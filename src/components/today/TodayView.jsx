@@ -1,18 +1,22 @@
 // Component: TodayView
-// Purpose: Main "Today" dashboard — mood check-in, stats, tasks, habits, quick note
-import TodaySummaryBar  from './TodaySummaryBar'
-import TodayTaskList    from './TodayTaskList'
-import TodayHabitStrip  from './TodayHabitStrip'
-import TodayQuickNote   from './TodayQuickNote'
-import WeekStrip        from './WeekStrip'
-import MoodTracker      from '../insights/MoodTracker'
+// Purpose: Today tab — greeting/intention/weather, focus task, progress ring, tasks, habits, note
+import GoodMorningHeader from './GoodMorningHeader'
+import FocusTask         from './FocusTask'
+import ProgressRing      from './ProgressRing'
+import TodayTaskList     from './TodayTaskList'
+import TodayHabitStrip   from './TodayHabitStrip'
+import TodayQuickNote    from './TodayQuickNote'
+import WeekStrip         from './WeekStrip'
+import MoodTracker       from '../insights/MoodTracker'
 
-export default function TodayView({ tasks, habits, notes, mood }) {
+export default function TodayView({ tasks, habits, notes, mood, intention }) {
   return (
     <div className="max-w-3xl mx-auto space-y-4 pt-2">
       <WeekStrip />
+      <GoodMorningHeader intention={intention} />
       <MoodTracker mood={mood} />
-      <TodaySummaryBar tasks={tasks} habits={habits} />
+      <FocusTask tasks={tasks} />
+      <ProgressRing tasks={tasks} habits={habits} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <TodayTaskList tasks={tasks} />
         <div className="flex flex-col gap-4">

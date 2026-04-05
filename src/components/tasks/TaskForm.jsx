@@ -1,21 +1,29 @@
 // Component: TaskForm
-// Purpose: Form inside the "New Task" modal — title, priority, category, date
+// Purpose: New task form — title, priority, category, date, time estimate, recurring
 import { useState } from 'react'
-import Input  from '../ui/Input'
+import Input from '../ui/Input'
 import { TASK_CATEGORIES } from '../../utils/constants'
 import { getTodayKey } from '../../utils/dateUtils'
 
-const PRIORITIES = ['low', 'medium', 'high']
+const PRIORITIES  = ['low', 'medium', 'high']
+const RECUR_DAYS  = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+const ESTIMATES   = [null, 15, 30, 45, 60, 90, 120]
 
 export default function TaskForm({ onSubmit, onCancel }) {
   const [form, setForm] = useState({
-    title:    '',
-    priority: 'medium',
-    category: 'Personal',
-    date:     getTodayKey(),
+    title: '', priority: 'medium', category: 'Personal',
+    date: getTodayKey(), estimateMins: null,
+    isRecurring: false, recurDays: [],
   })
 
   const set = (k, v) => setForm(prev => ({ ...prev, [k]: v }))
+
+  const toggleDay = (day) => {
+    const next = form.recurDays.includes(day)
+      ? form.recurDays.filter(d => d !== day)
+      : [...form.recurDays, day]
+    set('recurDays', next)
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -25,33 +33,22 @@ export default function TaskForm({ onSubmit, onCancel }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <Input
-        label="Task title"
-        placeholder="What needs to be done?"
-        value={form.title}
-        onChange={e => set('title', e.target.value)}
-        autoFocus
-      />
+      <Input label="Task title" placeholder="What needs to be done?" value={form.title}
+        onChange={e => set('title', e.target.value)} autoFocus />
 
       {/* Priority */}
       <div>
         <p className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2">Priority</p>
         <div className="flex gap-2">
           {PRIORITIES.map(p => (
-            <button
-              key={p}
-              type="button"
-              onClick={() => set('priority', p)}
+            <button key={p} type="button" onClick={() => set('priority', p)}
               className={`flex-1 py-2 rounded-xl text-sm font-medium capitalize transition-all border ${
                 form.priority === p
                   ? p === 'high'   ? 'bg-red-50 border-red-300 text-red-600'
                   : p === 'medium' ? 'bg-amber-50 border-amber-300 text-amber-600'
                                    : 'bg-forest-50 border-forest-300 text-forest-700'
                   : 'border-stone-200 text-ink-faint hover:bg-stone-50'
-              }`}
-            >
-              {p}
-            </button>
+              }`}>{p}</button>
           ))}
         </div>
       </div>
@@ -61,44 +58,62 @@ export default function TaskForm({ onSubmit, onCancel }) {
         <p className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2">Category</p>
         <div className="flex flex-wrap gap-2">
           {TASK_CATEGORIES.map(c => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => set('category', c)}
+            <button key={c} type="button" onClick={() => set('category', c)}
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
-                form.category === c
-                  ? 'bg-ink text-white border-ink'
-                  : 'border-stone-200 text-ink-muted hover:bg-stone-50'
-              }`}
-            >
-              {c}
-            </button>
+                form.category === c ? 'bg-ink text-white border-ink' : 'border-stone-200 text-ink-muted hover:bg-stone-50'
+              }`}>{c}</button>
           ))}
         </div>
       </div>
 
-      {/* Date */}
-      <Input
-        label="Date"
-        type="date"
-        value={form.date}
-        onChange={e => set('date', e.target.value)}
-      />
+      {/* Date + estimate row */}
+      <div className="grid grid-cols-2 gap-3">
+        <Input label="Date" type="date" value={form.date} onChange={e => set('date', e.target.value)} />
+        <div>
+          <p className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-1.5">Est. time</p>
+          <select
+            value={form.estimateMins ?? ''}
+            onChange={e => set('estimateMins', e.target.value ? Number(e.target.value) : null)}
+            className="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-parchment text-sm text-ink outline-none focus:ring-2 focus:ring-forest-200"
+          >
+            <option value="">No estimate</option>
+            {ESTIMATES.filter(Boolean).map(m => (
+              <option key={m} value={m}>{m < 60 ? `${m} min` : `${m/60}h`}</option>
+            ))}
+          </select>
+        </div>
+      </div>
 
-      {/* Actions */}
-      <div className="flex gap-3 pt-2">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="flex-1 py-2.5 rounded-xl border border-stone-200 text-sm text-ink-muted hover:bg-stone-50 transition-colors"
-        >
+      {/* Recurring toggle */}
+      <div>
+        <label className="flex items-center gap-2 cursor-pointer select-none">
+          <div
+            onClick={() => set('isRecurring', !form.isRecurring)}
+            className={`w-9 h-5 rounded-full transition-colors relative ${form.isRecurring ? 'bg-forest-500' : 'bg-stone-200'}`}
+          >
+            <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.isRecurring ? 'translate-x-4' : 'translate-x-0.5'}`} />
+          </div>
+          <span className="text-sm text-ink-muted">Recurring task</span>
+        </label>
+        {form.isRecurring && (
+          <div className="flex gap-1.5 mt-2 flex-wrap">
+            {RECUR_DAYS.map(d => (
+              <button key={d} type="button" onClick={() => toggleDay(d)}
+                className={`w-10 h-8 rounded-lg text-xs font-medium transition-all ${
+                  form.recurDays.includes(d) ? 'bg-forest-500 text-white' : 'bg-stone-100 text-ink-muted hover:bg-stone-200'
+                }`}>{d}</button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="flex gap-3 pt-1">
+        <button type="button" onClick={onCancel}
+          className="flex-1 py-2.5 rounded-xl border border-stone-200 text-sm text-ink-muted hover:bg-stone-50 transition-colors">
           Cancel
         </button>
-        <button
-          type="submit"
-          disabled={!form.title.trim()}
-          className="flex-1 py-2.5 rounded-xl bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 disabled:opacity-40 transition-colors"
-        >
+        <button type="submit" disabled={!form.title.trim()}
+          className="flex-1 py-2.5 rounded-xl bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 disabled:opacity-40 transition-colors">
           Add Task
         </button>
       </div>
