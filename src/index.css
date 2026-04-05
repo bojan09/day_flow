@@ -1,30 +1,59 @@
-/* Styles: Global Tailwind directives and base overrides */
+/* Styles: Global Tailwind directives, base overrides, and theme variables */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  * {
-    box-sizing: border-box;
+  :root,
+  [data-theme="light"] {
+    --bg:           #FAFAF8;
+    --surface:      #FFFFFF;
+    --border:       #E8E5E0;
+    --text:         #1A1A1A;
+    --text-muted:   #737373;
+    --text-faint:   #A8A29E;
+    --accent:       #3B6B4B;
+    --accent-light: #EEF4ED;
   }
-  html {
-    scroll-behavior: smooth;
+  [data-theme="dark"] {
+    --bg:           #111210;
+    --surface:      #1C1E1B;
+    --border:       #2A2D28;
+    --text:         #F0EDE8;
+    --text-muted:   #9A9690;
+    --text-faint:   #5C5955;
+    --accent:       #5A9E6F;
+    --accent-light: #1A2D20;
   }
+  [data-theme="forest"] {
+    --bg:           #F0F5F0;
+    --surface:      #FFFFFF;
+    --border:       #C8D9C8;
+    --text:         #1A2A1A;
+    --text-muted:   #4A6A4A;
+    --text-faint:   #8AAA8A;
+    --accent:       #2A5A3A;
+    --accent-light: #DCF0DC;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
-    @apply bg-parchment font-sans text-ink antialiased;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
-  ::selection {
-    @apply bg-forest-100 text-forest-900;
-  }
+  ::selection { background-color: var(--accent-light); color: var(--accent); }
 }
 
 @layer utilities {
-  /* Hide scrollbar while keeping scroll functionality */
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .theme-bg      { background-color: var(--bg); }
+  .theme-surface { background-color: var(--surface); }
+  .theme-border  { border-color: var(--border); }
+  .theme-text    { color: var(--text); }
+  .theme-muted   { color: var(--text-muted); }
+  .theme-faint   { color: var(--text-faint); }
 }
