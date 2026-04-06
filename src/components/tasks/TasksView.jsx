@@ -1,16 +1,20 @@
 // Component: TasksView
-// Purpose: Full tasks tab — filter pills, task list with overdue/due-today badges, add modal
+// Purpose: Full tasks tab — NLP quick-add, filters, task list with badges, focus pin, duplicate-day
 import { useState } from 'react'
-import Card      from '../ui/Card'
-import Badge     from '../ui/Badge'
-import Modal     from '../ui/Modal'
-import TaskForm  from './TaskForm'
-import EmptyState from '../ui/EmptyState'
+import Card          from '../ui/Card'
+import Badge         from '../ui/Badge'
+import Modal         from '../ui/Modal'
+import TaskForm      from './TaskForm'
+import NLPTaskInput  from './NLPTaskInput'
+import EmptyState    from '../ui/EmptyState'
+import TaskTemplates from '../templates/TaskTemplates'
+import SomedayList   from '../summary/SomedayList'
 import { getTodayKey } from '../../utils/dateUtils'
+import { addDays, format } from 'date-fns'
 
 const FILTERS = ['All', 'Today', 'Overdue', 'Pending', 'Done']
 
-export default function TasksView({ tasks }) {
+export default function TasksView({ tasks, templates, someday }) {
   const [filter,    setFilter] = useState('All')
   const [modalOpen, setModal]  = useState(false)
   const todayKey = getTodayKey()
@@ -31,36 +35,54 @@ export default function TasksView({ tasks }) {
 
   const overdueCount = tasks.tasks.filter(t => tasks.isOverdue(t)).length
 
+  // Duplicate today's incomplete tasks to tomorrow
+  const handleDuplicateDay = () => {
+    const tomorrow = format(addDays(new Date(), 1), 'yyyy-MM-dd')
+    const inc = tasks.getTodayTasks().filter(t => !t.completed && !t.isRecurring)
+    inc.forEach(t => tasks.addTask({ ...t, date: tomorrow }))
+  }
+
   return (
     <div className="max-w-2xl mx-auto space-y-4 pt-2">
+      {/* NLP quick-add */}
+      <NLPTaskInput onAdd={t => tasks.addTask(t)} />
+
+      {/* Header row */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-ink-muted">
           {tasks.tasks.length} tasks
           {overdueCount > 0 && <span className="ml-2 text-red-500 font-medium">· {overdueCount} overdue</span>}
         </p>
-        <button
-          onClick={() => setModal(true)}
-          className="px-4 py-2 rounded-full bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 transition-colors"
-        >
-          + New Task
-        </button>
+        <div className="flex gap-2">
+          <button onClick={handleDuplicateDay}
+            title="Copy today's incomplete tasks to tomorrow"
+            className="px-3 py-2 rounded-full border border-stone-200 text-ink-muted text-xs font-medium hover:bg-stone-50 transition-colors">
+            Copy to tomorrow →
+          </button>
+          <button onClick={() => setModal(true)}
+            className="px-4 py-2 rounded-full bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 transition-colors">
+            + New
+          </button>
+        </div>
       </div>
 
-      {/* Filter pills */}
+      {/* Filters */}
       <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
         {FILTERS.map(f => (
           <button key={f} onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium flex-shrink-0 transition-all ${
-              filter === f ? 'bg-ink text-white' : 'bg-white border border-stone-200 text-ink-muted hover:border-stone-300'
-            }`}>
-            {f}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium flex-shrink-0 transition-all border ${
+              filter === f ? 'bg-ink text-white border-ink' : 'bg-white border-stone-200 text-ink-muted hover:border-stone-300'
+            }`}>{f}
           </button>
         ))}
       </div>
 
+      {/* Task list */}
       <Card noPad>
         {sorted.length === 0 ? (
-          <EmptyState type="tasks" title="Nothing here" subtitle="Add a task or change your filter." action="+ New Task" onAction={() => setModal(true)} />
+          <EmptyState type="tasks" title="Nothing here"
+            subtitle="Add a task using the input above or change your filter."
+            action="+ New Task" onAction={() => setModal(true)} />
         ) : (
           <ul className="divide-y divide-stone-50">
             {sorted.map(t => {
@@ -68,15 +90,12 @@ export default function TasksView({ tasks }) {
               const dueToday = tasks.isDueToday(t)
               return (
                 <li key={t.id} className="flex items-center gap-3 px-5 py-3.5 hover:bg-stone-50/50 transition-colors group">
-                  {/* Checkbox */}
                   <button onClick={() => tasks.toggleTask(t.id)}
                     className={`w-5 h-5 rounded-md border-2 flex-shrink-0 flex items-center justify-center text-xs transition-all ${
                       t.completed ? 'bg-forest-500 border-forest-500 text-white' : 'border-stone-300 hover:border-forest-400'
                     }`}>
                     {t.completed && '✓'}
                   </button>
-
-                  {/* Text */}
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm truncate ${t.completed ? 'line-through text-ink-faint' : 'text-ink'}`}>{t.title}</p>
                     <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
@@ -84,24 +103,17 @@ export default function TasksView({ tasks }) {
                       {overdue  && <span className="text-[11px] font-medium text-red-500 bg-red-50 px-1.5 rounded">Overdue</span>}
                       {dueToday && <span className="text-[11px] font-medium text-amber-600 bg-amber-50 px-1.5 rounded">Due today</span>}
                       {t.estimateMins && <span className="text-[11px] text-ink-faint">⏱ {t.estimateMins < 60 ? `${t.estimateMins}m` : `${t.estimateMins/60}h`}</span>}
-                      {t.isRecurring  && <span className="text-[11px] text-forest-500">🔁</span>}
+                      {t.isRecurring && <span className="text-[11px] text-forest-500">🔁</span>}
                     </div>
                   </div>
-
                   <div className="flex items-center gap-1.5 flex-shrink-0">
                     <Badge label={t.priority} color={t.priority} />
-                    {/* Focus pin */}
-                    <button
-                      onClick={() => tasks.setFocus(t.id)}
-                      title={t.isFocus ? 'Unpin focus' : 'Set as focus task'}
-                      className={`opacity-0 group-hover:opacity-100 text-sm transition-all p-1 rounded ${t.isFocus ? 'opacity-100 text-forest-500' : 'text-ink-faint hover:text-forest-500'}`}
-                    >
+                    <button onClick={() => tasks.setFocus(t.id)}
+                      className={`text-sm transition-all p-1 rounded opacity-0 group-hover:opacity-100 ${t.isFocus ? 'opacity-100 text-forest-500' : 'text-ink-faint hover:text-forest-500'}`}>
                       {t.isFocus ? '📌' : '📍'}
                     </button>
                     <button onClick={() => tasks.deleteTask(t.id)}
-                      className="opacity-0 group-hover:opacity-100 text-ink-faint hover:text-red-400 transition-all text-xs p-1">
-                      ✕
-                    </button>
+                      className="opacity-0 group-hover:opacity-100 text-ink-faint hover:text-red-400 transition-all text-xs p-1">✕</button>
                   </div>
                 </li>
               )
@@ -109,6 +121,14 @@ export default function TasksView({ tasks }) {
           </ul>
         )}
       </Card>
+
+      {/* Templates and Someday */}
+      {templates && someday && (
+        <>
+          <TaskTemplates templates={templates} tasks={tasks} />
+          <SomedayList   someday={someday}    tasks={tasks} />
+        </>
+      )}
 
       <Modal isOpen={modalOpen} onClose={() => setModal(false)} title="New Task">
         <TaskForm onSubmit={t => { tasks.addTask(t); setModal(false) }} onCancel={() => setModal(false)} />

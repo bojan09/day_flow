@@ -1,5 +1,5 @@
 // Component: TodayView
-// Purpose: Today tab — greeting/intention/weather, focus task, progress ring, tasks, habits, note
+// Purpose: Today tab — full daily command center with all Phase 3-5 widgets
 import GoodMorningHeader from './GoodMorningHeader'
 import FocusTask         from './FocusTask'
 import ProgressRing      from './ProgressRing'
@@ -8,8 +8,10 @@ import TodayHabitStrip   from './TodayHabitStrip'
 import TodayQuickNote    from './TodayQuickNote'
 import WeekStrip         from './WeekStrip'
 import MoodTracker       from '../insights/MoodTracker'
+import GratitudeLog      from '../gratitude/GratitudeLog'
+import EndOfDayReview    from '../summary/EndOfDayReview'
 
-export default function TodayView({ tasks, habits, notes, mood, intention }) {
+export default function TodayView({ tasks, habits, notes, mood, intention, gratitude }) {
   return (
     <div className="max-w-3xl mx-auto space-y-4 pt-2">
       <WeekStrip />
@@ -21,9 +23,11 @@ export default function TodayView({ tasks, habits, notes, mood, intention }) {
         <TodayTaskList tasks={tasks} />
         <div className="flex flex-col gap-4">
           <TodayHabitStrip habits={habits} />
-          <TodayQuickNote notes={notes} />
+          <TodayQuickNote  notes={notes} />
         </div>
       </div>
+      <GratitudeLog gratitude={gratitude} />
+      <EndOfDayReview tasks={tasks} />
     </div>
   )
 }

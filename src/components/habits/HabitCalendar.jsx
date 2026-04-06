@@ -1,0 +1,102 @@
+// Component: HabitCalendar
+// Purpose: Full-month calendar view for habits — shows completion dots per day
+import { useState } from 'react'
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDay, isToday } from 'date-fns'
+import { getDateKey } from '../../utils/dateUtils'
+import Card from '../ui/Card'
+
+export default function HabitCalendar({ habits }) {
+  const [month,       setMonth]       = useState(new Date())
+  const [selectedHabit, setSelected] = useState(null)
+
+  const monthStart = startOfMonth(month)
+  const monthEnd   = endOfMonth(month)
+  const days       = eachDayOfInterval({ start: monthStart, end: monthEnd })
+
+  // Pad to start on Monday (0=Mon)
+  const startDow  = (getDay(monthStart) + 6) % 7
+  const padded    = [...Array(startDow).fill(null), ...days]
+  const habit     = habits.habits.find(h => h.id === selectedHabit) || habits.habits[0]
+
+  const prevMonth = () => setMonth(m => new Date(m.getFullYear(), m.getMonth() - 1, 1))
+  const nextMonth = () => setMonth(m => new Date(m.getFullYear(), m.getMonth() + 1, 1))
+
+  return (
+    <Card>
+      {/* Habit selector */}
+      {habits.habits.length > 1 && (
+        <div className="flex gap-1.5 overflow-x-auto scrollbar-hide mb-4 pb-1">
+          {habits.habits.map(h => (
+            <button key={h.id} onClick={() => setSelected(h.id)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium flex-shrink-0 transition-all border ${
+                (selectedHabit || habits.habits[0]?.id) === h.id
+                  ? 'bg-forest-500 text-white border-forest-500'
+                  : 'border-stone-200 text-ink-muted hover:bg-stone-50'
+              }`}>
+              <span>{h.icon}</span>{h.name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Month navigation */}
+      <div className="flex items-center justify-between mb-4">
+        <button onClick={prevMonth}
+          className="w-7 h-7 rounded-full hover:bg-stone-100 flex items-center justify-center text-ink-muted transition-colors text-sm">
+          ‹
+        </button>
+        <span className="font-serif text-base text-ink">{format(month, 'MMMM yyyy')}</span>
+        <button onClick={nextMonth}
+          className="w-7 h-7 rounded-full hover:bg-stone-100 flex items-center justify-center text-ink-muted transition-colors text-sm">
+          ›
+        </button>
+      </div>
+
+      {/* Day of week headers */}
+      <div className="grid grid-cols-7 mb-2">
+        {['M','T','W','T','F','S','S'].map((d, i) => (
+          <div key={i} className="text-center text-[10px] font-medium text-ink-faint uppercase">{d}</div>
+        ))}
+      </div>
+
+      {/* Calendar grid */}
+      {habit ? (
+        <div className="grid grid-cols-7 gap-1">
+          {padded.map((day, i) => {
+            if (!day) return <div key={`pad-${i}`} />
+            const dateKey = getDateKey(day)
+            const done    = habits.isHabitDone(habit.id, dateKey)
+            const today   = isToday(day)
+            return (
+              <button
+                key={dateKey}
+                onClick={() => habits.toggleHabitDay(habit.id, dateKey)}
+                className={`aspect-square rounded-full flex items-center justify-center text-xs font-medium transition-all ${
+                  done  ? 'bg-forest-500 text-white shadow-sm'
+                  : today ? 'border-2 border-forest-400 text-forest-600 hover:bg-forest-50'
+                  : 'text-ink-muted hover:bg-stone-100'
+                }`}
+              >
+                {format(day, 'd')}
+              </button>
+            )
+          })}
+        </div>
+      ) : (
+        <p className="text-center text-sm text-ink-faint py-6 italic">Add habits to see the calendar</p>
+      )}
+
+      {/* Month summary */}
+      {habit && (
+        <div className="mt-4 pt-3 border-t border-stone-50 flex justify-between text-xs text-ink-faint">
+          <span>
+            {days.filter(d => habits.isHabitDone(habit.id, getDateKey(d))).length} / {days.length} days
+          </span>
+          <span className="text-forest-500 font-medium">
+            {Math.round((days.filter(d => habits.isHabitDone(habit.id, getDateKey(d))).length / days.length) * 100)}% this month
+          </span>
+        </div>
+      )}
+    </Card>
+  )
+}
