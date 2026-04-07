@@ -1,18 +1,19 @@
 // Component: AddHabitModal
-// Purpose: Modal form to add a habit — name, icon picker, frequency (daily or X/week)
+// Purpose: Add habit with name, frequency, icon, and pairing suggestion
 import { useState } from 'react'
-import Modal from '../ui/Modal'
-import Input from '../ui/Input'
-import { HABIT_ICONS } from '../../utils/constants'
+import Modal                 from '../ui/Modal'
+import Input                 from '../ui/Input'
+import HabitPairingSuggestion from './HabitPairingSuggestion'
+import { HABIT_ICONS }       from '../../utils/constants'
 
 const FREQUENCIES = [
-  { id: 'daily',  label: 'Every day' },
-  { id: '3',      label: '3× / week' },
-  { id: '4',      label: '4× / week' },
-  { id: '5',      label: '5× / week' },
+  { id: 'daily', label: 'Every day' },
+  { id: '3',     label: '3× / week' },
+  { id: '4',     label: '4× / week' },
+  { id: '5',     label: '5× / week' },
 ]
 
-export default function AddHabitModal({ isOpen, onClose, onAdd }) {
+export default function AddHabitModal({ isOpen, onClose, onAdd, existingHabits = [] }) {
   const [name,      setName]      = useState('')
   const [icon,      setIcon]      = useState('⭐')
   const [frequency, setFrequency] = useState('daily')
@@ -30,24 +31,20 @@ export default function AddHabitModal({ isOpen, onClose, onAdd }) {
         <Input label="Habit name" placeholder="e.g. Morning run, Read 20 pages..."
           value={name} onChange={e => setName(e.target.value)} autoFocus />
 
-        {/* Frequency */}
+        <HabitPairingSuggestion habits={existingHabits} newHabitIcon={icon} />
+
         <div>
           <p className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2">Frequency</p>
           <div className="grid grid-cols-2 gap-2">
             {FREQUENCIES.map(f => (
               <button key={f.id} type="button" onClick={() => setFrequency(f.id)}
                 className={`py-2 rounded-xl text-sm font-medium transition-all border ${
-                  frequency === f.id
-                    ? 'bg-forest-500 text-white border-forest-500'
-                    : 'border-stone-200 text-ink-muted hover:bg-stone-50'
-                }`}>
-                {f.label}
-              </button>
+                  frequency === f.id ? 'bg-forest-500 text-white border-forest-500' : 'border-stone-200 text-ink-muted hover:bg-stone-50'
+                }`}>{f.label}</button>
             ))}
           </div>
         </div>
 
-        {/* Icon picker */}
         <div>
           <p className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2">Icon</p>
           <div className="grid grid-cols-6 gap-2">
@@ -55,9 +52,7 @@ export default function AddHabitModal({ isOpen, onClose, onAdd }) {
               <button key={i} type="button" onClick={() => setIcon(i)}
                 className={`aspect-square rounded-xl text-xl flex items-center justify-center transition-all border ${
                   icon === i ? 'bg-forest-50 border-forest-300 scale-110' : 'border-stone-100 hover:bg-stone-50'
-                }`}>
-                {i}
-              </button>
+                }`}>{i}</button>
             ))}
           </div>
         </div>

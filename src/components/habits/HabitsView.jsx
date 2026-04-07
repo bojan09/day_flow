@@ -1,36 +1,38 @@
 // Component: HabitsView
-// Purpose: Full habits tab — weekly grid, month calendar, confetti on milestones
+// Purpose: Habits tab — weekly/calendar toggle, rules panel, pairing suggestions, confetti
 import { useState, useRef } from 'react'
-import Card          from '../ui/Card'
-import HabitRow      from './HabitRow'
-import AddHabitModal from './AddHabitModal'
-import HabitCalendar from './HabitCalendar'
-import Confetti      from '../ui/Confetti'
-import EmptyState    from '../ui/EmptyState'
-import { getWeekDays } from '../../utils/dateUtils'
+import Card              from '../ui/Card'
+import HabitRow          from './HabitRow'
+import AddHabitModal     from './AddHabitModal'
+import HabitCalendar     from './HabitCalendar'
+import HabitRulesPanel   from './HabitRulesPanel'
+import Confetti          from '../ui/Confetti'
+import EmptyState        from '../ui/EmptyState'
+import { getWeekDays }   from '../../utils/dateUtils'
 import { format, isToday } from 'date-fns'
 import { notifications } from '../../services/notificationService'
 
 const MILESTONE_STREAKS = [7, 14, 30, 60, 100]
 
-export default function HabitsView({ habits }) {
-  const [modalOpen, setModal]   = useState(false)
+export default function HabitsView({ habits, habitRules }) {
+  const [modalOpen, setModal]    = useState(false)
   const [confetti,  setConfetti] = useState(false)
-  const [view,      setView]    = useState('week') // 'week' | 'calendar'
-  const prevStreaks              = useRef({})
-  const weekDays                = getWeekDays()
+  const [view,      setView]     = useState('week')
+  const prevStreaks               = useRef({})
+  const weekDays                 = getWeekDays()
   const { habits: list, isHabitDone, toggleHabitDay, deleteHabit, getStreak, getWeeklyCount } = habits
 
   const handleToggle = (habitId, dateKey) => {
+    // Fire IFTTT rules
+    habitRules.fireRules(habitId, toggleHabitDay)
     toggleHabitDay(habitId, dateKey)
     setTimeout(() => {
-      const newStreak = getStreak(habitId)
-      const prev      = prevStreaks.current[habitId] || 0
-      if (MILESTONE_STREAKS.includes(newStreak) && newStreak > prev) {
+      const s = getStreak(habitId)
+      if (MILESTONE_STREAKS.includes(s) && s > (prevStreaks.current[habitId] || 0)) {
         setConfetti(true); setTimeout(() => setConfetti(false), 100)
-        notifications.sendStreakCelebration(newStreak)
+        notifications.sendStreakCelebration(s)
       }
-      prevStreaks.current[habitId] = newStreak
+      prevStreaks.current[habitId] = s
     }, 50)
   }
 
@@ -41,7 +43,6 @@ export default function HabitsView({ habits }) {
       <div className="flex items-center justify-between">
         <p className="text-sm text-ink-muted">{list.length} habit{list.length !== 1 ? 's' : ''}</p>
         <div className="flex gap-2">
-          {/* View toggle */}
           <div className="flex bg-stone-100 rounded-full p-0.5">
             {['week','calendar'].map(v => (
               <button key={v} onClick={() => setView(v)}
@@ -72,9 +73,7 @@ export default function HabitsView({ habits }) {
             ))}
           </div>
           {list.length === 0 ? (
-            <EmptyState type="habits" title="No habits yet"
-              subtitle="Build a routine — add your first habit."
-              action="+ Add Habit" onAction={() => setModal(true)} />
+            <EmptyState type="habits" title="No habits yet" subtitle="Build a routine — add your first habit." action="+ Add Habit" onAction={() => setModal(true)} />
           ) : (
             <div className="divide-y divide-stone-50">
               {list.map(h => (
@@ -87,6 +86,8 @@ export default function HabitsView({ habits }) {
           )}
         </Card>
       )}
+
+      {list.length >= 2 && <HabitRulesPanel habits={habits} habitRules={habitRules} />}
 
       <AddHabitModal isOpen={modalOpen} onClose={() => setModal(false)}
         onAdd={h => { habits.addHabit(h); setModal(false) }} />

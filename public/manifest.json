@@ -1,0 +1,26 @@
+{
+  "name": "DayFlow — Daily Planner",
+  "short_name": "DayFlow",
+  "description": "Your daily command center — tasks, habits, notes, goals in one calm space.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAFAF8",
+  "theme_color": "#3B6B4B",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "lifestyle"],
+  "screenshots": []
+}
