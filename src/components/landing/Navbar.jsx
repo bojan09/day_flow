@@ -1,28 +1,56 @@
 // Component: Navbar (Landing)
-// Purpose: Polished fixed nav — fully theme-aware with glass background
+// Purpose: Fixed nav — logo scrolls to top, links smooth-scroll to real sections
 import { useNavigate } from 'react-router-dom'
+
+const NAV_LINKS = [
+  { label: 'Features',     href: '#features'      },
+  { label: 'How it works', href: '#how-it-works'  },
+  { label: 'Pricing',      href: '#pricing'       },
+]
 
 export default function Navbar() {
   const navigate = useNavigate()
+
+  const handleLogoClick = () => {
+    if (window.location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } else {
+      navigate('/')
+    }
+  }
+
+  const handleNavClick = (e, href) => {
+    e.preventDefault()
+    const el = document.getElementById(href.replace('#', ''))
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 sm:px-10 py-4 glass border-b"
       style={{ borderColor: 'var(--border-soft)' }}
     >
-      <span className="font-serif text-2xl tracking-tight leading-none" style={{ color: 'var(--text)' }}>
+      <button
+        onClick={handleLogoClick}
+        className="font-serif text-2xl tracking-tight leading-none hover:opacity-80 transition-opacity"
+        style={{ color: 'var(--text)' }}
+      >
         Day<em className="not-italic text-forest-500">Flow</em>
-      </span>
+      </button>
 
       <ul className="hidden sm:flex gap-8 list-none">
-        {['Features', 'How it works', 'Pricing'].map(item => (
-          <li key={item}>
+        {NAV_LINKS.map(item => (
+          <li key={item.label}>
             <a
-              href={`#${item.toLowerCase().replace(/ /g, '-')}`}
+              href={item.href}
+              onClick={e => handleNavClick(e, item.href)}
               className="text-sm font-light transition-colors"
               style={{ color: 'var(--text-muted)' }}
               onMouseOver={e => e.target.style.color = 'var(--text)'}
               onMouseOut={e => e.target.style.color = 'var(--text-muted)'}
-            >{item}</a>
+            >
+              {item.label}
+            </a>
           </li>
         ))}
       </ul>
