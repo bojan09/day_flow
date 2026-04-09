@@ -1,5 +1,5 @@
 // Page: DashboardPage
-// Purpose: Root dashboard — owns all state, renders active tab, keyboard shortcuts, PWA
+// Purpose: Root page — owns all state, renders active tab, hosts QuickCapture + keyboard shortcuts
 import { useState, useEffect } from 'react'
 import DashboardLayout    from '../layouts/DashboardLayout'
 import TodayView          from '../components/today/TodayView'
@@ -11,8 +11,17 @@ import FocusMode          from '../components/focus/FocusMode'
 import SearchView         from '../components/search/SearchView'
 import InsightsView       from '../components/insights/InsightsView'
 import TimeBlockView      from '../components/timeblock/TimeBlockView'
+import CalendarView       from '../components/calendar/CalendarView'
+import IdeasView          from '../components/ideas/IdeasView'
+import BrainDump          from '../components/braindump/BrainDump'
+import RoutinesView       from '../components/routines/RoutinesView'
+import ChallengesView     from '../components/challenges/ChallengesView'
+import ProjectsView       from '../components/projects/ProjectsView'
+import BookmarksView      from '../components/bookmarks/BookmarksView'
 import WeeklyReview       from '../components/weekly/WeeklyReview'
 import KeyboardShortcuts  from '../components/keyboard/KeyboardShortcuts'
+import QuickCapture       from '../components/quickcapture/QuickCapture'
+
 import { useTasks          } from '../hooks/useTasks'
 import { useNotes          } from '../hooks/useNotes'
 import { useHabits         } from '../hooks/useHabits'
@@ -30,12 +39,18 @@ import { useDailyScore     } from '../hooks/useDailyScore'
 import { useMonthlyLetter  } from '../hooks/useMonthlyLetter'
 import { usePomodoroHistory} from '../hooks/usePomodoroHistory'
 import { useHabitRules     } from '../hooks/useHabitRules'
+import { useIdeas          } from '../hooks/useIdeas'
+import { useRoutines       } from '../hooks/useRoutines'
+import { useChallenges     } from '../hooks/useChallenges'
+import { useBalanceWheel   } from '../hooks/useBalanceWheel'
+import { useProjects       } from '../hooks/useProjects'
+import { useBookmarks      } from '../hooks/useBookmarks'
+import { useAffirmations   } from '../hooks/useAffirmations'
 import { spawnRecurringTasks } from '../services/recurringEngine'
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('today')
 
-  // Core data hooks
   const tasks          = useTasks()
   const notes          = useNotes()
   const habits         = useHabits()
@@ -51,12 +66,17 @@ export default function DashboardPage() {
   const monthlyLetter  = useMonthlyLetter()
   const pomodoroHistory = usePomodoroHistory()
   const habitRules     = useHabitRules()
+  const ideas          = useIdeas()
+  const routines       = useRoutines()
+  const challenges     = useChallenges()
+  const wheel          = useBalanceWheel()
+  const projects       = useProjects()
+  const bookmarks      = useBookmarks()
+  const affirmations   = useAffirmations()
   const { theme, setTheme } = useTheme()
 
-  // Derived / calculated
   const score = useDailyScore({ tasks, habits, mood, gratitude, water })
 
-  // Spawn recurring task instances for today on mount
   useEffect(() => { spawnRecurringTasks(tasks.tasks, tasks.addTask) }, [])
 
   const handleWriteNote = (prompt) => {
@@ -69,25 +89,27 @@ export default function DashboardPage() {
       <KeyboardShortcuts onTabChange={setActiveTab} />
 
       <DashboardLayout activeTab={activeTab} onTabChange={setActiveTab}>
-        {activeTab === 'today' && (
-          <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood}
-            intention={intention} gratitude={gratitude} water={water}
-            score={score} monthlyLetter={monthlyLetter} energy={energy} />
-        )}
-        {activeTab === 'tasks'    && <TasksView tasks={tasks} templates={templates} someday={someday} />}
-        {activeTab === 'timeblock'&& <TimeBlockView tasks={tasks} />}
-        {activeTab === 'notes'    && <NotesView notes={notes} />}
-        {activeTab === 'habits'   && <HabitsView habits={habits} habitRules={habitRules} />}
-        {activeTab === 'goals'    && <GoalsView goals={goals} xp={xp} />}
-        {activeTab === 'focus'    && <FocusMode tasks={tasks} xp={xp} pomodoroHistory={pomodoroHistory} />}
-        {activeTab === 'search'   && <SearchView tasks={tasks} notes={notes} habits={habits} goals={goals} />}
-        {activeTab === 'insights' && (
-          <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes}
-            theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote}
-            intentions={intention} xp={xp} />
-        )}
+        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} />}
+        {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} />}
+        {activeTab === 'calendar'   && <CalendarView tasks={tasks} />}
+        {activeTab === 'timeblock'  && <TimeBlockView tasks={tasks} />}
+        {activeTab === 'projects'   && <ProjectsView projects={projects} tasks={tasks} />}
+        {activeTab === 'notes'      && <NotesView notes={notes} />}
+        {activeTab === 'ideas'      && <IdeasView ideas={ideas} goals={goals} />}
+        {activeTab === 'braindump'  && <BrainDump tasks={tasks} ideas={ideas} notes={notes} />}
+        {activeTab === 'bookmarks'  && <BookmarksView bookmarks={bookmarks} />}
+        {activeTab === 'habits'     && <HabitsView habits={habits} habitRules={habitRules} />}
+        {activeTab === 'routines'   && <RoutinesView routines={routines} />}
+        {activeTab === 'challenges' && <ChallengesView challenges={challenges} />}
+        {activeTab === 'goals'      && <GoalsView goals={goals} xp={xp} />}
+        {activeTab === 'focus'      && <FocusMode tasks={tasks} xp={xp} pomodoroHistory={pomodoroHistory} />}
+        {activeTab === 'search'     && <SearchView tasks={tasks} notes={notes} habits={habits} goals={goals} ideas={ideas} bookmarks={bookmarks} />}
+        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} xp={xp} wheel={wheel} />}
+        {activeTab === 'balance'    && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} xp={xp} wheel={wheel} />}
       </DashboardLayout>
 
+      {/* Global overlays */}
+      <QuickCapture tasks={tasks} ideas={ideas} notes={notes} habits={habits} onTabChange={setActiveTab} />
       <WeeklyReview tasks={tasks} habits={habits} mood={mood} />
     </>
   )

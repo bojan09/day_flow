@@ -1,12 +1,14 @@
 // Component: TopBar
-// Purpose: Sticky header — DayFlow logo (mobile = home), page title, search shortcut
+// Purpose: Sticky header — logo (mobile = home), page title, search shortcut
 import { useNavigate } from 'react-router-dom'
 import { formatDate } from '../../utils/dateUtils'
 
 const TITLES = {
   today: 'Today', tasks: 'Tasks', notes: 'Notes', habits: 'Habits',
   goals: 'Goals', focus: 'Focus', search: 'Search', insights: 'Insights',
-  timeblock: 'Schedule',
+  timeblock: 'Schedule', calendar: 'Calendar', ideas: 'Ideas',
+  braindump: 'Brain Dump', routines: 'Routines', challenges: 'Challenges',
+  balance: 'Balance', projects: 'Projects', bookmarks: 'Bookmarks',
 }
 
 export default function TopBar({ activeTab, onTabChange }) {
@@ -26,7 +28,7 @@ export default function TopBar({ activeTab, onTabChange }) {
       <div className="flex items-center gap-2">
         <button onClick={() => onTabChange('search')}
           className="w-8 h-8 rounded-full hover:bg-stone-100 flex items-center justify-center text-ink-muted hover:text-ink transition-colors text-sm"
-          title="Search">🔍</button>
+          title="Search (/)">🔍</button>
         <button onClick={() => navigate('/')}
           className="hidden md:flex items-center gap-1 text-xs text-ink-faint hover:text-ink transition-colors">
           ← Home

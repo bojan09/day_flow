@@ -1,13 +1,13 @@
 // Component: BottomNav
-// Purpose: Mobile bottom navigation — primary tabs + home
+// Purpose: Mobile bottom nav — 5 primary tabs + home
 import { useNavigate } from 'react-router-dom'
 
-const PRIMARY_TABS = [
-  { id: 'today',    label: 'Today',   emoji: '☀️' },
-  { id: 'tasks',    label: 'Tasks',   emoji: '✅' },
-  { id: 'goals',    label: 'Goals',   emoji: '🎯' },
-  { id: 'focus',    label: 'Focus',   emoji: '⏱️' },
-  { id: 'insights', label: 'More',    emoji: '⋯'  },
+const TABS = [
+  { id: 'today',     label: 'Today',    emoji: '☀️' },
+  { id: 'tasks',     label: 'Tasks',    emoji: '✅' },
+  { id: 'ideas',     label: 'Ideas',    emoji: '💡' },
+  { id: 'habits',    label: 'Habits',   emoji: '🔁' },
+  { id: 'insights',  label: 'More',     emoji: '⋯'  },
 ]
 
 export default function BottomNav({ activeTab, onTabChange }) {
@@ -20,9 +20,9 @@ export default function BottomNav({ activeTab, onTabChange }) {
         <span className="text-[10px] font-medium">Home</span>
       </button>
       <div className="w-px bg-stone-100 my-2" />
-      {PRIMARY_TABS.map(t => (
+      {TABS.map(t => (
         <button key={t.id} onClick={() => onTabChange(t.id)}
-          className={`flex flex-col items-center justify-center gap-0.5 py-2.5 px-2 transition-colors flex-1 ${
+          className={`flex flex-col items-center justify-center gap-0.5 py-2.5 px-1.5 transition-colors flex-1 ${
             activeTab === t.id ? 'text-forest-500' : 'text-ink-faint hover:text-ink'
           }`}>
           <span className={`text-lg transition-transform ${activeTab === t.id ? 'scale-110' : ''}`}>{t.emoji}</span>

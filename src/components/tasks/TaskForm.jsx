@@ -1,29 +1,26 @@
 // Component: TaskForm
-// Purpose: New task form — title, priority, category, date, time estimate, recurring
+// Purpose: New/edit task form — title, priority, category, date, estimate, recurring, project
 import { useState } from 'react'
 import Input from '../ui/Input'
 import { TASK_CATEGORIES } from '../../utils/constants'
 import { getTodayKey } from '../../utils/dateUtils'
 
-const PRIORITIES  = ['low', 'medium', 'high']
-const RECUR_DAYS  = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
-const ESTIMATES   = [null, 15, 30, 45, 60, 90, 120]
+const PRIORITIES = ['low', 'medium', 'high']
+const RECUR_DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+const ESTIMATES  = [null, 15, 30, 45, 60, 90, 120]
 
-export default function TaskForm({ onSubmit, onCancel }) {
+export default function TaskForm({ onSubmit, onCancel, projects = [] }) {
   const [form, setForm] = useState({
     title: '', priority: 'medium', category: 'Personal',
     date: getTodayKey(), estimateMins: null,
-    isRecurring: false, recurDays: [],
+    isRecurring: false, recurDays: [], projectId: null,
   })
+  const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
 
-  const set = (k, v) => setForm(prev => ({ ...prev, [k]: v }))
-
-  const toggleDay = (day) => {
-    const next = form.recurDays.includes(day)
+  const toggleDay = (day) =>
+    set('recurDays', form.recurDays.includes(day)
       ? form.recurDays.filter(d => d !== day)
-      : [...form.recurDays, day]
-    set('recurDays', next)
-  }
+      : [...form.recurDays, day])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -33,8 +30,8 @@ export default function TaskForm({ onSubmit, onCancel }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <Input label="Task title" placeholder="What needs to be done?" value={form.title}
-        onChange={e => set('title', e.target.value)} autoFocus />
+      <Input label="Task title" placeholder="What needs to be done?"
+        value={form.title} onChange={e => set('title', e.target.value)} autoFocus />
 
       {/* Priority */}
       <div>
@@ -66,17 +63,14 @@ export default function TaskForm({ onSubmit, onCancel }) {
         </div>
       </div>
 
-      {/* Date + estimate row */}
+      {/* Date + estimate */}
       <div className="grid grid-cols-2 gap-3">
         <Input label="Date" type="date" value={form.date} onChange={e => set('date', e.target.value)} />
         <div>
           <p className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-1.5">Est. time</p>
-          <select
-            value={form.estimateMins ?? ''}
-            onChange={e => set('estimateMins', e.target.value ? Number(e.target.value) : null)}
-            className="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-parchment text-sm text-ink outline-none focus:ring-2 focus:ring-forest-200"
-          >
-            <option value="">No estimate</option>
+          <select value={form.estimateMins ?? ''} onChange={e => set('estimateMins', e.target.value ? Number(e.target.value) : null)}
+            className="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-parchment text-sm text-ink outline-none focus:ring-2 focus:ring-forest-200">
+            <option value="">None</option>
             {ESTIMATES.filter(Boolean).map(m => (
               <option key={m} value={m}>{m < 60 ? `${m} min` : `${m/60}h`}</option>
             ))}
@@ -84,13 +78,23 @@ export default function TaskForm({ onSubmit, onCancel }) {
         </div>
       </div>
 
-      {/* Recurring toggle */}
+      {/* Project link */}
+      {projects.length > 0 && (
+        <div>
+          <p className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-1.5">Project</p>
+          <select value={form.projectId || ''} onChange={e => set('projectId', e.target.value || null)}
+            className="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-parchment text-sm text-ink outline-none focus:ring-2 focus:ring-forest-200">
+            <option value="">No project</option>
+            {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+          </select>
+        </div>
+      )}
+
+      {/* Recurring */}
       <div>
         <label className="flex items-center gap-2 cursor-pointer select-none">
-          <div
-            onClick={() => set('isRecurring', !form.isRecurring)}
-            className={`w-9 h-5 rounded-full transition-colors relative ${form.isRecurring ? 'bg-forest-500' : 'bg-stone-200'}`}
-          >
+          <div onClick={() => set('isRecurring', !form.isRecurring)}
+            className={`w-9 h-5 rounded-full transition-colors relative ${form.isRecurring ? 'bg-forest-500' : 'bg-stone-200'}`}>
             <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.isRecurring ? 'translate-x-4' : 'translate-x-0.5'}`} />
           </div>
           <span className="text-sm text-ink-muted">Recurring task</span>
@@ -109,13 +113,9 @@ export default function TaskForm({ onSubmit, onCancel }) {
 
       <div className="flex gap-3 pt-1">
         <button type="button" onClick={onCancel}
-          className="flex-1 py-2.5 rounded-xl border border-stone-200 text-sm text-ink-muted hover:bg-stone-50 transition-colors">
-          Cancel
-        </button>
+          className="flex-1 py-2.5 rounded-xl border border-stone-200 text-sm text-ink-muted hover:bg-stone-50">Cancel</button>
         <button type="submit" disabled={!form.title.trim()}
-          className="flex-1 py-2.5 rounded-xl bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 disabled:opacity-40 transition-colors">
-          Add Task
-        </button>
+          className="flex-1 py-2.5 rounded-xl bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 disabled:opacity-40">Add Task</button>
       </div>
     </form>
   )
