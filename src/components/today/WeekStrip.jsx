@@ -1,29 +1,29 @@
 // Component: WeekStrip
-// Purpose: Horizontal scrollable strip showing Mon–Sun with today highlighted
+// Purpose: Polished 7-day week navigator with theme-aware active/today states
 import { format, isToday, isSameDay } from 'date-fns'
 import { getWeekDays } from '../../utils/dateUtils'
 import { useState } from 'react'
 
 export default function WeekStrip() {
-  const days = getWeekDays()
-  const [selected, setSelected] = useState(new Date())
+  const days     = getWeekDays()
+  const [sel, setSel] = useState(new Date())
 
   return (
     <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1">
       {days.map(day => {
-        const active = isSameDay(day, selected)
+        const active = isSameDay(day, sel)
         const today  = isToday(day)
         return (
           <button
             key={day.toISOString()}
-            onClick={() => setSelected(day)}
-            className={`flex flex-col items-center gap-0.5 px-3 py-2.5 rounded-xl flex-shrink-0 transition-all ${
-              active
-                ? 'bg-forest-500 text-white shadow-sm'
-                : today
-                ? 'bg-forest-50 text-forest-700 border border-forest-200'
-                : 'bg-white text-ink-muted border border-stone-100 hover:bg-stone-50'
-            }`}
+            onClick={() => setSel(day)}
+            className="flex flex-col items-center gap-0.5 px-3 py-2.5 rounded-xl flex-shrink-0 transition-all duration-200 no-select"
+            style={active
+              ? { backgroundColor: 'var(--accent)', color: 'white', boxShadow: 'var(--shadow-card)' }
+              : today
+              ? { backgroundColor: 'var(--accent-light)', color: 'var(--accent)', border: `1px solid var(--accent-mid)` }
+              : { backgroundColor: 'var(--surface)', color: 'var(--text-muted)', border: '1px solid var(--border)' }
+            }
           >
             <span className="text-[10px] uppercase tracking-wider font-medium opacity-70">
               {format(day, 'EEE')}

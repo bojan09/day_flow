@@ -1,70 +1,73 @@
 // Component: SideNav
-// Purpose: Desktop left sidebar — full navigation for all app sections
+// Purpose: Desktop sidebar — sectioned navigation with theme-aware surfaces
 import { useNavigate } from 'react-router-dom'
 
 const SECTIONS = [
-  {
-    label: 'Plan',
-    tabs: [
-      { id: 'today',      label: 'Today',      emoji: '☀️' },
-      { id: 'tasks',      label: 'Tasks',      emoji: '✅' },
-      { id: 'calendar',   label: 'Calendar',   emoji: '📅' },
-      { id: 'timeblock',  label: 'Schedule',   emoji: '⏰' },
-      { id: 'projects',   label: 'Projects',   emoji: '🗂️' },
-    ]
-  },
-  {
-    label: 'Build',
-    tabs: [
-      { id: 'habits',     label: 'Habits',     emoji: '🔁' },
-      { id: 'routines',   label: 'Routines',   emoji: '🌅' },
-      { id: 'challenges', label: 'Challenges', emoji: '🎯' },
-      { id: 'goals',      label: 'Goals',      emoji: '🏆' },
-    ]
-  },
-  {
-    label: 'Think',
-    tabs: [
-      { id: 'notes',      label: 'Notes',      emoji: '📝' },
-      { id: 'ideas',      label: 'Ideas',      emoji: '💡' },
-      { id: 'braindump',  label: 'Brain Dump', emoji: '🧠' },
-      { id: 'bookmarks',  label: 'Bookmarks',  emoji: '🔖' },
-    ]
-  },
-  {
-    label: 'Reflect',
-    tabs: [
-      { id: 'insights',   label: 'Insights',   emoji: '📊' },
-      { id: 'balance',    label: 'Balance',    emoji: '⚖️' },
-      { id: 'focus',      label: 'Focus',      emoji: '⏱️' },
-      { id: 'search',     label: 'Search',     emoji: '🔍' },
-    ]
-  },
+  { label: 'Plan', tabs: [
+    { id: 'today',     label: 'Today',     emoji: '☀️' },
+    { id: 'tasks',     label: 'Tasks',     emoji: '✅' },
+    { id: 'calendar',  label: 'Calendar',  emoji: '📅' },
+    { id: 'timeblock', label: 'Schedule',  emoji: '⏰' },
+    { id: 'projects',  label: 'Projects',  emoji: '🗂️' },
+  ]},
+  { label: 'Build', tabs: [
+    { id: 'habits',     label: 'Habits',     emoji: '🔁' },
+    { id: 'routines',   label: 'Routines',   emoji: '🌅' },
+    { id: 'challenges', label: 'Challenges', emoji: '🎯' },
+    { id: 'goals',      label: 'Goals',      emoji: '🏆' },
+  ]},
+  { label: 'Think', tabs: [
+    { id: 'notes',     label: 'Notes',     emoji: '📝' },
+    { id: 'ideas',     label: 'Ideas',     emoji: '💡' },
+    { id: 'braindump', label: 'Brain Dump',emoji: '🧠' },
+    { id: 'bookmarks', label: 'Bookmarks', emoji: '🔖' },
+  ]},
+  { label: 'Reflect', tabs: [
+    { id: 'insights',   label: 'Insights',   emoji: '📊' },
+    { id: 'balance',    label: 'Balance',    emoji: '⚖️' },
+    { id: 'focus',      label: 'Focus',      emoji: '⏱️' },
+    { id: 'search',     label: 'Search',     emoji: '🔍' },
+  ]},
 ]
 
 export default function SideNav({ activeTab, onTabChange }) {
   const navigate = useNavigate()
   return (
-    <nav className="fixed top-0 left-0 h-screen w-56 bg-white border-r border-stone-100 flex flex-col py-5 px-3 z-40 overflow-y-auto scrollbar-hide">
-      <button onClick={() => navigate('/')}
-        className="font-serif text-xl text-ink mb-5 text-left pl-2 hover:opacity-70 transition-opacity flex-shrink-0">
+    <nav
+      className="fixed top-0 left-0 h-screen w-60 flex flex-col py-5 px-3 z-40 overflow-y-auto scrollbar-hide border-r"
+      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+    >
+      {/* Logo */}
+      <button
+        onClick={() => navigate('/')}
+        className="font-serif text-xl mb-6 text-left pl-2 hover:opacity-70 transition-opacity flex-shrink-0"
+        style={{ color: 'var(--text)' }}
+      >
         Day<em className="not-italic text-forest-500">Flow</em>
       </button>
 
-      <div className="flex flex-col gap-4 flex-1">
+      <div className="flex flex-col gap-5 flex-1">
         {SECTIONS.map(section => (
           <div key={section.label}>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-ink-faint px-2 mb-1">
+            <p className="text-[10px] font-semibold uppercase tracking-widest px-2 mb-1.5"
+              style={{ color: 'var(--text-faint)' }}>
               {section.label}
             </p>
             <div className="flex flex-col gap-0.5">
               {section.tabs.map(t => (
-                <button key={t.id} onClick={() => onTabChange(t.id)}
-                  className={`flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-sm font-medium transition-all text-left ${
-                    activeTab === t.id
-                      ? 'bg-forest-500 text-white shadow-sm'
-                      : 'text-ink-muted hover:bg-stone-50 hover:text-ink'
-                  }`}>
+                <button
+                  key={t.id}
+                  onClick={() => onTabChange(t.id)}
+                  className={`flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-sm font-medium transition-all text-left no-select ${
+                    activeTab === t.id ? 'text-white' : ''
+                  }`}
+                  style={activeTab === t.id
+                    ? { backgroundColor: 'var(--accent)', color: 'white' }
+                    : { color: 'var(--text-muted)' }
+                  }
+                  onMouseOver={e => { if (activeTab !== t.id) e.currentTarget.style.backgroundColor = 'var(--bg-secondary)' }}
+                  onMouseOut={e => { if (activeTab !== t.id) e.currentTarget.style.backgroundColor = 'transparent' }}
+                >
                   <span className="text-sm w-4 text-center">{t.emoji}</span>
                   {t.label}
                 </button>
@@ -74,8 +77,13 @@ export default function SideNav({ activeTab, onTabChange }) {
         ))}
       </div>
 
-      <button onClick={() => navigate('/')}
-        className="flex items-center gap-2 px-2.5 py-2 rounded-xl text-sm text-ink-faint hover:bg-stone-50 hover:text-ink transition-all flex-shrink-0 mt-3">
+      <button
+        onClick={() => navigate('/')}
+        className="flex items-center gap-2 px-2.5 py-2 rounded-xl text-sm transition-all mt-3 flex-shrink-0"
+        style={{ color: 'var(--text-faint)' }}
+        onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
+        onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
+      >
         <span className="w-4 text-center">🏠</span> Home
       </button>
     </nav>
