@@ -1,0 +1,18 @@
+# Supabase project configuration
+# See: https://supabase.com/docs/reference/cli/config
+
+[api]
+enabled = true
+
+[auth]
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["https://your-deployed-app.com"]
+
+[functions.send-push]
+verify_jwt = true
+
+[functions.daily-reminders]
+verify_jwt = false
+
+[db]
+port = 54322

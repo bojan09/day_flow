@@ -1,0 +1,101 @@
+-- DayFlow Email Templates
+-- Configure these in: Supabase Dashboard → Authentication → Email Templates
+
+-- ──────────────────────────────────────────────────────
+-- CONFIRMATION EMAIL  (sent when a user signs up)
+-- ──────────────────────────────────────────────────────
+-- Subject: Confirm your DayFlow account
+--
+-- Body (HTML):
+-- <!DOCTYPE html>
+-- <html>
+-- <body style="font-family:'Outfit',system-ui,sans-serif;background:#FAFAF8;margin:0;padding:40px 20px;">
+--   <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:24px;padding:40px;border:1px solid #E8E5E0;">
+--     <h1 style="font-family:Georgia,serif;font-size:28px;color:#1A1A1A;margin:0 0 8px;">
+--       Day<span style="color:#3B6B4B">Flow</span>
+--     </h1>
+--     <p style="color:#737373;font-size:14px;margin:0 0 32px;">Your daily command center</p>
+--     <h2 style="font-size:20px;color:#1A1A1A;margin:0 0 12px;">Confirm your account</h2>
+--     <p style="color:#737373;font-size:15px;line-height:1.6;margin:0 0 28px;">
+--       Welcome! Click the button below to confirm your email address and start planning your days.
+--     </p>
+--     <a href="{{ .ConfirmationURL }}"
+--        style="display:inline-block;background:#3B6B4B;color:#fff;text-decoration:none;padding:14px 32px;border-radius:100px;font-size:15px;font-weight:500;">
+--       Confirm my account →
+--     </a>
+--     <p style="color:#A8A29E;font-size:12px;margin:28px 0 0;line-height:1.6;">
+--       This link expires in 24 hours. If you didn't create a DayFlow account, you can ignore this email.
+--     </p>
+--   </div>
+-- </body>
+-- </html>
+
+-- ──────────────────────────────────────────────────────
+-- MAGIC LINK EMAIL  (sent when user requests passwordless sign-in)
+-- ──────────────────────────────────────────────────────
+-- Subject: Your DayFlow sign-in link
+--
+-- Body (HTML):
+-- <!DOCTYPE html>
+-- <html>
+-- <body style="font-family:'Outfit',system-ui,sans-serif;background:#FAFAF8;margin:0;padding:40px 20px;">
+--   <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:24px;padding:40px;border:1px solid #E8E5E0;">
+--     <h1 style="font-family:Georgia,serif;font-size:28px;color:#1A1A1A;margin:0 0 8px;">
+--       Day<span style="color:#3B6B4B">Flow</span>
+--     </h1>
+--     <p style="color:#737373;font-size:14px;margin:0 0 32px;">Your daily command center</p>
+--     <h2 style="font-size:20px;color:#1A1A1A;margin:0 0 12px;">Your sign-in link</h2>
+--     <p style="color:#737373;font-size:15px;line-height:1.6;margin:0 0 28px;">
+--       Click below to sign in to DayFlow. This link is valid for 1 hour.
+--     </p>
+--     <a href="{{ .ConfirmationURL }}"
+--        style="display:inline-block;background:#3B6B4B;color:#fff;text-decoration:none;padding:14px 32px;border-radius:100px;font-size:15px;font-weight:500;">
+--       Sign in to DayFlow →
+--     </a>
+--     <p style="color:#A8A29E;font-size:12px;margin:28px 0 0;line-height:1.6;">
+--       If you didn't request this link, you can safely ignore this email.
+--     </p>
+--   </div>
+-- </body>
+-- </html>
+
+-- ──────────────────────────────────────────────────────
+-- PASSWORD RESET EMAIL
+-- ──────────────────────────────────────────────────────
+-- Subject: Reset your DayFlow password
+--
+-- Body (HTML):
+-- <!DOCTYPE html>
+-- <html>
+-- <body style="font-family:'Outfit',system-ui,sans-serif;background:#FAFAF8;margin:0;padding:40px 20px;">
+--   <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:24px;padding:40px;border:1px solid #E8E5E0;">
+--     <h1 style="font-family:Georgia,serif;font-size:28px;color:#1A1A1A;margin:0 0 8px;">
+--       Day<span style="color:#3B6B4B">Flow</span>
+--     </h1>
+--     <h2 style="font-size:20px;color:#1A1A1A;margin:0 0 12px;">Reset your password</h2>
+--     <p style="color:#737373;font-size:15px;line-height:1.6;margin:0 0 28px;">
+--       We received a request to reset your DayFlow password.
+--     </p>
+--     <a href="{{ .ConfirmationURL }}"
+--        style="display:inline-block;background:#3B6B4B;color:#fff;text-decoration:none;padding:14px 32px;border-radius:100px;font-size:15px;font-weight:500;">
+--       Reset password →
+--     </a>
+--     <p style="color:#A8A29E;font-size:12px;margin:28px 0 0;line-height:1.6;">
+--       This link expires in 1 hour. If you didn't request a reset, ignore this email.
+--     </p>
+--   </div>
+-- </body>
+-- </html>
+
+-- ──────────────────────────────────────────────────────
+-- SMTP CONFIGURATION (optional — for custom sender)
+-- ──────────────────────────────────────────────────────
+-- Supabase Dashboard → Project Settings → Authentication → SMTP Settings
+--
+-- Host:      your SMTP provider (e.g. smtp.resend.com, smtp.sendgrid.net)
+-- Port:      465 (SSL) or 587 (TLS)
+-- Username:  your SMTP username / API key
+-- Password:  your SMTP password / API key
+-- Sender:    DayFlow <noreply@yourdomain.com>
+
+select 'Email templates configured — copy the HTML above into Supabase Dashboard → Auth → Email Templates' as status;

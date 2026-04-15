@@ -1,72 +1,81 @@
 // Hook: useHabits
-// Purpose: Habit tracking with frequency (daily vs X/week), streaks, localStorage
-import { useState, useEffect } from 'react'
+// Purpose: Habit tracking with frequency, streaks, Supabase sync, and real-time
+import { useState, useEffect, useCallback } from 'react'
 import { storage } from '../services/storage'
+import { habitsService } from '../services/supabaseDataService'
+import { subscribeToTables } from '../services/realtimeService'
+import { useAuth } from './useAuth'
+import { isSupabaseConfigured } from '../services/supabaseClient'
 import { getTodayKey, getDateKey } from '../utils/dateUtils'
 import { startOfWeek, addDays } from 'date-fns'
 
-const HABITS_KEY = 'habits'
-const LOG_KEY    = 'habit_log'
-
 export function useHabits() {
-  const [habits, setHabits] = useState(() => storage.get(HABITS_KEY, []))
-  const [log,    setLog]    = useState(() => storage.get(LOG_KEY, {}))
+  const { user }  = useAuth()
+  const userId    = user?.id
+  const useDB     = isSupabaseConfigured() && !!userId
 
-  useEffect(() => { storage.set(HABITS_KEY, habits) }, [habits])
-  useEffect(() => { storage.set(LOG_KEY, log) },    [log])
+  const [habits, setHabits] = useState(() => storage.get('habits', []))
+  const [log,    setLog]    = useState(() => storage.get('habit_log', {}))
+  const [synced, setSynced] = useState(false)
 
-  const addHabit = (habit) => {
-    const newHabit = {
-      id:          Date.now().toString(),
-      name:        habit.name.trim(),
-      icon:        habit.icon        || '⭐',
-      frequency:   habit.frequency   || 'daily',   // 'daily' | number (times/week)
-      createdAt:   new Date().toISOString(),
-    }
-    setHabits(prev => [...prev, newHabit])
-    return newHabit
+  const loadFromDB = useCallback(() => {
+    if (!useDB) return
+    habitsService.getAll(userId).then(({ habits: rows, log: dbLog }) => {
+      setHabits(rows); setLog(dbLog)
+      storage.set('habits', rows); storage.set('habit_log', dbLog)
+      setSynced(true)
+    })
+  }, [useDB, userId])
+
+  useEffect(() => { if (useDB) loadFromDB(); else setSynced(true) }, [userId])
+
+  useEffect(() => {
+    if (!useDB) return
+    return subscribeToTables(['habits', 'habit_log'], userId, loadFromDB)
+  }, [userId])
+
+  useEffect(() => { if (!useDB) { storage.set('habits', habits); storage.set('habit_log', log) } }, [habits, log])
+
+  const addHabit = async (habit) => {
+    const h = { id: Date.now().toString(), name: habit.name.trim(), icon: habit.icon || '⭐', frequency: habit.frequency || 'daily', createdAt: new Date().toISOString(), ...(useDB ? { user_id: userId } : {}) }
+    setHabits(prev => [...prev, h])
+    if (useDB) await habitsService.upsertHabit(userId, h)
+    return h
   }
 
-  const deleteHabit     = (id) => setHabits(prev => prev.filter(h => h.id !== id))
-
-  const toggleHabitDay  = (habitId, date = getTodayKey()) => {
-    const key = `${habitId}_${date}`
-    setLog(prev => ({ ...prev, [key]: !prev[key] }))
+  const deleteHabit = async (id) => {
+    setHabits(prev => prev.filter(h => h.id !== id))
+    if (useDB) await habitsService.deleteHabit(userId, id)
   }
 
-  const isHabitDone     = (habitId, date = getTodayKey()) => !!log[`${habitId}_${date}`]
+  const toggleHabitDay = async (habitId, date = getTodayKey()) => {
+    const key  = `${habitId}_${date}`
+    const done = !log[key]
+    setLog(prev => ({ ...prev, [key]: done }))
+    if (useDB) await habitsService.toggleLog(userId, habitId, date, done)
+  }
+
+  const isHabitDone  = (habitId, date = getTodayKey()) => !!log[`${habitId}_${date}`]
 
   const getStreak = (habitId) => {
-    let streak = 0
-    const cursor = new Date()
+    let streak = 0; const cursor = new Date()
     while (true) {
-      if (log[`${habitId}_${getDateKey(cursor)}`]) {
-        streak++
-        cursor.setDate(cursor.getDate() - 1)
-      } else break
+      if (log[`${habitId}_${getDateKey(cursor)}`]) { streak++; cursor.setDate(cursor.getDate() - 1) }
+      else break
     }
     return streak
   }
 
-  // Count completions in current week for a habit
   const getWeeklyCount = (habitId) => {
-    const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 })
-    return Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
-      .filter(d => log[`${habitId}_${getDateKey(d)}`]).length
+    const start = startOfWeek(new Date(), { weekStartsOn: 1 })
+    return Array.from({ length: 7 }, (_, i) => addDays(start, i)).filter(d => log[`${habitId}_${getDateKey(d)}`]).length
   }
 
-  const getMaxStreak = () =>
-    habits.length === 0 ? 0 : Math.max(...habits.map(h => getStreak(h.id)))
-
+  const getMaxStreak       = () => habits.length === 0 ? 0 : Math.max(...habits.map(h => getStreak(h.id)))
   const getTodayCompletion = () => {
     if (habits.length === 0) return 0
-    const done = habits.filter(h => isHabitDone(h.id)).length
-    return Math.round((done / habits.length) * 100)
+    return Math.round((habits.filter(h => isHabitDone(h.id)).length / habits.length) * 100)
   }
 
-  return {
-    habits, log, addHabit, deleteHabit,
-    toggleHabitDay, isHabitDone,
-    getStreak, getWeeklyCount, getMaxStreak, getTodayCompletion,
-  }
+  return { habits, log, synced, addHabit, deleteHabit, toggleHabitDay, isHabitDone, getStreak, getWeeklyCount, getMaxStreak, getTodayCompletion }
 }

@@ -1,0 +1,25 @@
+	# 1. Run SQL files in order (Supabase SQL Editor)
+supabase/schema.sql              # tables + RLS
+supabase/push-subscriptions.sql  # push table
+supabase/storage.sql             # file buckets
+supabase/email-templates.sql     # copy HTML into dashboard
+
+# 2. Configure in Supabase Dashboard
+# → Auth → Providers: enable Google + GitHub (see oauth-setup.sql)
+# → Auth → Email Templates: paste branded HTML
+
+# 3. Generate VAPID keys
+npx web-push generate-vapid-keys
+# Add to .env.local + Supabase Edge Function secrets
+
+# 4. Deploy Edge Functions
+npx supabase functions deploy send-push
+npx supabase functions deploy daily-reminders
+
+# 5. Set Edge Function secrets
+npx supabase secrets set VAPID_PUBLIC_KEY=BPoEC2W_4zpn-j-IC_GRxempEbO6vsmMOidUQ3Qs1-mXZPrNFW8SPJiC1djjS7-TS9ZpVO9AgDKxRytevKiitUg
+npx supabase secrets set VAPID_PRIVATE_KEY=MoJ6J7akWBV3DO7hO7Uu63bjwk-PpstaYJcoC2UCAmk
+npx supabase secrets set CRON_SECRET=your_random_secret
+
+# 6. Run
+npm install && npm run dev

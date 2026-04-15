@@ -1,7 +1,8 @@
 // Component: TopBar
-// Purpose: Sticky header with theme-aware glass background
-import { useNavigate } from 'react-router-dom'
-import { formatDate } from '../../utils/dateUtils'
+// Purpose: Sticky header with glass, sync indicator, search shortcut, home link
+import { useNavigate }   from 'react-router-dom'
+import { formatDate }    from '../../utils/dateUtils'
+import SyncIndicator     from '../ui/SyncIndicator'
 
 const TITLES = {
   today:'Today', tasks:'Tasks', notes:'Notes', habits:'Habits',
@@ -33,7 +34,10 @@ export default function TopBar({ activeTab, onTabChange }) {
         </p>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
+        {/* Real-time sync status */}
+        <SyncIndicator />
+
         <button
           onClick={() => onTabChange('search')}
           className="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors"
@@ -44,7 +48,7 @@ export default function TopBar({ activeTab, onTabChange }) {
         </button>
         <button
           onClick={() => navigate('/')}
-          className="hidden md:flex items-center gap-1 text-xs transition-colors"
+          className="hidden md:flex items-center gap-1 text-xs transition-colors ml-1"
           style={{ color: 'var(--text-faint)' }}>
           ← Home
         </button>

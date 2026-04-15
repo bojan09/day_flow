@@ -1,39 +1,51 @@
 // Hook: useBookmarks
-// Purpose: Save URLs with title, notes, tags, read status, and scheduled reminders
-import { useState, useEffect } from 'react'
+// Purpose: Reading list with Supabase sync + real-time
+import { useState, useEffect, useCallback } from 'react'
 import { storage } from '../services/storage'
+import { bookmarksService } from '../services/supabaseDataService'
+import { subscribeToTable } from '../services/realtimeService'
+import { useAuth } from './useAuth'
+import { isSupabaseConfigured } from '../services/supabaseClient'
 
 const KEY = 'bookmarks'
-
 export const BOOKMARK_TAGS = ['article', 'video', 'tool', 'inspiration', 'reference', 'course']
 
 export function useBookmarks() {
+  const { user }  = useAuth()
+  const userId    = user?.id
+  const useDB     = isSupabaseConfigured() && !!userId
+
   const [bookmarks, setBookmarks] = useState(() => storage.get(KEY, []))
-  useEffect(() => { storage.set(KEY, bookmarks) }, [bookmarks])
+
+  useEffect(() => {
+    if (!useDB) return
+    bookmarksService.getAll(userId).then(rows => { setBookmarks(rows); storage.set(KEY, rows) })
+  }, [userId])
+
+  useEffect(() => {
+    if (!useDB) return
+    return subscribeToTable('bookmarks', userId, () =>
+      bookmarksService.getAll(userId).then(rows => { setBookmarks(rows); storage.set(KEY, rows) })
+    )
+  }, [userId])
+
+  useEffect(() => { if (!useDB) storage.set(KEY, bookmarks) }, [bookmarks])
+
+  const persist = useCallback(async (b) => { if (useDB) await bookmarksService.upsert(userId, b) }, [useDB, userId])
 
   const addBookmark = (data) => {
     const b = {
-      id:        Date.now().toString(),
-      url:       data.url?.trim()   || '',
-      title:     data.title?.trim() || data.url || 'Untitled',
-      note:      data.note          || '',
-      tags:      data.tags          || [],
-      read:      false,
-      remindAt:  data.remindAt      || null,
-      createdAt: new Date().toISOString(),
+      id: Date.now().toString(), url: data.url?.trim() || '', title: data.title?.trim() || data.url || 'Untitled',
+      note: data.note || '', tags: data.tags || [], read: false, remindAt: data.remindAt || null,
+      createdAt: new Date().toISOString(), ...(useDB ? { user_id: userId } : {}),
     }
-    setBookmarks(prev => [b, ...prev])
-    return b
+    setBookmarks(prev => [b, ...prev]); persist(b); return b
   }
 
-  const updateBookmark = (id, updates) =>
-    setBookmarks(prev => prev.map(b => b.id === id ? { ...b, ...updates } : b))
+  const updateBookmark = (id, updates) => setBookmarks(prev => prev.map(b => { if (b.id !== id) return b; const u = { ...b, ...updates }; persist(u); return u }))
+  const deleteBookmark = (id)           => { setBookmarks(prev => prev.filter(b => b.id !== id)); if (useDB) bookmarksService.delete(userId, id) }
+  const toggleRead     = (id)           => updateBookmark(id, { read: !bookmarks.find(b => b.id === id)?.read })
+  const unread                          = bookmarks.filter(b => !b.read)
 
-  const deleteBookmark = (id)    => setBookmarks(prev => prev.filter(b => b.id !== id))
-  const toggleRead     = (id)    => setBookmarks(prev => prev.map(b => b.id === id ? { ...b, read: !b.read } : b))
-
-  const filterByTag    = (tag)   => bookmarks.filter(b => b.tags.includes(tag))
-  const unread         = bookmarks.filter(b => !b.read)
-
-  return { bookmarks, addBookmark, updateBookmark, deleteBookmark, toggleRead, filterByTag, unread }
+  return { bookmarks, addBookmark, updateBookmark, deleteBookmark, toggleRead, unread }
 }

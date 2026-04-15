@@ -1,16 +1,12 @@
 // Component: CTASection
-// Purpose: Premium CTA section with theme-aware gradient and floating button effect
+// Purpose: Bottom CTA — sign up link and try demo option
 import { useNavigate } from 'react-router-dom'
 
 const APP_TABS = [
-  { emoji: '☀️', label: 'Today'     },
-  { emoji: '✅', label: 'Tasks'     },
-  { emoji: '📝', label: 'Notes'     },
-  { emoji: '🔁', label: 'Habits'    },
-  { emoji: '💡', label: 'Ideas'     },
-  { emoji: '🎯', label: 'Goals'     },
-  { emoji: '⏱️', label: 'Focus'     },
-  { emoji: '📊', label: 'Insights'  },
+  { emoji: '☀️', label: 'Today'     }, { emoji: '✅', label: 'Tasks'    },
+  { emoji: '📝', label: 'Notes'     }, { emoji: '🔁', label: 'Habits'   },
+  { emoji: '💡', label: 'Ideas'     }, { emoji: '🎯', label: 'Goals'    },
+  { emoji: '⏱️', label: 'Focus'     }, { emoji: '📊', label: 'Insights' },
   { emoji: '⚖️', label: 'Balance'   },
 ]
 
@@ -24,14 +20,11 @@ export default function CTASection() {
         <p className="text-xs font-medium uppercase tracking-widest text-forest-500 mb-4">Get started today</p>
         <h2 className="font-serif text-4xl sm:text-5xl leading-tight tracking-tight mb-5 text-balance"
           style={{ color: 'var(--text)' }}>
-          Ready to take back<br />
-          <em className="text-forest-500 not-italic">your days?</em>
+          Ready to take back<br /><em className="text-forest-500 not-italic">your days?</em>
         </h2>
         <p className="mb-10 text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-          Join thousands of focused people. Free forever — no card, no BS.
+          Free forever. No card required. Your data stays private.
         </p>
-
-        {/* App tab pills */}
         <div className="flex flex-wrap justify-center gap-2 mb-10">
           {APP_TABS.map(t => (
             <span key={t.label}
@@ -41,14 +34,22 @@ export default function CTASection() {
             </span>
           ))}
         </div>
-
-        <button
-          onClick={() => navigate('/dashboard')}
-          className="px-10 py-4 rounded-full text-white font-medium text-base transition-all hover:shadow-float hover:-translate-y-1 active:scale-95 animate-float"
-          style={{ backgroundColor: 'var(--accent)' }}
-        >
-          Open DayFlow — It's Free
-        </button>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <button
+            onClick={() => navigate('/auth')}
+            className="px-10 py-4 rounded-full text-white font-medium text-base transition-all hover:shadow-float hover:-translate-y-1 active:scale-95 animate-float"
+            style={{ backgroundColor: 'var(--accent)' }}>
+            Create free account
+          </button>
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="px-6 py-4 rounded-full text-sm font-light transition-all border"
+            style={{ color: 'var(--text-muted)', borderColor: 'var(--border)' }}
+            onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
+            onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}>
+            Try without signing up
+          </button>
+        </div>
       </div>
     </section>
   )

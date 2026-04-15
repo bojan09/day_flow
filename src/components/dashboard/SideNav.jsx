@@ -1,6 +1,7 @@
 // Component: SideNav
-// Purpose: Desktop sidebar — sectioned navigation with theme-aware surfaces
+// Purpose: Desktop sidebar — sectioned nav + UserMenu at the bottom
 import { useNavigate } from 'react-router-dom'
+import UserMenu from '../auth/UserMenu'
 
 const SECTIONS = [
   { label: 'Plan', tabs: [
@@ -37,7 +38,6 @@ export default function SideNav({ activeTab, onTabChange }) {
       className="fixed top-0 left-0 h-screen w-60 flex flex-col py-5 px-3 z-40 overflow-y-auto scrollbar-hide border-r"
       style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
     >
-      {/* Logo */}
       <button
         onClick={() => navigate('/')}
         className="font-serif text-xl mb-6 text-left pl-2 hover:opacity-70 transition-opacity flex-shrink-0"
@@ -58,9 +58,7 @@ export default function SideNav({ activeTab, onTabChange }) {
                 <button
                   key={t.id}
                   onClick={() => onTabChange(t.id)}
-                  className={`flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-sm font-medium transition-all text-left no-select ${
-                    activeTab === t.id ? 'text-white' : ''
-                  }`}
+                  className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-sm font-medium transition-all text-left no-select"
                   style={activeTab === t.id
                     ? { backgroundColor: 'var(--accent)', color: 'white' }
                     : { color: 'var(--text-muted)' }
@@ -77,15 +75,10 @@ export default function SideNav({ activeTab, onTabChange }) {
         ))}
       </div>
 
-      <button
-        onClick={() => navigate('/')}
-        className="flex items-center gap-2 px-2.5 py-2 rounded-xl text-sm transition-all mt-3 flex-shrink-0"
-        style={{ color: 'var(--text-faint)' }}
-        onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-        onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
-      >
-        <span className="w-4 text-center">🏠</span> Home
-      </button>
+      {/* User menu at the bottom */}
+      <div className="mt-4 flex-shrink-0">
+        <UserMenu />
+      </div>
     </nav>
   )
 }
