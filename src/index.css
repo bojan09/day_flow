@@ -164,14 +164,6 @@
   .pt-safe { padding-top: max(0px, env(safe-area-inset-top)); }
 
   /* Glass morphism */
-  .glass {
-    background: rgba(255,255,255,0.75);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-  }
-  [data-theme="dark"] .glass {
-    background: rgba(28,30,27,0.8);
-  }
 
   /* Text balance */
   .text-balance { text-wrap: balance; }

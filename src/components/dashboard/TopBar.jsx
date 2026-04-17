@@ -1,41 +1,56 @@
 // Component: TopBar
-// Purpose: Sticky header with glass, sync indicator, search shortcut, home link
-import { useNavigate }   from 'react-router-dom'
-import { formatDate }    from '../../utils/dateUtils'
-import SyncIndicator     from '../ui/SyncIndicator'
+// Purpose: Sticky dashboard header — page title, date, search, sync status.
+//          No glassmorphism. Solid background surface.
+import { useNavigate }  from 'react-router-dom'
+import { formatDate }   from '../../utils/dateUtils'
+import SyncIndicator    from '../ui/SyncIndicator'
 
 const TITLES = {
-  today:'Today', tasks:'Tasks', notes:'Notes', habits:'Habits',
-  goals:'Goals', focus:'Focus', search:'Search', insights:'Insights',
-  timeblock:'Schedule', calendar:'Calendar', ideas:'Ideas',
-  braindump:'Brain Dump', routines:'Routines', challenges:'Challenges',
-  balance:'Balance', projects:'Projects', bookmarks:'Bookmarks',
+  today: 'Today', tasks: 'Tasks', notes: 'Notes', habits: 'Habits',
+  goals: 'Goals', focus: 'Focus', search: 'Search', insights: 'Insights',
+  timeblock: 'Schedule', calendar: 'Calendar', ideas: 'Ideas',
+  braindump: 'Brain Dump', routines: 'Routines', challenges: 'Challenges',
+  balance: 'Balance', projects: 'Projects', bookmarks: 'Bookmarks',
 }
 
 export default function TopBar({ activeTab, onTabChange }) {
   const navigate = useNavigate()
+
   return (
     <header
-      className="sticky top-0 z-30 px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between gap-3 border-b glass"
-      style={{ borderColor: 'var(--border-soft)' }}
+      className="sticky top-0 z-30 px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between gap-3 border-b"
+      style={{
+        backgroundColor: 'var(--surface)',
+        borderColor:     'var(--border-soft)',
+      }}
     >
-      <button onClick={() => navigate('/')}
+      {/* Mobile: DayFlow logo — tapping goes to dashboard (not welcome) */}
+      <button
+        onClick={() => navigate('/dashboard')}
         className="md:hidden font-serif text-xl leading-none flex-shrink-0"
-        style={{ color: 'var(--text)' }}>
+        style={{ color: 'var(--text)' }}
+      >
         Day<em className="not-italic text-forest-500">Flow</em>
       </button>
 
+      {/* Page title + date */}
       <div className="flex-1 text-right md:text-left">
-        <h1 className="font-serif text-xl md:text-2xl leading-none" style={{ color: 'var(--text)' }}>
+        <h1
+          className="font-serif text-xl md:text-2xl leading-none"
+          style={{ color: 'var(--text)' }}
+        >
           {TITLES[activeTab] ?? 'DayFlow'}
         </h1>
-        <p className="text-[11px] mt-0.5 hidden sm:block" style={{ color: 'var(--text-faint)' }}>
+        <p
+          className="text-[11px] mt-0.5 hidden sm:block"
+          style={{ color: 'var(--text-faint)' }}
+        >
           {formatDate(new Date())}
         </p>
       </div>
 
+      {/* Actions */}
       <div className="flex items-center gap-1">
-        {/* Real-time sync status */}
         <SyncIndicator />
 
         <button
@@ -44,13 +59,10 @@ export default function TopBar({ activeTab, onTabChange }) {
           style={{ color: 'var(--text-muted)' }}
           onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
           onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
-          title="Search (/)">🔍
-        </button>
-        <button
-          onClick={() => navigate('/')}
-          className="hidden md:flex items-center gap-1 text-xs transition-colors ml-1"
-          style={{ color: 'var(--text-faint)' }}>
-          ← Home
+          title="Search (/)"
+          aria-label="Search"
+        >
+          🔍
         </button>
       </div>
     </header>

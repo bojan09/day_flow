@@ -26,7 +26,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 sm:px-10 py-4 glass border-b"
+    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 sm:px-10 py-4 border-b"
       style={{ borderColor: 'var(--border-soft)' }}>
       <button onClick={handleLogoClick}
         className="font-serif text-2xl tracking-tight leading-none hover:opacity-80 transition-opacity"
