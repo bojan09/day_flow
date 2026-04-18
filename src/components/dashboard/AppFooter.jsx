@@ -1,11 +1,10 @@
 // Component: AppFooter
-// Purpose: Minimal app footer shown to authenticated users inside the dashboard.
-//          Contains: version, keyboard shortcut hint, export link, sign-out.
-//          Deliberately sparse — keeps focus on the app content above.
+// Purpose: Minimal logged-in footer — desktop only.
+//          Sign-out centralised in useAuth.signOut() which redirects to /welcome.
 import { useAuth } from '../../hooks/useAuth'
 import { isSupabaseConfigured } from '../../services/supabaseClient'
 
-const VERSION = '3.0.0'
+const VERSION = '3.1.0'
 
 export default function AppFooter({ onTabChange }) {
   const { signOut, user } = useAuth()
@@ -20,70 +19,61 @@ export default function AppFooter({ onTabChange }) {
       }}
     >
       {/* Left — brand + version */}
-      <span>
-        DayFlow{' '}
+      <span className="flex items-center gap-2">
+        <span style={{ color: 'var(--text-faint)' }}>DayFlow</span>
         <span
-          className="px-1.5 py-0.5 rounded text-[10px] font-medium"
-          style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-faint)' }}
+          className="px-1.5 py-0.5 rounded text-[10px] font-medium border"
+          style={{
+            backgroundColor: 'var(--bg-secondary)',
+            borderColor:     'var(--border)',
+            color:           'var(--text-faint)',
+          }}
         >
           v{VERSION}
         </span>
       </span>
 
-      {/* Centre — quick links */}
+      {/* Centre — quick nav + shortcut hint */}
       <div className="flex items-center gap-5">
-        <button
-          onClick={() => onTabChange?.('search')}
-          className="transition-colors hover:underline underline-offset-2"
-          style={{ color: 'var(--text-faint)' }}
-          onMouseOver={e => e.target.style.color = 'var(--text-muted)'}
-          onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
-        >
-          Search
-        </button>
-        <button
-          onClick={() => onTabChange?.('insights')}
-          className="transition-colors hover:underline underline-offset-2"
-          style={{ color: 'var(--text-faint)' }}
-          onMouseOver={e => e.target.style.color = 'var(--text-muted)'}
-          onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
-        >
-          Insights
-        </button>
-        <button
-          onClick={() => onTabChange?.('insights')}
-          className="transition-colors hover:underline underline-offset-2"
-          style={{ color: 'var(--text-faint)' }}
-          onMouseOver={e => e.target.style.color = 'var(--text-muted)'}
-          onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
-        >
-          Export data
-        </button>
+        {[
+          { label: 'Search',    tab: 'search'   },
+          { label: 'Insights',  tab: 'insights' },
+          { label: 'Export',    tab: 'insights' },
+        ].map(item => (
+          <button
+            key={item.label}
+            onClick={() => onTabChange?.(item.tab)}
+            className="transition-colors"
+            style={{ color: 'var(--text-faint)' }}
+            onMouseOver={e => e.target.style.color = 'var(--text-muted)'}
+            onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
+          >
+            {item.label}
+          </button>
+        ))}
         <span
           className="px-2 py-0.5 rounded border text-[10px]"
           style={{ borderColor: 'var(--border)', color: 'var(--text-faint)' }}
           title="Press ? to see all shortcuts"
         >
-          Press ? for shortcuts
+          ? shortcuts
         </span>
       </div>
 
-      {/* Right — sign out (only when Supabase is configured and user is logged in) */}
-      <div className="flex items-center gap-4">
-        {isSupabaseConfigured() && user ? (
-          <button
-            onClick={signOut}
-            className="transition-colors"
-            style={{ color: 'var(--text-faint)' }}
-            onMouseOver={e => e.target.style.color = '#ef4444'}
-            onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
-          >
-            Sign out
-          </button>
-        ) : (
-          <span style={{ color: 'var(--text-faint)' }}>Demo mode</span>
-        )}
-      </div>
+      {/* Right — sign out or demo indicator */}
+      {isSupabaseConfigured() && user ? (
+        <button
+          onClick={signOut}
+          className="transition-colors"
+          style={{ color: 'var(--text-faint)' }}
+          onMouseOver={e => e.target.style.color = '#ef4444'}
+          onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
+        >
+          Sign out
+        </button>
+      ) : (
+        <span style={{ color: 'var(--text-faint)' }}>Demo mode</span>
+      )}
     </footer>
   )
 }

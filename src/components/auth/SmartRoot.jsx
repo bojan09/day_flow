@@ -1,7 +1,10 @@
 // Component: SmartRoot
-// Purpose: The "/" route handler — sends logged-in users to /dashboard,
-//          logged-out users to /welcome. Shows a minimal spinner while resolving.
-import { useEffect } from 'react'
+// Purpose: "/" route handler — decides where to send the user exactly once.
+//          Uses a ref to prevent double-navigation on auth state re-renders.
+//          Logged-in  → /dashboard
+//          Logged-out → /welcome
+//          Demo mode  → /welcome
+import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { isSupabaseConfigured } from '../../services/supabaseClient'
@@ -9,25 +12,28 @@ import { isSupabaseConfigured } from '../../services/supabaseClient'
 export default function SmartRoot() {
   const { user, loading } = useAuth()
   const navigate          = useNavigate()
+  const navigatedRef      = useRef(false)
 
   useEffect(() => {
-    // If Supabase not configured (demo mode) — go straight to welcome
+    // Already navigated — don't run again on re-render
+    if (navigatedRef.current) return
+
+    // Demo mode — always go to welcome immediately
     if (!isSupabaseConfigured()) {
+      navigatedRef.current = true
       navigate('/welcome', { replace: true })
       return
     }
 
-    // Wait for session to resolve
+    // Still loading Supabase session — wait
     if (loading) return
 
-    if (user) {
-      navigate('/dashboard', { replace: true })
-    } else {
-      navigate('/welcome', { replace: true })
-    }
+    // Session resolved — redirect once
+    navigatedRef.current = true
+    navigate(user ? '/dashboard' : '/welcome', { replace: true })
+
   }, [user, loading, navigate])
 
-  // Minimal loading state while session resolves
   return (
     <div
       className="min-h-screen flex items-center justify-center"

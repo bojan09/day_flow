@@ -1,6 +1,7 @@
 // Component: AuthGuard
-// Purpose: Protects /dashboard — redirects to /auth if not signed in.
-//          In demo mode (no Supabase), always allows access.
+// Purpose: Protects /dashboard. Redirects to /auth if session is gone.
+//          Handles both initial load AND mid-session token expiry.
+//          Demo mode (no Supabase) always passes through.
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
@@ -12,13 +13,16 @@ export default function AuthGuard({ children }) {
   const navigate          = useNavigate()
 
   useEffect(() => {
-    if (!isSupabaseConfigured()) return      // demo mode — always allow
+    // Demo mode — always allow, no check needed
+    if (!isSupabaseConfigured()) return
+
+    // Session resolved and no user → redirect to sign-in
     if (!loading && !user) {
       navigate('/auth?mode=signin', { replace: true })
     }
   }, [user, loading, navigate])
 
-  // Show skeleton while session resolves
+  // Show skeleton while Supabase resolves the session
   if (isSupabaseConfigured() && loading) {
     return (
       <div
@@ -33,8 +37,9 @@ export default function AuthGuard({ children }) {
     )
   }
 
-  // Demo mode or authenticated user — render the app
+  // Authenticated (or demo mode) — render children
   if (!isSupabaseConfigured() || user) return children
 
+  // Signed out — render nothing while redirect happens
   return null
 }
