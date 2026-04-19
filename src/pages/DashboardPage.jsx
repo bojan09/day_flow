@@ -93,7 +93,7 @@ export default function DashboardPage() {
     <>
       <KeyboardShortcuts onTabChange={setActiveTab} />
 
-      <DashboardLayout activeTab={activeTab} onTabChange={setActiveTab}>
+      <DashboardLayout activeTab={activeTab} onTabChange={setActiveTab} theme={theme} onSetTheme={setTheme}>
 
         {/* ── Plan ─────────────────────────────────────────────────────────── */}
         {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} />}

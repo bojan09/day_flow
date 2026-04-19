@@ -1,8 +1,9 @@
 // Component: SideNav
-// Purpose: Desktop sidebar navigation — 4 sections, UserMenu at bottom.
+// Purpose: Desktop sidebar — sectioned nav, expanded theme switcher, user menu.
 //          Logo always goes to /dashboard.
 import { useNavigate } from 'react-router-dom'
-import UserMenu from '../auth/UserMenu'
+import UserMenu    from '../auth/UserMenu'
+import ThemeToggle from '../ui/ThemeToggle'
 
 const SECTIONS = [
   { label: 'Plan', tabs: [
@@ -33,7 +34,7 @@ const SECTIONS = [
   ]},
 ]
 
-export default function SideNav({ activeTab, onTabChange }) {
+export default function SideNav({ activeTab, onTabChange, theme, onSetTheme }) {
   const navigate = useNavigate()
 
   return (
@@ -41,7 +42,7 @@ export default function SideNav({ activeTab, onTabChange }) {
       className="fixed top-0 left-0 h-screen w-60 flex flex-col py-5 px-3 z-40 overflow-y-auto scrollbar-hide border-r"
       style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
     >
-      {/* Logo — always stays in the app */}
+      {/* Logo */}
       <button
         onClick={() => navigate('/dashboard')}
         className="font-serif text-xl mb-6 pl-2 text-left hover:opacity-70 transition-opacity flex-shrink-0"
@@ -87,8 +88,21 @@ export default function SideNav({ activeTab, onTabChange }) {
         ))}
       </div>
 
+      {/* Theme switcher — expanded pill (desktop has room) */}
+      {theme && onSetTheme && (
+        <div className="mt-4 flex-shrink-0">
+          <p
+            className="text-[10px] font-semibold uppercase tracking-widest px-2 mb-2"
+            style={{ color: 'var(--text-faint)' }}
+          >
+            Appearance
+          </p>
+          <ThemeToggle theme={theme} onSetTheme={onSetTheme} compact={false} />
+        </div>
+      )}
+
       {/* User menu */}
-      <div className="mt-4 flex-shrink-0 border-t pt-4" style={{ borderColor: 'var(--border-soft)' }}>
+      <div className="mt-3 flex-shrink-0 border-t pt-3" style={{ borderColor: 'var(--border-soft)' }}>
         <UserMenu />
       </div>
     </nav>

@@ -14,6 +14,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <!--
+      FOUC prevention: apply saved theme before React hydrates.
+      Runs synchronously so there is zero flash of wrong theme.
+    -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('dayflow_theme')
+          if (saved) {
+            document.documentElement.setAttribute('data-theme', saved)
+          }
+        } catch (e) {}
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

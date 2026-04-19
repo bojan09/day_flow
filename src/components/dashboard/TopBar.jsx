@@ -1,32 +1,24 @@
 // Component: TopBar
-// Purpose: Sticky header — page title, date, search shortcut, sync status.
-//          Solid background — no glassmorphism.
+// Purpose: Sticky dashboard header — page title, date, theme toggle, search, sync status.
+//          Solid background, no glassmorphism.
 import { useNavigate }  from 'react-router-dom'
 import { formatDate }   from '../../utils/dateUtils'
 import SyncIndicator    from '../ui/SyncIndicator'
+import ThemeToggle      from '../ui/ThemeToggle'
 
 const TITLES = {
-  today:      'Today',
-  tasks:      'Tasks',
-  notes:      'Notes',
-  habits:     'Habits',
-  goals:      'Goals',
-  focus:      'Focus',
-  search:     'Search',
-  insights:   'Insights',
-  balance:    'Balance',
-  workouts:   'Workouts',
-  timeblock:  'Schedule',
-  calendar:   'Calendar',
-  ideas:      'Ideas',
-  braindump:  'Brain Dump',
-  routines:   'Routines',
-  challenges: 'Challenges',
-  projects:   'Projects',
-  bookmarks:  'Bookmarks',
+  today:      'Today',      tasks:      'Tasks',
+  notes:      'Notes',      habits:     'Habits',
+  goals:      'Goals',      focus:      'Focus',
+  search:     'Search',     insights:   'Insights',
+  balance:    'Balance',    workouts:   'Workouts',
+  timeblock:  'Schedule',   calendar:   'Calendar',
+  ideas:      'Ideas',      braindump:  'Brain Dump',
+  routines:   'Routines',   challenges: 'Challenges',
+  projects:   'Projects',   bookmarks:  'Bookmarks',
 }
 
-export default function TopBar({ activeTab, onTabChange }) {
+export default function TopBar({ activeTab, onTabChange, theme, onSetTheme }) {
   const navigate = useNavigate()
 
   return (
@@ -34,7 +26,7 @@ export default function TopBar({ activeTab, onTabChange }) {
       className="sticky top-0 z-30 px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between gap-3 border-b"
       style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-soft)' }}
     >
-      {/* Mobile logo — tapping stays in the app */}
+      {/* Mobile logo */}
       <button
         onClick={() => navigate('/dashboard')}
         className="md:hidden font-serif text-xl leading-none flex-shrink-0"
@@ -44,8 +36,11 @@ export default function TopBar({ activeTab, onTabChange }) {
       </button>
 
       {/* Title + date */}
-      <div className="flex-1 text-right md:text-left">
-        <h1 className="font-serif text-xl md:text-2xl leading-none" style={{ color: 'var(--text)' }}>
+      <div className="flex-1 text-right md:text-left min-w-0">
+        <h1
+          className="font-serif text-xl md:text-2xl leading-none truncate"
+          style={{ color: 'var(--text)' }}
+        >
           {TITLES[activeTab] ?? 'DayFlow'}
         </h1>
         <p className="text-[11px] mt-0.5 hidden sm:block" style={{ color: 'var(--text-faint)' }}>
@@ -54,8 +49,14 @@ export default function TopBar({ activeTab, onTabChange }) {
       </div>
 
       {/* Right actions */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 flex-shrink-0">
         <SyncIndicator />
+
+        {/* Theme toggle — compact single-button cycle */}
+        {theme && onSetTheme && (
+          <ThemeToggle theme={theme} onSetTheme={onSetTheme} compact />
+        )}
+
         <button
           onClick={() => onTabChange('search')}
           className="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors"

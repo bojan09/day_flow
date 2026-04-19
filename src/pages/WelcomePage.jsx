@@ -13,7 +13,7 @@ import StatsBand from '../components/landing/StatsBand'
 
 export default function WelcomePage() {
   useEffect(() => {
-    // Reset to light theme on welcome page
+    // Apply saved theme (FOUC script already did this, but ensure React state is in sync)
     const saved = localStorage.getItem('dayflow_theme') || 'light'
     document.documentElement.setAttribute('data-theme', saved)
     window.scrollTo(0, 0)

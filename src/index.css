@@ -79,11 +79,11 @@
     transition: background-color 0.3s ease, color 0.2s ease;
   }
 
-  /* Prevent FOUC on theme switch */
-  * { transition-property: background-color, border-color, color;
-      transition-duration: 0.2s; transition-timing-function: ease; }
-  /* But don't transition transforms/opacity (breaks animations) */
-  button, a, input, textarea, select { transition-property: color, background-color, border-color, box-shadow, opacity, transform; }
+  /* Theme transitions — only active during theme switch (class toggled by useTheme) */
+  .theme-transitioning,
+  .theme-transitioning * {
+    transition: background-color 0.25s ease, border-color 0.25s ease, color 0.2s ease !important;
+  }
 
   ::selection {
     background-color: var(--accent-light);
