@@ -1,6 +1,6 @@
 // Component: SideNav
-// Purpose: Desktop left sidebar — logo always navigates to /dashboard (never logs out).
-//          Sectioned navigation with UserMenu at the bottom.
+// Purpose: Desktop sidebar navigation — 4 sections, UserMenu at bottom.
+//          Logo always goes to /dashboard.
 import { useNavigate } from 'react-router-dom'
 import UserMenu from '../auth/UserMenu'
 
@@ -17,6 +17,7 @@ const SECTIONS = [
     { id: 'routines',   label: 'Routines',   emoji: '🌅' },
     { id: 'challenges', label: 'Challenges', emoji: '🎯' },
     { id: 'goals',      label: 'Goals',      emoji: '🏆' },
+    { id: 'workouts',   label: 'Workouts',   emoji: '🏋️' },
   ]},
   { label: 'Think', tabs: [
     { id: 'notes',     label: 'Notes',      emoji: '📝' },
@@ -25,10 +26,10 @@ const SECTIONS = [
     { id: 'bookmarks', label: 'Bookmarks',  emoji: '🔖' },
   ]},
   { label: 'Reflect', tabs: [
-    { id: 'insights',   label: 'Insights',   emoji: '📊' },
-    { id: 'balance',    label: 'Balance',    emoji: '⚖️' },
-    { id: 'focus',      label: 'Focus',      emoji: '⏱️' },
-    { id: 'search',     label: 'Search',     emoji: '🔍' },
+    { id: 'insights', label: 'Insights', emoji: '📊' },
+    { id: 'balance',  label: 'Balance',  emoji: '⚖️' },
+    { id: 'focus',    label: 'Focus',    emoji: '⏱️' },
+    { id: 'search',   label: 'Search',   emoji: '🔍' },
   ]},
 ]
 
@@ -40,10 +41,10 @@ export default function SideNav({ activeTab, onTabChange }) {
       className="fixed top-0 left-0 h-screen w-60 flex flex-col py-5 px-3 z-40 overflow-y-auto scrollbar-hide border-r"
       style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
     >
-      {/* Logo — always goes to /dashboard, never triggers sign-out or welcome */}
+      {/* Logo — always stays in the app */}
       <button
         onClick={() => navigate('/dashboard')}
-        className="font-serif text-xl mb-6 text-left pl-2 hover:opacity-70 transition-opacity flex-shrink-0"
+        className="font-serif text-xl mb-6 pl-2 text-left hover:opacity-70 transition-opacity flex-shrink-0"
         style={{ color: 'var(--text)' }}
         aria-label="Go to dashboard"
       >
@@ -86,7 +87,7 @@ export default function SideNav({ activeTab, onTabChange }) {
         ))}
       </div>
 
-      {/* User menu at the bottom */}
+      {/* User menu */}
       <div className="mt-4 flex-shrink-0 border-t pt-4" style={{ borderColor: 'var(--border-soft)' }}>
         <UserMenu />
       </div>
