@@ -6,7 +6,8 @@ import { useEffect } from 'react'
 function LevelBar({ xp }) {
   const info = xp.getLevelInfo()
   if (!info) return null
-  const { current, next, progress, totalXP } = info
+  // getLevelInfo spreads current level fields directly: { level, title, min, next, progress, totalXP }
+  const { level, title, next, progress, totalXP } = info
 
   return (
     <div
@@ -15,8 +16,8 @@ function LevelBar({ xp }) {
     >
       <div className="flex items-center justify-between mb-3">
         <div>
-          <p className="font-serif text-lg" style={{ color: 'var(--text)' }}>{current.title}</p>
-          <p className="text-xs mt-0.5" style={{ color: 'var(--text-faint)' }}>Level {current.level} · {totalXP} XP</p>
+          <p className="font-serif text-lg" style={{ color: 'var(--text)' }}>{title}</p>
+          <p className="text-xs mt-0.5" style={{ color: 'var(--text-faint)' }}>Level {level} · {totalXP} XP</p>
         </div>
         {next && (
           <div className="text-right">

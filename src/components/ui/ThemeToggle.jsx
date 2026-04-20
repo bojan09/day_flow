@@ -1,19 +1,17 @@
 // Component: ThemeToggle
-// Purpose: Compact 3-way toggle (Light / Dark / Forest) for TopBar and SideNav.
-//          Clicking cycles through themes. Long-press / hover shows all 3 options.
-import { useState } from 'react'
+// Purpose: 3-way theme switcher for TopBar (compact cycle) and SideNav (expanded pills).
+//          Active state uses accent colours so it's visible on every theme.
 import { THEMES } from '../../hooks/useTheme'
 
 const ICONS = { light: '☀️', dark: '🌙', forest: '🌿' }
 
 export default function ThemeToggle({ theme, onSetTheme, compact = false }) {
-  const [open, setOpen] = useState(false)
-  const current = THEMES.find(t => t.id === theme) || THEMES[0]
+  const current    = THEMES.find(t => t.id === theme) || THEMES[0]
+  const nextIndex  = (THEMES.findIndex(t => t.id === theme) + 1) % THEMES.length
+  const next       = THEMES[nextIndex]
 
+  // ── Compact: single button that cycles L → D → F ──────────────────────────
   if (compact) {
-    // Single button that cycles through themes
-    const nextIndex = (THEMES.findIndex(t => t.id === theme) + 1) % THEMES.length
-    const next      = THEMES[nextIndex]
     return (
       <button
         onClick={() => onSetTheme(next.id)}
@@ -21,7 +19,7 @@ export default function ThemeToggle({ theme, onSetTheme, compact = false }) {
         style={{ color: 'var(--text-muted)' }}
         onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
         onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
-        title={`Switch to ${next.label} mode`}
+        title={`Theme: ${current.label} — click for ${next.label}`}
         aria-label={`Theme: ${current.label}. Click for ${next.label}`}
       >
         {ICONS[theme]}
@@ -29,35 +27,43 @@ export default function ThemeToggle({ theme, onSetTheme, compact = false }) {
     )
   }
 
-  // Expanded — shows all 3 options as a pill switcher
+  // ── Expanded: pill switcher with all 3 options ─────────────────────────────
+  // Active state uses accent-light bg + accent text so it's always visible,
+  // even when the container and surface share the same background colour.
   return (
     <div
-      className="flex gap-0.5 rounded-xl p-1"
-      style={{ backgroundColor: 'var(--bg-secondary)' }}
+      className="flex rounded-xl overflow-hidden border"
+      style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg)' }}
       role="group"
       aria-label="Theme selector"
     >
-      {THEMES.map(t => (
-        <button
-          key={t.id}
-          onClick={() => onSetTheme(t.id)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
-          style={theme === t.id
-            ? {
-                backgroundColor: 'var(--surface)',
-                boxShadow:       'var(--shadow-card)',
-                color:           'var(--text)',
-              }
-            : {
-                color: 'var(--text-faint)',
-              }
-          }
-          aria-pressed={theme === t.id}
-        >
-          <span>{t.icon}</span>
-          <span className="hidden sm:inline">{t.label}</span>
-        </button>
-      ))}
+      {THEMES.map(t => {
+        const active = theme === t.id
+        return (
+          <button
+            key={t.id}
+            onClick={() => onSetTheme(t.id)}
+            className="flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-all"
+            style={active
+              ? {
+                  backgroundColor: 'var(--accent-light)',
+                  color:           'var(--accent)',
+                  borderBottom:    '2px solid var(--accent)',
+                }
+              : {
+                  backgroundColor: 'transparent',
+                  color:           'var(--text-faint)',
+                  borderBottom:    '2px solid transparent',
+                }
+            }
+            aria-pressed={active}
+            title={t.label}
+          >
+            <span>{t.icon}</span>
+            <span>{t.label}</span>
+          </button>
+        )
+      })}
     </div>
   )
 }

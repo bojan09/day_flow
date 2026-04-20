@@ -95,7 +95,8 @@ export function useAchievements({ tasks, habits, notes, goals, xp, workouts, moo
       workoutsLogged:   workouts?.sessions?.length ?? 0,
       personalBests:    workouts?.getPersonalBests?.()?.length ?? 0,
       moodStreak,
-      level:            levelInfo?.current?.level ?? 1,
+      // getLevelInfo returns { level, title, min, next, progress, totalXP } — not { current }
+      level:            levelInfo?.level ?? 1,
     }
   }, [tasks, habits, notes, goals, xp, workouts])
 
