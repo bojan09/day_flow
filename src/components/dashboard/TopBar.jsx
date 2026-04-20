@@ -16,6 +16,7 @@ const TITLES = {
   ideas:      'Ideas',      braindump:  'Brain Dump',
   routines:   'Routines',   challenges: 'Challenges',
   projects:   'Projects',   bookmarks:  'Bookmarks',
+  achievements: 'Achievements',
 }
 
 export default function TopBar({ activeTab, onTabChange, theme, onSetTheme }) {

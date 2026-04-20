@@ -13,6 +13,7 @@ import SearchView         from '../components/search/SearchView'
 import InsightsView       from '../components/insights/InsightsView'
 import BalanceView        from '../components/balance/BalanceView'
 import WorkoutsView       from '../components/workouts/WorkoutsView'
+import AchievementsView   from '../components/insights/AchievementsView'
 import TimeBlockView      from '../components/timeblock/TimeBlockView'
 import CalendarView       from '../components/calendar/CalendarView'
 import IdeasView          from '../components/ideas/IdeasView'
@@ -50,6 +51,7 @@ import { useProjects        } from '../hooks/useProjects'
 import { useBookmarks       } from '../hooks/useBookmarks'
 import { useAffirmations    } from '../hooks/useAffirmations'
 import { useWorkouts        } from '../hooks/useWorkouts'
+import { useAchievements    } from '../hooks/useAchievements'
 import { spawnRecurringTasks } from '../services/recurringEngine'
 
 export default function DashboardPage() {
@@ -79,6 +81,7 @@ export default function DashboardPage() {
   const bookmarks       = useBookmarks()
   const affirmations    = useAffirmations()
   const workouts        = useWorkouts()
+  const achievements    = useAchievements({ tasks, habits, notes, goals, xp, workouts, mood })
   const { theme, setTheme } = useTheme()
   const score = useDailyScore({ tasks, habits, mood, gratitude, water })
 
@@ -96,7 +99,7 @@ export default function DashboardPage() {
       <DashboardLayout activeTab={activeTab} onTabChange={setActiveTab} theme={theme} onSetTheme={setTheme}>
 
         {/* ── Plan ─────────────────────────────────────────────────────────── */}
-        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} />}
+        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={setActiveTab} />}
         {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} />}
         {activeTab === 'calendar'   && <CalendarView tasks={tasks} />}
         {activeTab === 'timeblock'  && <TimeBlockView tasks={tasks} />}
@@ -116,9 +119,10 @@ export default function DashboardPage() {
         {activeTab === 'bookmarks'  && <BookmarksView bookmarks={bookmarks} />}
 
         {/* ── Reflect ──────────────────────────────────────────────────────── */}
-        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} xp={xp} />}
+        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} xp={xp} achievements={achievements} energy={energy} goals={goals} />}
         {activeTab === 'balance'    && <BalanceView wheel={wheel} />}
         {activeTab === 'focus'      && <FocusMode tasks={tasks} xp={xp} pomodoroHistory={pomodoroHistory} />}
+        {activeTab === 'achievements' && <AchievementsView achievements={achievements} xp={xp} />}
         {activeTab === 'search'     && <SearchView tasks={tasks} notes={notes} habits={habits} goals={goals} ideas={ideas} bookmarks={bookmarks} />}
 
       </DashboardLayout>

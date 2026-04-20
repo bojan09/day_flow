@@ -31,6 +31,7 @@ const SECTIONS = [
     { id: 'balance',  label: 'Balance',  emoji: '⚖️' },
     { id: 'focus',    label: 'Focus',    emoji: '⏱️' },
     { id: 'search',   label: 'Search',   emoji: '🔍' },
+    { id: 'achievements', label: 'Achievements', emoji: '🏅' },
   ]},
 ]
 
