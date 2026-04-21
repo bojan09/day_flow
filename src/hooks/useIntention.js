@@ -1,15 +1,13 @@
 // Hook: useIntention
 // Purpose: Store and retrieve the daily "Today I intend to..." intention per day
-import { useState, useEffect } from 'react'
-import { storage } from '../services/storage'
+import { useEffect } from 'react'
+import { usePersistedState } from './usePersistedState'
 import { getTodayKey } from '../utils/dateUtils'
 
 const KEY = 'intentions'
 
 export function useIntention() {
-  const [intentions, setIntentions] = useState(() => storage.get(KEY, {}))
-
-  useEffect(() => { storage.set(KEY, intentions) }, [intentions])
+  const [intentions, setIntentions] = usePersistedState(KEY, {})
 
   const today = getTodayKey()
 

@@ -1,14 +1,13 @@
 // Hook: useSomeday
 // Purpose: "Someday" backlog — ideas and tasks not yet scheduled
-import { useState, useEffect } from 'react'
-import { storage } from '../services/storage'
+import { useEffect } from 'react'
+import { usePersistedState } from './usePersistedState'
 import { getTodayKey } from '../utils/dateUtils'
 
 const KEY = 'someday'
 
 export function useSomeday() {
-  const [items, setItems] = useState(() => storage.get(KEY, []))
-  useEffect(() => { storage.set(KEY, items) }, [items])
+  const [items, setItems] = usePersistedState(KEY, [])
 
   const addItem = (title) => {
     if (!title.trim()) return

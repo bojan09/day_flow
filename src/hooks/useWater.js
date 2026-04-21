@@ -1,15 +1,14 @@
 // Hook: useWater
 // Purpose: Daily hydration counter — log glasses of water with goal tracking
-import { useState, useEffect } from 'react'
-import { storage } from '../services/storage'
+import { useEffect } from 'react'
+import { usePersistedState } from './usePersistedState'
 import { getTodayKey } from '../utils/dateUtils'
 
 const KEY  = 'water_log'
 const GOAL = 8 // glasses per day
 
 export function useWater() {
-  const [log, setLog] = useState(() => storage.get(KEY, {}))
-  useEffect(() => { storage.set(KEY, log) }, [log])
+  const [log, setLog] = usePersistedState(KEY, {})
 
   const today = getTodayKey()
 

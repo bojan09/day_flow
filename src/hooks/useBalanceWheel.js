@@ -1,7 +1,7 @@
 // Hook: useBalanceWheel
 // Purpose: Life balance wheel — rate 8 life areas monthly and track over time
-import { useState, useEffect } from 'react'
-import { storage } from '../services/storage'
+import { useEffect } from 'react'
+import { usePersistedState } from './usePersistedState'
 import { format } from 'date-fns'
 
 const KEY = 'balance_wheel'
@@ -18,8 +18,7 @@ export const LIFE_AREAS = [
 ]
 
 export function useBalanceWheel() {
-  const [entries, setEntries] = useState(() => storage.get(KEY, {}))
-  useEffect(() => { storage.set(KEY, entries) }, [entries])
+  const [entries, setEntries] = usePersistedState(KEY, {})
 
   const currentMonth = format(new Date(), 'yyyy-MM')
 

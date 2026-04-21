@@ -1,7 +1,6 @@
 // Hook: useChallenges
 // Purpose: Time-boxed 7/30-day micro-habit challenges with progress tracking
-import { useState, useEffect } from 'react'
-import { storage } from '../services/storage'
+import { usePersistedState } from './usePersistedState'
 import { differenceInDays, parseISO, format } from 'date-fns'
 import { getTodayKey } from '../utils/dateUtils'
 
@@ -20,11 +19,8 @@ export const CHALLENGE_PRESETS = [
 ]
 
 export function useChallenges() {
-  const [challenges, setChallenges] = useState(() => storage.get(KEY, []))
-  const [log,        setLog]        = useState(() => storage.get(LOG_KEY, {}))
-
-  useEffect(() => { storage.set(KEY,     challenges) }, [challenges])
-  useEffect(() => { storage.set(LOG_KEY, log)        }, [log])
+  const [challenges, setChallenges] = usePersistedState(KEY, [])
+  const [log, setLog] = usePersistedState(LOG_KEY, {})
 
   const startChallenge = (data) => {
     const c = {

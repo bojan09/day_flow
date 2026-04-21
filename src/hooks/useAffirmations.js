@@ -1,7 +1,7 @@
 // Hook: useAffirmations
 // Purpose: Store personal affirmations and surface them as a daily rotating reminder
-import { useState, useEffect } from 'react'
-import { storage } from '../services/storage'
+import { useEffect } from 'react'
+import { usePersistedState } from './usePersistedState'
 
 const KEY = 'affirmations'
 
@@ -12,8 +12,7 @@ const DEFAULTS = [
 ]
 
 export function useAffirmations() {
-  const [affirmations, setAffirmations] = useState(() => storage.get(KEY, DEFAULTS))
-  useEffect(() => { storage.set(KEY, affirmations) }, [affirmations])
+  const [affirmations, setAffirmations] = usePersistedState(KEY, DEFAULTS)
 
   const addAffirmation    = (text)    => {
     if (!text.trim()) return

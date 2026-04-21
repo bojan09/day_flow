@@ -1,14 +1,13 @@
 // Hook: useMonthlyLetter
 // Purpose: Store monthly reflection letters, prompt on 1st of month
-import { useState, useEffect } from 'react'
-import { storage } from '../services/storage'
+import { useEffect } from 'react'
+import { usePersistedState } from './usePersistedState'
 import { format } from 'date-fns'
 
 const KEY = 'monthly_letters'
 
 export function useMonthlyLetter() {
-  const [letters, setLetters] = useState(() => storage.get(KEY, {}))
-  useEffect(() => { storage.set(KEY, letters) }, [letters])
+  const [letters, setLetters] = usePersistedState(KEY, {})
 
   const currentMonthKey = format(new Date(), 'yyyy-MM')
   const isFirstOfMonth  = new Date().getDate() === 1

@@ -1,8 +1,7 @@
 // Hook: useRoutines
 // Purpose: Full CRUD for routine checklists — create, edit, delete routines and their steps.
 //          Steps auto-reset each day. Timer state is local to the component.
-import { useState, useEffect } from 'react'
-import { storage } from '../services/storage'
+import { usePersistedState } from './usePersistedState'
 import { getTodayKey } from '../utils/dateUtils'
 
 const KEY     = 'routines'
@@ -39,11 +38,8 @@ const DEFAULT_ROUTINES = [
 ]
 
 export function useRoutines() {
-  const [routines, setRoutines] = useState(() => storage.get(KEY, DEFAULT_ROUTINES))
-  const [log,      setLog]      = useState(() => storage.get(LOG_KEY, {}))
-
-  useEffect(() => { storage.set(KEY,     routines) }, [routines])
-  useEffect(() => { storage.set(LOG_KEY, log)      }, [log])
+  const [routines, setRoutines] = usePersistedState(KEY, DEFAULT_ROUTINES)
+  const [log, setLog] = usePersistedState(LOG_KEY, {})
 
   const today = getTodayKey()
 

@@ -1,15 +1,14 @@
 // Hook: usePomodoroHistory
 // Purpose: Log completed focus sessions and compute weekly productivity report
-import { useState, useEffect } from 'react'
-import { storage } from '../services/storage'
+import { useEffect } from 'react'
+import { usePersistedState } from './usePersistedState'
 import { getTodayKey, getDateKey } from '../utils/dateUtils'
 import { subDays, format } from 'date-fns'
 
 const KEY = 'pomodoro_history'
 
 export function usePomodoroHistory() {
-  const [sessions, setSessions] = useState(() => storage.get(KEY, []))
-  useEffect(() => { storage.set(KEY, sessions) }, [sessions])
+  const [sessions, setSessions] = usePersistedState(KEY, [])
 
   const logSession = (durationMins = 25, taskTitle = '') => {
     setSessions(prev => [...prev, {

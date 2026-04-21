@@ -1,7 +1,7 @@
 // Hook: useXP
 // Purpose: XP + level system — earn points for tasks, streaks, mood, notes
-import { useState, useEffect } from 'react'
-import { storage } from '../services/storage'
+import { useEffect } from 'react'
+import { usePersistedState } from './usePersistedState'
 
 const KEY = 'xp_log'
 
@@ -32,8 +32,7 @@ const LEVELS = [
 ]
 
 export function useXP() {
-  const [log, setLog] = useState(() => storage.get(KEY, []))
-  useEffect(() => { storage.set(KEY, log) }, [log])
+  const [log, setLog] = usePersistedState(KEY, [])
 
   const totalXP = log.reduce((sum, e) => sum + e.amount, 0)
 

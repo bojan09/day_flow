@@ -1,7 +1,7 @@
 // Hook: useMood
 // Purpose: Track daily mood entries (emoji + note) with history access
-import { useState, useEffect } from 'react'
-import { storage } from '../services/storage'
+import { useEffect } from 'react'
+import { usePersistedState } from './usePersistedState'
 import { getTodayKey } from '../utils/dateUtils'
 
 const KEY = 'moods'
@@ -15,9 +15,7 @@ export const MOODS = [
 ]
 
 export function useMood() {
-  const [moods, setMoods] = useState(() => storage.get(KEY, {}))
-
-  useEffect(() => { storage.set(KEY, moods) }, [moods])
+  const [moods, setMoods] = usePersistedState(KEY, {})
 
   const setTodayMood = (moodScore, note = '') => {
     setMoods(prev => ({

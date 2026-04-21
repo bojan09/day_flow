@@ -1,7 +1,6 @@
 // Hook: useWorkouts
 // Purpose: Workout session CRUD — log sessions with exercises, sets, reps, duration.
-import { useState, useEffect } from 'react'
-import { storage } from '../services/storage'
+import { usePersistedState } from './usePersistedState'
 import { getTodayKey, getDateKey } from '../utils/dateUtils'
 
 const KEY = 'workouts'
@@ -17,8 +16,7 @@ export const MUSCLE_GROUPS = [
 ]
 
 export function useWorkouts() {
-  const [sessions, setSessions] = useState(() => storage.get(KEY, []))
-  useEffect(() => { storage.set(KEY, sessions) }, [sessions])
+  const [sessions, setSessions] = usePersistedState(KEY, [])
 
   // ── Session CRUD ────────────────────────────────────────────────────────────
 

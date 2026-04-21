@@ -1,13 +1,11 @@
 // Hook: useTemplates
 // Purpose: Save and apply reusable task template sets
-import { useState, useEffect } from 'react'
-import { storage } from '../services/storage'
+import { usePersistedState } from './usePersistedState'
 
 const KEY = 'task_templates'
 
 export function useTemplates() {
-  const [templates, setTemplates] = useState(() => storage.get(KEY, []))
-  useEffect(() => { storage.set(KEY, templates) }, [templates])
+  const [templates, setTemplates] = usePersistedState(KEY, [])
 
   const saveTemplate = (name, tasks) => {
     const tmpl = {

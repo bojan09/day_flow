@@ -1,14 +1,13 @@
 // Hook: useHabitRules
 // Purpose: "If habit A done → auto-complete habit B" rule engine
-import { useState, useEffect } from 'react'
-import { storage } from '../services/storage'
+import { useEffect } from 'react'
+import { usePersistedState } from './usePersistedState'
 import { getTodayKey } from '../utils/dateUtils'
 
 const KEY = 'habit_rules'
 
 export function useHabitRules() {
-  const [rules, setRules] = useState(() => storage.get(KEY, []))
-  useEffect(() => { storage.set(KEY, rules) }, [rules])
+  const [rules, setRules] = usePersistedState(KEY, [])
 
   const addRule = (triggerId, actionId) => {
     // Avoid duplicates
