@@ -40,7 +40,8 @@ export function useChallenges() {
     return c
   }
 
-  const deleteChallenge = (id) => setChallenges(prev => prev.filter(c => c.id !== id))
+  const deleteChallenge  = (id)     => setChallenges(prev => prev.filter(c => c.id !== id))
+  const updateChallenge  = (id, up) => setChallenges(prev => prev.map(c => c.id === id ? { ...c, ...up } : c))
 
   const toggleDay = (challengeId, dateKey = getTodayKey()) => {
     const k = `${challengeId}_${dateKey}`
@@ -76,7 +77,7 @@ export function useChallenges() {
 
   return {
     challenges, active, archived,
-    startChallenge, deleteChallenge, toggleDay, isDayDone,
+    startChallenge, deleteChallenge, updateChallenge, toggleDay, isDayDone,
     getDaysLeft, getDaysElapsed, getCompletedDays, getProgress,
   }
 }

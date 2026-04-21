@@ -29,7 +29,7 @@ export default function TopBar({ activeTab, onTabChange, theme, onSetTheme }) {
     >
       {/* Mobile logo */}
       <button
-        onClick={() => navigate('/dashboard')}
+        onClick={() => { navigate('/dashboard'); onTabChange('tasks') }}
         className="md:hidden font-serif text-xl leading-none flex-shrink-0"
         style={{ color: 'var(--text)' }}
       >

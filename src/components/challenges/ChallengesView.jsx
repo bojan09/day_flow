@@ -8,7 +8,7 @@ import { CHALLENGE_PRESETS } from '../../hooks/useChallenges'
 import { getTodayKey } from '../../utils/dateUtils'
 import { format, addDays, parseISO } from 'date-fns'
 
-function ChallengeCard({ c, challenges }) {
+function ChallengeCard({ c, challenges, onEdit }) {
   const daysLeft    = challenges.getDaysLeft(c)
   const daysElapsed = challenges.getDaysElapsed(c)
   const completed   = challenges.getCompletedDays(c)
@@ -55,8 +55,19 @@ function ChallengeCard({ c, challenges }) {
               }`}
             >{doneTodaay ? '✓' : ''}</button>
           )}
-          <button onClick={() => challenges.deleteChallenge(c.id)}
-            className="text-ink-faint hover:text-red-400 text-xs p-1 transition-colors">✕</button>
+          <div className="flex flex-col gap-1.5">
+            <button onClick={() => onEdit?.(c)}
+              className="text-xs w-7 h-7 rounded-full flex items-center justify-center transition-colors"
+              style={{ color: 'var(--text-faint)' }}
+              onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
+              onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
+              title="Edit">✏️</button>
+            <button onClick={() => challenges.deleteChallenge(c.id)}
+              className="text-xs w-7 h-7 rounded-full flex items-center justify-center transition-colors"
+              style={{ color: 'var(--text-faint)' }}
+              onMouseOver={e => { e.currentTarget.style.backgroundColor = '#fef2f2'; e.currentTarget.style.color = '#ef4444' }}
+              onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-faint)' }}>✕</button>
+          </div>
         </div>
       </div>
     </div>
@@ -64,16 +75,21 @@ function ChallengeCard({ c, challenges }) {
 }
 
 export default function ChallengesView({ challenges }) {
-  const [modal,   setModal]   = useState(false)
+  const [modal,   setModal]   = useState(false)  // 'add' | 'edit'
+  const [editing, setEditing] = useState(null)
   const [form,    setForm]    = useState({ title: '', emoji: '🎯', days: 7 })
   const [tab,     setTab]     = useState('active')
 
   const handleAdd = (e) => {
     e.preventDefault()
     if (!form.title.trim()) return
-    challenges.startChallenge(form)
+    if (modal === 'edit' && editing) {
+      challenges.updateChallenge(editing.id, { title: form.title, emoji: form.emoji, days: form.days })
+    } else {
+      challenges.startChallenge(form)
+    }
     setForm({ title: '', emoji: '🎯', days: 7 })
-    setModal(false)
+    setModal(false); setEditing(null)
   }
 
   const usePreset = (preset) => {
@@ -93,7 +109,7 @@ export default function ChallengesView({ challenges }) {
             </button>
           ))}
         </div>
-        <button onClick={() => setModal(true)}
+        <button onClick={() => { setEditing(null); setModal('add') }}
           className="px-4 py-2 rounded-full bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 transition-colors">
           + Challenge
         </button>
@@ -123,11 +139,11 @@ export default function ChallengesView({ challenges }) {
           onAction={tab === 'active' ? () => setModal(true) : undefined} />
       ) : (
         <div className="space-y-3">
-          {list.map(c => <ChallengeCard key={c.id} c={c} challenges={challenges} />)}
+          {list.map(c => <ChallengeCard key={c.id} c={c} challenges={challenges} onEdit={c => { setEditing(c); setModal('edit'); setForm({ title: c.title, emoji: c.emoji, days: c.days }) }} />)}
         </div>
       )}
 
-      <Modal isOpen={modal} onClose={() => setModal(false)} title="New Challenge">
+      <Modal isOpen={!!modal} onClose={() => { setModal(false); setEditing(null) }} title={modal === 'edit' ? 'Edit Challenge' : 'New Challenge'}>
         <form onSubmit={handleAdd} className="space-y-4">
           <div>
             <label className="text-xs font-medium text-ink-muted uppercase tracking-wide block mb-1.5">Challenge title</label>

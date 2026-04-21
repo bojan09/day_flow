@@ -1,5 +1,6 @@
 // Component: Modal
-// Purpose: Accessible theme-aware overlay — slides up on mobile, centered on desktop
+// Purpose: Theme-aware overlay. Header is sticky top, action footer is sticky bottom,
+//          scrollable content in between — save button is always visible.
 import { useEffect } from 'react'
 
 export default function Modal({ isOpen, onClose, title, children }) {
@@ -15,21 +16,22 @@ export default function Modal({ isOpen, onClose, title, children }) {
       {/* Backdrop */}
       <div
         className="absolute inset-0 animate-fade-in"
-        style={{ background: 'var(--overlay)', backdropFilter: 'blur(6px)' }}
+        style={{ background: 'var(--overlay)' }}
         onClick={onClose}
       />
-      {/* Panel */}
+      {/* Panel — flex column so header + footer are always visible */}
       <div
-        className="relative w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl max-h-[90vh] overflow-y-auto animate-slide-up sm:animate-scale-in"
+        className="relative w-full sm:max-w-md flex flex-col rounded-t-3xl sm:rounded-2xl animate-slide-up sm:animate-scale-in"
         style={{
           backgroundColor: 'var(--surface)',
-          boxShadow: 'var(--shadow-modal)',
+          boxShadow:       'var(--shadow-modal)',
+          maxHeight:       '92vh',
         }}
       >
-        {/* Header */}
+        {/* Sticky header */}
         <div
-          className="flex items-center justify-between px-5 py-4 border-b sticky top-0 z-10"
-          style={{ borderColor: 'var(--border-soft)', backgroundColor: 'var(--surface)' }}
+          className="flex items-center justify-between px-5 py-4 border-b flex-shrink-0"
+          style={{ borderColor: 'var(--border-soft)' }}
         >
           <h3 className="font-serif text-lg" style={{ color: 'var(--text)' }}>{title}</h3>
           <button
@@ -42,7 +44,11 @@ export default function Modal({ isOpen, onClose, title, children }) {
             ✕
           </button>
         </div>
-        <div className="p-5">{children}</div>
+
+        {/* Scrollable body */}
+        <div className="overflow-y-auto flex-1 p-5">
+          {children}
+        </div>
       </div>
     </div>
   )

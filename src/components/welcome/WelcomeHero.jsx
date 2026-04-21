@@ -1,30 +1,25 @@
 // Component: WelcomeHero
-// Purpose: Full-screen hero for the Welcome/landing page — headline, subtext, dual CTAs
+// Purpose: Full-screen hero — headline, subtext, centred dual CTAs, scroll hint
 import { useNavigate } from 'react-router-dom'
 
 export default function WelcomeHero() {
   const navigate = useNavigate()
 
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center px-5 pt-24 pb-16 text-center relative overflow-hidden">
-      {/* Soft ambient blobs — no blur/glass, just colour */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full opacity-[0.07] pointer-events-none"
-        style={{ backgroundColor: 'var(--accent)' }}
-      />
-      <div
-        className="absolute bottom-0 right-0 w-64 h-64 rounded-full opacity-[0.05] pointer-events-none"
-        style={{ backgroundColor: '#C4622D' }}
-      />
+    <section
+      className="min-h-screen flex flex-col items-center justify-center px-5 pt-24 pb-20 text-center relative"
+      style={{ overflow: 'hidden' }}
+    >
+      {/* Ambient blobs */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full opacity-[0.07] pointer-events-none"
+        style={{ backgroundColor: 'var(--accent)' }} />
+      <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full opacity-[0.05] pointer-events-none"
+        style={{ backgroundColor: '#C4622D' }} />
 
       {/* Badge */}
       <div
         className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8 border text-xs font-medium tracking-widest uppercase opacity-0 animate-fade-up"
-        style={{
-          backgroundColor: 'var(--accent-light)',
-          borderColor:     'var(--accent-mid)',
-          color:           'var(--accent)',
-        }}
+        style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', color: 'var(--accent)' }}
       >
         <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: 'var(--accent)' }} />
         Your daily command center
@@ -48,11 +43,11 @@ export default function WelcomeHero() {
         Tasks, habits, goals, notes, and insights — all in one focused space built around how you actually live.
       </p>
 
-      {/* CTAs */}
-      <div className="flex flex-col sm:flex-row gap-3 justify-center opacity-0 animate-fade-up-d3">
+      {/* CTAs — always row, centred, equal height */}
+      <div className="flex flex-row items-center justify-center gap-3 flex-wrap opacity-0 animate-fade-up-d3">
         <button
           onClick={() => navigate('/auth?mode=signup')}
-          className="px-8 py-3.5 rounded-full text-white font-medium text-base transition-all hover:-translate-y-0.5 active:scale-95"
+          className="px-8 py-3.5 rounded-full text-white font-medium text-base transition-all hover:-translate-y-0.5 active:scale-95 whitespace-nowrap"
           style={{ backgroundColor: 'var(--accent)' }}
           onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 24px rgba(59,107,75,0.35)'}
           onMouseOut={e => e.currentTarget.style.boxShadow = 'none'}
@@ -61,27 +56,17 @@ export default function WelcomeHero() {
         </button>
         <button
           onClick={() => navigate('/auth?mode=signin')}
-          className="px-8 py-3.5 rounded-full text-base font-medium transition-all border hover:-translate-y-0.5 active:scale-95"
-          style={{
-            color:           'var(--text-muted)',
-            borderColor:     'var(--border)',
-            backgroundColor: 'transparent',
-          }}
-          onMouseOver={e => {
-            e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'
-            e.currentTarget.style.borderColor = 'var(--text-faint)'
-          }}
-          onMouseOut={e => {
-            e.currentTarget.style.backgroundColor = 'transparent'
-            e.currentTarget.style.borderColor = 'var(--border)'
-          }}
+          className="px-8 py-3.5 rounded-full text-base font-medium transition-all border hover:-translate-y-0.5 active:scale-95 whitespace-nowrap"
+          style={{ color: 'var(--text-muted)', borderColor: 'var(--border)', backgroundColor: 'transparent' }}
+          onMouseOver={e => { e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'; e.currentTarget.style.borderColor = 'var(--text-faint)' }}
+          onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.borderColor = 'var(--border)' }}
         >
           Login
         </button>
       </div>
 
-      {/* Scroll hint */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-0 animate-fade-up-d3">
+      {/* Scroll hint — centred below CTAs, not absolute positioned */}
+      <div className="flex flex-col items-center gap-1 mt-16 opacity-0 animate-fade-up-d3">
         <span className="text-[10px] uppercase tracking-widest" style={{ color: 'var(--text-faint)' }}>
           Scroll to explore
         </span>

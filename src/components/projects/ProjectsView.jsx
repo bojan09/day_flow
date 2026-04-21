@@ -15,7 +15,7 @@ const STATUS_COLORS = {
 
 const PROJECT_COLORS = ['#3B6B4B','#3B82F6','#8B5CF6','#EC4899','#F59E0B','#06B6D4','#C4622D']
 
-function ProjectCard({ project, projects, tasks }) {
+function ProjectCard({ project, projects, tasks, onEdit }) {
   const [expanded, setExpanded] = useState(false)
   const progress     = projects.getProgress(project.id, tasks.tasks)
   const taskCount    = projects.getTaskCount(project.id, tasks.tasks)
@@ -45,7 +45,7 @@ function ProjectCard({ project, projects, tasks }) {
               <span className="text-xs text-ink-faint flex-shrink-0">{done}/{taskCount} tasks</span>
             </div>
           </div>
-          <div className="flex gap-1 flex-shrink-0">
+          <div className="flex items-center gap-1 flex-shrink-0">
             {PROJECT_STATUSES.map(s => (
               <button key={s} onClick={() => projects.setStatus(project.id, s)}
                 title={s}
@@ -53,11 +53,23 @@ function ProjectCard({ project, projects, tasks }) {
                 style={{ backgroundColor: s === 'Active' ? '#3B6B4B' : s === 'On Hold' ? '#F59E0B' : '#A8A29E' }} />
             ))}
             <button onClick={() => setExpanded(e => !e)}
-              className="ml-1 text-[10px] text-ink-faint hover:text-ink transition-colors">
+              className="ml-1 w-7 h-7 rounded-full flex items-center justify-center text-[11px] transition-colors"
+              style={{ color: 'var(--text-faint)' }}
+              onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
+              onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}>
               {expanded ? '▲' : '▼'}
             </button>
+            <button onClick={() => onEdit?.(project)}
+              className="w-7 h-7 rounded-full flex items-center justify-center text-sm transition-colors"
+              style={{ color: 'var(--text-faint)' }}
+              onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
+              onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
+              title="Edit project">✏️</button>
             <button onClick={() => projects.deleteProject(project.id)}
-              className="text-ink-faint hover:text-red-400 text-xs p-0.5 transition-colors">✕</button>
+              className="w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors"
+              style={{ color: 'var(--text-faint)' }}
+              onMouseOver={e => { e.currentTarget.style.backgroundColor = '#fef2f2'; e.currentTarget.style.color = '#ef4444' }}
+              onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-faint)' }}>✕</button>
           </div>
         </div>
       </div>
@@ -85,16 +97,21 @@ function ProjectCard({ project, projects, tasks }) {
 }
 
 export default function ProjectsView({ projects, tasks }) {
-  const [modal, setModal] = useState(false)
+  const [modal,   setModal]   = useState(false)  // 'add' | 'edit'
+  const [editing, setEditing] = useState(null)
   const [form,  setForm]  = useState({ name: '', description: '', category: 'Personal', color: PROJECT_COLORS[0], dueDate: '' })
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
 
   const handleAdd = (e) => {
     e.preventDefault()
     if (!form.name.trim()) return
-    projects.addProject(form)
+    if (modal === 'edit' && editing) {
+      projects.updateProject(editing.id, form)
+    } else {
+      projects.addProject(form)
+    }
     setForm({ name: '', description: '', category: 'Personal', color: PROJECT_COLORS[0], dueDate: '' })
-    setModal(false)
+    setModal(false); setEditing(null)
   }
 
   const active   = projects.projects.filter(p => p.status !== 'Done')
@@ -104,7 +121,7 @@ export default function ProjectsView({ projects, tasks }) {
     <div className="max-w-2xl mx-auto space-y-4 pt-2">
       <div className="flex items-center justify-between">
         <p className="text-sm text-ink-muted">{active.length} active project{active.length !== 1 ? 's' : ''}</p>
-        <button onClick={() => setModal(true)}
+        <button onClick={() => { setEditing(null); setModal('add') }}
           className="px-4 py-2 rounded-full bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 transition-colors">
           + New Project
         </button>
@@ -117,18 +134,18 @@ export default function ProjectsView({ projects, tasks }) {
       ) : (
         <>
           <div className="space-y-3">
-            {active.map(p => <ProjectCard key={p.id} project={p} projects={projects} tasks={tasks} />)}
+            {active.map(p => <ProjectCard key={p.id} project={p} projects={projects} tasks={tasks} onEdit={p => { setEditing(p); setModal('edit') }} />)}
           </div>
           {done.length > 0 && (
             <div className="space-y-3 opacity-60">
               <p className="text-xs font-medium text-ink-faint uppercase tracking-wider">Completed</p>
-              {done.map(p => <ProjectCard key={p.id} project={p} projects={projects} tasks={tasks} />)}
+              {done.map(p => <ProjectCard key={p.id} project={p} projects={projects} tasks={tasks} onEdit={p => { setEditing(p); setModal('edit') }} />)}
             </div>
           )}
         </>
       )}
 
-      <Modal isOpen={modal} onClose={() => setModal(false)} title="New Project">
+      <Modal isOpen={!!modal} onClose={() => { setModal(false); setEditing(null) }} title={modal === 'edit' ? 'Edit Project' : 'New Project'}>
         <form onSubmit={handleAdd} className="space-y-4">
           <Input label="Project name" placeholder="e.g. Launch personal website"
             value={form.name} onChange={e => set('name', e.target.value)} autoFocus />
