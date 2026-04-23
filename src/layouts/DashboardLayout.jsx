@@ -1,19 +1,21 @@
 // Layout: DashboardLayout
-// Purpose: App shell — sidebar (desktop), topbar, main content, app footer, mobile bottom nav.
-//          Accepts theme props so SideNav and TopBar can render the theme toggle.
-import { useAuth }     from '../hooks/useAuth'
-import SideNav         from '../components/dashboard/SideNav'
-import BottomNav       from '../components/dashboard/BottomNav'
-import TopBar          from '../components/dashboard/TopBar'
-import AppFooter       from '../components/dashboard/AppFooter'
-import PageTransition  from '../components/ui/PageTransition'
-import MigrationBanner from '../components/auth/MigrationBanner'
+// Purpose: App shell — desktop sidebar, topbar, main content, mobile bottom nav + drawer.
+import { useState }       from 'react'
+import { useAuth }        from '../hooks/useAuth'
+import SideNav            from '../components/dashboard/SideNav'
+import BottomNav          from '../components/dashboard/BottomNav'
+import MobileDrawer       from '../components/dashboard/MobileDrawer'
+import TopBar             from '../components/dashboard/TopBar'
+import AppFooter          from '../components/dashboard/AppFooter'
+import PageTransition     from '../components/ui/PageTransition'
+import MigrationBanner    from '../components/auth/MigrationBanner'
 
 export default function DashboardLayout({
   children, activeTab, onTabChange,
   theme, onSetTheme,
 }) {
-  const { user } = useAuth()
+  const { user }         = useAuth()
+  const [drawerOpen, setDrawerOpen] = useState(false)
 
   return (
     <div className="min-h-screen flex" style={{ backgroundColor: 'var(--bg)' }}>
@@ -49,7 +51,21 @@ export default function DashboardLayout({
       </div>
 
       {/* Mobile bottom nav */}
-      <BottomNav activeTab={activeTab} onTabChange={onTabChange} />
+      <BottomNav
+        activeTab={activeTab}
+        onTabChange={onTabChange}
+        onOpenDrawer={() => setDrawerOpen(true)}
+      />
+
+      {/* Mobile full drawer — all tabs + profile + theme */}
+      <MobileDrawer
+        isOpen={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        activeTab={activeTab}
+        onTabChange={onTabChange}
+        theme={theme}
+        onSetTheme={onSetTheme}
+      />
     </div>
   )
 }

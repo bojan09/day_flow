@@ -1,56 +1,93 @@
 // Component: BottomNav
-// Purpose: Mobile bottom navigation — solid background, no blur/glass.
-//          Primary 5 tabs + home button.
-import { useNavigate } from 'react-router-dom'
+// Purpose: Mobile bottom navigation bar — 4 primary tabs + "More" drawer trigger.
+//          Larger tap targets (min 48px), active pill indicator, haptic-style scale feedback.
+//          "More" opens the MobileDrawer, does NOT navigate to a tab.
 
-const TABS = [
-  { id: 'today',    label: 'Today',  emoji: '☀️' },
-  { id: 'tasks',    label: 'Tasks',  emoji: '✅' },
-  { id: 'ideas',    label: 'Ideas',  emoji: '💡' },
-  { id: 'habits',   label: 'Habits', emoji: '🔁' },
-  { id: 'insights', label: 'More',   emoji: '⋯'  },
+const PRIMARY_TABS = [
+  { id: 'today',  label: 'Today',  emoji: '☀️' },
+  { id: 'tasks',  label: 'Tasks',  emoji: '✅' },
+  { id: 'habits', label: 'Habits', emoji: '🔁' },
+  { id: 'focus',  label: 'Focus',  emoji: '⏱️' },
 ]
 
-export default function BottomNav({ activeTab, onTabChange }) {
-  const navigate = useNavigate()
+export default function BottomNav({ activeTab, onTabChange, onOpenDrawer }) {
+  const isMoreActive = !PRIMARY_TABS.find(t => t.id === activeTab)
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-stretch justify-around border-t pb-safe"
-      style={{
-        backgroundColor: 'var(--surface)',
-        borderColor:     'var(--border)',
-      }}
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t pb-safe"
+      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
     >
-      {/* Home — navigates to dashboard root (not welcome) */}
-      <button
-        onClick={() => navigate('/dashboard')}
-        className="flex flex-col items-center justify-center gap-0.5 py-2.5 px-3 transition-colors"
-        style={{ color: 'var(--text-faint)' }}
-        onMouseOver={e => e.currentTarget.style.color = 'var(--text-muted)'}
-        onMouseOut={e => e.currentTarget.style.color = 'var(--text-faint)'}
-      >
-        <span className="text-lg">🏠</span>
-        <span className="text-[10px] font-medium">Home</span>
-      </button>
+      <div className="flex items-stretch justify-around">
+        {PRIMARY_TABS.map(t => {
+          const active = activeTab === t.id
+          return (
+            <button
+              key={t.id}
+              onClick={() => onTabChange(t.id)}
+              className="flex flex-col items-center justify-center gap-0.5 flex-1 py-2 min-h-[56px] relative transition-all active:scale-95"
+              style={{ color: active ? 'var(--accent)' : 'var(--text-faint)' }}
+              aria-label={t.label}
+              aria-current={active ? 'page' : undefined}
+            >
+              {/* Active pill indicator */}
+              {active && (
+                <span
+                  className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-b-full"
+                  style={{ backgroundColor: 'var(--accent)' }}
+                />
+              )}
+              <span
+                className="text-xl leading-none transition-transform duration-150"
+                style={{ transform: active ? 'scale(1.15)' : 'scale(1)' }}
+              >
+                {t.emoji}
+              </span>
+              <span
+                className="text-[10px] font-medium tracking-tight"
+                style={{ fontWeight: active ? 600 : 400 }}
+              >
+                {t.label}
+              </span>
+            </button>
+          )
+        })}
 
-      <div className="w-px my-2" style={{ backgroundColor: 'var(--border)' }} />
-
-      {TABS.map(t => (
+        {/* More — opens the full drawer */}
         <button
-          key={t.id}
-          onClick={() => onTabChange(t.id)}
-          className="flex flex-col items-center justify-center gap-0.5 py-2.5 px-1.5 transition-colors flex-1"
-          style={{ color: activeTab === t.id ? 'var(--accent)' : 'var(--text-faint)' }}
+          onClick={onOpenDrawer}
+          className="flex flex-col items-center justify-center gap-0.5 flex-1 py-2 min-h-[56px] relative transition-all active:scale-95"
+          style={{ color: isMoreActive ? 'var(--accent)' : 'var(--text-faint)' }}
+          aria-label="More navigation options"
+          aria-haspopup="dialog"
         >
+          {isMoreActive && (
+            <span
+              className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-b-full"
+              style={{ backgroundColor: 'var(--accent)' }}
+            />
+          )}
+          {/* Animated grid icon */}
           <span
-            className={`text-lg transition-transform duration-150 ${activeTab === t.id ? 'scale-110' : ''}`}
+            className="grid grid-cols-2 gap-[3px] w-5 h-5 transition-transform duration-150"
+            style={{ transform: isMoreActive ? 'scale(1.15)' : 'scale(1)' }}
           >
-            {t.emoji}
+            {[0,1,2,3].map(i => (
+              <span
+                key={i}
+                className="rounded-[2px]"
+                style={{ backgroundColor: isMoreActive ? 'var(--accent)' : 'var(--text-faint)' }}
+              />
+            ))}
           </span>
-          <span className="text-[10px] font-medium">{t.label}</span>
+          <span
+            className="text-[10px] tracking-tight"
+            style={{ fontWeight: isMoreActive ? 600 : 400 }}
+          >
+            More
+          </span>
         </button>
-      ))}
+      </div>
     </nav>
   )
 }
