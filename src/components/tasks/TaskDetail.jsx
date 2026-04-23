@@ -1,9 +1,8 @@
 // Component: TaskDetail
-// Purpose: Full task editor — title, priority, date, category, notes, sub-tasks.
-//          All fields are editable inline and saved immediately.
+// Purpose: Full task editor — title, priority, date, category (with custom), notes, sub-tasks.
 import { useState } from 'react'
-import Modal from '../ui/Modal'
-import { TASK_CATEGORIES } from '../../utils/constants'
+import Modal          from '../ui/Modal'
+import CategoryPicker from '../ui/CategoryPicker'
 
 const PRIORITIES = ['low', 'medium', 'high']
 const PRIORITY_STYLES = {
@@ -12,7 +11,10 @@ const PRIORITY_STYLES = {
   low:    { bg: '#F0FDF4', border: '#BBF7D0', text: '#166534' },
 }
 
-export default function TaskDetail({ task, tasks, isOpen, onClose }) {
+export default function TaskDetail({
+  task, tasks, isOpen, onClose,
+  categories, onAddCategory, onRemoveCategory,
+}) {
   const [title,    setTitle]    = useState(task?.title    || '')
   const [priority, setPriority] = useState(task?.priority || 'medium')
   const [date,     setDate]     = useState(task?.date     || '')
@@ -23,13 +25,15 @@ export default function TaskDetail({ task, tasks, isOpen, onClose }) {
 
   if (!task) return null
 
-  const subs    = task.subTasks || []
+  const subs     = task.subTasks || []
   const doneSubs = subs.filter(s => s.done).length
-
-  const markDirty = () => setDirty(true)
+  const mark     = () => setDirty(true)
 
   const saveAll = () => {
-    tasks.updateTask(task.id, { title: title.trim() || task.title, priority, date, category, notes: note })
+    tasks.updateTask(task.id, {
+      title:    title.trim() || task.title,
+      priority, date, category, notes: note,
+    })
     setDirty(false)
   }
 
@@ -37,7 +41,7 @@ export default function TaskDetail({ task, tasks, isOpen, onClose }) {
     e.preventDefault()
     if (!subText.trim()) return
     tasks.updateTask(task.id, {
-      subTasks: [...subs, { id: Date.now().toString(), text: subText.trim(), done: false }]
+      subTasks: [...subs, { id: Date.now().toString(), text: subText.trim(), done: false }],
     })
     setSubText('')
   }
@@ -60,11 +64,9 @@ export default function TaskDetail({ task, tasks, isOpen, onClose }) {
             Title
           </label>
           <input
-            autoFocus
-            value={title}
-            onChange={e => { setTitle(e.target.value); markDirty() }}
-            className="input-base w-full"
-            style={inputStyle}
+            autoFocus value={title}
+            onChange={e => { setTitle(e.target.value); mark() }}
+            className="input-base w-full" style={inputStyle}
           />
         </div>
 
@@ -77,52 +79,43 @@ export default function TaskDetail({ task, tasks, isOpen, onClose }) {
             {PRIORITIES.map(p => {
               const s = PRIORITY_STYLES[p]
               return (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => { setPriority(p); markDirty() }}
+                <button key={p} type="button"
+                  onClick={() => { setPriority(p); mark() }}
                   className="flex-1 py-2 rounded-xl text-sm font-medium capitalize transition-all border"
                   style={priority === p
                     ? { backgroundColor: s.bg, borderColor: s.border, color: s.text }
                     : { borderColor: 'var(--border)', color: 'var(--text-muted)' }
                   }
-                >
-                  {p}
-                </button>
+                >{p}</button>
               )
             })}
           </div>
         </div>
 
-        {/* Date + Category */}
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="text-xs font-medium uppercase tracking-wide block mb-1.5" style={{ color: 'var(--text-muted)' }}>
-              Date
-            </label>
-            <input
-              type="date"
-              value={date}
-              onChange={e => { setDate(e.target.value); markDirty() }}
-              className="input-base w-full"
-              style={inputStyle}
-            />
-          </div>
-          <div>
-            <label className="text-xs font-medium uppercase tracking-wide block mb-1.5" style={{ color: 'var(--text-muted)' }}>
-              Category
-            </label>
-            <select
-              value={category}
-              onChange={e => { setCategory(e.target.value); markDirty() }}
-              className="input-base w-full"
-              style={inputStyle}
-            >
-              {(TASK_CATEGORIES || ['Personal','Work','Health','Learning','Finance','Other']).map(c => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-          </div>
+        {/* Date */}
+        <div>
+          <label className="text-xs font-medium uppercase tracking-wide block mb-1.5" style={{ color: 'var(--text-muted)' }}>
+            Date
+          </label>
+          <input
+            type="date" value={date}
+            onChange={e => { setDate(e.target.value); mark() }}
+            className="input-base w-full" style={inputStyle}
+          />
+        </div>
+
+        {/* Category — uses CategoryPicker with custom support */}
+        <div>
+          <label className="text-xs font-medium uppercase tracking-wide block mb-2" style={{ color: 'var(--text-muted)' }}>
+            Category
+          </label>
+          <CategoryPicker
+            value={category}
+            onChange={v => { setCategory(v); mark() }}
+            categories={categories}
+            onAddCategory={onAddCategory}
+            onRemoveCategory={onRemoveCategory}
+          />
         </div>
 
         {/* Sub-tasks */}
@@ -146,15 +139,11 @@ export default function TaskDetail({ task, tasks, isOpen, onClose }) {
                       ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)', color: 'white' }
                       : { borderColor: 'var(--border)' }
                     }
-                  >
-                    {s.done && '✓'}
-                  </button>
+                  >{s.done && '✓'}</button>
                   <span
                     className="flex-1 text-sm"
                     style={{ color: s.done ? 'var(--text-faint)' : 'var(--text)', textDecoration: s.done ? 'line-through' : 'none' }}
-                  >
-                    {s.text}
-                  </span>
+                  >{s.text}</span>
                   <button
                     onClick={() => deleteSub(s.id)}
                     className="opacity-0 group-hover:opacity-100 text-xs transition-all"
@@ -168,19 +157,14 @@ export default function TaskDetail({ task, tasks, isOpen, onClose }) {
           )}
           <form onSubmit={addSub} className="flex gap-2">
             <input
-              value={subText}
-              onChange={e => setSubText(e.target.value)}
+              value={subText} onChange={e => setSubText(e.target.value)}
               placeholder="Add a sub-task…"
-              className="input-base flex-1 text-sm"
-              style={inputStyle}
+              className="input-base flex-1 text-sm" style={inputStyle}
             />
-            <button
-              type="submit" disabled={!subText.trim()}
+            <button type="submit" disabled={!subText.trim()}
               className="px-3 py-2 rounded-xl text-white text-sm font-medium disabled:opacity-40"
               style={{ backgroundColor: 'var(--accent)' }}
-            >
-              Add
-            </button>
+            >Add</button>
           </form>
         </div>
 
@@ -190,33 +174,22 @@ export default function TaskDetail({ task, tasks, isOpen, onClose }) {
             Notes
           </label>
           <textarea
-            value={note}
-            onChange={e => { setNote(e.target.value); markDirty() }}
-            placeholder="Add notes…"
-            rows={3}
-            className="input-base w-full resize-none"
-            style={inputStyle}
+            value={note} onChange={e => { setNote(e.target.value); mark() }}
+            placeholder="Add notes…" rows={3}
+            className="input-base w-full resize-none" style={inputStyle}
           />
         </div>
 
-        {/* Save button */}
+        {/* Actions */}
         <div className="flex gap-3 pt-1">
-          <button
-            type="button" onClick={() => { if (dirty) saveAll(); onClose() }}
+          <button type="button" onClick={() => { if (dirty) saveAll(); onClose() }}
             className="flex-1 py-2.5 rounded-xl border text-sm font-medium transition-colors"
             style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={() => { saveAll(); onClose() }}
-            disabled={!dirty && title === task.title}
+          >Cancel</button>
+          <button type="button" onClick={() => { saveAll(); onClose() }}
             className="flex-1 py-2.5 rounded-xl text-sm font-medium text-white"
             style={{ backgroundColor: 'var(--accent)' }}
-          >
-            Save changes
-          </button>
+          >Save changes</button>
         </div>
       </div>
     </Modal>

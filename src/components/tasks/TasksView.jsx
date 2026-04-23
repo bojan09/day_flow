@@ -33,7 +33,7 @@ const CAT_DOT = {
   Other:    'bg-stone-400',
 }
 
-export default function TasksView({ tasks, templates, someday }) {
+export default function TasksView({ tasks, templates, someday, projects, categories, onAddCategory, onRemoveCategory, onTabChange }) {
   const [filter,     setFilter]  = useState('All')
   const [modalOpen,  setModal]   = useState(false)
   const [detailTask, setDetail]  = useState(null)
@@ -121,6 +121,11 @@ export default function TasksView({ tasks, templates, someday }) {
                     {t.estimateMins       && <span className="text-[11px] text-ink-faint">⏱ {t.estimateMins < 60 ? `${t.estimateMins}m` : `${t.estimateMins/60}h`}</span>}
                     {t.isRecurring        && <span className="text-[11px] text-forest-500">🔁</span>}
                     {(t.subTasks?.length) > 0 && <span className="text-[11px] text-ink-faint">· {t.subTasks.filter(s=>s.done).length}/{t.subTasks.length} sub</span>}
+                    {t.projectId && projects?.find(p => p.id === t.projectId) && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded font-medium" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-faint)' }}>
+                        🗂️ {projects.find(p => p.id === t.projectId)?.name}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -130,6 +135,14 @@ export default function TasksView({ tasks, templates, someday }) {
                     className={`text-sm p-1 rounded opacity-0 group-hover:opacity-100 transition-all ${t.isFocus ? 'opacity-100 text-forest-500' : 'text-ink-faint hover:text-forest-500'}`}>
                     {t.isFocus ? '📌' : '📍'}
                   </button>
+                  {onTabChange && (
+                    <button
+                      onClick={() => onTabChange('timeblock')}
+                      className="opacity-0 group-hover:opacity-100 text-[11px] px-1.5 py-0.5 rounded transition-all"
+                      style={{ color: 'var(--accent)', backgroundColor: 'var(--accent-light)' }}
+                      title="Open in Schedule"
+                    >⏰</button>
+                  )}
                   <button onClick={() => tasks.deleteTask(t.id)}
                     className="opacity-0 group-hover:opacity-100 text-ink-faint hover:text-red-400 text-xs p-1 transition-all">✕</button>
                 </div>
@@ -147,10 +160,10 @@ export default function TasksView({ tasks, templates, someday }) {
       )}
 
       <Modal isOpen={modalOpen} onClose={() => setModal(false)} title="New Task">
-        <TaskForm onSubmit={t => { tasks.addTask(t); setModal(false) }} onCancel={() => setModal(false)} />
+        <TaskForm onSubmit={t => { tasks.addTask(t); setModal(false) }} onCancel={() => setModal(false)} projects={projects || []} categories={categories} onAddCategory={onAddCategory} onRemoveCategory={onRemoveCategory} />
       </Modal>
 
-      <TaskDetail task={detailTask} tasks={tasks} isOpen={!!detailTask} onClose={() => setDetail(null)} />
+      <TaskDetail task={detailTask} tasks={tasks} isOpen={!!detailTask} onClose={() => setDetail(null)} categories={categories} onAddCategory={onAddCategory} onRemoveCategory={onRemoveCategory} />
     </div>
   )
 }

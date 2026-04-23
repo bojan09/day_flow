@@ -20,7 +20,7 @@ export default function HabitsView({ habits, habitRules }) {
   const [view,      setView]     = useState('week')
   const prevStreaks               = useRef({})
   const weekDays                 = getWeekDays()
-  const { habits: list, isHabitDone, toggleHabitDay, deleteHabit, getStreak, getWeeklyCount } = habits
+  const { habits: list, isHabitDone, toggleHabitDay, addHabit, updateHabit, deleteHabit, getStreak, getWeeklyCount } = habits
 
   const handleToggle = (habitId, dateKey) => {
     // Fire IFTTT rules
@@ -80,7 +80,7 @@ export default function HabitsView({ habits, habitRules }) {
                 <HabitRow key={h.id} habit={h} weekDays={weekDays}
                   isHabitDone={isHabitDone} toggleHabitDay={handleToggle}
                   streak={getStreak(h.id)} weeklyCount={getWeeklyCount(h.id)}
-                  onDelete={deleteHabit} />
+                  onDelete={deleteHabit} onEdit={updateHabit} />
               ))}
             </div>
           )}

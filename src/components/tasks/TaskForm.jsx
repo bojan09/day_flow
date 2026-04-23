@@ -1,15 +1,24 @@
 // Component: TaskForm
-// Purpose: New/edit task form — title, priority, category, date, estimate, recurring, project
+// Purpose: New task form — title, priority, category (with custom), date, estimate, recurring, project
 import { useState } from 'react'
-import Input from '../ui/Input'
-import { TASK_CATEGORIES } from '../../utils/constants'
+import Input          from '../ui/Input'
+import CategoryPicker from '../ui/CategoryPicker'
 import { getTodayKey } from '../../utils/dateUtils'
 
 const PRIORITIES = ['low', 'medium', 'high']
 const RECUR_DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
 const ESTIMATES  = [null, 15, 30, 45, 60, 90, 120]
 
-export default function TaskForm({ onSubmit, onCancel, projects = [] }) {
+const PRIORITY_STYLES = {
+  high:   'bg-red-50 border-red-300 text-red-600',
+  medium: 'bg-amber-50 border-amber-300 text-amber-600',
+  low:    'bg-forest-50 border-forest-300 text-forest-700',
+}
+
+export default function TaskForm({
+  onSubmit, onCancel, projects = [],
+  categories, onAddCategory, onRemoveCategory,
+}) {
   const [form, setForm] = useState({
     title: '', priority: 'medium', category: 'Personal',
     date: getTodayKey(), estimateMins: null,
@@ -28,48 +37,58 @@ export default function TaskForm({ onSubmit, onCancel, projects = [] }) {
     onSubmit(form)
   }
 
+  const inputStyle = { backgroundColor: 'var(--bg)', borderColor: 'var(--border)', color: 'var(--text)' }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <Input label="Task title" placeholder="What needs to be done?"
-        value={form.title} onChange={e => set('title', e.target.value)} autoFocus />
+      <Input
+        label="Task title" placeholder="What needs to be done?"
+        value={form.title} onChange={e => set('title', e.target.value)} autoFocus
+      />
 
       {/* Priority */}
       <div>
-        <p className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2">Priority</p>
+        <p className="text-xs font-medium uppercase tracking-wide mb-2" style={{ color: 'var(--text-muted)' }}>
+          Priority
+        </p>
         <div className="flex gap-2">
           {PRIORITIES.map(p => (
             <button key={p} type="button" onClick={() => set('priority', p)}
               className={`flex-1 py-2 rounded-xl text-sm font-medium capitalize transition-all border ${
-                form.priority === p
-                  ? p === 'high'   ? 'bg-red-50 border-red-300 text-red-600'
-                  : p === 'medium' ? 'bg-amber-50 border-amber-300 text-amber-600'
-                                   : 'bg-forest-50 border-forest-300 text-forest-700'
-                  : 'border-stone-200 text-ink-faint hover:bg-stone-50'
-              }`}>{p}</button>
+                form.priority === p ? PRIORITY_STYLES[p] : 'border-stone-200 text-ink-faint hover:bg-stone-50'
+              }`}
+            >{p}</button>
           ))}
         </div>
       </div>
 
-      {/* Category */}
+      {/* Category — uses CategoryPicker with custom support */}
       <div>
-        <p className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2">Category</p>
-        <div className="flex flex-wrap gap-2">
-          {TASK_CATEGORIES.map(c => (
-            <button key={c} type="button" onClick={() => set('category', c)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
-                form.category === c ? 'bg-ink text-white border-ink' : 'border-stone-200 text-ink-muted hover:bg-stone-50'
-              }`}>{c}</button>
-          ))}
-        </div>
+        <p className="text-xs font-medium uppercase tracking-wide mb-2" style={{ color: 'var(--text-muted)' }}>
+          Category
+        </p>
+        <CategoryPicker
+          value={form.category}
+          onChange={v => set('category', v)}
+          categories={categories}
+          onAddCategory={onAddCategory}
+          onRemoveCategory={onRemoveCategory}
+        />
       </div>
 
       {/* Date + estimate */}
       <div className="grid grid-cols-2 gap-3">
         <Input label="Date" type="date" value={form.date} onChange={e => set('date', e.target.value)} />
         <div>
-          <p className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-1.5">Est. time</p>
-          <select value={form.estimateMins ?? ''} onChange={e => set('estimateMins', e.target.value ? Number(e.target.value) : null)}
-            className="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-parchment text-sm text-ink outline-none focus:ring-2 focus:ring-forest-200">
+          <p className="text-xs font-medium uppercase tracking-wide mb-1.5" style={{ color: 'var(--text-muted)' }}>
+            Est. time
+          </p>
+          <select
+            value={form.estimateMins ?? ''}
+            onChange={e => set('estimateMins', e.target.value ? Number(e.target.value) : null)}
+            className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none"
+            style={inputStyle}
+          >
             <option value="">None</option>
             {ESTIMATES.filter(Boolean).map(m => (
               <option key={m} value={m}>{m < 60 ? `${m} min` : `${m/60}h`}</option>
@@ -81,9 +100,15 @@ export default function TaskForm({ onSubmit, onCancel, projects = [] }) {
       {/* Project link */}
       {projects.length > 0 && (
         <div>
-          <p className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-1.5">Project</p>
-          <select value={form.projectId || ''} onChange={e => set('projectId', e.target.value || null)}
-            className="w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-parchment text-sm text-ink outline-none focus:ring-2 focus:ring-forest-200">
+          <p className="text-xs font-medium uppercase tracking-wide mb-1.5" style={{ color: 'var(--text-muted)' }}>
+            Project
+          </p>
+          <select
+            value={form.projectId || ''}
+            onChange={e => set('projectId', e.target.value || null)}
+            className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none"
+            style={inputStyle}
+          >
             <option value="">No project</option>
             {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
@@ -93,11 +118,13 @@ export default function TaskForm({ onSubmit, onCancel, projects = [] }) {
       {/* Recurring */}
       <div>
         <label className="flex items-center gap-2 cursor-pointer select-none">
-          <div onClick={() => set('isRecurring', !form.isRecurring)}
-            className={`w-9 h-5 rounded-full transition-colors relative ${form.isRecurring ? 'bg-forest-500' : 'bg-stone-200'}`}>
+          <div
+            onClick={() => set('isRecurring', !form.isRecurring)}
+            className={`w-9 h-5 rounded-full transition-colors relative ${form.isRecurring ? 'bg-forest-500' : 'bg-stone-200'}`}
+          >
             <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.isRecurring ? 'translate-x-4' : 'translate-x-0.5'}`} />
           </div>
-          <span className="text-sm text-ink-muted">Recurring task</span>
+          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Recurring task</span>
         </label>
         {form.isRecurring && (
           <div className="flex gap-1.5 mt-2 flex-wrap">
@@ -113,9 +140,13 @@ export default function TaskForm({ onSubmit, onCancel, projects = [] }) {
 
       <div className="flex gap-3 pt-1">
         <button type="button" onClick={onCancel}
-          className="flex-1 py-2.5 rounded-xl border border-stone-200 text-sm text-ink-muted hover:bg-stone-50">Cancel</button>
+          className="flex-1 py-2.5 rounded-xl border text-sm font-medium transition-colors"
+          style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
+        >Cancel</button>
         <button type="submit" disabled={!form.title.trim()}
-          className="flex-1 py-2.5 rounded-xl bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 disabled:opacity-40">Add Task</button>
+          className="flex-1 py-2.5 rounded-xl text-white text-sm font-medium disabled:opacity-40"
+          style={{ backgroundColor: 'var(--accent)' }}
+        >Add Task</button>
       </div>
     </form>
   )

@@ -51,6 +51,7 @@ import { useProjects        } from '../hooks/useProjects'
 import { useBookmarks       } from '../hooks/useBookmarks'
 import { useAffirmations    } from '../hooks/useAffirmations'
 import { useWorkouts        } from '../hooks/useWorkouts'
+import { useCustomCategories } from '../hooks/useCustomCategories'
 import { useAchievements    } from '../hooks/useAchievements'
 import { spawnRecurringTasks } from '../services/recurringEngine'
 
@@ -81,6 +82,7 @@ export default function DashboardPage() {
   const bookmarks       = useBookmarks()
   const affirmations    = useAffirmations()
   const workouts        = useWorkouts()
+  const catData         = useCustomCategories()
   const achievements    = useAchievements({ tasks, habits, notes, goals, xp, workouts, mood })
   const { theme, setTheme } = useTheme()
   const score = useDailyScore({ tasks, habits, mood, gratitude, water })
@@ -100,7 +102,7 @@ export default function DashboardPage() {
 
         {/* ── Plan ─────────────────────────────────────────────────────────── */}
         {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={setActiveTab} />}
-        {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} />}
+        {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={setActiveTab} />}
         {activeTab === 'calendar'   && <CalendarView tasks={tasks} />}
         {activeTab === 'timeblock'  && <TimeBlockView tasks={tasks} />}
         {activeTab === 'projects'   && <ProjectsView projects={projects} tasks={tasks} />}

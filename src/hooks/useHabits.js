@@ -43,6 +43,11 @@ export function useHabits() {
     return h
   }
 
+  const updateHabit = async (id, updates) => {
+    setHabits(prev => prev.map(h => h.id === id ? { ...h, ...updates } : h))
+    if (useDB) await habitsService.upsertHabit(userId, { ...habits.find(h => h.id === id), ...updates })
+  }
+
   const deleteHabit = async (id) => {
     setHabits(prev => prev.filter(h => h.id !== id))
     if (useDB) await habitsService.deleteHabit(userId, id)
@@ -77,5 +82,5 @@ export function useHabits() {
     return Math.round((habits.filter(h => isHabitDone(h.id)).length / habits.length) * 100)
   }
 
-  return { habits, log, synced, addHabit, deleteHabit, toggleHabitDay, isHabitDone, getStreak, getWeeklyCount, getMaxStreak, getTodayCompletion }
+  return { habits, log, synced, addHabit, updateHabit, deleteHabit, toggleHabitDay, isHabitDone, getStreak, getWeeklyCount, getMaxStreak, getTodayCompletion }
 }
