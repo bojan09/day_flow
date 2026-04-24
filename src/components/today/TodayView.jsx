@@ -1,6 +1,7 @@
 // Component: TodayView
 // Purpose: Adaptive daily command center.
-//          Phase 4.1: collapsible widgets, larger tap targets, swipe week navigation.
+//          Version 4.2: dynamic ordering, widget pinning, hide support.
+//          Widget order is driven by time-of-day + user preferences.
 import GoodMorningHeader  from './GoodMorningHeader'
 import EnergyCheckIn      from './EnergyCheckIn'
 import AffirmationsCard   from '../affirmations/AffirmationsCard'
@@ -19,20 +20,61 @@ import MonthlyLetter      from '../monthly/MonthlyLetter'
 import OverdueRescue      from '../tasks/OverdueRescue'
 import DashboardNudges    from './DashboardNudges'
 import CollapsibleWidget  from '../ui/CollapsibleWidget'
-import { useAdaptiveDashboard } from '../../hooks/useAdaptiveDashboard'
+import QuickPlannerWidget from './QuickPlannerWidget'
+import MiniHabitWidget    from '../habits/MiniHabitWidget'
+import WidgetCustomizer   from './WidgetCustomizer'
+import { useAdaptiveDashboard }  from '../../hooks/useAdaptiveDashboard'
+import { useWidgetPreferences, WIDGET_REGISTRY } from '../../hooks/useWidgetPreferences'
+import { useState } from 'react'
+
+// Adaptive default orders by time context
+const MORNING_ORDER   = ['mood','tasks-today','habits-today','energy','water','focus-task','gratitude','affirmations','quick-note']
+const AFTERNOON_ORDER = ['focus-task','tasks-today','habits-today','mood','water','energy','gratitude','quick-note','affirmations']
+const EVENING_ORDER   = ['mood','habits-today','tasks-today','gratitude','water','energy','focus-task','affirmations','quick-note']
+
+// Map widget id → the component to render
+function WidgetContent({ id, tasks, habits, notes, mood, energy, gratitude, water, affirmations }) {
+  switch (id) {
+    case 'mood':          return <MoodTracker mood={mood} />
+    case 'tasks-today':   return <TodayTaskList tasks={tasks} />
+    case 'habits-today':  return <TodayHabitStrip habits={habits} />
+    case 'water':         return <WaterTracker water={water} />
+    case 'energy':        return <EnergyCheckIn energy={energy} />
+    case 'gratitude':     return <GratitudeLog gratitude={gratitude} />
+    case 'focus-task':    return <FocusTask tasks={tasks} />
+    case 'affirmations':  return <AffirmationsCard affirmations={affirmations} />
+    case 'quick-note':    return <TodayQuickNote notes={notes} />
+    case 'mini-habits':   return <MiniHabitWidget habits={habits} />
+    default:              return null
+  }
+}
 
 export default function TodayView({
   tasks, habits, notes, mood, intention, gratitude,
   water, score, monthlyLetter, energy, affirmations, onTabChange,
 }) {
-  const adaptive  = useAdaptiveDashboard({ tasks, habits, mood, energy, xp: { getLevelInfo: () => null } })
-  const scoreData = score.calculate()
+  const adaptive   = useAdaptiveDashboard({ tasks, habits, mood, energy, xp: { getLevelInfo: () => null } })
+  const widgetPrefs = useWidgetPreferences()
+  const scoreData  = score.calculate()
+  const [showCustomizer, setShowCustomizer] = useState(false)
+
+  // Pick adaptive default order based on time context
   const isEvening = ['evening', 'night'].includes(adaptive.context)
+  const isAfternoon = adaptive.context === 'afternoon'
+  const adaptiveDefault = isEvening ? EVENING_ORDER : isAfternoon ? AFTERNOON_ORDER : MORNING_ORDER
+
+  // Apply user preferences on top of adaptive order
+  const orderedIds = widgetPrefs.getOrderedWidgets(adaptiveDefault)
+
+  // Get registry entry for a widget
+  const getMeta = (id) => WIDGET_REGISTRY.find(w => w.id === id) ?? { id, title: id, emoji: '📦', defaultOpen: false }
+
+  const widgetProps = { tasks, habits, notes, mood, energy, gratitude, water, affirmations }
 
   return (
     <div className="max-w-2xl mx-auto space-y-3 pt-2">
 
-      {/* Week strip — always at top, swipeable */}
+      {/* Week strip */}
       <WeekStrip />
 
       {/* Monthly letter */}
@@ -44,96 +86,63 @@ export default function TodayView({
       {/* Overdue rescue */}
       <OverdueRescue tasks={tasks} />
 
-      {/* Greeting + intention */}
+      {/* Greeting */}
       <GoodMorningHeader intention={intention} />
 
-      {/* MORNING layout — plan first */}
-      {!isEvening && (
-        <>
-          <CollapsibleWidget id="affirmations" emoji="✨" title="Affirmations" defaultOpen={false}>
-            <AffirmationsCard affirmations={affirmations} />
+      {/* Customize button */}
+      <div className="flex justify-end px-1">
+        <button
+          onClick={() => setShowCustomizer(true)}
+          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-all"
+          style={{ borderColor: 'var(--border)', color: 'var(--text-faint)' }}
+          onMouseOver={e => { e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
+          onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-faint)' }}
+        >
+          ✦ Customize
+        </button>
+      </div>
+
+      {/* Dynamic widget list */}
+      {orderedIds.map(id => {
+        const meta    = getMeta(id)
+        const content = <WidgetContent id={id} {...widgetProps} />
+        if (!content) return null
+
+        return (
+          <CollapsibleWidget
+            key={id}
+            id={id}
+            title={meta.title}
+            emoji={meta.emoji}
+            defaultOpen={meta.defaultOpen}
+            isPinned={widgetPrefs.isPinned(id)}
+            onTogglePin={widgetPrefs.togglePin}
+            onToggleHide={widgetPrefs.toggleHide}
+          >
+            {content}
           </CollapsibleWidget>
+        )
+      })}
 
-          <CollapsibleWidget id="mood" emoji="😊" title="Today's Mood" defaultOpen={true}>
-            <MoodTracker mood={mood} />
-          </CollapsibleWidget>
-
-          <ProgressRing tasks={tasks} habits={habits} />
-
-          <CollapsibleWidget id="tasks-today" emoji="✅" title="Today's Tasks" defaultOpen={true}>
-            <TodayTaskList tasks={tasks} />
-          </CollapsibleWidget>
-
-          <CollapsibleWidget id="habits-today" emoji="🔁" title="Habits Today" defaultOpen={true}>
-            <TodayHabitStrip habits={habits} />
-          </CollapsibleWidget>
-
-          <CollapsibleWidget id="energy" emoji="⚡" title="Energy" defaultOpen={false}>
-            <EnergyCheckIn energy={energy} />
-          </CollapsibleWidget>
-
-          <CollapsibleWidget id="water" emoji="💧" title="Hydration" defaultOpen={true}>
-            <WaterTracker water={water} />
-          </CollapsibleWidget>
-
-          <CollapsibleWidget id="focus-task" emoji="🎯" title="Focus Task" defaultOpen={false}>
-            <FocusTask tasks={tasks} />
-          </CollapsibleWidget>
-
-          <CollapsibleWidget id="gratitude" emoji="🙏" title="Gratitude" defaultOpen={false}>
-            <GratitudeLog gratitude={gratitude} />
-          </CollapsibleWidget>
-
-          <CollapsibleWidget id="quick-note" emoji="📝" title="Quick Note" defaultOpen={false}>
-            <TodayQuickNote notes={notes} />
-          </CollapsibleWidget>
-
-          <DailyScore scoreData={scoreData} />
-          <EndOfDayReview tasks={tasks} />
-        </>
-      )}
-
-      {/* EVENING layout — review first */}
+      {/* Evening: plan tomorrow */}
       {isEvening && (
-        <>
-          <CollapsibleWidget id="mood-eve" emoji="😊" title="Today's Mood" defaultOpen={true}>
-            <MoodTracker mood={mood} />
-          </CollapsibleWidget>
-
-          <ProgressRing tasks={tasks} habits={habits} />
-
-          <CollapsibleWidget id="habits-eve" emoji="🔁" title="Habits Today" defaultOpen={true}>
-            <TodayHabitStrip habits={habits} />
-          </CollapsibleWidget>
-
-          <CollapsibleWidget id="tasks-eve" emoji="✅" title="Today's Tasks" defaultOpen={true}>
-            <TodayTaskList tasks={tasks} />
-          </CollapsibleWidget>
-
-          <CollapsibleWidget id="gratitude-eve" emoji="🙏" title="Gratitude" defaultOpen={true}>
-            <GratitudeLog gratitude={gratitude} />
-          </CollapsibleWidget>
-
-          <CollapsibleWidget id="water-eve" emoji="💧" title="Hydration" defaultOpen={false}>
-            <WaterTracker water={water} />
-          </CollapsibleWidget>
-
-          <DailyScore scoreData={scoreData} />
-          <EndOfDayReview tasks={tasks} />
-
-          <CollapsibleWidget id="energy-eve" emoji="⚡" title="Energy" defaultOpen={false}>
-            <EnergyCheckIn energy={energy} />
-          </CollapsibleWidget>
-
-          <CollapsibleWidget id="affirmations-eve" emoji="✨" title="Affirmations" defaultOpen={false}>
-            <AffirmationsCard affirmations={affirmations} />
-          </CollapsibleWidget>
-
-          <CollapsibleWidget id="quick-note-eve" emoji="📝" title="Quick Note" defaultOpen={false}>
-            <TodayQuickNote notes={notes} />
-          </CollapsibleWidget>
-        </>
+        <CollapsibleWidget id="planner-tomorrow" emoji="📅" title="Plan Tomorrow" defaultOpen={true}>
+          <QuickPlannerWidget tasks={tasks} />
+        </CollapsibleWidget>
       )}
+
+      {/* Static bottom widgets — always shown, never rearranged */}
+      <ProgressRing tasks={tasks} habits={habits} />
+      <DailyScore scoreData={scoreData} />
+      <EndOfDayReview tasks={tasks} />
+
+      {/* Widget customizer panel */}
+      <WidgetCustomizer
+        isOpen={showCustomizer}
+        onClose={() => setShowCustomizer(false)}
+        widgetPrefs={widgetPrefs}
+        adaptiveOrder={adaptiveDefault}
+      />
     </div>
   )
 }

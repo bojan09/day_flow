@@ -5,6 +5,7 @@ import Card          from '../ui/Card'
 import Badge         from '../ui/Badge'
 import Modal         from '../ui/Modal'
 import TaskForm      from './TaskForm'
+import QuickTaskBar  from './QuickTaskBar'
 import NLPTaskInput  from './NLPTaskInput'
 import TaskDetail    from './TaskDetail'
 import EmptyState    from '../ui/EmptyState'
@@ -62,6 +63,10 @@ export default function TasksView({ tasks, templates, someday, projects, categor
 
   return (
     <div className="max-w-2xl mx-auto space-y-4 pt-2">
+
+      {/* Zero-friction quick entry */}
+      <QuickTaskBar tasks={tasks} />
+
       <NLPTaskInput onAdd={t => tasks.addTask(t)} />
 
       <div className="flex items-center justify-between">
