@@ -48,7 +48,7 @@ export default function GoodMorningHeader({ intention }) {
         style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)' }}
         onClick={() => setEditing(true)}
       >
-        <span className="text-sm flex-shrink-0 text-forest-500">🎯</span>
+        <span className="text-sm flex-shrink-0 [color:var(--accent)]">🎯</span>
         {editing ? (
           <input
             autoFocus
@@ -66,7 +66,7 @@ export default function GoodMorningHeader({ intention }) {
             {text || 'Today I intend to…  (tap to set)'}
           </span>
         )}
-        {text && !editing && <span className="text-xs text-forest-500">✓</span>}
+        {text && !editing && <span className="text-xs [color:var(--accent)]">✓</span>}
       </div>
     </div>
   )

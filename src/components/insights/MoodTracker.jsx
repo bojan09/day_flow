@@ -1,14 +1,13 @@
 // Component: MoodTracker
-// Purpose: Daily mood check-in card — emoji selector + optional note
+// Purpose: Daily mood check-in — large emoji tap targets (56px), CSS variables, optional note.
 import { useState } from 'react'
-import Card from '../ui/Card'
 import { MOODS } from '../../hooks/useMood'
 
 export default function MoodTracker({ mood }) {
-  const today   = mood.getTodayMood()
-  const [note, setNote]       = useState(today?.note ?? '')
+  const today    = mood.getTodayMood()
+  const [note,     setNote]     = useState(today?.note  ?? '')
   const [selected, setSelected] = useState(today?.score ?? null)
-  const [saved, setSaved]     = useState(!!today)
+  const [saved,    setSaved]    = useState(!!today)
 
   const handleSelect = (score) => {
     setSelected(score)
@@ -22,64 +21,84 @@ export default function MoodTracker({ mood }) {
   }
 
   return (
-    <Card>
-      <p className="text-xs font-medium uppercase tracking-wider text-ink-faint mb-3">
+    <div
+      className="rounded-2xl border p-5"
+      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+    >
+      <p className="text-xs font-medium uppercase tracking-wider mb-4" style={{ color: 'var(--text-faint)' }}>
         How are you feeling today?
       </p>
 
-      {/* Mood buttons */}
-      <div className="flex justify-between gap-1 mb-4">
-        {MOODS.map(m => (
-          <button
-            key={m.score}
-            onClick={() => handleSelect(m.score)}
-            title={m.label}
-            className={`flex-1 flex flex-col items-center gap-1 py-2.5 rounded-xl transition-all border ${
-              selected === m.score
-                ? 'bg-forest-50 border-forest-300 scale-105 shadow-sm'
-                : 'border-stone-100 hover:bg-stone-50 hover:border-stone-200'
-            }`}
-          >
-            <span className="text-2xl">{m.emoji}</span>
-            <span className="text-[10px] text-ink-faint font-medium">{m.label}</span>
-          </button>
-        ))}
+      {/* Mood buttons — 56px min height for comfortable tapping */}
+      <div className="flex justify-between gap-1.5 mb-4">
+        {MOODS.map(m => {
+          const active = selected === m.score
+          return (
+            <button
+              key={m.score}
+              onClick={() => handleSelect(m.score)}
+              title={m.label}
+              className="flex-1 flex flex-col items-center gap-1 py-3 rounded-2xl transition-all border active:scale-95"
+              style={{
+                minHeight:       '64px',
+                backgroundColor: active ? 'var(--accent-light)' : 'var(--bg-secondary)',
+                borderColor:     active ? 'var(--accent-mid)'   : 'var(--border)',
+                transform:       active ? 'scale(1.05)'         : 'scale(1)',
+              }}
+              aria-pressed={active}
+            >
+              <span className="text-2xl leading-none">{m.emoji}</span>
+              <span
+                className="text-[10px] font-medium"
+                style={{ color: active ? 'var(--accent)' : 'var(--text-faint)' }}
+              >{m.label}</span>
+            </button>
+          )
+        })}
       </div>
 
-      {/* Note field */}
+      {/* Already saved — show current mood */}
+      {saved && today && (
+        <div
+          className="flex items-center justify-between rounded-xl px-4 py-2.5"
+          style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)' }}
+        >
+          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
+            Mood logged ✓
+            {today.note && ` · "${today.note}"`}
+          </span>
+          <button
+            onClick={() => setSaved(false)}
+            className="text-xs"
+            style={{ color: 'var(--accent)' }}
+          >Edit</button>
+        </div>
+      )}
+
+      {/* Note + save — only show when selecting/editing */}
       {selected && !saved && (
         <div className="space-y-3">
           <textarea
             value={note}
             onChange={e => setNote(e.target.value)}
-            placeholder="Add a note about your day... (optional)"
+            placeholder="Add a note about your day… (optional)"
             rows={2}
-            className="w-full text-sm bg-parchment border border-stone-200 rounded-xl px-3 py-2 outline-none resize-none focus:ring-2 focus:ring-forest-200 focus:border-forest-400 text-ink placeholder-ink-faint/50 transition-all"
+            className="w-full text-sm rounded-xl px-4 py-2.5 outline-none resize-none border"
+            style={{
+              backgroundColor: 'var(--bg)',
+              borderColor:     'var(--border)',
+              color:           'var(--text)',
+            }}
           />
           <button
             onClick={handleSave}
-            className="w-full py-2 rounded-xl bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 transition-colors"
+            className="w-full py-3 rounded-xl text-sm font-semibold text-white transition-all active:scale-95"
+            style={{ backgroundColor: 'var(--accent)', minHeight: '48px' }}
           >
-            Save Mood
+            Save mood
           </button>
         </div>
       )}
-
-      {/* Saved state */}
-      {saved && today && (
-        <div className="flex items-center gap-2 text-sm text-ink-muted">
-          <span className="text-xl">{MOODS.find(m => m.score === today.score)?.emoji}</span>
-          <span className="italic font-serif text-base">
-            {today.note || `Feeling ${MOODS.find(m => m.score === today.score)?.label?.toLowerCase()}`}
-          </span>
-          <button
-            onClick={() => setSaved(false)}
-            className="ml-auto text-xs text-ink-faint hover:text-ink transition-colors"
-          >
-            Edit
-          </button>
-        </div>
-      )}
-    </Card>
+    </div>
   )
 }

@@ -1,9 +1,8 @@
 // Component: TodayHabitStrip
-// Purpose: Compact habit checklist for today — theme-aware with animated toggles
-import { useNavigate } from 'react-router-dom'
-
+// Purpose: Today's habit checklist — 44px+ tap rows, animated toggles, progress header.
 export default function TodayHabitStrip({ habits }) {
   const { habits: list, isHabitDone, toggleHabitDay } = habits
+  const doneCount = list.filter(h => isHabitDone(h.id)).length
 
   return (
     <div
@@ -16,7 +15,7 @@ export default function TodayHabitStrip({ habits }) {
       >
         <h3 className="font-serif text-base" style={{ color: 'var(--text)' }}>Habits Today</h3>
         <span className="text-xs" style={{ color: 'var(--text-faint)' }}>
-          {list.filter(h => isHabitDone(h.id)).length}/{list.length}
+          {doneCount}/{list.length}
         </span>
       </div>
 
@@ -29,20 +28,35 @@ export default function TodayHabitStrip({ habits }) {
           {list.map(h => {
             const done = isHabitDone(h.id)
             return (
-              <li key={h.id} className="flex items-center gap-3 px-5 py-2.5">
+              <li key={h.id}>
                 <button
                   onClick={() => toggleHabitDay(h.id)}
-                  className={`w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center text-xs transition-all duration-200 ${done ? 'animate-bounce-check' : ''}`}
-                  style={done
-                    ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)', color: 'white' }
-                    : { borderColor: 'var(--border)' }
-                  }
-                >{done && '✓'}</button>
-                <span className="text-base">{h.icon}</span>
-                <span
-                  className={`text-sm flex-1 transition-all ${done ? 'line-through' : ''}`}
-                  style={{ color: done ? 'var(--text-faint)' : 'var(--text)' }}
-                >{h.name}</span>
+                  className="w-full flex items-center gap-3 px-5 transition-colors text-left"
+                  style={{ minHeight: '52px' }}
+                  onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
+                  onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                  aria-pressed={done}
+                >
+                  {/* Circle toggle */}
+                  <span
+                    className={`w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center text-xs transition-all duration-200 ${done ? 'animate-bounce-check' : ''}`}
+                    style={done
+                      ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)', color: 'white' }
+                      : { borderColor: 'var(--border)' }
+                    }
+                  >{done && '✓'}</span>
+
+                  <span className="text-base flex-shrink-0">{h.icon}</span>
+
+                  <span
+                    className={`text-sm flex-1 transition-all ${done ? 'line-through' : ''}`}
+                    style={{ color: done ? 'var(--text-faint)' : 'var(--text)' }}
+                  >{h.name}</span>
+
+                  {done && (
+                    <span className="text-xs flex-shrink-0" style={{ color: 'var(--accent)' }}>✓</span>
+                  )}
+                </button>
               </li>
             )
           })}

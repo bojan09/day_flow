@@ -1,6 +1,5 @@
 // Component: EnergyCheckIn
-// Purpose: Morning check-in for peak energy window — suggests when to schedule hard tasks
-import Card from '../ui/Card'
+// Purpose: Peak energy window check-in — CSS variables, 48px+ tap targets.
 import { ENERGY_WINDOWS } from '../../hooks/useEnergy'
 
 export default function EnergyCheckIn({ energy }) {
@@ -10,33 +9,46 @@ export default function EnergyCheckIn({ energy }) {
   if (today) {
     const win = ENERGY_WINDOWS.find(w => w.id === today.window)
     return (
-      <div className="flex items-center gap-3 px-4 py-2.5 bg-white rounded-xl border border-stone-100 shadow-sm">
-        <span className="text-xl">{win?.emoji}</span>
+      <div
+        className="flex items-center gap-3 px-4 py-3 rounded-2xl border"
+        style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)' }}
+      >
+        <span className="text-xl flex-shrink-0">{win?.emoji}</span>
         <div className="flex-1 min-w-0">
-          <p className="text-xs text-ink-faint">Peak energy: <span className="font-medium text-ink">{win?.label} ({win?.hours})</span></p>
-          {suggestion && <p className="text-xs text-forest-600 mt-0.5 italic">{suggestion}</p>}
+          <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
+            Peak energy: <span className="font-semibold" style={{ color: 'var(--text)' }}>{win?.label} ({win?.hours})</span>
+          </p>
+          {suggestion && <p className="text-xs italic mt-0.5" style={{ color: 'var(--accent)' }}>{suggestion}</p>}
         </div>
         <button
           onClick={() => energy.setTodayEnergy(null)}
-          className="text-[10px] text-ink-faint hover:text-ink transition-colors"
+          className="text-xs flex-shrink-0 transition-colors"
+          style={{ color: 'var(--text-faint)' }}
+          onMouseOver={e => e.target.style.color = 'var(--text)'}
+          onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
         >Change</button>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4">
-      <p className="text-xs font-medium uppercase tracking-wider text-ink-faint mb-3">⚡ When's your peak energy today?</p>
+    <div>
+      <p className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: 'var(--text-faint)' }}>
+        ⚡ When's your peak energy today?
+      </p>
       <div className="grid grid-cols-3 gap-2">
         {ENERGY_WINDOWS.map(w => (
           <button
             key={w.id}
             onClick={() => energy.setTodayEnergy(w.id)}
-            className="flex flex-col items-center gap-1 py-3 rounded-xl border border-stone-100 hover:border-forest-300 hover:bg-forest-50 transition-all group"
+            className="flex flex-col items-center gap-1.5 py-4 rounded-2xl border transition-all active:scale-95"
+            style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg-secondary)', minHeight: '80px' }}
+            onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--accent-mid)'; e.currentTarget.style.backgroundColor = 'var(--accent-light)' }}
+            onMouseOut={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.backgroundColor = 'var(--bg-secondary)' }}
           >
             <span className="text-2xl">{w.emoji}</span>
-            <span className="text-xs font-medium text-ink group-hover:text-forest-700">{w.label}</span>
-            <span className="text-[10px] text-ink-faint">{w.hours}</span>
+            <span className="text-xs font-semibold" style={{ color: 'var(--text)' }}>{w.label}</span>
+            <span className="text-[10px]" style={{ color: 'var(--text-faint)' }}>{w.hours}</span>
           </button>
         ))}
       </div>

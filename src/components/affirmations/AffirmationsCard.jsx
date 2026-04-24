@@ -1,60 +1,100 @@
 // Component: AffirmationsCard
-// Purpose: Daily rotating affirmation display + editor for the Today tab
+// Purpose: Daily rotating affirmation + editor. CSS variables throughout.
+//          Accepts plain prop when used inside CollapsibleWidget (skips own card wrapper).
 import { useState } from 'react'
-import Card from '../ui/Card'
 
-export default function AffirmationsCard({ affirmations }) {
+export default function AffirmationsCard({ affirmations, plain = false }) {
   const [editing, setEditing] = useState(false)
   const [newText, setNewText] = useState('')
   const daily = affirmations.getDailyAffirmation()
 
-  if (!daily && !editing) return (
-    <div className="flex items-center justify-between px-4 py-3 bg-white rounded-xl border border-stone-100 shadow-sm">
-      <span className="text-sm text-ink-faint italic">No affirmations yet</span>
-      <button onClick={() => setEditing(true)}
-        className="text-xs text-forest-500 hover:text-forest-700 font-medium transition-colors">Add one →</button>
-    </div>
-  )
+  const inputStyle = {
+    backgroundColor: 'var(--bg)',
+    borderColor:     'var(--border)',
+    color:           'var(--text)',
+  }
 
-  return (
-    <Card className="bg-gradient-to-br from-forest-50 to-parchment border-forest-100">
-      <div className="flex items-start justify-between mb-2">
-        <p className="text-xs font-medium uppercase tracking-wider text-forest-600">✨ Today's Affirmation</p>
-        <button onClick={() => setEditing(e => !e)}
-          className="text-xs text-forest-400 hover:text-forest-600 transition-colors">
+  const content = (
+    <>
+      <div className="flex items-start justify-between mb-3">
+        <p className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--accent)' }}>
+          ✨ Today's Affirmation
+        </p>
+        <button
+          onClick={() => setEditing(e => !e)}
+          className="text-xs font-medium transition-colors"
+          style={{ color: 'var(--text-faint)' }}
+          onMouseOver={e => e.target.style.color = 'var(--accent)'}
+          onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
+        >
           {editing ? 'Done' : 'Edit'}
         </button>
       </div>
 
       {!editing ? (
-        <p className="font-serif text-base text-forest-900 leading-relaxed italic">"{daily}"</p>
+        daily
+          ? <p className="font-serif text-base leading-relaxed italic" style={{ color: 'var(--text)' }}>
+              "{daily}"
+            </p>
+          : <div className="flex items-center justify-between">
+              <span className="text-sm italic" style={{ color: 'var(--text-faint)' }}>No affirmations yet</span>
+              <button
+                onClick={() => setEditing(true)}
+                className="text-xs font-medium"
+                style={{ color: 'var(--accent)' }}
+              >Add one →</button>
+            </div>
       ) : (
-        <div className="space-y-3">
-          {/* Current list */}
-          <div className="space-y-2">
-            {affirmations.affirmations.map((a, i) => (
-              <div key={i} className="flex items-center gap-2 group">
-                <input
-                  value={a}
-                  onChange={e => affirmations.updateAffirmation(i, e.target.value)}
-                  className="flex-1 text-xs bg-white/70 border border-forest-200 rounded-lg px-3 py-1.5 outline-none focus:ring-1 focus:ring-forest-300 text-ink"
-                />
-                <button onClick={() => affirmations.removeAffirmation(i)}
-                  className="text-forest-300 hover:text-red-400 text-xs opacity-0 group-hover:opacity-100 transition-all">✕</button>
-              </div>
-            ))}
-          </div>
-          {/* Add new */}
-          <form onSubmit={e => { e.preventDefault(); affirmations.addAffirmation(newText); setNewText('') }}
-            className="flex gap-2">
-            <input value={newText} onChange={e => setNewText(e.target.value)}
+        <div className="space-y-2">
+          {affirmations.affirmations.map((a, i) => (
+            <div key={i} className="flex items-center gap-2 group">
+              <input
+                value={a}
+                onChange={e => affirmations.updateAffirmation(i, e.target.value)}
+                className="flex-1 text-xs rounded-lg px-3 py-2 outline-none border"
+                style={inputStyle}
+              />
+              <button
+                onClick={() => affirmations.removeAffirmation(i)}
+                className="text-xs opacity-0 group-hover:opacity-100 transition-all"
+                style={{ color: 'var(--text-faint)' }}
+                onMouseOver={e => e.target.style.color = '#ef4444'}
+                onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
+              >✕</button>
+            </div>
+          ))}
+          <form
+            onSubmit={e => { e.preventDefault(); if (newText.trim()) { affirmations.addAffirmation(newText); setNewText('') } }}
+            className="flex gap-2"
+          >
+            <input
+              value={newText}
+              onChange={e => setNewText(e.target.value)}
               placeholder="I am..."
-              className="flex-1 text-xs bg-white/70 border border-forest-200 rounded-lg px-3 py-1.5 outline-none focus:ring-1 focus:ring-forest-300 text-ink placeholder-forest-300/60" />
-            <button type="submit" disabled={!newText.trim()}
-              className="text-xs px-3 py-1.5 rounded-lg bg-forest-500 text-white disabled:opacity-40 transition-colors">Add</button>
+              className="flex-1 text-xs rounded-lg px-3 py-2 outline-none border"
+              style={inputStyle}
+            />
+            <button
+              type="submit"
+              disabled={!newText.trim()}
+              className="text-xs px-3 py-2 rounded-lg text-white disabled:opacity-40 transition-colors"
+              style={{ backgroundColor: 'var(--accent)' }}
+            >Add</button>
           </form>
         </div>
       )}
-    </Card>
+    </>
+  )
+
+  // When used inside CollapsibleWidget (plain=true), render content only — no card wrapper
+  if (plain) return <div>{content}</div>
+
+  return (
+    <div
+      className="rounded-2xl border p-5"
+      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+    >
+      {content}
+    </div>
   )
 }
