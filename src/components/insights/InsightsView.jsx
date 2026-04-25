@@ -2,6 +2,8 @@
 // Purpose: Full Insights tab — mood, smart streaks, advanced analytics, AI coach,
 //          achievements, theme, export. BalanceWheel lives in its own Balance tab.
 import MoodTracker       from './MoodTracker'
+import DailySummaryCard  from '../summary/DailySummaryCard'
+import AIDailyFeedback   from '../summary/AIDailyFeedback'
 import MoodChart         from './MoodChart'
 import ReflectionPrompt  from './ReflectionPrompt'
 import YearlyChain       from '../chain/YearlyChain'
@@ -18,10 +20,16 @@ import ExportPanel       from '../export/ExportPanel'
 export default function InsightsView({
   mood, habits, tasks, notes, goals,
   theme, onSetTheme, onWriteNote,
-  intentions, xp, achievements, energy,
+  intentions, xp, achievements, energy, water,
 }) {
   return (
     <div className="max-w-2xl mx-auto space-y-5 pt-2">
+
+      {/* Daily summary */}
+      <DailySummaryCard tasks={tasks} habits={habits} mood={mood} water={water} xp={xp} />
+
+      {/* AI daily feedback */}
+      <AIDailyFeedback tasks={tasks} habits={habits} mood={mood} water={water} />
 
       {/* Daily mood + chart */}
       <MoodTracker mood={mood} />

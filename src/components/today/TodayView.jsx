@@ -21,6 +21,7 @@ import OverdueRescue      from '../tasks/OverdueRescue'
 import DashboardNudges    from './DashboardNudges'
 import CollapsibleWidget  from '../ui/CollapsibleWidget'
 import QuickPlannerWidget from './QuickPlannerWidget'
+import DailySummaryCard  from '../summary/DailySummaryCard'
 import MiniHabitWidget    from '../habits/MiniHabitWidget'
 import WidgetCustomizer   from './WidgetCustomizer'
 import { useAdaptiveDashboard }  from '../../hooks/useAdaptiveDashboard'
@@ -51,7 +52,7 @@ function WidgetContent({ id, tasks, habits, notes, mood, energy, gratitude, wate
 
 export default function TodayView({
   tasks, habits, notes, mood, intention, gratitude,
-  water, score, monthlyLetter, energy, affirmations, onTabChange,
+  water, score, monthlyLetter, energy, affirmations, onTabChange, xp,
 }) {
   const adaptive   = useAdaptiveDashboard({ tasks, habits, mood, energy, xp: { getLevelInfo: () => null } })
   const widgetPrefs = useWidgetPreferences()
@@ -123,6 +124,13 @@ export default function TodayView({
           </CollapsibleWidget>
         )
       })}
+
+      {/* Evening: daily summary recap */}
+      {isEvening && (
+        <CollapsibleWidget id="daily-summary" emoji="📊" title="Today's Summary" defaultOpen={true}>
+          <DailySummaryCard tasks={tasks} habits={habits} mood={mood} water={water} xp={xp} />
+        </CollapsibleWidget>
+      )}
 
       {/* Evening: plan tomorrow */}
       {isEvening && (

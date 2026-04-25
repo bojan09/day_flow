@@ -15,6 +15,7 @@ export const WIDGET_REGISTRY = [
   { id: 'affirmations', title: 'Affirmations',  emoji: '✨', defaultOpen: false, alwaysVisible: false },
   { id: 'quick-note',   title: 'Quick Note',    emoji: '📝', defaultOpen: false, alwaysVisible: false },
   { id: 'mini-habits',  title: 'Mini Habits',   emoji: '⚡', defaultOpen: false, alwaysVisible: false },
+  { id: 'daily-summary', title: 'Daily Summary', emoji: '📊', defaultOpen: true,  alwaysVisible: false },
 ]
 
 const DEFAULT_PREFS = {

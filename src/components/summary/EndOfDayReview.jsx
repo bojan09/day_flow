@@ -1,49 +1,86 @@
 // Component: EndOfDayReview
-// Purpose: Appears after 6pm — "Did you hit your focus task?" + tomorrow intention
+// Purpose: Evening check-in (after 6pm) — focus task hit?, tomorrow intention.
+//          CSS variables throughout, no Card dependency.
 import { useState } from 'react'
-import { storage } from '../../services/storage'
+import { usePersistedState } from '../../hooks/usePersistedState'
 import { getTodayKey } from '../../utils/dateUtils'
-import Card from '../ui/Card'
-
-const KEY = 'eod_reviews'
 
 export default function EndOfDayReview({ tasks }) {
-  const hour      = new Date().getHours()
-  const todayKey  = getTodayKey()
-  const reviews   = storage.get(KEY, {})
+  const hour     = new Date().getHours()
+  const todayKey = getTodayKey()
+
+  const [reviews, setReviews] = usePersistedState('eod_reviews', {})
   const alreadyDone = !!reviews[todayKey]
 
-  const [step,       setStep]       = useState(0)
-  const [focusHit,   setFocusHit]   = useState(null)
-  const [tomorrow,   setTomorrow]   = useState('')
-  const [dismissed,  setDismissed]  = useState(alreadyDone)
+  const [step,      setStep]      = useState(0)
+  const [focusHit,  setFocusHit]  = useState(null)
+  const [tomorrow,  setTomorrow]  = useState('')
+  const [dismissed, setDismissed] = useState(alreadyDone)
 
   if (hour < 18 || dismissed) return null
 
   const focusTask = tasks.getFocusTask()
 
   const handleSave = () => {
-    const updated = { ...reviews, [todayKey]: { focusHit, tomorrow, savedAt: new Date().toISOString() } }
-    storage.set(KEY, updated)
+    setReviews(prev => ({
+      ...prev,
+      [todayKey]: { focusHit, tomorrow, savedAt: new Date().toISOString() },
+    }))
     setDismissed(true)
   }
 
+  const inputStyle = {
+    backgroundColor: 'var(--bg)',
+    borderColor:     'var(--border)',
+    color:           'var(--text)',
+  }
+
   return (
-    <Card className="border-violet-100 bg-violet-50">
-      <p className="text-xs font-medium uppercase tracking-wider text-violet-600 mb-3">🌙 End of Day Review</p>
+    <div
+      className="rounded-2xl border p-5"
+      style={{
+        backgroundColor: 'var(--surface)',
+        borderColor:     'var(--border)',
+        boxShadow:       'var(--shadow-card)',
+      }}
+    >
+      <p
+        className="text-xs font-semibold uppercase tracking-widest mb-3"
+        style={{ color: 'var(--accent)' }}
+      >
+        🌙 End of Day Review
+      </p>
 
       {step === 0 && (
         <div>
-          <p className="text-sm text-ink font-serif mb-3">
+          <p className="font-serif text-base mb-4" style={{ color: 'var(--text)' }}>
             {focusTask
               ? `Did you complete "${focusTask.title}"?`
               : 'How did today go overall?'}
           </p>
-          <div className="flex gap-2">
-            {['Yes! ✅', 'Partially 🤏', 'Not today 😞'].map(ans => (
-              <button key={ans} onClick={() => { setFocusHit(ans); setStep(1) }}
-                className="flex-1 py-2 rounded-xl text-xs font-medium border border-violet-200 bg-white hover:bg-violet-50 text-ink transition-all">
-                {ans}
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { label: 'Yes! ✅',        value: 'yes'      },
+              { label: 'Partially 🤏',   value: 'partial'  },
+              { label: 'Not today 😞',   value: 'no'       },
+            ].map(ans => (
+              <button
+                key={ans.value}
+                onClick={() => { setFocusHit(ans.value); setStep(1) }}
+                className="py-3 rounded-2xl text-sm font-medium border transition-all active:scale-95"
+                style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
+                onMouseOver={e => {
+                  e.currentTarget.style.backgroundColor = 'var(--accent-light)'
+                  e.currentTarget.style.borderColor     = 'var(--accent-mid)'
+                  e.currentTarget.style.color           = 'var(--accent)'
+                }}
+                onMouseOut={e => {
+                  e.currentTarget.style.backgroundColor = 'transparent'
+                  e.currentTarget.style.borderColor     = 'var(--border)'
+                  e.currentTarget.style.color           = 'var(--text-muted)'
+                }}
+              >
+                {ans.label}
               </button>
             ))}
           </div>
@@ -52,26 +89,37 @@ export default function EndOfDayReview({ tasks }) {
 
       {step === 1 && (
         <div className="space-y-3">
-          <p className="text-sm text-ink font-serif">What will you do differently tomorrow?</p>
+          <p className="font-serif text-base" style={{ color: 'var(--text)' }}>
+            What will you do differently tomorrow?
+          </p>
           <textarea
             value={tomorrow}
             onChange={e => setTomorrow(e.target.value)}
-            placeholder="One small thing to improve..."
+            placeholder="One small thing to improve…"
             rows={2}
-            className="w-full text-sm bg-white border border-violet-200 rounded-xl px-3 py-2 outline-none resize-none focus:ring-2 focus:ring-violet-300 text-ink placeholder-violet-300/60"
+            className="w-full text-sm rounded-xl px-4 py-3 outline-none resize-none border"
+            style={inputStyle}
+            onFocus={e => e.target.style.borderColor = 'var(--accent-mid)'}
+            onBlur={e => e.target.style.borderColor = 'var(--border)'}
           />
           <div className="flex gap-2">
-            <button onClick={handleSave}
-              className="flex-1 py-2 rounded-xl bg-violet-500 text-white text-xs font-medium hover:bg-violet-700 transition-colors">
+            <button
+              onClick={handleSave}
+              className="flex-1 py-2.5 rounded-xl text-white text-sm font-semibold transition-all"
+              style={{ backgroundColor: 'var(--accent)' }}
+            >
               Save Review
             </button>
-            <button onClick={() => setDismissed(true)}
-              className="px-3 py-2 rounded-xl border border-violet-200 text-xs text-violet-400 hover:bg-violet-100 transition-colors">
+            <button
+              onClick={() => setDismissed(true)}
+              className="px-4 py-2.5 rounded-xl border text-sm transition-colors"
+              style={{ borderColor: 'var(--border)', color: 'var(--text-faint)' }}
+            >
               Skip
             </button>
           </div>
         </div>
       )}
-    </Card>
+    </div>
   )
 }

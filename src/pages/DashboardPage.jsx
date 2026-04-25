@@ -101,7 +101,7 @@ export default function DashboardPage() {
       <DashboardLayout activeTab={activeTab} onTabChange={setActiveTab} theme={theme} onSetTheme={setTheme}>
 
         {/* ── Plan ─────────────────────────────────────────────────────────── */}
-        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={setActiveTab} />}
+        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={setActiveTab} xp={xp} />}
         {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={setActiveTab} />}
         {activeTab === 'calendar'   && <CalendarView tasks={tasks} />}
         {activeTab === 'timeblock'  && <TimeBlockView tasks={tasks} />}
@@ -121,7 +121,7 @@ export default function DashboardPage() {
         {activeTab === 'bookmarks'  && <BookmarksView bookmarks={bookmarks} />}
 
         {/* ── Reflect ──────────────────────────────────────────────────────── */}
-        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} xp={xp} achievements={achievements} energy={energy} goals={goals} />}
+        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} xp={xp} achievements={achievements} energy={energy} goals={goals} water={water} />}
         {activeTab === 'balance'    && <BalanceView wheel={wheel} />}
         {activeTab === 'focus'      && <FocusMode tasks={tasks} xp={xp} pomodoroHistory={pomodoroHistory} />}
         {activeTab === 'achievements' && <AchievementsView achievements={achievements} xp={xp} />}
