@@ -8,6 +8,16 @@ export function registerSW() {
   })
 }
 
+// Listen for messages from service worker (background sync)
+export function listenForSWMessages(onSyncQueue) {
+  if (!('serviceWorker' in navigator)) return
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    if (event.data?.type === 'SYNC_QUEUE') {
+      onSyncQueue?.()
+    }
+  })
+}
+
 // Store the install prompt event for later use
 let deferredPrompt = null
 

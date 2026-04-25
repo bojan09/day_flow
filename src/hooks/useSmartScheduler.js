@@ -1,0 +1,126 @@
+// Hook: useSmartScheduler
+// Purpose: Analyses the user's task backlog, schedule gaps, completion patterns,
+//          and energy data to build context for AI scheduling suggestions.
+import { useMemo } from 'react'
+import { format, addDays, subDays, isWeekend } from 'date-fns'
+import { getTodayKey, getDateKey } from '../utils/dateUtils'
+
+export function useSmartScheduler({ tasks, energy, habits }) {
+  const today = getTodayKey()
+
+  const analysis = useMemo(() => {
+    // ── Overdue tasks ──────────────────────────────────────────────────────
+    const overdue = tasks.tasks.filter(t =>
+      !t.completed && t.date && t.date < today
+    ).sort((a, b) => a.date.localeCompare(b.date))
+
+    // ── Unscheduled tasks (no date) ────────────────────────────────────────
+    const unscheduled = tasks.tasks.filter(t =>
+      !t.completed && !t.date
+    )
+
+    // ── Next 7 days workload ───────────────────────────────────────────────
+    const next7 = Array.from({ length: 7 }, (_, i) => {
+      const d       = addDays(new Date(), i)
+      const dateKey = getDateKey(d)
+      const dayTasks = tasks.tasks.filter(t => t.date === dateKey && !t.completed)
+      const totalMins = dayTasks.reduce((s, t) => s + (t.estimateMins || 30), 0)
+      return {
+        dateKey,
+        label:     format(d, 'EEE MMM d'),
+        isToday:   dateKey === today,
+        isWeekend: isWeekend(d),
+        taskCount: dayTasks.length,
+        totalMins,
+        isLight:   dayTasks.length < 3,
+        isHeavy:   totalMins > 240 || dayTasks.length > 7,
+        tasks:     dayTasks.map(t => ({
+          title:    t.title,
+          priority: t.priority,
+          estimate: t.estimateMins,
+        })),
+      }
+    })
+
+    // ── Best focus days (gaps available for scheduling) ────────────────────
+    const lightDays = next7.filter(d => d.isLight && !d.isToday)
+    const heavyDays = next7.filter(d => d.isHeavy)
+
+    // ── Completion rate trend (last 14 days) ──────────────────────────────
+    const last14 = Array.from({ length: 14 }, (_, i) => {
+      const d       = subDays(new Date(), 13 - i)
+      const dateKey = getDateKey(d)
+      const dayTasks = tasks.tasks.filter(t => t.date === dateKey)
+      const done     = dayTasks.filter(t => t.completed).length
+      return { dateKey, pct: dayTasks.length > 0 ? Math.round((done / dayTasks.length) * 100) : null }
+    }).filter(d => d.pct !== null)
+
+    const avgCompletion = last14.length > 0
+      ? Math.round(last14.reduce((s, d) => s + d.pct, 0) / last14.length)
+      : null
+
+    // ── Today's energy window ─────────────────────────────────────────────
+    const todayEnergy = energy?.getTodayEnergy?.()
+
+    // ── Priority distribution ─────────────────────────────────────────────
+    const activeTasks = tasks.tasks.filter(t => !t.completed)
+    const byPriority = {
+      high:   activeTasks.filter(t => t.priority === 'high').length,
+      medium: activeTasks.filter(t => t.priority === 'medium').length,
+      low:    activeTasks.filter(t => t.priority === 'low').length,
+    }
+
+    // ── What to work on NOW (priority recommendation) ─────────────────────
+    const hour = new Date().getHours()
+    const todayTasks = tasks.getTodayTasks().filter(t => !t.completed)
+    const highPriority = todayTasks.filter(t => t.priority === 'high')
+    const focusTask    = tasks.getFocusTask()
+
+    let topRecommendation = null
+    if (focusTask && !focusTask.completed) {
+      topRecommendation = { task: focusTask, reason: 'Your pinned focus task' }
+    } else if (highPriority.length > 0) {
+      topRecommendation = { task: highPriority[0], reason: 'Highest priority today' }
+    } else if (overdue.length > 0) {
+      topRecommendation = { task: overdue[0], reason: `Overdue since ${overdue[0].date}` }
+    } else if (todayTasks.length > 0) {
+      topRecommendation = { task: todayTasks[0], reason: 'Next on your list' }
+    }
+
+    return {
+      overdue,
+      unscheduled,
+      next7,
+      lightDays,
+      heavyDays,
+      avgCompletion,
+      todayEnergy,
+      byPriority,
+      topRecommendation,
+      activeTasks: activeTasks.length,
+    }
+  }, [tasks, energy, today])
+
+  // ── Build context string for AI ───────────────────────────────────────────
+  const buildAIContext = () => {
+    const { overdue, unscheduled, next7, avgCompletion, todayEnergy, byPriority } = analysis
+
+    return `
+SCHEDULING CONTEXT (${format(new Date(), 'EEEE, MMM d, yyyy')}):
+
+BACKLOG:
+- Overdue tasks: ${overdue.length} (${overdue.slice(0, 3).map(t => `"${t.title}"`).join(', ')}${overdue.length > 3 ? '…' : ''})
+- Unscheduled tasks: ${unscheduled.length}
+- Priority breakdown: ${byPriority.high} high, ${byPriority.medium} medium, ${byPriority.low} low
+
+NEXT 7 DAYS:
+${next7.map(d => `- ${d.label}: ${d.taskCount} tasks (~${d.totalMins}min)${d.isHeavy ? ' ⚠️ heavy' : d.isLight ? ' ✓ light' : ''}`).join('\n')}
+
+PATTERNS:
+- 14-day avg completion: ${avgCompletion !== null ? `${avgCompletion}%` : 'not enough data'}
+- Peak energy window today: ${todayEnergy ? todayEnergy.window : 'not logged'}
+`.trim()
+  }
+
+  return { analysis, buildAIContext }
+}

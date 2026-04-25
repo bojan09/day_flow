@@ -21,7 +21,9 @@ import OverdueRescue      from '../tasks/OverdueRescue'
 import DashboardNudges    from './DashboardNudges'
 import CollapsibleWidget  from '../ui/CollapsibleWidget'
 import QuickPlannerWidget from './QuickPlannerWidget'
-import DailySummaryCard  from '../summary/DailySummaryCard'
+import DailySummaryCard       from '../summary/DailySummaryCard'
+import PriorityRecommendation from './PriorityRecommendation'
+import { useSmartScheduler }  from '../../hooks/useSmartScheduler'
 import MiniHabitWidget    from '../habits/MiniHabitWidget'
 import WidgetCustomizer   from './WidgetCustomizer'
 import { useAdaptiveDashboard }  from '../../hooks/useAdaptiveDashboard'
@@ -55,6 +57,7 @@ export default function TodayView({
   water, score, monthlyLetter, energy, affirmations, onTabChange, xp,
 }) {
   const adaptive   = useAdaptiveDashboard({ tasks, habits, mood, energy, xp: { getLevelInfo: () => null } })
+  const { analysis } = useSmartScheduler({ tasks, energy, habits })
   const widgetPrefs = useWidgetPreferences()
   const scoreData  = score.calculate()
   const [showCustomizer, setShowCustomizer] = useState(false)
@@ -83,6 +86,9 @@ export default function TodayView({
 
       {/* Smart nudges */}
       <DashboardNudges nudges={adaptive.nudges} onTabChange={onTabChange} />
+
+      {/* Priority recommendation */}
+      <PriorityRecommendation analysis={analysis} onTabChange={onTabChange} />
 
       {/* Overdue rescue */}
       <OverdueRescue tasks={tasks} />

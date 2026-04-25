@@ -5,7 +5,8 @@ import Card          from '../ui/Card'
 import Badge         from '../ui/Badge'
 import Modal         from '../ui/Modal'
 import TaskForm      from './TaskForm'
-import QuickTaskBar  from './QuickTaskBar'
+import QuickTaskBar          from './QuickTaskBar'
+import SmartSchedulerPanel  from './SmartSchedulerPanel'
 import NLPTaskInput  from './NLPTaskInput'
 import TaskDetail    from './TaskDetail'
 import EmptyState    from '../ui/EmptyState'
@@ -34,7 +35,7 @@ const CAT_DOT = {
   Other:    'bg-stone-400',
 }
 
-export default function TasksView({ tasks, templates, someday, projects, categories, onAddCategory, onRemoveCategory, onTabChange }) {
+export default function TasksView({ tasks, templates, someday, projects, categories, onAddCategory, onRemoveCategory, onTabChange, energy, habits }) {
   const [filter,     setFilter]  = useState('All')
   const [modalOpen,  setModal]   = useState(false)
   const [detailTask, setDetail]  = useState(null)
@@ -66,6 +67,9 @@ export default function TasksView({ tasks, templates, someday, projects, categor
 
       {/* Zero-friction quick entry */}
       <QuickTaskBar tasks={tasks} />
+
+      {/* AI smart scheduler */}
+      <SmartSchedulerPanel tasks={tasks} energy={energy} habits={habits} onTabChange={onTabChange} />
 
       <NLPTaskInput onAdd={t => tasks.addTask(t)} />
 

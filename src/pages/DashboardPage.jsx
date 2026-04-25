@@ -102,7 +102,7 @@ export default function DashboardPage() {
 
         {/* ── Plan ─────────────────────────────────────────────────────────── */}
         {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={setActiveTab} xp={xp} />}
-        {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={setActiveTab} />}
+        {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={setActiveTab} energy={energy} habits={habits} />}
         {activeTab === 'calendar'   && <CalendarView tasks={tasks} />}
         {activeTab === 'timeblock'  && <TimeBlockView tasks={tasks} />}
         {activeTab === 'projects'   && <ProjectsView projects={projects} tasks={tasks} />}
