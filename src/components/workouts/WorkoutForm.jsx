@@ -13,6 +13,7 @@ export default function WorkoutForm({ initial, onSubmit, onCancel }) {
     date:         initial?.date         || getTodayKey(),
     notes:        initial?.notes        || '',
     exercises:    initial?.exercises    || [],
+    recurrence:   initial?.recurrence   || 'none',
   })
   const [newExName, setNewExName] = useState('')
 
@@ -259,6 +260,29 @@ export default function WorkoutForm({ initial, onSubmit, onCancel }) {
           >
             Add
           </button>
+        </div>
+      </div>
+
+      {/* Recurrence */}
+      <div>
+        <label className="text-xs font-medium uppercase tracking-wide block mb-2"
+          style={{ color: 'var(--text-muted)' }}>
+          Repeat
+        </label>
+        <div className="grid grid-cols-4 gap-2">
+          {[
+            { id: 'none',    label: 'Once'    },
+            { id: 'daily',   label: 'Daily'   },
+            { id: 'weekly',  label: 'Weekly'  },
+            { id: 'monthly', label: 'Monthly' },
+          ].map(opt => (
+            <button key={opt.id} type="button" onClick={() => set('recurrence', opt.id)}
+              className="py-2 rounded-xl text-xs font-medium transition-all border"
+              style={form.recurrence === opt.id
+                ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)', color: 'white' }
+                : { borderColor: 'var(--border)', color: 'var(--text-muted)' }
+              }>{opt.label}</button>
+          ))}
         </div>
       </div>
 

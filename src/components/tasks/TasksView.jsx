@@ -19,20 +19,20 @@ const FILTERS = ['All', 'Today', 'Overdue', 'Pending', 'Done']
 
 const CAT_COLORS = {
   Work:     'bg-blue-100 text-blue-700',
-  Personal: 'bg-forest-100 text-forest-700',
+  Personal: '[background-color:var(--accent-light)] [color:var(--accent)]',
   Health:   'bg-emerald-100 text-emerald-700',
   Learning: 'bg-violet-100 text-violet-700',
   Finance:  'bg-amber-100 text-amber-700',
-  Other:    'bg-stone-100 text-stone-600',
+  Other:    '[background-color:var(--bg-secondary)] text-stone-600',
 }
 
 const CAT_DOT = {
   Work:     'bg-blue-400',
-  Personal: 'bg-forest-500',
+  Personal: '[background-color:var(--accent)]',
   Health:   'bg-emerald-500',
   Learning: 'bg-violet-500',
   Finance:  'bg-amber-400',
-  Other:    'bg-stone-400',
+  Other:    '[background-color:var(--border)]',
 }
 
 export default function TasksView({ tasks, templates, someday, projects, categories, onAddCategory, onRemoveCategory, onTabChange, energy, habits }) {
@@ -74,17 +74,17 @@ export default function TasksView({ tasks, templates, someday, projects, categor
       <NLPTaskInput onAdd={t => tasks.addTask(t)} />
 
       <div className="flex items-center justify-between">
-        <p className="text-sm text-ink-muted">
+        <p className="text-sm [color:var(--text-muted)]">
           {tasks.tasks.length} tasks
           {overdueCount > 0 && <span className="ml-2 text-red-500 font-medium">· {overdueCount} overdue</span>}
         </p>
         <div className="flex gap-2">
           <button onClick={handleDuplicateDay}
-            className="px-3 py-2 rounded-full border border-stone-200 text-ink-muted text-xs font-medium hover:bg-stone-50 transition-colors">
+            className="px-3 py-2 rounded-full border [border-color:var(--border)] [color:var(--text-muted)] text-xs font-medium hover:[background-color:var(--bg-secondary)] transition-colors">
             Copy to tomorrow →
           </button>
           <button onClick={() => setModal(true)}
-            className="px-4 py-2 rounded-full bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 transition-colors">
+            className="px-4 py-2 rounded-full [background-color:var(--accent)] text-white text-sm font-medium hover:[background-color:var(--accent)] transition-colors">
             + New
           </button>
         </div>
@@ -94,7 +94,7 @@ export default function TasksView({ tasks, templates, someday, projects, categor
         {FILTERS.map(f => (
           <button key={f} onClick={() => setFilter(f)}
             className={`px-4 py-1.5 rounded-full text-sm font-medium flex-shrink-0 transition-all border ${
-              filter === f ? 'bg-ink text-white border-ink' : 'bg-white border-stone-200 text-ink-muted hover:border-stone-300'
+              filter === f ? 'bg-ink text-white border-ink' : '[background-color:var(--surface)] [border-color:var(--border)] [color:var(--text-muted)] hover:[border-color:var(--border)]'
             }`}>{f}</button>
         ))}
       </div>
@@ -103,33 +103,33 @@ export default function TasksView({ tasks, templates, someday, projects, categor
         {sorted.length === 0 ? (
           <EmptyState type="tasks" title="Nothing here" subtitle="Add a task using the input above." action="+ New Task" onAction={() => setModal(true)} />
         ) : (
-          <ul className="divide-y divide-stone-50">
+          <ul className="divide-y [border-color:var(--border-soft)]">
             {sorted.map(t => (
               <li key={t.id}
-                className="flex items-center gap-3 px-5 py-3.5 hover:bg-stone-50/50 transition-colors group cursor-pointer"
+                className="flex items-center gap-3 px-5 py-3.5 hover:[background-color:var(--bg-secondary)]/50 transition-colors group cursor-pointer"
                 onClick={() => setDetail(t)}>
                 {/* Color dot */}
-                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${CAT_DOT[t.category] ?? 'bg-stone-300'}`} />
+                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${CAT_DOT[t.category] ?? '[background-color:var(--border)]'}`} />
 
                 <button
                   onClick={e => { e.stopPropagation(); tasks.toggleTask(t.id) }}
                   className={`w-5 h-5 rounded-md border-2 flex-shrink-0 flex items-center justify-center text-xs transition-all ${
-                    t.completed ? 'bg-forest-500 border-forest-500 text-white' : 'border-stone-300 hover:border-forest-400'
+                    t.completed ? '[background-color:var(--accent)] border-forest-500 text-white' : '[border-color:var(--border)] hover:border-forest-400'
                   }`}>
                   {t.completed && '✓'}
                 </button>
 
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm truncate ${t.completed ? 'line-through text-ink-faint' : 'text-ink'}`}>{t.title}</p>
+                  <p className={`text-sm truncate ${t.completed ? 'line-through [color:var(--text-faint)]' : '[color:var(--text)]'}`}>{t.title}</p>
                   <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${CAT_COLORS[t.category] ?? 'bg-stone-100 text-stone-600'}`}>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${CAT_COLORS[t.category] ?? '[background-color:var(--bg-secondary)] text-stone-600'}`}>
                       {t.category}
                     </span>
                     {tasks.isOverdue(t)   && <span className="text-[11px] font-medium text-red-500 bg-red-50 px-1.5 rounded">Overdue</span>}
                     {tasks.isDueToday(t)  && <span className="text-[11px] font-medium text-amber-600 bg-amber-50 px-1.5 rounded">Due today</span>}
-                    {t.estimateMins       && <span className="text-[11px] text-ink-faint">⏱ {t.estimateMins < 60 ? `${t.estimateMins}m` : `${t.estimateMins/60}h`}</span>}
-                    {t.isRecurring        && <span className="text-[11px] text-forest-500">🔁</span>}
-                    {(t.subTasks?.length) > 0 && <span className="text-[11px] text-ink-faint">· {t.subTasks.filter(s=>s.done).length}/{t.subTasks.length} sub</span>}
+                    {t.estimateMins       && <span className="text-[11px] [color:var(--text-faint)]">⏱ {t.estimateMins < 60 ? `${t.estimateMins}m` : `${t.estimateMins/60}h`}</span>}
+                    {t.isRecurring        && <span className="text-[11px] [color:var(--accent)]">🔁</span>}
+                    {(t.subTasks?.length) > 0 && <span className="text-[11px] [color:var(--text-faint)]">· {t.subTasks.filter(s=>s.done).length}/{t.subTasks.length} sub</span>}
                     {t.projectId && projects?.find(p => p.id === t.projectId) && (
                       <span className="text-[10px] px-1.5 py-0.5 rounded font-medium" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-faint)' }}>
                         🗂️ {projects.find(p => p.id === t.projectId)?.name}
@@ -141,7 +141,7 @@ export default function TasksView({ tasks, templates, someday, projects, categor
                 <div className="flex items-center gap-1.5 flex-shrink-0" onClick={e => e.stopPropagation()}>
                   <Badge label={t.priority} color={t.priority} />
                   <button onClick={() => tasks.setFocus(t.id)}
-                    className={`text-sm p-1 rounded opacity-0 group-hover:opacity-100 transition-all ${t.isFocus ? 'opacity-100 text-forest-500' : 'text-ink-faint hover:text-forest-500'}`}>
+                    className={`text-sm p-1 rounded opacity-0 group-hover:opacity-100 transition-all ${t.isFocus ? 'opacity-100 [color:var(--accent)]' : '[color:var(--text-faint)] hover:[color:var(--accent)]'}`}>
                     {t.isFocus ? '📌' : '📍'}
                   </button>
                   {onTabChange && (
@@ -153,7 +153,7 @@ export default function TasksView({ tasks, templates, someday, projects, categor
                     >⏰</button>
                   )}
                   <button onClick={() => tasks.deleteTask(t.id)}
-                    className="opacity-0 group-hover:opacity-100 text-ink-faint hover:text-red-400 text-xs p-1 transition-all">✕</button>
+                    className="opacity-0 group-hover:opacity-100 [color:var(--text-faint)] hover:text-red-400 text-xs p-1 transition-all">✕</button>
                 </div>
               </li>
             ))}

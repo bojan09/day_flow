@@ -37,7 +37,7 @@ export default function YearlyChain({ tasks, habits, mood }) {
   const weeks    = []
   for (let i = 0; i < padded.length; i += 7) weeks.push(padded.slice(i, i + 7))
 
-  const COLORS = ['bg-stone-100', 'bg-forest-200', 'bg-forest-400', 'bg-forest-600']
+  const COLORS = ['[background-color:var(--bg-secondary)]', '[background-color:var(--accent-light)]', '[background-color:var(--accent-mid)]', '[background-color:var(--accent)]']
   const streak = (() => {
     let s = 0
     const cursor = new Date()
@@ -52,7 +52,7 @@ export default function YearlyChain({ tasks, habits, mood }) {
   return (
     <Card>
       <div className="flex items-center justify-between mb-3">
-        <p className="text-xs font-medium uppercase tracking-wider text-ink-faint">Activity This Year</p>
+        <p className="text-xs font-medium uppercase tracking-wider [color:var(--text-faint)]">Activity This Year</p>
         <span className="text-sm font-semibold text-terracotta-500">{streak}🔥 day streak</span>
       </div>
 
@@ -63,7 +63,7 @@ export default function YearlyChain({ tasks, habits, mood }) {
           const label = firstReal && firstReal.date.getDate() <= 7
             ? format(firstReal.date, 'MMM')
             : ''
-          return <div key={wi} className="w-3 flex-shrink-0 text-[8px] text-ink-faint leading-none">{label}</div>
+          return <div key={wi} className="w-3 flex-shrink-0 text-[8px] [color:var(--text-faint)] leading-none">{label}</div>
         })}
       </div>
 
@@ -86,9 +86,9 @@ export default function YearlyChain({ tasks, habits, mood }) {
 
       {/* Legend */}
       <div className="flex items-center gap-1.5 mt-2 justify-end">
-        <span className="text-[9px] text-ink-faint">Less</span>
+        <span className="text-[9px] [color:var(--text-faint)]">Less</span>
         {COLORS.map((c, i) => <div key={i} className={`w-2.5 h-2.5 rounded-sm ${c}`} />)}
-        <span className="text-[9px] text-ink-faint">More</span>
+        <span className="text-[9px] [color:var(--text-faint)]">More</span>
       </div>
     </Card>
   )

@@ -46,10 +46,10 @@ export default function NotesView({ notes }) {
       <div className="flex gap-4 h-[calc(100vh-140px)]">
         <div className={`w-full md:w-64 flex-shrink-0 flex flex-col gap-2 ${activeNote ? 'hidden md:flex' : 'flex'}`}>
           {/* Date filter */}
-          <div className="flex gap-1 bg-stone-100 rounded-xl p-0.5">
+          <div className="flex gap-1 [background-color:var(--bg-secondary)] rounded-xl p-0.5">
             {DATE_FILTERS.map(f => (
               <button key={f.id} onClick={() => setDateFilter(f.id)}
-                className={`flex-1 py-1 rounded-lg text-[11px] font-medium transition-all ${dateFilter === f.id ? 'bg-white shadow-sm text-ink' : 'text-ink-muted'}`}>
+                className={`flex-1 py-1 rounded-lg text-[11px] font-medium transition-all ${dateFilter === f.id ? '[background-color:var(--surface)] shadow-sm [color:var(--text)]' : '[color:var(--text-muted)]'}`}>
                 {f.label}
               </button>
             ))}
@@ -58,12 +58,12 @@ export default function NotesView({ notes }) {
           {/* Tag filter */}
           <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1">
             <button onClick={() => setFilterTag(null)}
-              className={`px-3 py-1 rounded-full text-xs font-medium flex-shrink-0 transition-all border ${!filterTag ? 'bg-ink text-white border-ink' : 'border-stone-200 text-ink-muted hover:bg-stone-50'}`}>
+              className={`px-3 py-1 rounded-full text-xs font-medium flex-shrink-0 transition-all border ${!filterTag ? 'bg-ink text-white border-ink' : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'}`}>
               All
             </button>
             {NOTE_TAGS.map(tag => (
               <button key={tag} onClick={() => setFilterTag(filterTag === tag ? null : tag)}
-                className={`px-3 py-1 rounded-full text-xs font-medium flex-shrink-0 transition-all border ${filterTag === tag ? 'bg-forest-500 text-white border-forest-500' : 'border-stone-200 text-ink-muted hover:bg-stone-50'}`}>
+                className={`px-3 py-1 rounded-full text-xs font-medium flex-shrink-0 transition-all border ${filterTag === tag ? '[background-color:var(--accent)] text-white border-forest-500' : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'}`}>
                 #{tag}
               </button>
             ))}
@@ -82,9 +82,9 @@ export default function NotesView({ notes }) {
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-center">
               <p className="text-5xl mb-3">📝</p>
-              <p className="text-ink-muted text-sm mb-4">Select a note or create a new one</p>
+              <p className="[color:var(--text-muted)] text-sm mb-4">Select a note or create a new one</p>
               <button onClick={handleNew}
-                className="px-5 py-2.5 rounded-full bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 transition-colors">
+                className="px-5 py-2.5 rounded-full [background-color:var(--accent)] text-white text-sm font-medium hover:[background-color:var(--accent)] transition-colors">
                 + New Note
               </button>
             </div>

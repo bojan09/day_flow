@@ -8,9 +8,9 @@ import EmptyState from '../ui/EmptyState'
 import { PROJECT_STATUSES, PROJECT_CATEGORIES } from '../../hooks/useProjects'
 
 const STATUS_COLORS = {
-  Active:   'bg-forest-50 text-forest-700 border-forest-200',
+  Active:   '[background-color:var(--accent-light)] [color:var(--accent)] [border-color:var(--accent-mid)]',
   'On Hold':'bg-amber-50  text-amber-700  border-amber-200',
-  Done:     'bg-stone-100 text-stone-500  border-stone-200',
+  Done:     '[background-color:var(--bg-secondary)] text-stone-500  [border-color:var(--border)]',
 }
 
 const PROJECT_COLORS = ['#3B6B4B','#3B82F6','#8B5CF6','#EC4899','#F59E0B','#06B6D4','#C4622D']
@@ -23,26 +23,26 @@ function ProjectCard({ project, projects, tasks, onEdit }) {
   const done         = projectTasks.filter(t => t.completed).length
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+    <div className="[background-color:var(--surface)] rounded-2xl border [border-color:var(--border-soft)] shadow-sm overflow-hidden">
       <div className="p-4">
         <div className="flex items-start gap-3">
           <div className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: project.color }} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <p className="text-sm font-semibold text-ink">{project.name}</p>
+              <p className="text-sm font-semibold [color:var(--text)]">{project.name}</p>
               <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${STATUS_COLORS[project.status]}`}>
                 {project.status}
               </span>
             </div>
             {project.description && (
-              <p className="text-xs text-ink-muted leading-relaxed mb-2">{project.description}</p>
+              <p className="text-xs [color:var(--text-muted)] leading-relaxed mb-2">{project.description}</p>
             )}
             <div className="flex items-center gap-3">
-              <div className="flex-1 h-1.5 bg-stone-100 rounded-full overflow-hidden">
+              <div className="flex-1 h-1.5 [background-color:var(--bg-secondary)] rounded-full overflow-hidden">
                 <div className="h-full rounded-full transition-all duration-500"
                   style={{ width: `${progress}%`, backgroundColor: project.color }} />
               </div>
-              <span className="text-xs text-ink-faint flex-shrink-0">{done}/{taskCount} tasks</span>
+              <span className="text-xs [color:var(--text-faint)] flex-shrink-0">{done}/{taskCount} tasks</span>
             </div>
           </div>
           <div className="flex items-center gap-1 flex-shrink-0">
@@ -75,15 +75,15 @@ function ProjectCard({ project, projects, tasks, onEdit }) {
       </div>
 
       {expanded && (
-        <div className="border-t border-stone-50 px-4 pb-4">
-          <p className="text-[10px] text-ink-faint uppercase tracking-wider mt-3 mb-2">Tasks in this project</p>
+        <div className="border-t [border-color:var(--border-soft)] px-4 pb-4">
+          <p className="text-[10px] [color:var(--text-faint)] uppercase tracking-wider mt-3 mb-2">Tasks in this project</p>
           {projectTasks.length === 0 ? (
-            <p className="text-xs text-ink-faint italic">No tasks yet — assign tasks to this project from the Tasks tab.</p>
+            <p className="text-xs [color:var(--text-faint)] italic">No tasks yet — assign tasks to this project from the Tasks tab.</p>
           ) : (
             <ul className="space-y-1.5">
               {projectTasks.map(t => (
                 <li key={t.id} className="flex items-center gap-2">
-                  <span className={`text-xs ${t.completed ? 'text-ink-faint line-through' : 'text-ink'}`}>
+                  <span className={`text-xs ${t.completed ? '[color:var(--text-faint)] line-through' : '[color:var(--text)]'}`}>
                     {t.completed ? '✓' : '○'} {t.title}
                   </span>
                 </li>
@@ -120,9 +120,9 @@ export default function ProjectsView({ projects, tasks }) {
   return (
     <div className="max-w-2xl mx-auto space-y-4 pt-2">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-ink-muted">{active.length} active project{active.length !== 1 ? 's' : ''}</p>
+        <p className="text-sm [color:var(--text-muted)]">{active.length} active project{active.length !== 1 ? 's' : ''}</p>
         <button onClick={() => { setEditing(null); setModal('add') }}
-          className="px-4 py-2 rounded-full bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 transition-colors">
+          className="px-4 py-2 rounded-full [background-color:var(--accent)] text-white text-sm font-medium hover:[background-color:var(--accent)] transition-colors">
           + New Project
         </button>
       </div>
@@ -138,7 +138,7 @@ export default function ProjectsView({ projects, tasks }) {
           </div>
           {done.length > 0 && (
             <div className="space-y-3 opacity-60">
-              <p className="text-xs font-medium text-ink-faint uppercase tracking-wider">Completed</p>
+              <p className="text-xs font-medium [color:var(--text-faint)] uppercase tracking-wider">Completed</p>
               {done.map(p => <ProjectCard key={p.id} project={p} projects={projects} tasks={tasks} onEdit={p => { setEditing(p); setModal('edit') }} />)}
             </div>
           )}
@@ -150,14 +150,14 @@ export default function ProjectsView({ projects, tasks }) {
           <Input label="Project name" placeholder="e.g. Launch personal website"
             value={form.name} onChange={e => set('name', e.target.value)} autoFocus />
           <div>
-            <label className="text-xs font-medium text-ink-muted uppercase tracking-wide block mb-1.5">Description</label>
+            <label className="text-xs font-medium [color:var(--text-muted)] uppercase tracking-wide block mb-1.5">Description</label>
             <textarea value={form.description} onChange={e => set('description', e.target.value)}
               placeholder="What is this project about?"
               rows={2}
-              className="w-full px-4 py-2.5 rounded-xl border border-stone-200 bg-parchment text-sm text-ink outline-none resize-none focus:ring-2 focus:ring-forest-200 placeholder-ink-faint/50" />
+              className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] text-sm [color:var(--text)] outline-none resize-none focus:ring-2 focus:ring-forest-200 placeholder-ink-faint/50" />
           </div>
           <div>
-            <p className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2">Colour</p>
+            <p className="text-xs font-medium [color:var(--text-muted)] uppercase tracking-wide mb-2">Colour</p>
             <div className="flex gap-2">
               {PROJECT_COLORS.map(c => (
                 <button key={c} type="button" onClick={() => set('color', c)}
@@ -169,9 +169,9 @@ export default function ProjectsView({ projects, tasks }) {
           <Input label="Due date (optional)" type="date" value={form.dueDate} onChange={e => set('dueDate', e.target.value)} />
           <div className="flex gap-3 pt-1">
             <button type="button" onClick={() => setModal(false)}
-              className="flex-1 py-2.5 rounded-xl border border-stone-200 text-sm text-ink-muted hover:bg-stone-50">Cancel</button>
+              className="flex-1 py-2.5 rounded-xl border [border-color:var(--border)] text-sm [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]">Cancel</button>
             <button type="submit" disabled={!form.name.trim()}
-              className="flex-1 py-2.5 rounded-xl bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 disabled:opacity-40">Create</button>
+              className="flex-1 py-2.5 rounded-xl [background-color:var(--accent)] text-white text-sm font-medium hover:[background-color:var(--accent)] disabled:opacity-40">Create</button>
           </div>
         </form>
       </Modal>

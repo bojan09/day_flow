@@ -1,21 +1,22 @@
 // Component: IdeasView
 // Purpose: Idea tracker — capture, edit, status board, ratings, goal linking, resurface
 import { useState } from 'react'
-import Modal       from '../ui/Modal'
+import Modal          from '../ui/Modal'
+import CategoryPicker from '../ui/CategoryPicker'
 import EmptyState  from '../ui/EmptyState'
 import { IDEA_STATUSES, IDEA_CATEGORIES } from '../../hooks/useIdeas'
 
 const STATUS_COLORS = {
   Raw:        'bg-amber-50  text-amber-700  border-amber-200',
   Developing: 'bg-blue-50   text-blue-700   border-blue-200',
-  Action:     'bg-forest-50 text-forest-700 border-forest-200',
-  Archived:   'bg-stone-100 text-stone-500  border-stone-200',
+  Action:     '[background-color:var(--accent-light)] [color:var(--accent)] [border-color:var(--accent-mid)]',
+  Archived:   '[background-color:var(--bg-secondary)] text-stone-500  [border-color:var(--border)]',
 }
 
 const CAT_COLORS = {
   Business: 'bg-blue-100 text-blue-700',    Creative: 'bg-pink-100 text-pink-700',
-  Personal: 'bg-forest-100 text-forest-700', Technical: 'bg-violet-100 text-violet-700',
-  Learning: 'bg-amber-100 text-amber-700',  Other: 'bg-stone-100 text-stone-600',
+  Personal: '[background-color:var(--accent-light)] [color:var(--accent)]', Technical: 'bg-violet-100 text-violet-700',
+  Learning: 'bg-amber-100 text-amber-700',  Other: '[background-color:var(--bg-secondary)] text-stone-600',
 }
 
 function StarRating({ stars, onChange }) {
@@ -103,14 +104,14 @@ function IdeaCard({ idea, ideas, goals, onEdit }) {
             {IDEA_STATUSES.map(s => (
               <button key={s} onClick={() => ideas.setStatus(idea.id, s)}
                 className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all border ${
-                  idea.status === s ? STATUS_COLORS[s] : 'border-stone-200 text-ink-muted hover:bg-stone-50'
+                  idea.status === s ? STATUS_COLORS[s] : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'
                 }`}>{s}</button>
             ))}
           </div>
 
           {goals.goals.length > 0 && (
             <div>
-              <p className="text-[10px] text-ink-faint uppercase tracking-wider mb-1">Linked goal</p>
+              <p className="text-[10px] [color:var(--text-faint)] uppercase tracking-wider mb-1">Linked goal</p>
               <select
                 value={idea.linkedGoalId || ''}
                 onChange={e => ideas.linkGoal(idea.id, e.target.value || null)}
@@ -137,7 +138,7 @@ function IdeaCard({ idea, ideas, goals, onEdit }) {
 }
 
 // ── Shared idea form (used for both Add and Edit) ─────────────────────────────
-function IdeaForm({ initial, onSubmit, onCancel }) {
+function IdeaForm({ initial, onSubmit, onCancel, categories, onAddCategory, onRemoveCategory }) {
   const [form, setForm] = useState({
     title:       initial?.title       || '',
     description: initial?.description || '',
@@ -182,21 +183,13 @@ function IdeaForm({ initial, onSubmit, onCancel }) {
       </div>
       <div>
         <p className="text-xs font-medium uppercase tracking-wide mb-2" style={{ color: 'var(--text-muted)' }}>Category</p>
-        <div className="flex flex-wrap gap-2">
-          {IDEA_CATEGORIES.map(c => (
-            <button
-              key={c} type="button"
-              onClick={() => setForm(p => ({ ...p, category: c }))}
-              className="px-3 py-1.5 rounded-full text-xs font-medium transition-all border"
-              style={form.category === c
-                ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)', color: 'white' }
-                : { borderColor: 'var(--border)', color: 'var(--text-muted)' }
-              }
-            >
-              {c}
-            </button>
-          ))}
-        </div>
+        <CategoryPicker
+          value={form.category}
+          onChange={v => setForm(p => ({ ...p, category: v }))}
+          categories={categories || IDEA_CATEGORIES}
+          onAddCategory={onAddCategory}
+          onRemoveCategory={onRemoveCategory}
+        />
       </div>
       <div className="flex gap-3 pt-1">
         <button
@@ -219,7 +212,7 @@ function IdeaForm({ initial, onSubmit, onCancel }) {
 }
 
 // ── Main view ─────────────────────────────────────────────────────────────────
-export default function IdeasView({ ideas, goals }) {
+export default function IdeasView({ ideas, goals, categories, onAddCategory, onRemoveCategory }) {
   const [modal,   setModal]   = useState(false)   // 'add' | 'edit'
   const [editing, setEditing] = useState(null)
   const [filter,  setFilter]  = useState('All')
@@ -309,6 +302,9 @@ export default function IdeasView({ ideas, goals }) {
           initial={modal === 'edit' ? editing : null}
           onSubmit={handleSubmit}
           onCancel={close}
+          categories={categories}
+          onAddCategory={onAddCategory}
+          onRemoveCategory={onRemoveCategory}
         />
       </Modal>
     </div>

@@ -23,7 +23,7 @@ export default function HeroSection() {
       <h1 className="font-serif text-5xl sm:text-6xl lg:text-[4.5rem] leading-[1.06] tracking-tight max-w-3xl mx-auto mb-5 text-balance opacity-0 animate-fade-up-d1"
         style={{ color: 'var(--text)' }}>
         Plan it. Track it.<br />
-        <em className="text-forest-500 not-italic">Own your day.</em>
+        <em className="[color:var(--accent)] not-italic">Own your day.</em>
       </h1>
 
       <p className="text-lg sm:text-xl max-w-xl mx-auto mb-9 leading-relaxed font-light opacity-0 animate-fade-up-d2"

@@ -32,26 +32,26 @@ export default function WeeklyPersonalBest({ tasks, habits }) {
 
   return (
     <Card>
-      <p className="text-xs font-medium uppercase tracking-wider text-ink-faint mb-4">🏆 vs Your Best Week</p>
+      <p className="text-xs font-medium uppercase tracking-wider [color:var(--text-faint)] mb-4">🏆 vs Your Best Week</p>
       <div className="space-y-4">
         {rows.map(row => {
           const pct = row.best > 0 ? Math.min(100, Math.round((row.current / row.best) * 100)) : 100
           return (
             <div key={row.label}>
               <div className="flex justify-between mb-1.5">
-                <span className="text-sm text-ink">{row.label}</span>
+                <span className="text-sm [color:var(--text)]">{row.label}</span>
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-sm font-semibold text-ink">{row.current}{row.suffix}</span>
-                  <span className="text-xs text-ink-faint">/ best: {row.best}{row.suffix}</span>
+                  <span className="text-sm font-semibold [color:var(--text)]">{row.current}{row.suffix}</span>
+                  <span className="text-xs [color:var(--text-faint)]">/ best: {row.best}{row.suffix}</span>
                 </div>
               </div>
-              <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
+              <div className="h-2 [background-color:var(--bg-secondary)] rounded-full overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all duration-700 ${pct >= 100 ? 'bg-terracotta-500' : pct >= 75 ? 'bg-forest-500' : 'bg-forest-300'}`}
+                  className={`h-full rounded-full transition-all duration-700 ${pct >= 100 ? 'bg-terracotta-500' : pct >= 75 ? '[background-color:var(--accent)]' : '[background-color:var(--accent-light)]'}`}
                   style={{ width: `${Math.min(pct, 100)}%` }}
                 />
               </div>
-              <p className="text-[10px] text-ink-faint mt-0.5 text-right">
+              <p className="text-[10px] [color:var(--text-faint)] mt-0.5 text-right">
                 {pct >= 100 ? '🎉 New personal best!' : `${pct}% of your best`}
               </p>
             </div>

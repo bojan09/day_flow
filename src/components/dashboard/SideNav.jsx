@@ -50,7 +50,7 @@ export default function SideNav({ activeTab, onTabChange, theme, onSetTheme }) {
         style={{ color: 'var(--text)' }}
         aria-label="Go to tasks"
       >
-        Day<em className="not-italic text-forest-500">Flow</em>
+        Day<em className="not-italic [color:var(--accent)]">Flow</em>
       </button>
 
       {/* Nav sections */}

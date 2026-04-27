@@ -2,7 +2,7 @@
 // Purpose: Polished button with variants, sizes, loading state, and micro-interactions
 
 const VARIANTS = {
-  primary:    'bg-forest-500 text-white hover:bg-forest-700 active:scale-[0.97] shadow-sm hover:shadow-md',
+  primary:    '[background-color:var(--accent)] text-white hover:[background-color:var(--accent)] active:scale-[0.97] shadow-sm hover:shadow-md',
   ghost:      'bg-transparent border border-theme text-muted hover:bg-app-secondary active:scale-[0.97]',
   danger:     'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 active:scale-[0.97]',
   terracotta: 'bg-terracotta-500 text-white hover:bg-terracotta-700 active:scale-[0.97] shadow-sm',

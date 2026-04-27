@@ -25,7 +25,7 @@ export default function WelcomeFooter() {
               className="font-serif text-2xl mb-3 block hover:opacity-80 transition-opacity"
               style={{ color: 'var(--text)' }}
             >
-              Day<em className="not-italic text-forest-500">Flow</em>
+              Day<em className="not-italic [color:var(--accent)]">Flow</em>
             </button>
             <p className="text-sm leading-relaxed" style={{ color: 'var(--text-faint)' }}>
               Your daily command center for tasks, habits, goals, and personal growth.

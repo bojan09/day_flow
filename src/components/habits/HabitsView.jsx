@@ -41,18 +41,22 @@ export default function HabitsView({ habits, habitRules }) {
       <Confetti trigger={confetti} />
 
       <div className="flex items-center justify-between">
-        <p className="text-sm text-ink-muted">{list.length} habit{list.length !== 1 ? 's' : ''}</p>
+        <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{list.length} habit{list.length !== 1 ? 's' : ''}</p>
         <div className="flex gap-2">
-          <div className="flex bg-stone-100 rounded-full p-0.5">
+          <div className="flex rounded-full p-0.5" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             {['week','calendar'].map(v => (
               <button key={v} onClick={() => setView(v)}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-all capitalize ${view === v ? 'bg-white shadow-sm text-ink' : 'text-ink-muted'}`}>
+                className="px-3 py-1 rounded-full text-xs font-medium transition-all capitalize"
+                style={view === v
+                  ? { backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)', color: 'var(--text)' }
+                  : { color: 'var(--text-faint)' }
+                }>
                 {v}
               </button>
             ))}
           </div>
           <button onClick={() => setModal(true)}
-            className="px-4 py-2 rounded-full bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 transition-colors">
+            className="px-4 py-2 rounded-full [background-color:var(--accent)] text-white text-sm font-medium hover:[background-color:var(--accent)] transition-colors">
             + Add
           </button>
         </div>
@@ -62,12 +66,17 @@ export default function HabitsView({ habits, habitRules }) {
         <HabitCalendar habits={habits} />
       ) : (
         <Card noPad>
-          <div className="grid items-center border-b border-stone-50 px-5 py-3"
-            style={{ gridTemplateColumns: '1fr repeat(7, 2rem)' }}>
-            <span className="text-xs text-ink-faint uppercase tracking-wider">Habit</span>
+          <div
+            className="grid items-center px-5 py-3 border-b"
+            style={{ gridTemplateColumns: '1fr repeat(7, 2rem)', gap: '0.5rem', borderColor: 'var(--border-soft)' }}
+          >
+            <span className="text-xs uppercase tracking-wider" style={{ color: 'var(--text-faint)' }}>Habit</span>
             {weekDays.map(d => (
-              <span key={d.toISOString()}
-                className={`text-center text-[10px] font-medium uppercase ${isToday(d) ? 'text-forest-500' : 'text-ink-faint'}`}>
+              <span
+                key={d.toISOString()}
+                className="text-center text-[10px] font-medium uppercase"
+                style={{ color: isToday(d) ? 'var(--accent)' : 'var(--text-faint)' }}
+              >
                 {format(d, 'EEE')[0]}
               </span>
             ))}
@@ -75,7 +84,7 @@ export default function HabitsView({ habits, habitRules }) {
           {list.length === 0 ? (
             <EmptyState type="habits" title="No habits yet" subtitle="Build a routine — add your first habit." action="+ Add Habit" onAction={() => setModal(true)} />
           ) : (
-            <div className="divide-y divide-stone-50">
+            <div className="divide-y" style={{borderColor: "var(--border-soft)"}}>
               {list.map(h => (
                 <HabitRow key={h.id} habit={h} weekDays={weekDays}
                   isHabitDone={isHabitDone} toggleHabitDay={handleToggle}

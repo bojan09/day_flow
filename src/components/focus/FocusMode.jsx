@@ -5,7 +5,7 @@ import PomodoroReport from '../pomodoro/PomodoroReport'
 import { notifications } from '../../services/notificationService'
 
 const MODES = [
-  { id: 'focus', label: 'Focus',       mins: 25, color: 'text-forest-500'  },
+  { id: 'focus', label: 'Focus',       mins: 25, color: '[color:var(--accent)]'  },
   { id: 'short', label: 'Short Break', mins: 5,  color: 'text-blue-500'   },
   { id: 'long',  label: 'Long Break',  mins: 15, color: 'text-violet-500' },
 ]
@@ -67,11 +67,11 @@ export default function FocusMode({ tasks, xp, pomodoroHistory }) {
   return (
     <div className="max-w-sm mx-auto space-y-5 pt-4">
       {/* Mode tabs */}
-      <div className="flex gap-1 bg-stone-100 rounded-2xl p-1">
+      <div className="flex gap-1 [background-color:var(--bg-secondary)] rounded-2xl p-1">
         {MODES.map(m => (
           <button key={m.id} onClick={() => switchMode(m)}
             className={`flex-1 py-2 rounded-xl text-sm font-medium transition-all ${
-              mode === m.id ? 'bg-white shadow-sm text-ink' : 'text-ink-muted hover:text-ink'
+              mode === m.id ? '[background-color:var(--surface)] shadow-sm [color:var(--text)]' : '[color:var(--text-muted)] hover:[color:var(--text)]'
             }`}>{m.label}</button>
         ))}
       </div>
@@ -88,12 +88,12 @@ export default function FocusMode({ tasks, xp, pomodoroHistory }) {
               style={{ transition: 'stroke-dasharray 1s linear' }}/>
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="font-serif text-5xl text-ink tracking-tight">
+            <span className="font-serif text-5xl [color:var(--text)] tracking-tight">
               {pad(Math.floor(secs/60))}:{pad(secs%60)}
             </span>
             <span className={`text-sm font-medium mt-1 ${current.color}`}>{current.label}</span>
             {todaySessions.length > 0 && (
-              <span className="text-xs text-ink-faint mt-1">{todaySessions.length} sessions · {todayMins}m today</span>
+              <span className="text-xs [color:var(--text-faint)] mt-1">{todaySessions.length} sessions · {todayMins}m today</span>
             )}
           </div>
         </div>
@@ -102,25 +102,25 @@ export default function FocusMode({ tasks, xp, pomodoroHistory }) {
       {/* Controls */}
       <div className="flex items-center justify-center gap-4">
         <button onClick={() => { clearInterval(interval.current); setRunning(false); setSecs(current.mins * 60) }}
-          className="w-10 h-10 rounded-full border border-stone-200 text-ink-muted hover:bg-stone-50 flex items-center justify-center text-sm transition-colors">↺</button>
+          className="w-10 h-10 rounded-full border [border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)] flex items-center justify-center text-sm transition-colors">↺</button>
         <button onClick={() => setRunning(r => !r)}
           className={`w-20 h-20 rounded-full text-white font-semibold text-lg shadow-lg transition-all active:scale-95 ${
-            running ? 'bg-terracotta-500 hover:bg-terracotta-700' : 'bg-forest-500 hover:bg-forest-700'
+            running ? 'bg-terracotta-500 hover:bg-terracotta-700' : '[background-color:var(--accent)] hover:[background-color:var(--accent)]'
           }`}>{running ? '⏸' : '▶'}</button>
         <div className="w-10 h-10"/>
       </div>
 
       {/* Task picker */}
       {todayPending.length > 0 && (
-        <div className="bg-white rounded-2xl border border-stone-100 p-4">
-          <p className="text-xs font-medium text-ink-faint uppercase tracking-wider mb-2">Focusing on</p>
+        <div className="[background-color:var(--surface)] rounded-2xl border [border-color:var(--border-soft)] p-4">
+          <p className="text-xs font-medium [color:var(--text-faint)] uppercase tracking-wider mb-2">Focusing on</p>
           <div className="space-y-1.5 max-h-36 overflow-y-auto scrollbar-hide">
             {todayPending.map(t => (
               <button key={t.id} onClick={() => setTaskId(t.id)}
                 className={`w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all ${
-                  taskId === t.id ? 'bg-forest-500 text-white' : 'hover:bg-stone-50 text-ink'
+                  taskId === t.id ? '[background-color:var(--accent)] text-white' : 'hover:[background-color:var(--bg-secondary)] [color:var(--text)]'
                 }`}>
-                <span className={`w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center text-[10px] ${taskId === t.id ? 'border-white/50' : 'border-stone-300'}`}>
+                <span className={`w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center text-[10px] ${taskId === t.id ? 'border-white/50' : '[border-color:var(--border)]'}`}>
                   {taskId === t.id ? '●' : ''}
                 </span>
                 <span className="truncate">{t.title}</span>

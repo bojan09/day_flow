@@ -77,7 +77,7 @@ export default function PushSetupPanel() {
           style={{ backgroundColor: subscribed ? 'var(--accent)' : 'var(--border)' }}
         >
           <div
-            className="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
+            className="absolute top-0.5 w-5 h-5 [background-color:var(--surface)] rounded-full shadow transition-transform duration-200"
             style={{ transform: subscribed ? 'translateX(24px)' : 'translateX(2px)' }}
           />
           {loading && (

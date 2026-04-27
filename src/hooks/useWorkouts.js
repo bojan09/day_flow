@@ -31,6 +31,7 @@ export function useWorkouts() {
       notes:        data.notes          || '',
       exercises:    data.exercises      || [],
       completed:    false,
+      recurrence:   data.recurrence     || 'none',
       createdAt:    new Date().toISOString(),
     }
     setSessions(prev => [session, ...prev])

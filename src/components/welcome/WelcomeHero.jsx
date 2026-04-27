@@ -32,7 +32,7 @@ export default function WelcomeHero() {
       >
         Plan it. Track it.
         <br />
-        <em className="not-italic text-forest-500">Own your day.</em>
+        <em className="not-italic [color:var(--accent)]">Own your day.</em>
       </h1>
 
       {/* Subheadline */}

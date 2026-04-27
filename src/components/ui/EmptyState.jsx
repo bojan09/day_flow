@@ -46,12 +46,12 @@ export default function EmptyState({ type = 'default', title, subtitle, action, 
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
       {ILLUSTRATIONS[type] || ILLUSTRATIONS.default}
-      {title && <p className="mt-3 text-sm font-medium text-ink">{title}</p>}
-      {subtitle && <p className="mt-1 text-xs text-ink-faint max-w-xs">{subtitle}</p>}
+      {title && <p className="mt-3 text-sm font-medium [color:var(--text)]">{title}</p>}
+      {subtitle && <p className="mt-1 text-xs [color:var(--text-faint)] max-w-xs">{subtitle}</p>}
       {action && onAction && (
         <button
           onClick={onAction}
-          className="mt-4 px-4 py-2 rounded-full bg-forest-500 text-white text-xs font-medium hover:bg-forest-700 transition-colors"
+          className="mt-4 px-4 py-2 rounded-full [background-color:var(--accent)] text-white text-xs font-medium hover:[background-color:var(--accent)] transition-colors"
         >
           {action}
         </button>

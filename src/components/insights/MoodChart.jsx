@@ -7,7 +7,7 @@ import { getDateKey } from '../../utils/dateUtils'
 
 const BAR_COLORS = {
   5: 'bg-emerald-400',
-  4: 'bg-forest-400',
+  4: '[background-color:var(--accent-mid)]',
   3: 'bg-amber-300',
   2: 'bg-orange-400',
   1: 'bg-red-400',
@@ -26,8 +26,8 @@ export default function MoodChart({ mood }) {
   return (
     <Card>
       <div className="flex items-center justify-between mb-4">
-        <p className="text-xs font-medium uppercase tracking-wider text-ink-faint">7-Day Mood</p>
-        <span className="text-sm font-semibold text-forest-500">Avg {avg}/5</span>
+        <p className="text-xs font-medium uppercase tracking-wider [color:var(--text-faint)]">7-Day Mood</p>
+        <span className="text-sm font-semibold [color:var(--accent)]">Avg {avg}/5</span>
       </div>
 
       <div className="flex items-end gap-1.5 h-16">
@@ -38,11 +38,11 @@ export default function MoodChart({ mood }) {
             <div key={key} className="flex-1 flex flex-col items-center gap-1">
               {emoji && <span className="text-xs leading-none">{emoji}</span>}
               <div
-                className={`w-full rounded-t-md transition-all ${entry ? (BAR_COLORS[entry.score] ?? 'bg-stone-200') : 'bg-stone-100'}`}
+                className={`w-full rounded-t-md transition-all ${entry ? (BAR_COLORS[entry.score] ?? '[background-color:var(--border)]') : '[background-color:var(--bg-secondary)]'}`}
                 style={{ height: h, minHeight: '8px' }}
                 title={entry ? `${MOODS.find(m => m.score === entry.score)?.label} · ${entry.note}` : 'No entry'}
               />
-              <span className="text-[9px] text-ink-faint">
+              <span className="text-[9px] [color:var(--text-faint)]">
                 {format(date, 'EEE')[0]}
               </span>
             </div>

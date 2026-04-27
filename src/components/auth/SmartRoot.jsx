@@ -44,7 +44,7 @@ export default function SmartRoot() {
           className="font-serif text-3xl"
           style={{ color: 'var(--text)' }}
         >
-          Day<em className="not-italic text-forest-500">Flow</em>
+          Day<em className="not-italic [color:var(--accent)]">Flow</em>
         </span>
         <span
           className="w-5 h-5 border-2 border-t-transparent rounded-full animate-spin"

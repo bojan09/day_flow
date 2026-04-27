@@ -8,7 +8,7 @@ export default function StatsBand() {
       <div className="max-w-3xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-6 px-5 text-center">
         {STATS.map((s, i) => (
           <div key={s.label} className="opacity-0 animate-fade-up" style={{ animationDelay: `${i * 0.1}s` }}>
-            <p className="font-serif text-3xl text-forest-500 tracking-tight mb-1">{s.num}</p>
+            <p className="font-serif text-3xl [color:var(--accent)] tracking-tight mb-1">{s.num}</p>
             <p className="text-xs uppercase tracking-wider" style={{ color: 'var(--text-faint)' }}>{s.label}</p>
           </div>
         ))}

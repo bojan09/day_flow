@@ -3,8 +3,8 @@
 const COLORS = {
   high:    'bg-red-50 text-red-600 border-red-200',
   medium:  'bg-amber-50 text-amber-600 border-amber-200',
-  low:     'bg-forest-50 text-forest-700 border-forest-200',
-  default: 'bg-stone-100 text-stone-600 border-stone-200',
+  low:     '[background-color:var(--accent-light)] [color:var(--accent)] [border-color:var(--accent-mid)]',
+  default: '[background-color:var(--bg-secondary)] text-stone-600 [border-color:var(--border)]',
 }
 
 export default function Badge({ label, color = 'default', className = '' }) {

@@ -29,14 +29,14 @@ export default function MigrationBanner({ userId }) {
       style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)' }}
     >
       {done ? (
-        <p className="text-sm font-medium text-forest-700">
+        <p className="text-sm font-medium [color:var(--accent)]">
           ✓ Your local data has been synced to your account!
         </p>
       ) : (
         <>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-forest-800">Welcome! We found local data</p>
-            <p className="text-xs text-forest-600 mt-0.5">
+            <p className="text-sm font-semibold [color:var(--accent)]">Welcome! We found local data</p>
+            <p className="text-xs [color:var(--accent)] mt-0.5">
               Import your existing tasks, notes, and habits to your new account so they sync across all devices.
             </p>
           </div>
@@ -51,7 +51,7 @@ export default function MigrationBanner({ userId }) {
             </button>
             <button
               onClick={() => setVisible(false)}
-              className="text-xs text-forest-500 hover:text-forest-700 transition-colors px-2"
+              className="text-xs [color:var(--accent)] hover:[color:var(--accent)] transition-colors px-2"
             >
               Skip
             </button>

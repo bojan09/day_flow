@@ -92,7 +92,7 @@ export default function BalanceWheel({ wheel }) {
           ⚖️ Life Balance — {format(new Date(), 'MMMM yyyy')}
         </p>
         <div className="flex items-center gap-3">
-          <span className="text-sm font-semibold text-forest-500">{avg}/10</span>
+          <span className="text-sm font-semibold [color:var(--accent)]">{avg}/10</span>
           <button
             onClick={() => setEditing(e => !e)}
             className="text-xs font-medium transition-colors px-2.5 py-1 rounded-full border"

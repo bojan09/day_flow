@@ -34,44 +34,44 @@ export default function AddHabitModal({ isOpen, onClose, onAdd, existingHabits =
         <HabitPairingSuggestion habits={existingHabits} newHabitIcon={icon} />
 
         <div>
-          <p className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2">Frequency</p>
+          <p className="text-xs font-medium [color:var(--text-muted)] uppercase tracking-wide mb-2">Frequency</p>
           <div className="grid grid-cols-2 gap-2">
             {FREQUENCIES.map(f => (
               <button key={f.id} type="button" onClick={() => setFrequency(f.id)}
                 className={`py-2 rounded-xl text-sm font-medium transition-all border ${
-                  frequency === f.id ? 'bg-forest-500 text-white border-forest-500' : 'border-stone-200 text-ink-muted hover:bg-stone-50'
+                  frequency === f.id ? '[background-color:var(--accent)] text-white border-forest-500' : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'
                 }`}>{f.label}</button>
             ))}
           </div>
         </div>
 
         <div>
-          <p className="text-xs font-medium text-ink-muted uppercase tracking-wide mb-2">Icon</p>
+          <p className="text-xs font-medium [color:var(--text-muted)] uppercase tracking-wide mb-2">Icon</p>
           <div className="grid grid-cols-6 gap-2">
             {HABIT_ICONS.map(i => (
               <button key={i} type="button" onClick={() => setIcon(i)}
                 className={`aspect-square rounded-xl text-xl flex items-center justify-center transition-all border ${
-                  icon === i ? 'bg-forest-50 border-forest-300 scale-110' : 'border-stone-100 hover:bg-stone-50'
+                  icon === i ? '[background-color:var(--accent-light)] [border-color:var(--accent-mid)] scale-110' : '[border-color:var(--border-soft)] hover:[background-color:var(--bg-secondary)]'
                 }`}>{i}</button>
             ))}
           </div>
         </div>
 
         {name.trim() && (
-          <div className="flex items-center gap-3 px-4 py-3 bg-parchment rounded-xl">
+          <div className="flex items-center gap-3 px-4 py-3 [background-color:var(--bg)] rounded-xl">
             <span className="text-2xl">{icon}</span>
             <div>
-              <p className="text-sm font-medium text-ink">{name}</p>
-              <p className="text-xs text-ink-faint">{FREQUENCIES.find(f => f.id === frequency)?.label}</p>
+              <p className="text-sm font-medium [color:var(--text)]">{name}</p>
+              <p className="text-xs [color:var(--text-faint)]">{FREQUENCIES.find(f => f.id === frequency)?.label}</p>
             </div>
           </div>
         )}
 
         <div className="flex gap-3 pt-1">
           <button type="button" onClick={onClose}
-            className="flex-1 py-2.5 rounded-xl border border-stone-200 text-sm text-ink-muted hover:bg-stone-50 transition-colors">Cancel</button>
+            className="flex-1 py-2.5 rounded-xl border [border-color:var(--border)] text-sm [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)] transition-colors">Cancel</button>
           <button type="submit" disabled={!name.trim()}
-            className="flex-1 py-2.5 rounded-xl bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 disabled:opacity-40 transition-colors">Add Habit</button>
+            className="flex-1 py-2.5 rounded-xl [background-color:var(--accent)] text-white text-sm font-medium hover:[background-color:var(--accent)] disabled:opacity-40 transition-colors">Add Habit</button>
         </div>
       </form>
     </Modal>

@@ -15,7 +15,7 @@ export default function StreakBoard({ habits }) {
 
   return (
     <Card>
-      <p className="text-xs font-medium uppercase tracking-wider text-ink-faint mb-4">Habit Streaks</p>
+      <p className="text-xs font-medium uppercase tracking-wider [color:var(--text-faint)] mb-4">Habit Streaks</p>
       <div className="space-y-4">
         {list.map(h => {
           const streak = getStreak(h.id)
@@ -24,9 +24,9 @@ export default function StreakBoard({ habits }) {
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-2">
                   <span className="text-base">{h.icon}</span>
-                  <span className="text-sm font-medium text-ink">{h.name}</span>
+                  <span className="text-sm font-medium [color:var(--text)]">{h.name}</span>
                 </div>
-                <span className={`text-sm font-semibold ${streak >= 7 ? 'text-terracotta-500' : 'text-ink-muted'}`}>
+                <span className={`text-sm font-semibold ${streak >= 7 ? 'text-terracotta-500' : '[color:var(--text-muted)]'}`}>
                   {streak > 0 ? `${streak}🔥` : '—'}
                 </span>
               </div>
@@ -38,7 +38,7 @@ export default function StreakBoard({ habits }) {
                     <div
                       key={dateKey}
                       title={dateKey}
-                      className={`w-3 h-3 rounded-sm ${done ? 'bg-forest-500' : 'bg-stone-100'}`}
+                      className={`w-3 h-3 rounded-sm ${done ? '[background-color:var(--accent)]' : '[background-color:var(--bg-secondary)]'}`}
                     />
                   )
                 })}

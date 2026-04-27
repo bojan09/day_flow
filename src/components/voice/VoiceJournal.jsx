@@ -1,7 +1,6 @@
 // Component: VoiceJournal
 // Purpose: Voice journaling — records speech, saves audio to Supabase Storage + note
 import { useState, useRef, useEffect } from 'react'
-import Card from '../ui/Card'
 import { uploadFile, BUCKETS } from '../../services/storageService'
 import { useAuth } from '../../hooks/useAuth'
 import { isSupabaseConfigured } from '../../services/supabaseClient'
@@ -100,7 +99,10 @@ export default function VoiceJournal({ notes, xp }) {
   const isActive = listening || recording
 
   return (
-    <Card>
+    <div
+      className="rounded-2xl border p-5"
+      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+    >
       <p className="text-xs font-medium uppercase tracking-wider mb-4" style={{ color: 'var(--text-faint)' }}>
         🎙 Voice Journal
       </p>
@@ -157,6 +159,6 @@ export default function VoiceJournal({ notes, xp }) {
           )}
         </div>
       )}
-    </Card>
+    </div>
   )
 }

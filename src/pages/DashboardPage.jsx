@@ -53,6 +53,7 @@ import { useAffirmations    } from '../hooks/useAffirmations'
 import { useWorkouts        } from '../hooks/useWorkouts'
 import { useCustomCategories } from '../hooks/useCustomCategories'
 import { useAchievements    } from '../hooks/useAchievements'
+import VoiceCommandBar     from '../components/voice/VoiceCommandBar'
 import { spawnRecurringTasks } from '../services/recurringEngine'
 
 export default function DashboardPage() {
@@ -103,7 +104,7 @@ export default function DashboardPage() {
         {/* ── Plan ─────────────────────────────────────────────────────────── */}
         {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={setActiveTab} xp={xp} />}
         {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={setActiveTab} energy={energy} habits={habits} />}
-        {activeTab === 'calendar'   && <CalendarView tasks={tasks} />}
+        {activeTab === 'calendar'   && <CalendarView tasks={tasks} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} />}
         {activeTab === 'timeblock'  && <TimeBlockView tasks={tasks} />}
         {activeTab === 'projects'   && <ProjectsView projects={projects} tasks={tasks} />}
 
@@ -116,7 +117,7 @@ export default function DashboardPage() {
 
         {/* ── Think ────────────────────────────────────────────────────────── */}
         {activeTab === 'notes'      && <NotesView notes={notes} />}
-        {activeTab === 'ideas'      && <IdeasView ideas={ideas} goals={goals} />}
+        {activeTab === 'ideas'      && <IdeasView ideas={ideas} goals={goals} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} />}
         {activeTab === 'braindump'  && <BrainDump tasks={tasks} ideas={ideas} notes={notes} />}
         {activeTab === 'bookmarks'  && <BookmarksView bookmarks={bookmarks} />}
 
@@ -130,6 +131,7 @@ export default function DashboardPage() {
       </DashboardLayout>
 
       <QuickCapture tasks={tasks} ideas={ideas} notes={notes} habits={habits} onTabChange={setActiveTab} />
+      <VoiceCommandBar tasks={tasks} habits={habits} notes={notes} ideas={ideas} />
       <WeeklyReview tasks={tasks} habits={habits} mood={mood} />
     </>
   )

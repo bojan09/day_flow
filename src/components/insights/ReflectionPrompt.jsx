@@ -30,23 +30,23 @@ export default function ReflectionPrompt({ onWriteNote }) {
   const next = () => setIdx(i => (i + 1) % PROMPTS.length)
 
   return (
-    <Card className="bg-forest-50 border-forest-100">
+    <Card className="[background-color:var(--accent-light)] border-forest-100">
       <div className="flex items-start justify-between gap-3 mb-3">
-        <p className="text-xs font-medium uppercase tracking-wider text-forest-700">Daily Reflection</p>
+        <p className="text-xs font-medium uppercase tracking-wider [color:var(--accent)]">Daily Reflection</p>
         <button
           onClick={next}
-          className="text-xs text-forest-500 hover:text-forest-700 transition-colors flex-shrink-0"
+          className="text-xs [color:var(--accent)] hover:[color:var(--accent)] transition-colors flex-shrink-0"
           title="Next prompt"
         >
           ↻ New
         </button>
       </div>
-      <p className="font-serif text-base text-forest-900 leading-relaxed italic mb-4">
+      <p className="font-serif text-base [color:var(--accent)] leading-relaxed italic mb-4">
         "{PROMPTS[idx]}"
       </p>
       <button
         onClick={() => onWriteNote(PROMPTS[idx])}
-        className="text-xs font-medium text-forest-600 hover:text-forest-800 transition-colors flex items-center gap-1"
+        className="text-xs font-medium [color:var(--accent)] hover:[color:var(--accent)] transition-colors flex items-center gap-1"
       >
         ✍️ Write about this →
       </button>

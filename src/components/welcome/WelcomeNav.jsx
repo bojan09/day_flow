@@ -31,7 +31,7 @@ export default function WelcomeNav() {
         className="font-serif text-2xl tracking-tight leading-none hover:opacity-80 transition-opacity"
         style={{ color: 'var(--text)' }}
       >
-        Day<em className="not-italic text-forest-500">Flow</em>
+        Day<em className="not-italic [color:var(--accent)]">Flow</em>
       </button>
 
       {/* Nav links — hidden on mobile */}

@@ -9,21 +9,21 @@ import { GOAL_TYPES } from '../../hooks/useGoals'
 function XPBar({ xp }) {
   const info = xp.getLevelInfo()
   return (
-    <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-4">
+    <div className="[background-color:var(--surface)] rounded-2xl border [border-color:var(--border-soft)] shadow-sm p-4">
       <div className="flex items-center justify-between mb-2">
-        <span className="font-serif text-base text-ink">{info.title}</span>
-        <span className="text-xs font-medium text-forest-500 bg-forest-50 px-2.5 py-0.5 rounded-full">
+        <span className="font-serif text-base [color:var(--text)]">{info.title}</span>
+        <span className="text-xs font-medium [color:var(--accent)] [background-color:var(--accent-light)] px-2.5 py-0.5 rounded-full">
           {info.totalXP} XP
         </span>
       </div>
-      <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
+      <div className="h-2 [background-color:var(--bg-secondary)] rounded-full overflow-hidden">
         <div
-          className="h-full bg-forest-500 rounded-full transition-all duration-700"
+          className="h-full [background-color:var(--accent)] rounded-full transition-all duration-700"
           style={{ width: `${info.progress}%` }}
         />
       </div>
       {info.next && (
-        <p className="text-[10px] text-ink-faint mt-1.5">
+        <p className="text-[10px] [color:var(--text-faint)] mt-1.5">
           {info.next.min - info.totalXP} XP to level {info.next.level} · {info.next.title}
         </p>
       )}
@@ -44,10 +44,10 @@ export default function GoalsView({ goals, xp }) {
       <XPBar xp={xp} />
 
       <div className="flex items-center justify-between">
-        <p className="text-sm text-ink-muted">{goals.goals.length} goals</p>
+        <p className="text-sm [color:var(--text-muted)]">{goals.goals.length} goals</p>
         <button
           onClick={() => setModal(true)}
-          className="px-4 py-2 rounded-full bg-forest-500 text-white text-sm font-medium hover:bg-forest-700 transition-colors"
+          className="px-4 py-2 rounded-full [background-color:var(--accent)] text-white text-sm font-medium hover:[background-color:var(--accent)] transition-colors"
         >
           + New Goal
         </button>
@@ -59,7 +59,7 @@ export default function GoalsView({ goals, xp }) {
             className={`px-4 py-1.5 rounded-full text-sm font-medium flex-shrink-0 transition-all border ${
               activeType === t
                 ? 'bg-ink text-white border-ink'
-                : 'bg-white border-stone-200 text-ink-muted hover:border-stone-300'
+                : '[background-color:var(--surface)] [border-color:var(--border)] [color:var(--text-muted)] hover:[border-color:var(--border)]'
             }`}
           >{t}</button>
         ))}

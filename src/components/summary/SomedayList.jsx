@@ -21,14 +21,14 @@ export default function SomedayList({ someday, tasks }) {
   }
 
   if (someday.items.length === 0 && !input) return (
-    <Card className="border-dashed border-stone-200 bg-transparent shadow-none">
-      <p className="text-xs font-medium uppercase tracking-wider text-ink-faint mb-2">📥 Someday List</p>
+    <Card className="border-dashed [border-color:var(--border)] bg-transparent shadow-none">
+      <p className="text-xs font-medium uppercase tracking-wider [color:var(--text-faint)] mb-2">📥 Someday List</p>
       <form onSubmit={handleAdd} className="flex gap-2">
         <input value={input} onChange={e => setInput(e.target.value)}
           placeholder="Capture an idea for later..."
-          className="flex-1 text-sm bg-transparent outline-none text-ink placeholder-ink-faint" />
+          className="flex-1 text-sm bg-transparent outline-none [color:var(--text)] placeholder-ink-faint" />
         <button type="submit" disabled={!input.trim()}
-          className="text-xs text-forest-500 font-medium disabled:opacity-30 hover:text-forest-700 transition-colors">
+          className="text-xs [color:var(--accent)] font-medium disabled:opacity-30 hover:[color:var(--accent)] transition-colors">
           Add
         </button>
       </form>
@@ -37,37 +37,37 @@ export default function SomedayList({ someday, tasks }) {
 
   return (
     <Card>
-      <p className="text-xs font-medium uppercase tracking-wider text-ink-faint mb-3">📥 Someday List</p>
+      <p className="text-xs font-medium uppercase tracking-wider [color:var(--text-faint)] mb-3">📥 Someday List</p>
       <div className="space-y-2 mb-3 max-h-48 overflow-y-auto scrollbar-hide">
         {someday.items.map(item => (
           <div key={item.id} className="flex items-center gap-2 group">
-            <span className="flex-1 text-sm text-ink truncate">{item.title}</span>
+            <span className="flex-1 text-sm [color:var(--text)] truncate">{item.title}</span>
             <input
               type="date"
               value={sched[item.id] || ''}
               onChange={e => setSched(p => ({ ...p, [item.id]: e.target.value }))}
-              className="text-[11px] border border-stone-200 rounded-lg px-1.5 py-1 outline-none focus:ring-1 focus:ring-forest-200 text-ink-muted opacity-0 group-hover:opacity-100 transition-opacity w-28"
+              className="text-[11px] border [border-color:var(--border)] rounded-lg px-1.5 py-1 outline-none focus:ring-1 focus:ring-forest-200 [color:var(--text-muted)] opacity-0 group-hover:opacity-100 transition-opacity w-28"
             />
             <button
               onClick={() => handleSchedule(item.id)}
               title="Schedule this task"
-              className="text-[10px] px-2 py-1 rounded-full bg-forest-50 text-forest-700 border border-forest-200 hover:bg-forest-100 transition-colors flex-shrink-0 opacity-0 group-hover:opacity-100"
+              className="text-[10px] px-2 py-1 rounded-full [background-color:var(--accent-light)] [color:var(--accent)] border [border-color:var(--accent-mid)] hover:[background-color:var(--accent-light)] transition-colors flex-shrink-0 opacity-0 group-hover:opacity-100"
             >
               Schedule →
             </button>
             <button onClick={() => someday.removeItem(item.id)}
-              className="text-ink-faint hover:text-red-400 text-xs p-1 opacity-0 group-hover:opacity-100 transition-all">
+              className="[color:var(--text-faint)] hover:text-red-400 text-xs p-1 opacity-0 group-hover:opacity-100 transition-all">
               ✕
             </button>
           </div>
         ))}
       </div>
-      <form onSubmit={handleAdd} className="flex gap-2 border-t border-stone-50 pt-3">
+      <form onSubmit={handleAdd} className="flex gap-2 border-t [border-color:var(--border-soft)] pt-3">
         <input value={input} onChange={e => setInput(e.target.value)}
           placeholder="Add another idea..."
-          className="flex-1 text-sm bg-transparent outline-none text-ink placeholder-ink-faint" />
+          className="flex-1 text-sm bg-transparent outline-none [color:var(--text)] placeholder-ink-faint" />
         <button type="submit" disabled={!input.trim()}
-          className="text-xs text-forest-500 font-medium disabled:opacity-30 hover:text-forest-700 transition-colors">
+          className="text-xs [color:var(--accent)] font-medium disabled:opacity-30 hover:[color:var(--accent)] transition-colors">
           Add
         </button>
       </form>

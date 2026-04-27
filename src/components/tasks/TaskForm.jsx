@@ -12,7 +12,7 @@ const ESTIMATES  = [null, 15, 30, 45, 60, 90, 120]
 const PRIORITY_STYLES = {
   high:   'bg-red-50 border-red-300 text-red-600',
   medium: 'bg-amber-50 border-amber-300 text-amber-600',
-  low:    'bg-forest-50 border-forest-300 text-forest-700',
+  low:    '[background-color:var(--accent-light)] [border-color:var(--accent-mid)] [color:var(--accent)]',
 }
 
 export default function TaskForm({
@@ -55,7 +55,7 @@ export default function TaskForm({
           {PRIORITIES.map(p => (
             <button key={p} type="button" onClick={() => set('priority', p)}
               className={`flex-1 py-2 rounded-xl text-sm font-medium capitalize transition-all border ${
-                form.priority === p ? PRIORITY_STYLES[p] : 'border-stone-200 text-ink-faint hover:bg-stone-50'
+                form.priority === p ? PRIORITY_STYLES[p] : '[border-color:var(--border)] [color:var(--text-faint)] hover:[background-color:var(--bg-secondary)]'
               }`}
             >{p}</button>
           ))}
@@ -120,9 +120,9 @@ export default function TaskForm({
         <label className="flex items-center gap-2 cursor-pointer select-none">
           <div
             onClick={() => set('isRecurring', !form.isRecurring)}
-            className={`w-9 h-5 rounded-full transition-colors relative ${form.isRecurring ? 'bg-forest-500' : 'bg-stone-200'}`}
+            className={`w-9 h-5 rounded-full transition-colors relative ${form.isRecurring ? '[background-color:var(--accent)]' : '[background-color:var(--border)]'}`}
           >
-            <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.isRecurring ? 'translate-x-4' : 'translate-x-0.5'}`} />
+            <div className={`absolute top-0.5 w-4 h-4 [background-color:var(--surface)] rounded-full shadow transition-transform ${form.isRecurring ? 'translate-x-4' : 'translate-x-0.5'}`} />
           </div>
           <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Recurring task</span>
         </label>
@@ -131,7 +131,7 @@ export default function TaskForm({
             {RECUR_DAYS.map(d => (
               <button key={d} type="button" onClick={() => toggleDay(d)}
                 className={`w-10 h-8 rounded-lg text-xs font-medium transition-all ${
-                  form.recurDays.includes(d) ? 'bg-forest-500 text-white' : 'bg-stone-100 text-ink-muted hover:bg-stone-200'
+                  form.recurDays.includes(d) ? '[background-color:var(--accent)] text-white' : '[background-color:var(--bg-secondary)] [color:var(--text-muted)] hover:[background-color:var(--border)]'
                 }`}>{d}</button>
             ))}
           </div>

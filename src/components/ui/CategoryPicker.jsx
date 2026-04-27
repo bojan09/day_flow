@@ -106,7 +106,7 @@ export default function CategoryPicker({ value, onChange, categories, onAddCateg
 
       {/* Inline add form */}
       {adding && (
-        <form onSubmit={handleAdd} className="flex items-center gap-2 mt-2">
+        <div className="flex items-center gap-2 mt-2">
           <input
             autoFocus
             value={newName}
@@ -115,10 +115,14 @@ export default function CategoryPicker({ value, onChange, categories, onAddCateg
             maxLength={24}
             className="input-base flex-1 text-sm py-1.5"
             style={{ backgroundColor: 'var(--bg)', borderColor: error ? '#f87171' : 'var(--border)', color: 'var(--text)' }}
-            onKeyDown={e => { if (e.key === 'Escape') { setAdding(false); setNewName(''); setError('') } }}
+            onKeyDown={e => {
+              if (e.key === 'Enter')  { e.preventDefault(); e.stopPropagation(); handleAdd(e) }
+              if (e.key === 'Escape') { setAdding(false); setNewName(''); setError('') }
+            }}
           />
           <button
-            type="submit"
+            type="button"
+            onClick={e => { e.preventDefault(); e.stopPropagation(); handleAdd(e) }}
             disabled={!newName.trim()}
             className="px-3 py-1.5 rounded-xl text-xs font-medium text-white disabled:opacity-40 flex-shrink-0"
             style={{ backgroundColor: 'var(--accent)' }}
@@ -127,13 +131,13 @@ export default function CategoryPicker({ value, onChange, categories, onAddCateg
           </button>
           <button
             type="button"
-            onClick={() => { setAdding(false); setNewName(''); setError('') }}
+            onClick={e => { e.preventDefault(); e.stopPropagation(); setAdding(false); setNewName(''); setError('') }}
             className="px-3 py-1.5 rounded-xl text-xs font-medium flex-shrink-0"
             style={{ color: 'var(--text-faint)', border: '1px solid var(--border)' }}
           >
             Cancel
           </button>
-        </form>
+        </div>
       )}
 
       {error && (

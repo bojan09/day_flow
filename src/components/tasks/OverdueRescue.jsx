@@ -40,7 +40,7 @@ export default function OverdueRescue({ tasks }) {
         </button>
         <button
           onClick={() => rescheduleAll(tomorrow)}
-          className="px-3 py-1.5 rounded-full bg-white border border-red-200 text-red-600 text-xs font-medium hover:bg-red-50 transition-colors"
+          className="px-3 py-1.5 rounded-full [background-color:var(--surface)] border border-red-200 text-red-600 text-xs font-medium hover:bg-red-50 transition-colors"
         >
           Move to tomorrow
         </button>

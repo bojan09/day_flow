@@ -30,8 +30,8 @@ export default function HabitCalendar({ habits }) {
             <button key={h.id} onClick={() => setSelected(h.id)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium flex-shrink-0 transition-all border ${
                 (selectedHabit || habits.habits[0]?.id) === h.id
-                  ? 'bg-forest-500 text-white border-forest-500'
-                  : 'border-stone-200 text-ink-muted hover:bg-stone-50'
+                  ? '[background-color:var(--accent)] text-white border-forest-500'
+                  : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'
               }`}>
               <span>{h.icon}</span>{h.name}
             </button>
@@ -42,12 +42,12 @@ export default function HabitCalendar({ habits }) {
       {/* Month navigation */}
       <div className="flex items-center justify-between mb-4">
         <button onClick={prevMonth}
-          className="w-7 h-7 rounded-full hover:bg-stone-100 flex items-center justify-center text-ink-muted transition-colors text-sm">
+          className="w-7 h-7 rounded-full hover:[background-color:var(--bg-secondary)] flex items-center justify-center [color:var(--text-muted)] transition-colors text-sm">
           ‹
         </button>
-        <span className="font-serif text-base text-ink">{format(month, 'MMMM yyyy')}</span>
+        <span className="font-serif text-base [color:var(--text)]">{format(month, 'MMMM yyyy')}</span>
         <button onClick={nextMonth}
-          className="w-7 h-7 rounded-full hover:bg-stone-100 flex items-center justify-center text-ink-muted transition-colors text-sm">
+          className="w-7 h-7 rounded-full hover:[background-color:var(--bg-secondary)] flex items-center justify-center [color:var(--text-muted)] transition-colors text-sm">
           ›
         </button>
       </div>
@@ -55,7 +55,7 @@ export default function HabitCalendar({ habits }) {
       {/* Day of week headers */}
       <div className="grid grid-cols-7 mb-2">
         {['M','T','W','T','F','S','S'].map((d, i) => (
-          <div key={i} className="text-center text-[10px] font-medium text-ink-faint uppercase">{d}</div>
+          <div key={i} className="text-center text-[10px] font-medium [color:var(--text-faint)] uppercase">{d}</div>
         ))}
       </div>
 
@@ -72,9 +72,9 @@ export default function HabitCalendar({ habits }) {
                 key={dateKey}
                 onClick={() => habits.toggleHabitDay(habit.id, dateKey)}
                 className={`aspect-square rounded-full flex items-center justify-center text-xs font-medium transition-all ${
-                  done  ? 'bg-forest-500 text-white shadow-sm'
-                  : today ? 'border-2 border-forest-400 text-forest-600 hover:bg-forest-50'
-                  : 'text-ink-muted hover:bg-stone-100'
+                  done  ? '[background-color:var(--accent)] text-white shadow-sm'
+                  : today ? 'border-2 border-forest-400 [color:var(--accent)] hover:[background-color:var(--accent-light)]'
+                  : '[color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'
                 }`}
               >
                 {format(day, 'd')}
@@ -83,16 +83,16 @@ export default function HabitCalendar({ habits }) {
           })}
         </div>
       ) : (
-        <p className="text-center text-sm text-ink-faint py-6 italic">Add habits to see the calendar</p>
+        <p className="text-center text-sm [color:var(--text-faint)] py-6 italic">Add habits to see the calendar</p>
       )}
 
       {/* Month summary */}
       {habit && (
-        <div className="mt-4 pt-3 border-t border-stone-50 flex justify-between text-xs text-ink-faint">
+        <div className="mt-4 pt-3 border-t [border-color:var(--border-soft)] flex justify-between text-xs [color:var(--text-faint)]">
           <span>
             {days.filter(d => habits.isHabitDone(habit.id, getDateKey(d))).length} / {days.length} days
           </span>
-          <span className="text-forest-500 font-medium">
+          <span className="[color:var(--accent)] font-medium">
             {Math.round((days.filter(d => habits.isHabitDone(habit.id, getDateKey(d))).length / days.length) * 100)}% this month
           </span>
         </div>
