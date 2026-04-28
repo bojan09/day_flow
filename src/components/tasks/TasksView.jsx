@@ -36,7 +36,7 @@ const CAT_DOT = {
 }
 
 export default function TasksView({ tasks, templates, someday, projects, categories, onAddCategory, onRemoveCategory, onTabChange, energy, habits }) {
-  const [filter,     setFilter]  = useState('All')
+  const [filter,     setFilter]  = useState('Today')
   const [modalOpen,  setModal]   = useState(false)
   const [detailTask, setDetail]  = useState(null)
   const todayKey = getTodayKey()

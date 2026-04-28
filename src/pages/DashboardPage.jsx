@@ -1,7 +1,7 @@
 // Page: DashboardPage
 // Purpose: Root app page — owns all state hooks, renders active tab.
 //          Hosts QuickCapture + KeyboardShortcuts as global overlays.
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import DashboardLayout    from '../layouts/DashboardLayout'
 import TodayView          from '../components/today/TodayView'
 import TasksView          from '../components/tasks/TasksView'
@@ -54,7 +54,8 @@ import { useWorkouts        } from '../hooks/useWorkouts'
 import { useCustomCategories } from '../hooks/useCustomCategories'
 import { useAchievements    } from '../hooks/useAchievements'
 import VoiceCommandBar     from '../components/voice/VoiceCommandBar'
-import { spawnRecurringTasks } from '../services/recurringEngine'
+import { spawnRecurringTasks }    from '../services/recurringEngine'
+import { spawnRecurringWorkouts } from '../services/recurringWorkoutsEngine'
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('today')
@@ -88,7 +89,16 @@ export default function DashboardPage() {
   const { theme, setTheme } = useTheme()
   const score = useDailyScore({ tasks, habits, mood, gratitude, water })
 
-  useEffect(() => { spawnRecurringTasks(tasks.tasks, tasks.addTask) }, [])
+  // Recurring engine — runs once after data loads, ref prevents double-fire
+  const spawnedRef = useRef(false)
+  useEffect(() => {
+    // Wait until tasks are actually loaded (non-empty or synced)
+    if (spawnedRef.current) return
+    if (tasks.tasks === undefined) return
+    spawnedRef.current = true
+    spawnRecurringTasks(tasks.tasks, tasks.addTask)
+    spawnRecurringWorkouts(workouts.sessions, workouts.addSession)
+  }, [tasks.tasks.length, workouts.sessions.length])
 
   const handleWriteNote = (prompt) => {
     notes.addNote({ title: 'Reflection', content: `Prompt: ${prompt}\n\n`, tags: ['reflection'] })

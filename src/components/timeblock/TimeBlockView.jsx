@@ -19,7 +19,9 @@ export default function TimeBlockView({ tasks }) {
   const [blocks,    setBlocks]    = usePersistedState(storageKey, {})
   const [custom,    setCustom]    = usePersistedState(`custom_entries_${getTodayKey()}`, {})
   const [dragging,  setDragging]  = useState(null)
-  const [addingTo,  setAddingTo]  = useState(null)  // hour slot being manually filled
+  const [addingTo,   setAddingTo]  = useState(null)  // hour slot being manually filled
+  const [editingHour, setEditingHour] = useState(null) // hour of custom entry being edited
+  const [editText,    setEditText]    = useState('')
   const [entryText, setEntryText] = useState('')
   const [entryColor, setEntryColor] = useState(SLOT_COLORS[0])
 
@@ -48,6 +50,18 @@ export default function TimeBlockView({ tasks }) {
     }))
     setEntryText('')
     setAddingTo(null)
+  }
+
+  const editCustomEntry = (hour) => {
+    setEditingHour(hour)
+    setEditText(custom[hour]?.text || '')
+  }
+
+  const saveEditedEntry = (hour) => {
+    if (!editText.trim()) { removeCustomEntry(hour); setEditingHour(null); return }
+    setCustom(prev => ({ ...prev, [hour]: { ...prev[hour], text: editText.trim() } }))
+    setEditingHour(null)
+    setEditText('')
   }
 
   const removeCustomEntry = (hour) => {
@@ -159,12 +173,22 @@ export default function TimeBlockView({ tasks }) {
                       </div>
                     )}
 
-                    {customEntry && !task && (
-                      <div className="flex-1 flex items-center gap-2 min-w-0">
+                    {customEntry && !task && editingHour !== hour && (
+                      <div className="flex-1 flex items-center gap-2 min-w-0 group/entry">
                         <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: customEntry.color }} />
-                        <span className="text-xs flex-1 truncate" style={{ color: 'var(--text)' }}>
+                        <span
+                          className="text-xs flex-1 truncate cursor-pointer"
+                          style={{ color: 'var(--text)' }}
+                          onDoubleClick={() => editCustomEntry(hour)}
+                          title="Double-click to edit"
+                        >
                           {customEntry.text}
                         </span>
+                        <button
+                          onClick={() => editCustomEntry(hour)}
+                          className="opacity-0 group-hover/entry:opacity-100 text-[10px] transition-opacity"
+                          style={{ color: 'var(--accent)' }}
+                        >✏️</button>
                         <button
                           onClick={() => removeCustomEntry(hour)}
                           className="text-[10px] w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
@@ -172,6 +196,24 @@ export default function TimeBlockView({ tasks }) {
                           onMouseOver={e => { e.currentTarget.style.color = '#ef4444' }}
                           onMouseOut={e => { e.currentTarget.style.color = 'var(--text-faint)' }}
                         >✕</button>
+                      </div>
+                    )}
+                    {customEntry && !task && editingHour === hour && (
+                      <div className="flex-1 flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: customEntry.color }} />
+                        <input
+                          autoFocus
+                          value={editText}
+                          onChange={e => setEditText(e.target.value)}
+                          className="flex-1 text-xs bg-transparent outline-none border-b"
+                          style={{ borderColor: 'var(--accent-mid)', color: 'var(--text)' }}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter')  saveEditedEntry(hour)
+                            if (e.key === 'Escape') { setEditingHour(null); setEditText('') }
+                          }}
+                          onBlur={() => saveEditedEntry(hour)}
+                        />
+                        <button onClick={() => saveEditedEntry(hour)} className="text-[10px] font-semibold" style={{ color: 'var(--accent)' }}>Save</button>
                       </div>
                     )}
 

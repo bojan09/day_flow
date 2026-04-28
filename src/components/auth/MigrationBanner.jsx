@@ -1,17 +1,34 @@
 // Component: MigrationBanner
-// Purpose: After first login, detects localStorage data and offers one-click migration
+// Purpose: One-time offer to import localStorage data after first login.
+//          Uses a user-specific key so it never appears again after dismiss or import.
 import { useState } from 'react'
 import { hasLocalData, hasMigrated, migrateToSupabase } from '../../services/migrationService'
 import { isSupabaseConfigured } from '../../services/supabaseClient'
 
+function getDismissedKey(userId) {
+  return `dayflow_migration_dismissed_${userId}`
+}
+
 export default function MigrationBanner({ userId }) {
-  const [visible,   setVisible]   = useState(() =>
-    isSupabaseConfigured() && !!userId && hasLocalData() && !hasMigrated()
-  )
-  const [loading,   setLoading]   = useState(false)
-  const [done,      setDone]      = useState(false)
+  const [visible, setVisible] = useState(() => {
+    if (!isSupabaseConfigured() || !userId) return false
+    if (hasMigrated()) return false
+    if (!hasLocalData()) return false
+    // Check user-specific dismiss flag
+    try {
+      if (localStorage.getItem(getDismissedKey(userId))) return false
+    } catch {}
+    return true
+  })
+  const [loading, setLoading] = useState(false)
+  const [done,    setDone]    = useState(false)
 
   if (!visible) return null
+
+  const dismiss = () => {
+    try { localStorage.setItem(getDismissedKey(userId), '1') } catch {}
+    setVisible(false)
+  }
 
   const handleMigrate = async () => {
     setLoading(true)
@@ -19,6 +36,7 @@ export default function MigrationBanner({ userId }) {
     setLoading(false)
     if (result.success || result.skipped) {
       setDone(true)
+      try { localStorage.setItem(getDismissedKey(userId), '1') } catch {}
       setTimeout(() => setVisible(false), 3000)
     }
   }
@@ -29,15 +47,17 @@ export default function MigrationBanner({ userId }) {
       style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)' }}
     >
       {done ? (
-        <p className="text-sm font-medium [color:var(--accent)]">
+        <p className="text-sm font-medium" style={{ color: 'var(--accent)' }}>
           ✓ Your local data has been synced to your account!
         </p>
       ) : (
         <>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold [color:var(--accent)]">Welcome! We found local data</p>
-            <p className="text-xs [color:var(--accent)] mt-0.5">
-              Import your existing tasks, notes, and habits to your new account so they sync across all devices.
+            <p className="text-sm font-semibold" style={{ color: 'var(--accent)' }}>
+              Welcome! We found local data
+            </p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--accent)' }}>
+              Import your existing tasks, notes, and habits so they sync across all devices.
             </p>
           </div>
           <div className="flex gap-2 flex-shrink-0">
@@ -50,10 +70,11 @@ export default function MigrationBanner({ userId }) {
               {loading ? 'Importing…' : 'Import data →'}
             </button>
             <button
-              onClick={() => setVisible(false)}
-              className="text-xs [color:var(--accent)] hover:[color:var(--accent)] transition-colors px-2"
+              onClick={dismiss}
+              className="text-xs px-2 transition-colors"
+              style={{ color: 'var(--accent)' }}
             >
-              Skip
+              Dismiss
             </button>
           </div>
         </>

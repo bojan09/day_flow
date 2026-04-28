@@ -83,7 +83,7 @@ function PersonalBestsList({ workouts }) {
 export default function WorkoutsView({ workouts }) {
   const [modal,    setModal]    = useState(false)   // 'add' | 'edit'
   const [editing,  setEditing]  = useState(null)    // session being edited
-  const [filter,   setFilter]   = useState('all')   // 'all' | 'today' | 'done'
+  const [filter,   setFilter]   = useState('today') // 'all' | 'today' | 'done'
 
   const openAdd  = ()          => { setEditing(null);    setModal('add')  }
   const openEdit = (session)   => { setEditing(session); setModal('edit') }
