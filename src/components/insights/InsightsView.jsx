@@ -7,6 +7,7 @@ import MoodTracker           from './MoodTracker'
 import MoodChart             from './MoodChart'
 import AnalyticsPanel        from './AnalyticsPanel'
 import SmartStreakBoard      from './SmartStreakBoard'
+import HabitLoopOptimizer  from '../habits/HabitLoopOptimizer'
 import AdvancedAnalytics     from './AdvancedAnalytics'
 import AchievementsView      from './AchievementsView'
 import AICoach               from './AICoach'
@@ -33,6 +34,7 @@ export default function InsightsView({
   mood, habits, tasks, notes, goals,
   theme, onSetTheme, onWriteNote,
   intentions, xp, achievements, energy, water,
+  moodTheme,
 }) {
   const [tab, setTab] = useState('overview')
 
@@ -88,6 +90,7 @@ export default function InsightsView({
       {tab === 'habits' && (
         <div className="space-y-4">
           <SmartStreakBoard habits={habits} />
+          <HabitLoopOptimizer habits={habits} />
 
           {achievements && (
             <>
@@ -117,6 +120,35 @@ export default function InsightsView({
       {tab === 'settings' && (
         <div className="space-y-4">
           <ThemePicker theme={theme} onSetTheme={onSetTheme} />
+
+          {moodTheme && (
+            <div
+              className="rounded-2xl border p-5"
+              style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold" style={{ color: 'var(--text)' }}>
+                    😊 Mood-Responsive UI
+                  </p>
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
+                    Subtly tints the interface based on your daily mood
+                  </p>
+                </div>
+                <button
+                  onClick={() => moodTheme.setEnabled(e => !e)}
+                  className="relative w-11 h-6 rounded-full transition-colors flex-shrink-0"
+                  style={{ backgroundColor: moodTheme.enabled ? 'var(--accent)' : 'var(--border)' }}
+                  aria-label="Toggle mood-responsive UI"
+                >
+                  <span
+                    className="absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
+                    style={{ transform: moodTheme.enabled ? 'translateX(22px)' : 'translateX(2px)' }}
+                  />
+                </button>
+              </div>
+            </div>
+          )}
 
           <div>
             <p className="text-xs font-medium uppercase tracking-widest mb-3 px-1"

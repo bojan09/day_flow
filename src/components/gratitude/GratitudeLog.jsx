@@ -42,7 +42,6 @@ export default function GratitudeLog({ gratitude }) {
             <input
               value={line}
               onChange={e => setLine(i, e.target.value)}
-              onBlur={handleSave}
               placeholder={['I am grateful for…', 'Something that made me smile…', 'A person I appreciate…'][i]}
               className="flex-1 text-sm rounded-xl px-3 outline-none border transition-all"
               style={{

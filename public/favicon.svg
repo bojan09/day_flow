@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Background circle -->
+  <circle cx="16" cy="16" r="16" fill="#3B6B4B"/>
+  <!-- D letter in serif style representing DayFlow -->
+  <text x="16" y="22" font-family="Georgia, serif" font-size="18" font-weight="700"
+    text-anchor="middle" fill="white">D</text>
+  <!-- Small flow line accent -->
+  <path d="M8 24 Q16 20 24 24" stroke="white" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+</svg>

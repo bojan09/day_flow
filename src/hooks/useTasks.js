@@ -6,6 +6,7 @@ import { tasksService } from '../services/supabaseDataService'
 import { subscribeToTable } from '../services/realtimeService'
 import { useAuth } from './useAuth'
 import { isSupabaseConfigured } from '../services/supabaseClient'
+import { withRetry }           from '../utils/withRetry'
 import { getTodayKey } from '../utils/dateUtils'
 
 const KEY = 'tasks'
@@ -84,12 +85,26 @@ export function useTasks() {
   }
 
   const toggleTask = (id) => {
+    // Optimistic update — UI changes immediately
+    let targetTask = null
     setTasks(prev => prev.map(t => {
       if (t.id !== id) return t
       const updated = { ...t, completed: !t.completed, completedAt: !t.completed ? new Date().toISOString() : null }
-      persist(updated)
+      targetTask = updated
       return updated
     }))
+    // Persist with retry — revert on persistent failure
+    if (targetTask) {
+      withRetry(() => persist(targetTask), {
+        errorMessage: 'Could not save task — please check your connection',
+        onFail: () => {
+          // Revert the optimistic update
+          setTasks(prev => prev.map(t =>
+            t.id === id ? { ...t, completed: !t.completed, completedAt: t.completed ? null : t.completedAt } : t
+          ))
+        },
+      })
+    }
   }
 
   const setFocus = (id) => {

@@ -249,10 +249,12 @@ export default function TimeBlockView({ tasks }) {
                     {!hasContent && !isAdding && (
                       <button
                         onClick={() => { setAddingTo(hour); setEntryText('') }}
-                        className="text-[10px] opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="text-[10px] transition-colors w-full text-left"
                         style={{ color: 'var(--text-faint)' }}
+                        onMouseOver={e => e.target.style.color = 'var(--accent)'}
+                        onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
                       >
-                        + add
+                        + add entry
                       </button>
                     )}
                   </div>

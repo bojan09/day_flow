@@ -22,6 +22,7 @@ export default function TaskForm({
   const [form, setForm] = useState({
     title: '', priority: 'medium', category: 'Personal',
     date: getTodayKey(), estimateMins: null,
+    dueTime: '', customMins: '',
     isRecurring: false, recurDays: [], projectId: null,
   })
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
@@ -114,6 +115,37 @@ export default function TaskForm({
           </select>
         </div>
       )}
+
+      {/* Due time + custom duration */}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-xs font-medium uppercase tracking-wide block mb-1.5"
+            style={{ color: 'var(--text-muted)' }}>
+            Due time
+          </label>
+          <input
+            type="time"
+            value={form.dueTime}
+            onChange={e => set('dueTime', e.target.value)}
+            className="input-base w-full"
+            style={inputStyle}
+          />
+        </div>
+        <div>
+          <label className="text-xs font-medium uppercase tracking-wide block mb-1.5"
+            style={{ color: 'var(--text-muted)' }}>
+            Custom duration
+          </label>
+          <input
+            type="text"
+            value={form.customMins}
+            onChange={e => set('customMins', e.target.value)}
+            placeholder="e.g. 25min, 1h30m"
+            className="input-base w-full"
+            style={inputStyle}
+          />
+        </div>
+      </div>
 
       {/* Recurring */}
       <div>

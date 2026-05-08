@@ -35,7 +35,7 @@ const CAT_DOT = {
   Other:    '[background-color:var(--border)]',
 }
 
-export default function TasksView({ tasks, templates, someday, projects, categories, onAddCategory, onRemoveCategory, onTabChange, energy, habits }) {
+export default function TasksView({ tasks, templates, someday, projects, categories, onAddCategory, onRemoveCategory, onTabChange, energy, habits, ideas }) {
   const [filter,     setFilter]  = useState('Today')
   const [modalOpen,  setModal]   = useState(false)
   const [detailTask, setDetail]  = useState(null)
@@ -104,9 +104,10 @@ export default function TasksView({ tasks, templates, someday, projects, categor
           <EmptyState type="tasks" title="Nothing here" subtitle="Add a task using the input above." action="+ New Task" onAction={() => setModal(true)} />
         ) : (
           <ul className="divide-y [border-color:var(--border-soft)]">
-            {sorted.map(t => (
+            {sorted.map((t, idx) => (
               <li key={t.id}
-                className="flex items-center gap-3 px-5 py-3.5 hover:[background-color:var(--bg-secondary)]/50 transition-colors group cursor-pointer"
+                className="flex items-center gap-3 px-5 py-3.5 hover:[background-color:var(--bg-secondary)]/50 transition-colors group cursor-pointer animate-fade-up"
+                style={{ animationDelay: `${Math.min(idx * 35, 350)}ms`, animationFillMode: 'both' }}
                 onClick={() => setDetail(t)}>
                 {/* Color dot */}
                 <div className={`w-2 h-2 rounded-full flex-shrink-0 ${CAT_DOT[t.category] ?? '[background-color:var(--border)]'}`} />
@@ -172,7 +173,7 @@ export default function TasksView({ tasks, templates, someday, projects, categor
         <TaskForm onSubmit={t => { tasks.addTask(t); setModal(false) }} onCancel={() => setModal(false)} projects={projects || []} categories={categories} onAddCategory={onAddCategory} onRemoveCategory={onRemoveCategory} />
       </Modal>
 
-      <TaskDetail task={detailTask} tasks={tasks} isOpen={!!detailTask} onClose={() => setDetail(null)} categories={categories} onAddCategory={onAddCategory} onRemoveCategory={onRemoveCategory} />
+      <TaskDetail task={detailTask} tasks={tasks} isOpen={!!detailTask} onClose={() => setDetail(null)} categories={categories} onAddCategory={onAddCategory} onRemoveCategory={onRemoveCategory} projects={projects || []} ideas={ideas} />
     </div>
   )
 }

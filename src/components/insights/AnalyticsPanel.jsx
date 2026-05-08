@@ -5,6 +5,8 @@ import { useMemo } from 'react'
 import { subDays, format } from 'date-fns'
 import { getDateKey } from '../../utils/dateUtils'
 
+import AnimatedBar from '../ui/AnimatedBar'
+
 const CAT_COLORS = {
   Work:     '#3B82F6',
   Personal: '#3B6B4B',
@@ -118,12 +120,7 @@ export default function AnalyticsPanel({ tasks }) {
                       {count} task{count > 1 ? 's' : ''} · {pct}%
                     </span>
                   </div>
-                  <div className="h-2 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-                    <div
-                      className="h-full rounded-full transition-all duration-700"
-                      style={{ width: `${pct}%`, backgroundColor: color }}
-                    />
-                  </div>
+                  <AnimatedBar pct={pct} color={color} delay={categories.indexOf(cat) * 80} />
                 </div>
               )
             })}

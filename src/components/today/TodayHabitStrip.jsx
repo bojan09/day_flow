@@ -44,7 +44,15 @@ export default function TodayHabitStrip({ habits }) {
                       ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)', color: 'white' }
                       : { borderColor: 'var(--border)' }
                     }
-                  >{done && '✓'}</span>
+                  >
+                    {done && '✓'}
+                    {done && (
+                      <span
+                        className="absolute inset-0 rounded-full animate-ripple pointer-events-none"
+                        style={{ backgroundColor: 'var(--accent)', opacity: 0.4 }}
+                      />
+                    )}
+                  </span>
 
                   <span className="text-base flex-shrink-0">{h.icon}</span>
 

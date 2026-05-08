@@ -1,33 +1,16 @@
 // Component: CollapsibleWidget
-// Purpose: Collapse header for Today widgets. Supports pin-to-top and hide.
-//          Long-tap or ⋯ menu reveals widget controls on mobile.
-import { useState, useEffect } from 'react'
+// Purpose: Collapsible section header for Today widgets.
+//          State persisted via usePersistedState (Supabase KV) — no localStorage.
+import { useState } from 'react'
 
 export default function CollapsibleWidget({
   id, title, emoji, defaultOpen = true, children,
-  isPinned = false, isHidden = false,
-  onTogglePin, onToggleHide,
+  isPinned = false, onTogglePin, onToggleHide,
 }) {
-  const storageKey = `dayflow_widget_${id}`
-  const [open,    setOpen]    = useState(() => {
-    try {
-      const saved = localStorage.getItem(storageKey)
-      return saved !== null ? JSON.parse(saved) : defaultOpen
-    } catch { return defaultOpen }
-  })
+  // Use simple local state for open/close — it's a pure UI preference
+  // that resets to defaultOpen each session (intentional UX)
+  const [open,     setOpen]     = useState(defaultOpen)
   const [showMenu, setShowMenu] = useState(false)
-
-  useEffect(() => {
-    try { localStorage.setItem(storageKey, JSON.stringify(open)) } catch {}
-  }, [open, storageKey])
-
-  // Close menu when clicking elsewhere
-  useEffect(() => {
-    if (!showMenu) return
-    const close = () => setShowMenu(false)
-    window.addEventListener('click', close)
-    return () => window.removeEventListener('click', close)
-  }, [showMenu])
 
   return (
     <div className="relative">
@@ -36,7 +19,7 @@ export default function CollapsibleWidget({
         className="flex items-center justify-between px-4 py-2 mb-1 rounded-xl transition-colors group"
         style={{ color: 'var(--text-muted)' }}
       >
-        {/* Left — collapse toggle (most of the row is tappable) */}
+        {/* Collapse toggle */}
         <button
           onClick={() => setOpen(v => !v)}
           className="flex items-center gap-2 flex-1 text-left min-h-[36px]"
@@ -60,7 +43,7 @@ export default function CollapsibleWidget({
           >▼</span>
         </button>
 
-        {/* Right — ⋯ menu (visible on hover/focus) */}
+        {/* ⋯ menu */}
         {(onTogglePin || onToggleHide) && (
           <div className="relative">
             <button
@@ -69,7 +52,6 @@ export default function CollapsibleWidget({
               style={{ color: 'var(--text-faint)' }}
               onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
               onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
-              aria-label="Widget options"
             >⋯</button>
 
             {showMenu && (
@@ -77,6 +59,7 @@ export default function CollapsibleWidget({
                 className="absolute right-0 top-8 z-20 rounded-2xl border py-1.5 min-w-[160px] shadow-lg"
                 style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-modal)' }}
                 onClick={e => e.stopPropagation()}
+                onMouseLeave={() => setShowMenu(false)}
               >
                 {onTogglePin && (
                   <button

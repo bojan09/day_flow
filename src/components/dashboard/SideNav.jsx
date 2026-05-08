@@ -35,6 +35,25 @@ const SECTIONS = [
   ]},
 ]
 
+
+// Preload lazy chunks when user hovers a nav item
+const PRELOAD_MAP = {
+  notes:      () => import('../notes/NotesView'),
+  goals:      () => import('../goals/GoalsView'),
+  insights:   () => import('../insights/InsightsView'),
+  workouts:   () => import('../workouts/WorkoutsView'),
+  calendar:   () => import('../calendar/CalendarView'),
+  ideas:      () => import('../ideas/IdeasView'),
+  braindump:  () => import('../braindump/BrainDump'),
+  routines:   () => import('../routines/RoutinesView'),
+  challenges: () => import('../challenges/ChallengesView'),
+  projects:   () => import('../projects/ProjectsView'),
+  search:     () => import('../search/SearchView'),
+  balance:    () => import('../balance/BalanceView'),
+  bookmarks:  () => import('../bookmarks/BookmarksView'),
+}
+const preload = (id) => PRELOAD_MAP[id]?.()
+
 export default function SideNav({ activeTab, onTabChange, theme, onSetTheme }) {
   const navigate = useNavigate()
 

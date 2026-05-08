@@ -14,6 +14,7 @@ const PRIORITY_STYLES = {
 export default function TaskDetail({
   task, tasks, isOpen, onClose,
   categories, onAddCategory, onRemoveCategory,
+  projects, ideas,
 }) {
   const [title,    setTitle]    = useState(task?.title    || '')
   const [priority, setPriority] = useState(task?.priority || 'medium')
@@ -179,6 +180,51 @@ export default function TaskDetail({
             className="input-base w-full resize-none" style={inputStyle}
           />
         </div>
+
+        {/* Transfer task */}
+        {(projects?.length > 0 || ideas) && (
+          <div>
+            <label className="text-xs font-medium uppercase tracking-wide block mb-2"
+              style={{ color: 'var(--text-muted)' }}>
+              Move to
+            </label>
+            <div className="flex gap-2 flex-wrap">
+              {projects?.length > 0 && (
+                <select
+                  defaultValue=""
+                  onChange={e => {
+                    if (!e.target.value) return
+                    tasks.updateTask(task.id, { projectId: e.target.value })
+                    onClose()
+                  }}
+                  className="flex-1 text-sm px-3 py-2 rounded-xl border outline-none"
+                  style={{ backgroundColor: 'var(--bg)', borderColor: 'var(--border)', color: 'var(--text)' }}
+                >
+                  <option value="">🗂️ Move to project…</option>
+                  {projects.map(p => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))}
+                </select>
+              )}
+              {ideas && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    ideas.addIdea({ title: task.title, description: note, category: category })
+                    tasks.deleteTask(task.id)
+                    onClose()
+                  }}
+                  className="px-4 py-2 rounded-xl text-sm font-medium border transition-colors"
+                  style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
+                  onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
+                  onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  💡 Move to Ideas
+                </button>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Actions */}
         <div className="flex gap-3 pt-1">

@@ -1,35 +1,24 @@
 // Component: InstallPromptBanner
-// Purpose: Prompts mobile users to install DayFlow as a PWA.
-//          Only shown once, dismissed state persisted in localStorage.
-//          Uses the browser's beforeinstallprompt event via pwa.js utilities.
+// Purpose: PWA install prompt — shown once per user, dismissed state in Supabase.
 import { useState, useEffect } from 'react'
 import { setupInstallPrompt, triggerInstall } from '../../utils/pwa'
-
-const DISMISSED_KEY = 'dayflow_install_dismissed'
+import { usePersistedState } from '../../hooks/usePersistedState'
 
 export default function InstallPromptBanner() {
   const [canInstall, setCanInstall] = useState(false)
-  const [dismissed,  setDismissed]  = useState(() => {
-    try { return !!localStorage.getItem(DISMISSED_KEY) } catch { return false }
-  })
+  const [dismissed, setDismissed] = usePersistedState('pwa_install_dismissed', false)
 
   useEffect(() => {
-    // Don't show if already dismissed or already installed (standalone mode)
     if (dismissed) return
     if (window.matchMedia('(display-mode: standalone)').matches) return
     setupInstallPrompt(setCanInstall)
-  }, [])
+  }, [dismissed])
 
   if (!canInstall || dismissed) return null
 
   const handleInstall = async () => {
     const accepted = await triggerInstall()
     if (accepted) setDismissed(true)
-  }
-
-  const handleDismiss = () => {
-    setDismissed(true)
-    try { localStorage.setItem(DISMISSED_KEY, '1') } catch {}
   }
 
   return (
@@ -44,15 +33,10 @@ export default function InstallPromptBanner() {
       aria-label="Install DayFlow app"
     >
       <div className="flex items-start gap-3">
-        {/* Icon */}
         <div
           className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
           style={{ backgroundColor: 'var(--accent-light)' }}
-        >
-          📱
-        </div>
-
-        {/* Text */}
+        >📱</div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold" style={{ color: 'var(--text)' }}>
             Add DayFlow to Home Screen
@@ -61,38 +45,26 @@ export default function InstallPromptBanner() {
             Works offline · Faster access · No browser chrome
           </p>
         </div>
-
-        {/* Dismiss */}
         <button
-          onClick={handleDismiss}
-          className="flex-shrink-0 text-sm transition-colors w-6 h-6 flex items-center justify-center rounded-full"
+          onClick={() => setDismissed(true)}
+          className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-sm"
           style={{ color: 'var(--text-faint)' }}
           onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
           onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
           aria-label="Dismiss"
-        >
-          ✕
-        </button>
+        >✕</button>
       </div>
-
-      {/* Actions */}
       <div className="flex gap-2 mt-3">
         <button
-          onClick={handleDismiss}
-          className="flex-1 py-2 rounded-xl border text-xs font-medium transition-colors"
+          onClick={() => setDismissed(true)}
+          className="flex-1 py-2 rounded-xl border text-xs font-medium"
           style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
-          onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-          onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
-        >
-          Not now
-        </button>
+        >Not now</button>
         <button
           onClick={handleInstall}
-          className="flex-1 py-2 rounded-xl text-xs font-semibold text-white transition-all active:scale-95"
+          className="flex-1 py-2 rounded-xl text-xs font-semibold text-white"
           style={{ backgroundColor: 'var(--accent)' }}
-        >
-          Install app
-        </button>
+        >Install app</button>
       </div>
     </div>
   )

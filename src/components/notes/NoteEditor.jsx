@@ -1,6 +1,6 @@
 // Component: NoteEditor
 // Purpose: Full note editor with tags, word count, auto-save, and file attachments
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { format } from 'date-fns'
 import { NOTE_TAGS } from '../../hooks/useNotes'
 import NoteAttachments from './NoteAttachments'
@@ -16,7 +16,16 @@ export default function NoteEditor({ note, onUpdate, onBack, getWordCount, getRe
     setTags(note.tags || []); setSaved(true)
   }, [note.id])
 
+  // Debounced autosave — writes to Supabase 1s after user stops typing
+  const saveTimerRef = useRef(null)
   const save = () => { onUpdate(note.id, { title, content, tags }); setSaved(true) }
+
+  useEffect(() => {
+    if (saved) return
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = setTimeout(() => save(), 1000)
+    return () => clearTimeout(saveTimerRef.current)
+  }, [title, content, tags])
 
   const toggleTag = (tag) => {
     const next = tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag]

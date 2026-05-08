@@ -1,28 +1,29 @@
 // Page: DashboardPage
 // Purpose: Root app page — owns all state hooks, renders active tab.
 //          Hosts QuickCapture + KeyboardShortcuts as global overlays.
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import DashboardLayout    from '../layouts/DashboardLayout'
+import TabSkeleton        from '../components/ui/TabSkeleton'
 import TodayView          from '../components/today/TodayView'
 import TasksView          from '../components/tasks/TasksView'
-import NotesView          from '../components/notes/NotesView'
+const NotesView = lazy(() => import('../components/notes/NotesView'))
 import HabitsView         from '../components/habits/HabitsView'
-import GoalsView          from '../components/goals/GoalsView'
+const GoalsView = lazy(() => import('../components/goals/GoalsView'))
 import FocusMode          from '../components/focus/FocusMode'
-import SearchView         from '../components/search/SearchView'
-import InsightsView       from '../components/insights/InsightsView'
-import BalanceView        from '../components/balance/BalanceView'
-import WorkoutsView       from '../components/workouts/WorkoutsView'
-import AchievementsView   from '../components/insights/AchievementsView'
-import TimeBlockView      from '../components/timeblock/TimeBlockView'
-import CalendarView       from '../components/calendar/CalendarView'
-import IdeasView          from '../components/ideas/IdeasView'
-import BrainDump          from '../components/braindump/BrainDump'
-import RoutinesView       from '../components/routines/RoutinesView'
-import ChallengesView     from '../components/challenges/ChallengesView'
-import ProjectsView       from '../components/projects/ProjectsView'
-import BookmarksView      from '../components/bookmarks/BookmarksView'
-import WeeklyReview       from '../components/weekly/WeeklyReview'
+const SearchView = lazy(() => import('../components/search/SearchView'))
+const InsightsView = lazy(() => import('../components/insights/InsightsView'))
+const BalanceView = lazy(() => import('../components/balance/BalanceView'))
+const WorkoutsView = lazy(() => import('../components/workouts/WorkoutsView'))
+const AchievementsView = lazy(() => import('../components/insights/AchievementsView'))
+const TimeBlockView = lazy(() => import('../components/timeblock/TimeBlockView'))
+const CalendarView = lazy(() => import('../components/calendar/CalendarView'))
+const IdeasView = lazy(() => import('../components/ideas/IdeasView'))
+const BrainDump = lazy(() => import('../components/braindump/BrainDump'))
+const RoutinesView = lazy(() => import('../components/routines/RoutinesView'))
+const ChallengesView = lazy(() => import('../components/challenges/ChallengesView'))
+const ProjectsView = lazy(() => import('../components/projects/ProjectsView'))
+const BookmarksView = lazy(() => import('../components/bookmarks/BookmarksView'))
+const WeeklyReview = lazy(() => import('../components/weekly/WeeklyReview'))
 import KeyboardShortcuts  from '../components/keyboard/KeyboardShortcuts'
 import QuickCapture       from '../components/quickcapture/QuickCapture'
 
@@ -53,6 +54,7 @@ import { useAffirmations    } from '../hooks/useAffirmations'
 import { useWorkouts        } from '../hooks/useWorkouts'
 import { useCustomCategories } from '../hooks/useCustomCategories'
 import { useAchievements    } from '../hooks/useAchievements'
+import { useMoodTheme       } from '../hooks/useMoodTheme'
 import VoiceCommandBar     from '../components/voice/VoiceCommandBar'
 import { spawnRecurringTasks }    from '../services/recurringEngine'
 import { spawnRecurringWorkouts } from '../services/recurringWorkoutsEngine'
@@ -87,6 +89,7 @@ export default function DashboardPage() {
   const catData         = useCustomCategories()
   const achievements    = useAchievements({ tasks, habits, notes, goals, xp, workouts, mood })
   const { theme, setTheme } = useTheme()
+  const moodTheme = useMoodTheme(mood, theme)
   const score = useDailyScore({ tasks, habits, mood, gratitude, water })
 
   // Recurring engine — runs once after data loads, ref prevents double-fire
@@ -109,11 +112,12 @@ export default function DashboardPage() {
     <>
       <KeyboardShortcuts onTabChange={setActiveTab} />
 
+      <Suspense fallback={<TabSkeleton />}>
       <DashboardLayout activeTab={activeTab} onTabChange={setActiveTab} theme={theme} onSetTheme={setTheme}>
 
         {/* ── Plan ─────────────────────────────────────────────────────────── */}
-        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={setActiveTab} xp={xp} />}
-        {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={setActiveTab} energy={energy} habits={habits} />}
+        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={setActiveTab} xp={xp} goals={goals} />}
+        {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={setActiveTab} energy={energy} habits={habits} ideas={ideas} />}
         {activeTab === 'calendar'   && <CalendarView tasks={tasks} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} />}
         {activeTab === 'timeblock'  && <TimeBlockView tasks={tasks} />}
         {activeTab === 'projects'   && <ProjectsView projects={projects} tasks={tasks} />}
@@ -132,13 +136,14 @@ export default function DashboardPage() {
         {activeTab === 'bookmarks'  && <BookmarksView bookmarks={bookmarks} />}
 
         {/* ── Reflect ──────────────────────────────────────────────────────── */}
-        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} xp={xp} achievements={achievements} energy={energy} goals={goals} water={water} />}
+        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} xp={xp} achievements={achievements} energy={energy} goals={goals} water={water} moodTheme={moodTheme} />}
         {activeTab === 'balance'    && <BalanceView wheel={wheel} />}
         {activeTab === 'focus'      && <FocusMode tasks={tasks} xp={xp} pomodoroHistory={pomodoroHistory} />}
         {activeTab === 'achievements' && <AchievementsView achievements={achievements} xp={xp} />}
         {activeTab === 'search'     && <SearchView tasks={tasks} notes={notes} habits={habits} goals={goals} ideas={ideas} bookmarks={bookmarks} />}
 
       </DashboardLayout>
+      </Suspense>
 
       <QuickCapture tasks={tasks} ideas={ideas} notes={notes} habits={habits} onTabChange={setActiveTab} />
       <VoiceCommandBar tasks={tasks} habits={habits} notes={notes} ideas={ideas} />

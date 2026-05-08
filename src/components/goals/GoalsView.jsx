@@ -1,7 +1,8 @@
 // Component: GoalsView
 // Purpose: Goals tab — XP level bar, type filter, goal cards with milestones
 import { useState } from 'react'
-import GoalCard     from './GoalCard'
+import GoalCard       from './GoalCard'
+import GoalForecaster from './GoalForecaster'
 import AddGoalModal from './AddGoalModal'
 import EmptyState   from '../ui/EmptyState'
 import { GOAL_TYPES } from '../../hooks/useGoals'
