@@ -38,7 +38,8 @@ const CAT_DOT = {
 export default function TasksView({ tasks, templates, someday, projects, categories, onAddCategory, onRemoveCategory, onTabChange, energy, habits, ideas }) {
   const [filter,     setFilter]  = useState('Today')
   const [modalOpen,  setModal]   = useState(false)
-  const [detailTask, setDetail]  = useState(null)
+  const [detailTask,   setDetail]      = useState(null)
+  const [visibleCount, setVisibleCount] = useState(30)
   const todayKey = getTodayKey()
 
   const filtered = tasks.tasks.filter(t => {
@@ -104,7 +105,8 @@ export default function TasksView({ tasks, templates, someday, projects, categor
           <EmptyState type="tasks" title="Nothing here" subtitle="Add a task using the input above." action="+ New Task" onAction={() => setModal(true)} />
         ) : (
           <ul className="divide-y [border-color:var(--border-soft)]">
-            {sorted.map((t, idx) => (
+            {/* Show all when small list, paginate when large */}
+            {(sorted.length > 50 ? sorted.slice(0, visibleCount) : sorted).map((t, idx) => (
               <li key={t.id}
                 className="flex items-center gap-3 px-5 py-3.5 hover:[background-color:var(--bg-secondary)]/50 transition-colors group cursor-pointer animate-fade-up"
                 style={{ animationDelay: `${Math.min(idx * 35, 350)}ms`, animationFillMode: 'both' }}
@@ -158,6 +160,17 @@ export default function TasksView({ tasks, templates, someday, projects, categor
                 </div>
               </li>
             ))}
+            {sorted.length > 50 && visibleCount < sorted.length && (
+              <li className="text-center py-3">
+                <button
+                  onClick={() => setVisibleCount(v => v + 30)}
+                  className="text-sm font-medium"
+                  style={{ color: 'var(--accent)' }}
+                >
+                  Show {Math.min(30, sorted.length - visibleCount)} more ({sorted.length - visibleCount} remaining)
+                </button>
+              </li>
+            )}
           </ul>
         )}
       </Card>

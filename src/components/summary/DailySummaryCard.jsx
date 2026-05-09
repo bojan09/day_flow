@@ -1,7 +1,9 @@
+import { memo } from 'react'
 // Component: DailySummaryCard
 // Purpose: Complete daily recap — tasks done, habits hit, mood, water, XP earned.
 //          Shown in InsightsView and surfaced in Today's evening mode.
 import { format, subDays } from 'date-fns'
+import { useMemo } from 'react'
 import { getTodayKey, getDateKey } from '../../utils/dateUtils'
 
 function StatPill({ label, value, sub, color = 'var(--accent)' }) {
@@ -38,7 +40,7 @@ function DayBar({ label, pct, color }) {
   )
 }
 
-export default function DailySummaryCard({ tasks, habits, mood, water, xp }) {
+function DailySummaryCard({ tasks, habits, mood, water, xp }) {
   const today = getTodayKey()
 
   // ── Task stats ────────────────────────────────────────────────────────────
@@ -230,3 +232,5 @@ export default function DailySummaryCard({ tasks, habits, mood, water, xp }) {
     </div>
   )
 }
+
+export default memo(DailySummaryCard)

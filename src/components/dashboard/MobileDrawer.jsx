@@ -148,7 +148,7 @@ export default function MobileDrawer({
   if (!isOpen) return null
 
   return (
-    <div className="md:hidden fixed inset-0 z-[60]">
+    <div className="md:hidden fixed inset-0 z-[var(--z-drawer)]">
       {/* Backdrop */}
       <div
         className="absolute inset-0 animate-fade-in"

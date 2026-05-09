@@ -1,6 +1,7 @@
+import { memo } from 'react'
 // Component: TodayHabitStrip
 // Purpose: Today's habit checklist — 44px+ tap rows, animated toggles, progress header.
-export default function TodayHabitStrip({ habits }) {
+function TodayHabitStrip({ habits }) {
   const { habits: list, isHabitDone, toggleHabitDay } = habits
   const doneCount = list.filter(h => isHabitDone(h.id)).length
 
@@ -73,3 +74,5 @@ export default function TodayHabitStrip({ habits }) {
     </div>
   )
 }
+
+export default memo(TodayHabitStrip)

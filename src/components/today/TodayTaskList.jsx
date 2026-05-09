@@ -1,9 +1,9 @@
 // Component: TodayTaskList
 // Purpose: Today's tasks — 44px+ tap targets, swipe-friendly rows, quick-add.
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import EmptyState from '../ui/EmptyState'
 
-export default function TodayTaskList({ tasks }) {
+function TodayTaskList({ tasks }) {
   const [newTitle, setNewTitle] = useState('')
   const todayTasks = tasks.getTodayTasks()
   const doneCount  = todayTasks.filter(t => t.completed).length
@@ -110,3 +110,5 @@ export default function TodayTaskList({ tasks }) {
     </div>
   )
 }
+
+export default memo(TodayTaskList)

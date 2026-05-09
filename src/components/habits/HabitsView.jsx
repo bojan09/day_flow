@@ -1,6 +1,6 @@
 // Component: HabitsView
 // Purpose: Habits tab — weekly/calendar toggle, rules panel, pairing suggestions, confetti
-import { useState, useRef } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import Card              from '../ui/Card'
 import HabitRow          from './HabitRow'
 import AddHabitModal     from './AddHabitModal'
@@ -22,7 +22,7 @@ export default function HabitsView({ habits, habitRules }) {
   const weekDays                 = getWeekDays()
   const { habits: list, isHabitDone, toggleHabitDay, addHabit, updateHabit, deleteHabit, getStreak, getWeeklyCount } = habits
 
-  const handleToggle = (habitId, dateKey) => {
+  const handleToggle = useCallback((habitId, dateKey) => {
     // Fire IFTTT rules
     habitRules.fireRules(habitId, toggleHabitDay)
     toggleHabitDay(habitId, dateKey)
@@ -34,7 +34,7 @@ export default function HabitsView({ habits, habitRules }) {
       }
       prevStreaks.current[habitId] = s
     }, 50)
-  }
+  }, [toggleHabitDay, getStreak, habitRules, notifications])
 
   return (
     <div className="max-w-2xl mx-auto space-y-5 pt-2">

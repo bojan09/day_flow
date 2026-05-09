@@ -1,3 +1,4 @@
+import { memo } from 'react'
 // Component: DailyScore
 // Purpose: Day's report card — score, grade, category breakdown.
 //          Shows an encouraging empty state when nothing has been logged yet.
@@ -18,21 +19,26 @@ const BREAKDOWN_LABELS = {
   water:     { label: 'Hydration', max: 10, emoji: '💧' },
 }
 
-export default function DailyScore({ scoreData }) {
+function DailyScore({ scoreData }) {
   const { total, grade, message, breakdown, meta } = scoreData
   const colors    = GRADE_COLORS[grade] || GRADE_COLORS['F']
   const nothingYet = total === 0
 
   return (
     <div
-      className="rounded-2xl border p-5"
+      className="rounded-2xl border p-5 card-hover"
       style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
     >
       <div className="flex items-center gap-4 mb-4">
         {/* Grade circle */}
         <div
-          className="w-16 h-16 rounded-2xl border-2 flex items-center justify-center flex-shrink-0 font-serif text-2xl font-bold"
-          style={{ backgroundColor: nothingYet ? 'var(--bg-secondary)' : colors.bg, borderColor: nothingYet ? 'var(--border)' : colors.border, color: nothingYet ? 'var(--text-faint)' : colors.text }}
+          className="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 font-serif text-2xl font-bold"
+          style={{
+            background:   nothingYet ? 'var(--bg-secondary)' : `linear-gradient(135deg, ${colors.bg}, ${colors.bg}dd)`,
+            border:       `2px solid ${nothingYet ? 'var(--border)' : colors.border}`,
+            color:        nothingYet ? 'var(--text-faint)' : colors.text,
+            boxShadow:    nothingYet ? 'none' : `0 4px 16px ${colors.border}66`,
+          }}
         >
           {nothingYet ? '–' : grade}
         </div>
@@ -86,3 +92,5 @@ export default function DailyScore({ scoreData }) {
     </div>
   )
 }
+
+export default memo(DailyScore)

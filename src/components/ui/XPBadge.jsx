@@ -1,9 +1,9 @@
 // Component: XPBadge
 // Purpose: Floating "+XP" badge that rises and fades when a task/habit is completed.
 //          Triggered by XP value change. Positioned relative to parent element.
-import { useState, useEffect, useRef } from 'react'
+import { useState, memo, useEffect, useRef } from 'react'
 
-export default function XPBadge({ xp, trigger }) {
+const XPBadgeImpl = memo(function XPBadge({ xp, trigger }) {
   const [badges, setBadges]  = useState([])
   const prevXpRef            = useRef(xp)
 
@@ -39,4 +39,5 @@ export default function XPBadge({ xp, trigger }) {
       ))}
     </>
   )
-}
+})
+export default XPBadgeImpl

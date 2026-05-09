@@ -1,11 +1,11 @@
 // Component: WeekStrip
 // Purpose: 7-day week strip with swipe-left/right to navigate weeks (Phase 4.1.3).
 //          Active day highlighted, today ring, smooth week transitions.
-import { useState, useRef } from 'react'
+import { memo, useState, useRef } from 'react'
 import { format, isToday, isSameDay, addWeeks, subWeeks } from 'date-fns'
 import { getWeekDays } from '../../utils/dateUtils'
 
-export default function WeekStrip() {
+function WeekStrip() {
   const [weekOffset, setWeekOffset] = useState(0)
   const [selected,   setSelected]   = useState(new Date())
   const touchStartX = useRef(null)
@@ -90,3 +90,5 @@ export default function WeekStrip() {
     </div>
   )
 }
+
+export default memo(WeekStrip)

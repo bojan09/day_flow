@@ -1,9 +1,9 @@
 // Component: AnimatedBar
 // Purpose: Reusable animated progress bar — fills from 0 to target width on mount.
 //          Used in AnalyticsPanel, DailySummaryCard, CategoryTrends, GoalCard etc.
-import { useEffect, useRef } from 'react'
+import { memo, useEffect, useRef } from 'react'
 
-export default function AnimatedBar({
+const AnimatedBarImpl = memo(function AnimatedBar({
   pct = 0,
   color = 'var(--accent)',
   height = 'h-2',
@@ -40,4 +40,5 @@ export default function AnimatedBar({
       />
     </div>
   )
-}
+})
+export default AnimatedBarImpl

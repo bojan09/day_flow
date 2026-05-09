@@ -77,7 +77,7 @@ export default function QuickCapture({ tasks, ideas, notes, habits }) {
       {/* Floating button */}
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40 w-14 h-14 rounded-full text-white text-2xl shadow-xl transition-all active:scale-95 hover:scale-105 flex items-center justify-center"
+        className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-[var(--z-nav)] w-14 h-14 rounded-full text-white text-2xl shadow-xl transition-all active:scale-95 hover:scale-105 flex items-center justify-center"
         style={{ backgroundColor: 'var(--accent)', boxShadow: '0 8px 24px rgba(59,107,75,0.35)' }}
         title="Quick capture (press +)"
         aria-label="Quick capture"

@@ -61,6 +61,7 @@ import { spawnRecurringWorkouts } from '../services/recurringWorkoutsEngine'
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('today')
+  const handleTabChange = setActiveTab   // alias used throughout
 
   // ── Data hooks ──────────────────────────────────────────────────────────────
   const tasks           = useTasks()
@@ -110,14 +111,14 @@ export default function DashboardPage() {
 
   return (
     <>
-      <KeyboardShortcuts onTabChange={setActiveTab} />
+      <KeyboardShortcuts onTabChange={handleTabChange} />
 
       <Suspense fallback={<TabSkeleton />}>
-      <DashboardLayout activeTab={activeTab} onTabChange={setActiveTab} theme={theme} onSetTheme={setTheme}>
+      <DashboardLayout activeTab={activeTab} onTabChange={handleTabChange} theme={theme} onSetTheme={setTheme}>
 
         {/* ── Plan ─────────────────────────────────────────────────────────── */}
-        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={setActiveTab} xp={xp} goals={goals} />}
-        {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={setActiveTab} energy={energy} habits={habits} ideas={ideas} />}
+        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={handleTabChange} xp={xp} goals={goals} />}
+        {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={handleTabChange} energy={energy} habits={habits} ideas={ideas} />}
         {activeTab === 'calendar'   && <CalendarView tasks={tasks} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} />}
         {activeTab === 'timeblock'  && <TimeBlockView tasks={tasks} />}
         {activeTab === 'projects'   && <ProjectsView projects={projects} tasks={tasks} />}
@@ -145,7 +146,7 @@ export default function DashboardPage() {
       </DashboardLayout>
       </Suspense>
 
-      <QuickCapture tasks={tasks} ideas={ideas} notes={notes} habits={habits} onTabChange={setActiveTab} />
+      <QuickCapture tasks={tasks} ideas={ideas} notes={notes} habits={habits} onTabChange={handleTabChange} />
       <VoiceCommandBar tasks={tasks} habits={habits} notes={notes} ideas={ideas} />
       <WeeklyReview tasks={tasks} habits={habits} mood={mood} />
     </>

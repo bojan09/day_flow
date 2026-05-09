@@ -1,6 +1,6 @@
 // Component: WorkoutCard
 // Purpose: One workout session — type badge, exercises, sets toggle, complete, edit, delete
-import { useState } from 'react'
+import { useState, useEffect, memo } from 'react'
 
 const TYPE_COLORS = {
   Strength:   { bg: '#EEF4ED', text: '#2A4E36' },
@@ -15,8 +15,10 @@ const TYPE_COLORS = {
   Other:      { bg: 'var(--bg-secondary)', text: 'var(--text-muted)' },
 }
 
-export default function WorkoutCard({ session, workouts, onEdit }) {
+const WorkoutCardImpl = memo(function WorkoutCard({ session, workouts, onEdit }) {
   const [expanded, setExpanded] = useState(false)
+  // Reset expanded state when session identity changes (prevents state leak after memo reuse)
+  useEffect(() => { setExpanded(false) }, [session.id])
 
   const colors    = TYPE_COLORS[session.type] || TYPE_COLORS.Other
   const totalSets = session.exercises.reduce((n, e) => n + e.sets.length, 0)
@@ -25,7 +27,7 @@ export default function WorkoutCard({ session, workouts, onEdit }) {
 
   return (
     <div
-      className="rounded-2xl border overflow-hidden"
+      className="rounded-2xl border overflow-hidden card-hover"
       style={{
         backgroundColor: 'var(--surface)',
         borderColor:     session.completed ? 'var(--accent-mid)' : 'var(--border)',
@@ -207,4 +209,5 @@ export default function WorkoutCard({ session, workouts, onEdit }) {
       )}
     </div>
   )
-}
+})
+export default WorkoutCardImpl

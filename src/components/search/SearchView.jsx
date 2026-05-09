@@ -1,6 +1,7 @@
 // Component: SearchView
 // Purpose: Universal search — tasks, notes, habits, goals, ideas, bookmarks
 import { useState, useMemo } from 'react'
+import { useDebounce } from '../../hooks/useDebounce'
 
 function highlight(text = '', query = '') {
   if (!query.trim()) return text
@@ -19,7 +20,8 @@ const TYPE_COLORS = {
 
 export default function SearchView({ tasks, notes, habits, goals, ideas = null, bookmarks = null }) {
   const [query, setQuery] = useState('')
-  const q = query.toLowerCase().trim()
+  const debouncedQuery   = useDebounce(query, 200)
+  const q = debouncedQuery.toLowerCase().trim()
 
   const results = useMemo(() => {
     if (!q) return []

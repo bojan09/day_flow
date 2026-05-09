@@ -23,7 +23,7 @@ export default function InstallPromptBanner() {
 
   return (
     <div
-      className="fixed bottom-20 md:bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-80 z-50 rounded-2xl border p-4 animate-slide-up"
+      className="fixed bottom-20 md:bottom-6 left-4 right-4 md:left-auto md:right-6 md:w-80 z-[var(--z-nav)] rounded-2xl border p-4 animate-slide-up"
       style={{
         backgroundColor: 'var(--surface)',
         borderColor:     'var(--accent-mid)',

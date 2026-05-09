@@ -14,7 +14,7 @@ export default function BottomNav({ activeTab, onTabChange, onOpenDrawer }) {
   return (
     <>
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t pb-safe"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-[var(--z-nav)] border-t pb-safe"
         style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
       >
         <div className="flex items-stretch justify-around">

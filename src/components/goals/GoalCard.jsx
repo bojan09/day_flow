@@ -1,6 +1,6 @@
 // Component: GoalCard
 // Purpose: Single goal — progress ring, milestones, inline edit modal.
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import Modal from '../ui/Modal'
 import { GOAL_TYPES, GOAL_CATEGORIES } from '../../hooks/useGoals'
 
@@ -93,7 +93,7 @@ function EditGoalModal({ goal, goals, onClose }) {
   )
 }
 
-export default function GoalCard({ goal, goals, xp }) {
+const GoalCardImpl = memo(function GoalCard({ goal, goals, xp }) {
   const [expanded,  setExpanded]  = useState(false)
   const [editing,   setEditing]   = useState(false)
   const [newMs,     setNewMs]     = useState('')
@@ -120,7 +120,7 @@ export default function GoalCard({ goal, goals, xp }) {
   return (
     <>
       <div
-        className="rounded-2xl border overflow-hidden transition-all"
+        className="rounded-2xl border overflow-hidden card-hover transition-all"
         style={{
           backgroundColor: 'var(--surface)',
           borderColor:     goal.completed ? 'var(--accent-mid)' : 'var(--border)',
@@ -250,4 +250,5 @@ export default function GoalCard({ goal, goals, xp }) {
       {editing && <EditGoalModal goal={goal} goals={goals} onClose={() => setEditing(false)} />}
     </>
   )
-}
+})
+export default GoalCardImpl

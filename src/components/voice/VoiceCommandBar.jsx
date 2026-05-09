@@ -25,12 +25,18 @@ const FEEDBACK_STYLES = {
   error: { bg: '#FEF2F2', border: '#FECACA', text: '#991B1B', icon: '⚠️' },
 }
 
+function capitalize(str) {
+  if (!str) return str
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
 function parseCommand(text) {
   for (const cmd of COMMANDS) {
     const m = text.trim().match(cmd.trigger)
-    if (m) return { type: cmd.type, body: m[2].trim() }
+    if (m) return { type: cmd.type, body: capitalize(m[2].trim()) }
   }
-  if (text.trim().length > 2) return { type: 'task', body: text.trim() }
+  const t = text.trim()
+  if (t.length > 2) return { type: 'task', body: capitalize(t) }
   return null
 }
 
@@ -119,7 +125,7 @@ export default function VoiceCommandBar({ tasks, habits, notes, ideas }) {
       {/* Floating mic button — above the + QuickCapture button */}
       <button
         onClick={() => { setOpen(v => !v); setError(null); setFeedback(null) }}
-        className="fixed z-40 w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-lg transition-all active:scale-90 hover:scale-105"
+        className="fixed z-[var(--z-nav)] w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-lg transition-all active:scale-90 hover:scale-105"
         style={{
           bottom:          '6rem',
           right:           '1rem',

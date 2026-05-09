@@ -1,74 +1,64 @@
-// Service Worker: DayFlow v4.5
-// Strategy:
-//   - App shell (HTML, JS, CSS, fonts): Cache-first
-//   - Supabase API calls: Network-first, fall back to cache (read-only)
-//   - Everything else: Network-first, fall back to app shell
-const CACHE_VERSION  = 'dayflow-v4.5'
-const SHELL_CACHE    = `${CACHE_VERSION}-shell`
-const DATA_CACHE     = `${CACHE_VERSION}-data`
+// Service Worker: DayFlow PWA
+// Purpose: Offline-first caching — shell cache-first, API network-first.
+//          v6: Fixed Response body clone race condition.
 
-// App shell assets cached on install
-const SHELL_ASSETS = [
+const SHELL_CACHE   = 'dayflow-shell-v3'
+const DYNAMIC_CACHE = 'dayflow-dynamic-v3'
+
+const PRECACHE_URLS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
 ]
 
-// ── Install — cache app shell ─────────────────────────────────────────────
-self.addEventListener('install', (event) => {
+// ── Install ────────────────────────────────────────────────────────────────────
+self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(SHELL_CACHE)
-      .then(cache => cache.addAll(SHELL_ASSETS))
+      .then(cache => cache.addAll(PRECACHE_URLS))
       .then(() => self.skipWaiting())
   )
 })
 
-// ── Activate — clear old caches ───────────────────────────────────────────
-self.addEventListener('activate', (event) => {
+// ── Activate ───────────────────────────────────────────────────────────────────
+self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(
+    caches.keys().then(keys =>
+      Promise.all(
         keys
-          .filter(k => k !== SHELL_CACHE && k !== DATA_CACHE)
+          .filter(k => k !== SHELL_CACHE && k !== DYNAMIC_CACHE)
           .map(k => caches.delete(k))
-      ))
-      .then(() => self.clients.claim())
+      )
+    ).then(() => self.clients.claim())
   )
 })
 
-// ── Fetch — tiered caching strategy ──────────────────────────────────────
-self.addEventListener('fetch', (event) => {
+// ── Fetch ──────────────────────────────────────────────────────────────────────
+self.addEventListener('fetch', event => {
   const { request } = event
   const url = new URL(request.url)
 
-  // Skip non-GET and chrome-extension requests
+  // Skip non-GET and browser-extension requests
   if (request.method !== 'GET') return
-  if (url.protocol === 'chrome-extension:') return
+  if (!url.protocol.startsWith('http')) return
 
-  // ── Supabase API — network-first, cache successful responses ──────────
-  if (url.hostname.includes('supabase.co')) {
+  // ── Supabase API — network-first, no caching ─────────────────────────────
+  if (url.hostname.includes('supabase.co') || url.hostname.includes('anthropic.com')) {
     event.respondWith(
-      fetch(request.clone())
-        .then(response => {
-          if (response.ok) {
-            caches.open(DATA_CACHE).then(cache => cache.put(request, response.clone()))
-          }
-          return response
-        })
-        .catch(() => caches.match(request))
+      fetch(request).catch(() => caches.match(request))
     )
     return
   }
 
-  // ── Google Fonts — cache-first ─────────────────────────────────────────
+  // ── Google Fonts — cache-first ───────────────────────────────────────────
   if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
     event.respondWith(
       caches.match(request).then(cached => {
         if (cached) return cached
         return fetch(request).then(response => {
-          caches.open(SHELL_CACHE).then(cache => cache.put(request, response.clone()))
+          // Clone IMMEDIATELY before any async operation consumes the body
+          const clone = response.clone()
+          caches.open(SHELL_CACHE).then(cache => cache.put(request, clone))
           return response
         })
       })
@@ -76,78 +66,62 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // ── App shell & static assets — cache-first ────────────────────────────
+  // ── App shell & static assets — cache-first, update in background ────────
   if (url.origin === self.location.origin) {
     event.respondWith(
       caches.match(request).then(cached => {
-        if (cached) return cached
-        return fetch(request.clone())
-          .then(response => {
-            if (response.ok) {
-              caches.open(SHELL_CACHE).then(cache => cache.put(request, response.clone()))
-            }
-            return response
-          })
-          .catch(() => caches.match('/index.html'))
+        // Clone the request before passing to fetch (request body can only be read once)
+        const fetchPromise = fetch(request).then(response => {
+          if (response.ok) {
+            // Clone IMMEDIATELY — before any await/then that could consume the body
+            const clone = response.clone()
+            caches.open(SHELL_CACHE).then(cache => cache.put(request, clone))
+          }
+          return response
+        }).catch(() => caches.match('/index.html'))
+
+        // Return cached immediately, but refresh cache in background
+        return cached || fetchPromise
       })
     )
     return
   }
 
-  // ── Everything else — network-first ───────────────────────────────────
+  // ── Everything else — network with cache fallback ────────────────────────
   event.respondWith(
-    fetch(request).catch(() => caches.match('/index.html'))
+    fetch(request)
+      .then(response => {
+        if (response.ok) {
+          const clone = response.clone()
+          caches.open(DYNAMIC_CACHE).then(cache => cache.put(request, clone))
+        }
+        return response
+      })
+      .catch(() => caches.match(request) || caches.match('/index.html'))
   )
 })
 
-// ── Background sync (if supported) ───────────────────────────────────────
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'dayflow-sync') {
-    // Signal all clients to attempt a queue replay
-    event.waitUntil(
-      self.clients.matchAll().then(clients =>
-        clients.forEach(c => c.postMessage({ type: 'SYNC_QUEUE' }))
-      )
-    )
-  }
-})
-
-// ── Push notification received ────────────────────────────────────────────
-self.addEventListener('push', (event) => {
-  if (!event.data) return
-  let data = {}
-  try { data = event.data.json() } catch { data = { title: 'DayFlow', body: event.data.text() } }
-  const {
-    title = 'DayFlow', body = '',
-    icon  = '/icon-192.png',
-    badge = '/icon-192.png',
-    url   = '/dashboard',
-  } = data
+// ── Push notifications ─────────────────────────────────────────────────────────
+self.addEventListener('push', event => {
+  const data = event.data?.json() || { title: 'DayFlow', body: 'Time to check in!' }
   event.waitUntil(
-    self.registration.showNotification(title, {
-      body, icon, badge,
-      data:    { url },
-      vibrate: [100, 50, 100],
-      actions: [
-        { action: 'open',    title: 'Open DayFlow' },
-        { action: 'dismiss', title: 'Dismiss' },
-      ],
+    self.registration.showNotification(data.title, {
+      body:    data.body,
+      icon:    '/icon-192.png',
+      badge:   '/icon-192.png',
+      vibrate: [200, 100, 200],
+      data:    { url: data.url || '/dashboard' },
     })
   )
 })
 
-// ── Notification click ────────────────────────────────────────────────────
-self.addEventListener('notificationclick', (event) => {
+self.addEventListener('notificationclick', event => {
   event.notification.close()
-  if (event.action === 'dismiss') return
-  const url = event.notification.data?.url || '/dashboard'
   event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
-      for (const c of list) {
-        if (c.url.includes(self.location.origin) && 'focus' in c) {
-          c.navigate(url)
-          return c.focus()
-        }
+    clients.matchAll({ type: 'window' }).then(clientList => {
+      const url = event.notification.data?.url || '/dashboard'
+      for (const client of clientList) {
+        if (client.url.includes(url) && 'focus' in client) return client.focus()
       }
       if (clients.openWindow) return clients.openWindow(url)
     })

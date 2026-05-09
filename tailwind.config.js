@@ -4,6 +4,15 @@ export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
+      transitionTimingFunction: {
+        spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+        smooth: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      },
+      transitionDuration: {
+        '250': '250ms',
+        '400': '400ms',
+        '600': '600ms',
+      },
       colors: {
         parchment: '#FAFAF8',
         forest: {

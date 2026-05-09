@@ -25,7 +25,7 @@ function ChallengeCard({ c, challenges, onEdit }) {
 
   return (
     <div
-      className="rounded-2xl border overflow-hidden"
+      className="rounded-2xl border overflow-hidden card-hover"
       style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
     >
       <div className="p-4">

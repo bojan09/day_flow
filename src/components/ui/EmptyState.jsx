@@ -1,57 +1,78 @@
 // Component: EmptyState
-// Purpose: Reusable illustrated empty state with SVG spot art, title, subtitle, and optional CTA
+// Purpose: Illustrated empty states — custom SVG per type, not just text + icon.
+//          v6.2: proper illustrations, warmer tone, action button.
+import { memo } from 'react'
+
 const ILLUSTRATIONS = {
   tasks: (
-    <svg viewBox="0 0 120 80" className="w-28 h-20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="20" y="14" width="80" height="52" rx="8" fill="#EEF4ED" stroke="#D0E4CC" strokeWidth="1.5"/>
-      <rect x="32" y="26" width="40" height="5" rx="2.5" fill="#A7C9A0"/>
-      <rect x="32" y="36" width="56" height="4" rx="2" fill="#D0E4CC"/>
-      <rect x="32" y="45" width="48" height="4" rx="2" fill="#D0E4CC"/>
-      <circle cx="85" cy="58" r="12" fill="#3B6B4B"/>
-      <path d="M80 58l3.5 3.5L90 53" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ),
-  notes: (
-    <svg viewBox="0 0 120 80" className="w-28 h-20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="25" y="10" width="55" height="65" rx="6" fill="#EEF4ED" stroke="#D0E4CC" strokeWidth="1.5"/>
-      <rect x="34" y="22" width="37" height="4" rx="2" fill="#A7C9A0"/>
-      <rect x="34" y="31" width="37" height="3" rx="1.5" fill="#D0E4CC"/>
-      <rect x="34" y="39" width="28" height="3" rx="1.5" fill="#D0E4CC"/>
-      <rect x="34" y="47" width="32" height="3" rx="1.5" fill="#D0E4CC"/>
-      <path d="M75 54l8-8 6 6-8 8H75v-6z" fill="#C4622D" opacity="0.7"/>
+    <svg viewBox="0 0 120 80" className="w-28 h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="15" width="80" height="12" rx="4" fill="var(--border)" />
+      <rect x="20" y="33" width="60" height="10" rx="4" fill="var(--border)" opacity="0.6" />
+      <rect x="20" y="50" width="70" height="10" rx="4" fill="var(--border)" opacity="0.4" />
+      <circle cx="10" cy="21" r="4" stroke="var(--accent-mid)" strokeWidth="2" />
+      <circle cx="10" cy="38" r="4" stroke="var(--border)" strokeWidth="2" />
+      <circle cx="10" cy="55" r="4" stroke="var(--border)" strokeWidth="2" />
     </svg>
   ),
   habits: (
-    <svg viewBox="0 0 120 80" className="w-28 h-20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {[0,1,2,3,4,5,6].map((d,i) => (
-        <circle key={i} cx={22 + i * 11} cy="40" r="7" fill={i < 4 ? '#3B6B4B' : '#EEF4ED'} stroke={i < 4 ? '#2A4E36' : '#D0E4CC'} strokeWidth="1"/>
+    <svg viewBox="0 0 120 80" className="w-28 h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {[0,1,2,3,4,5,6].map(i => (
+        <rect key={i} x={8 + i*16} y="20" width="12" height="40" rx="3"
+          fill="var(--border)" opacity={0.3 + i*0.1} />
       ))}
-      {[0,1,2,3].map((i) => (
-        <path key={i} d={`M${18 + i * 11} 40l2.5 2.5L${24.5 + i * 11} 37`} stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-      ))}
-      <text x="60" y="68" textAnchor="middle" fontSize="11" fill="#A7C9A0" fontFamily="serif">keep going!</text>
+      <rect x="8" y="20" width="12" height="40" rx="3" fill="var(--accent-mid)" opacity="0.6" />
+      <rect x="24" y="30" width="12" height="30" rx="3" fill="var(--accent)" opacity="0.4" />
+    </svg>
+  ),
+  notes: (
+    <svg viewBox="0 0 120 80" className="w-28 h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="25" y="10" width="70" height="60" rx="6" fill="var(--border)" opacity="0.3" />
+      <rect x="35" y="25" width="50" height="6" rx="3" fill="var(--border)" />
+      <rect x="35" y="37" width="40" height="5" rx="3" fill="var(--border)" opacity="0.7" />
+      <rect x="35" y="48" width="45" height="5" rx="3" fill="var(--border)" opacity="0.5" />
+      <circle cx="90" cy="65" r="12" fill="var(--accent)" opacity="0.9" />
+      <line x1="86" y1="65" x2="94" y2="65" stroke="white" strokeWidth="2" strokeLinecap="round" />
+      <line x1="90" y1="61" x2="90" y2="69" stroke="white" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  ),
+  goals: (
+    <svg viewBox="0 0 120 80" className="w-28 h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="60" cy="40" r="28" stroke="var(--border)" strokeWidth="3" />
+      <circle cx="60" cy="40" r="18" stroke="var(--accent-mid)" strokeWidth="2.5" />
+      <circle cx="60" cy="40" r="8" fill="var(--accent)" opacity="0.3" />
+      <circle cx="60" cy="40" r="3" fill="var(--accent)" />
     </svg>
   ),
   default: (
-    <svg viewBox="0 0 120 80" className="w-28 h-20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="60" cy="38" r="24" fill="#EEF4ED" stroke="#D0E4CC" strokeWidth="1.5"/>
-      <circle cx="52" cy="34" r="2" fill="#A7C9A0"/>
-      <circle cx="68" cy="34" r="2" fill="#A7C9A0"/>
-      <path d="M50 44c2.5 4 17.5 4 20 0" stroke="#A7C9A0" strokeWidth="1.5" strokeLinecap="round"/>
+    <svg viewBox="0 0 120 80" className="w-28 h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="30" y="20" width="60" height="45" rx="8" fill="var(--border)" opacity="0.3" />
+      <rect x="42" y="33" width="36" height="5" rx="2.5" fill="var(--border)" />
+      <rect x="42" y="44" width="26" height="5" rx="2.5" fill="var(--border)" opacity="0.6" />
     </svg>
   ),
 }
 
-export default function EmptyState({ type = 'default', title, subtitle, action, onAction }) {
+function EmptyState({ type = 'default', title, subtitle, action, onAction }) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-      {ILLUSTRATIONS[type] || ILLUSTRATIONS.default}
-      {title && <p className="mt-3 text-sm font-medium [color:var(--text)]">{title}</p>}
-      {subtitle && <p className="mt-1 text-xs [color:var(--text-faint)] max-w-xs">{subtitle}</p>}
+    <div className="flex flex-col items-center justify-center py-10 px-6 text-center">
+      <div className="mb-4 opacity-80">
+        {ILLUSTRATIONS[type] || ILLUSTRATIONS.default}
+      </div>
+      {title && (
+        <p className="font-serif text-base font-semibold mb-1" style={{ color: 'var(--text)' }}>
+          {title}
+        </p>
+      )}
+      {subtitle && (
+        <p className="text-sm leading-relaxed" style={{ color: 'var(--text-faint)', maxWidth: '220px' }}>
+          {subtitle}
+        </p>
+      )}
       {action && onAction && (
         <button
           onClick={onAction}
-          className="mt-4 px-4 py-2 rounded-full [background-color:var(--accent)] text-white text-xs font-medium hover:[background-color:var(--accent)] transition-colors"
+          className="mt-4 px-5 py-2 rounded-full text-sm font-semibold text-white transition-all active:scale-95"
+          style={{ backgroundColor: 'var(--accent)' }}
         >
           {action}
         </button>
@@ -59,3 +80,5 @@ export default function EmptyState({ type = 'default', title, subtitle, action, 
     </div>
   )
 }
+
+export default memo(EmptyState)

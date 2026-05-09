@@ -1,6 +1,6 @@
 // Component: HabitRow
 // Purpose: Single habit row — 7-day toggle circles, streak, edit, delete.
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import Modal       from '../ui/Modal'
 import EmojiPicker from '../ui/EmojiPicker'
 import Input  from '../ui/Input'
@@ -66,7 +66,7 @@ function EditHabitModal({ habit, onSave, onClose }) {
   )
 }
 
-export default function HabitRow({ habit, weekDays, isHabitDone, toggleHabitDay, streak, weeklyCount, onDelete, onEdit }) {
+function HabitRow({ habit, weekDays, isHabitDone, toggleHabitDay, streak, weeklyCount, onDelete, onEdit }) {
   const [editing, setEditing] = useState(false)
   const freqLabel = habit.frequency === 'daily'
     ? 'daily'
@@ -138,3 +138,5 @@ export default function HabitRow({ habit, weekDays, isHabitDone, toggleHabitDay,
     </>
   )
 }
+
+export default memo(HabitRow)

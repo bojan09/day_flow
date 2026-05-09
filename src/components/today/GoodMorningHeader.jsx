@@ -1,73 +1,107 @@
 // Component: GoodMorningHeader
-// Purpose: Polished greeting card with weather, quote, and daily intention — fully theme-aware
-import { useState } from 'react'
+// Purpose: Polished greeting card — gradient accent band, intention input, weather.
+//          v6.2: gradient top band, richer typography, card-hover elevation.
+import { memo, useState } from 'react'
 import { getGreeting, getDailyQuote } from '../../utils/greetings'
 import { useWeather } from '../../hooks/useWeather'
 
-export default function GoodMorningHeader({ intention }) {
+function GoodMorningHeader({ intention }) {
   const greeting = getGreeting()
   const quote    = getDailyQuote()
   const { weather } = useWeather()
   const [text,    setText]    = useState(intention.getTodayIntention())
   const [editing, setEditing] = useState(false)
 
-  const handleBlur = () => {
-    intention.setTodayIntention(text)
-    setEditing(false)
-  }
+  const handleBlur = () => { intention.setTodayIntention(text); setEditing(false) }
 
   return (
     <div
-      className="rounded-2xl border p-5 space-y-3 animate-fade-up"
+      className="rounded-2xl border overflow-hidden card-hover animate-fade-up"
       style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex-1 min-w-0">
-          <h2 className="font-serif text-2xl leading-tight" style={{ color: 'var(--text)' }}>
-            {greeting} 👋
-          </h2>
-          <p className="text-sm mt-1 leading-relaxed italic font-serif" style={{ color: 'var(--text-muted)' }}>
-            "{quote}"
-          </p>
-        </div>
-        {weather && (
-          <div
-            className="flex-shrink-0 flex flex-col items-center rounded-xl px-3 py-2 border text-center"
-            style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' }}
-          >
-            <span className="text-2xl">{weather.emoji}</span>
-            <span className="text-xs font-semibold mt-0.5" style={{ color: 'var(--text)' }}>{weather.temp}°C</span>
-            <span className="text-[10px]" style={{ color: 'var(--text-faint)' }}>{weather.label}</span>
+      {/* Gradient top band */}
+      <div
+        className="px-5 pt-5 pb-4"
+        style={{
+          background: 'linear-gradient(135deg, var(--accent-light) 0%, var(--surface) 60%)',
+          borderBottom: '1px solid var(--border-soft)',
+        }}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <h2
+              className="font-serif leading-tight"
+              style={{ color: 'var(--text)', fontSize: 'var(--text-xl)' }}
+            >
+              {greeting} 👋
+            </h2>
+            <p
+              className="mt-1.5 leading-relaxed italic font-serif"
+              style={{ color: 'var(--text-muted)', fontSize: 'var(--text-sm)' }}
+            >
+              "{quote}"
+            </p>
           </div>
-        )}
+
+          {/* Weather widget */}
+          {weather && (
+            <div
+              className="flex-shrink-0 flex flex-col items-center rounded-2xl px-3.5 py-2.5 text-center border card-hover"
+              style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' }}
+            >
+              <span className="text-2xl">{weather.emoji}</span>
+              <span className="text-sm font-bold mt-0.5" style={{ color: 'var(--text)' }}>
+                {weather.temp}°C
+              </span>
+              <span style={{ color: 'var(--text-faint)', fontSize: 'var(--text-2xs)' }}>
+                {weather.label}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Daily intention */}
-      <div
-        className="flex items-center gap-2 rounded-xl px-4 py-2.5 cursor-text border transition-all"
-        style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)' }}
-        onClick={() => setEditing(true)}
-      >
-        <span className="text-sm flex-shrink-0 [color:var(--accent)]">🎯</span>
+      {/* Intention input */}
+      <div className="px-5 py-3.5">
+        <p style={{ color: 'var(--text-faint)', fontSize: 'var(--text-2xs)' }}
+          className="uppercase tracking-wider font-semibold mb-2">
+          Today's intention
+        </p>
         {editing ? (
           <input
             autoFocus
-            className="flex-1 bg-transparent text-sm outline-none placeholder-forest-300/60"
-            style={{ color: 'var(--text)' }}
-            placeholder="Today I intend to…"
             value={text}
             onChange={e => setText(e.target.value)}
             onBlur={handleBlur}
             onKeyDown={e => e.key === 'Enter' && handleBlur()}
+            placeholder="What matters most today?"
+            className="input-base w-full"
           />
         ) : (
-          <span className={`flex-1 text-sm ${text ? 'font-medium' : 'italic'}`}
-            style={{ color: text ? 'var(--text)' : 'var(--accent)' }}>
-            {text || 'Today I intend to…  (tap to set)'}
-          </span>
+          <button
+            onClick={() => setEditing(true)}
+            className="w-full text-left transition-colors rounded-xl px-4 py-2.5 border"
+            style={{
+              color:           text ? 'var(--text)' : 'var(--text-faint)',
+              borderColor:     'var(--border)',
+              backgroundColor: 'var(--bg)',
+              fontStyle:       text ? 'normal' : 'italic',
+              fontSize:        'var(--text-sm)',
+            }}
+            onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--accent-mid)'; e.currentTarget.style.backgroundColor = 'var(--accent-light)' }}
+            onMouseOut={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.backgroundColor = 'var(--bg)' }}
+          >
+            {text || 'Set your intention for today…'}
+            {text && (
+              <span className="ml-2" style={{ color: 'var(--accent)', fontSize: 'var(--text-2xs)' }}>
+                ✓
+              </span>
+            )}
+          </button>
         )}
-        {text && !editing && <span className="text-xs [color:var(--accent)]">✓</span>}
       </div>
     </div>
   )
 }
+
+export default memo(GoodMorningHeader)
