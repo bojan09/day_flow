@@ -47,7 +47,7 @@ export function useRoutines() {
 
   const addRoutine = (data) => {
     const routine = {
-      id:    Date.now().toString(),
+      id:    `${Date.now()}-${Math.random().toString(36).slice(2,9)}`,
       name:  data.name?.trim() || 'New Routine',
       emoji: data.emoji        || '🎯',
       time:  data.time         || 'morning',
@@ -69,7 +69,7 @@ export function useRoutines() {
     setRoutines(prev => prev.map(r =>
       r.id !== routineId ? r : {
         ...r,
-        steps: [...r.steps, { id: Date.now().toString(), text: text.trim(), duration }],
+        steps: [...r.steps, { id: `${Date.now()}-${Math.random().toString(36).slice(2,9)}`, text: text.trim(), duration }],
       }
     ))
 

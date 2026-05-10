@@ -55,6 +55,9 @@ import { useWorkouts        } from '../hooks/useWorkouts'
 import { useCustomCategories } from '../hooks/useCustomCategories'
 import { useAchievements    } from '../hooks/useAchievements'
 import { useMoodTheme       } from '../hooks/useMoodTheme'
+import { useOnboarding     } from '../hooks/useOnboarding'
+import OnboardingFlow       from '../components/onboarding/OnboardingFlow'
+import FeatureTooltip       from '../components/ui/FeatureTooltip'
 import VoiceCommandBar     from '../components/voice/VoiceCommandBar'
 import { spawnRecurringTasks }    from '../services/recurringEngine'
 import { spawnRecurringWorkouts } from '../services/recurringWorkoutsEngine'
@@ -90,7 +93,8 @@ export default function DashboardPage() {
   const catData         = useCustomCategories()
   const achievements    = useAchievements({ tasks, habits, notes, goals, xp, workouts, mood })
   const { theme, setTheme } = useTheme()
-  const moodTheme = useMoodTheme(mood, theme)
+  const moodTheme  = useMoodTheme(mood, theme)
+  const onboarding = useOnboarding()
   const score = useDailyScore({ tasks, habits, mood, gratitude, water })
 
   // Recurring engine — runs once after data loads, ref prevents double-fire
@@ -112,6 +116,17 @@ export default function DashboardPage() {
   return (
     <>
       <KeyboardShortcuts onTabChange={handleTabChange} />
+
+      {/* First-run onboarding wizard — shown once */}
+      {onboarding.shouldShow && (
+        <OnboardingFlow
+          onboarding={onboarding}
+          tasks={tasks}
+          habits={habits}
+          goals={goals}
+          onSetTheme={setTheme}
+        />
+      )}
 
       <Suspense fallback={<TabSkeleton />}>
       <DashboardLayout activeTab={activeTab} onTabChange={handleTabChange} theme={theme} onSetTheme={setTheme}>
@@ -147,7 +162,9 @@ export default function DashboardPage() {
       </Suspense>
 
       <QuickCapture tasks={tasks} ideas={ideas} notes={notes} habits={habits} onTabChange={handleTabChange} />
-      <VoiceCommandBar tasks={tasks} habits={habits} notes={notes} ideas={ideas} />
+      <FeatureTooltip id="voice-command">
+        <VoiceCommandBar tasks={tasks} habits={habits} notes={notes} ideas={ideas} />
+      </FeatureTooltip>
       <WeeklyReview tasks={tasks} habits={habits} mood={mood} />
     </>
   )

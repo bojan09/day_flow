@@ -55,7 +55,7 @@ export function useTasks() {
 
   const addTask = (task) => {
     const t = {
-      id: Date.now().toString(), title: task.title?.trim() || '',
+      id: `${Date.now()}-${Math.random().toString(36).slice(2,9)}`, title: task.title?.trim() || '',
       priority: task.priority || 'medium', category: task.category || 'Personal',
       date: task.date || getTodayKey(), completed: false, completedAt: null,
       isFocus: false, estimateMins: task.estimateMins || null,

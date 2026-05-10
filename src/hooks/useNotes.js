@@ -41,7 +41,7 @@ export function useNotes() {
 
   const addNote = (partial = {}) => {
     const note = {
-      id: Date.now().toString(), title: partial.title || 'Untitled',
+      id: `${Date.now()}-${Math.random().toString(36).slice(2,9)}`, title: partial.title || 'Untitled',
       content: partial.content || '', tags: partial.tags || [], pinned: false,
       createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
       ...(useDB ? { user_id: userId } : {}),

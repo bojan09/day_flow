@@ -22,7 +22,7 @@ export function useWorkouts() {
 
   const addSession = (data) => {
     const session = {
-      id:           Date.now().toString(),
+      id:           `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
       title:        data.title?.trim()  || 'Workout',
       type:         data.type           || 'Strength',
       muscleGroups: data.muscleGroups   || [],

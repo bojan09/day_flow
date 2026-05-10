@@ -36,7 +36,7 @@ export function useGoals() {
 
   const addGoal = (data) => {
     const g = {
-      id: Date.now().toString(), title: data.title.trim(), description: data.description || '',
+      id: `${Date.now()}-${Math.random().toString(36).slice(2,9)}`, title: data.title.trim(), description: data.description || '',
       type: data.type || 'Yearly', category: data.category || 'Personal', targetDate: data.targetDate || '',
       milestones: [], completed: false, createdAt: new Date().toISOString(),
       ...(useDB ? { user_id: userId } : {}),
@@ -49,7 +49,7 @@ export function useGoals() {
   const toggleGoal  = (id)          => updateGoal(id, { completed: !goals.find(g => g.id === id)?.completed })
 
   const addMilestone = (goalId, text) => updateGoal(goalId, {
-    milestones: [...(goals.find(g => g.id === goalId)?.milestones || []), { id: Date.now().toString(), text, done: false }]
+    milestones: [...(goals.find(g => g.id === goalId)?.milestones || []), { id: `${Date.now()}-${Math.random().toString(36).slice(2,9)}`, text, done: false }]
   })
 
   const toggleMilestone = (goalId, msId) => {

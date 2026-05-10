@@ -35,7 +35,7 @@ export function useBookmarks() {
 
   const addBookmark = (data) => {
     const b = {
-      id: Date.now().toString(), url: data.url?.trim() || '', title: data.title?.trim() || data.url || 'Untitled',
+      id: `${Date.now()}-${Math.random().toString(36).slice(2,9)}`, url: data.url?.trim() || '', title: data.title?.trim() || data.url || 'Untitled',
       note: data.note || '', tags: data.tags || [], read: false, remindAt: data.remindAt || null,
       createdAt: new Date().toISOString(), ...(useDB ? { user_id: userId } : {}),
     }

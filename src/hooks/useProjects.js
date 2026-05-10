@@ -36,7 +36,7 @@ export function useProjects() {
 
   const addProject = (data) => {
     const p = {
-      id: Date.now().toString(), name: data.name.trim(), description: data.description || '',
+      id: `${Date.now()}-${Math.random().toString(36).slice(2,9)}`, name: data.name.trim(), description: data.description || '',
       category: data.category || 'Personal', status: 'Active', color: data.color || '#3B6B4B',
       dueDate: data.dueDate || '', createdAt: new Date().toISOString(),
       ...(useDB ? { user_id: userId } : {}),

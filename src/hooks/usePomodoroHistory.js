@@ -12,7 +12,7 @@ export function usePomodoroHistory() {
 
   const logSession = (durationMins = 25, taskTitle = '') => {
     setSessions(prev => [...prev, {
-      id:           Date.now().toString(),
+      id:           `${Date.now()}-${Math.random().toString(36).slice(2,9)}`,
       date:         getTodayKey(),
       durationMins,
       taskTitle,

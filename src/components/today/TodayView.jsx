@@ -25,6 +25,7 @@ import DailySummaryCard       from '../summary/DailySummaryCard'
 import SmartMorningBrief     from './SmartMorningBrief'
 import PriorityRecommendation from './PriorityRecommendation'
 import { useSmartScheduler }  from '../../hooks/useSmartScheduler'
+import FeatureTooltip        from '../ui/FeatureTooltip'
 import MiniHabitWidget    from '../habits/MiniHabitWidget'
 import WidgetCustomizer   from './WidgetCustomizer'
 import { useAdaptiveDashboard }  from '../../hooks/useAdaptiveDashboard'
@@ -104,15 +105,17 @@ export default function TodayView({
 
       {/* Customize button */}
       <div className="flex justify-end px-1">
-        <button
-          onClick={() => setShowCustomizer(true)}
-          className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-all"
-          style={{ borderColor: 'var(--border)', color: 'var(--text-faint)' }}
-          onMouseOver={e => { e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
-          onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-faint)' }}
-        >
-          ✦ Customize
-        </button>
+        <FeatureTooltip id="widget-customize">
+          <button
+            onClick={() => setShowCustomizer(true)}
+            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-all"
+            style={{ borderColor: 'var(--border)', color: 'var(--text-faint)' }}
+            onMouseOver={e => { e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
+            onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-faint)' }}
+          >
+            ✦ Customize
+          </button>
+        </FeatureTooltip>
       </div>
 
       {/* Dynamic widget list */}

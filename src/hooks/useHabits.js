@@ -37,7 +37,7 @@ export function useHabits() {
   useEffect(() => { if (!useDB) { storage.set('habits', habits); storage.set('habit_log', log) } }, [habits, log])
 
   const addHabit = async (habit) => {
-    const h = { id: Date.now().toString(), name: habit.name.trim(), icon: habit.icon || '⭐', frequency: habit.frequency || 'daily', createdAt: new Date().toISOString(), ...(useDB ? { user_id: userId } : {}) }
+    const h = { id: `${Date.now()}-${Math.random().toString(36).slice(2,9)}`, name: habit.name.trim(), icon: habit.icon || '⭐', frequency: habit.frequency || 'daily', createdAt: new Date().toISOString(), ...(useDB ? { user_id: userId } : {}) }
     setHabits(prev => [...prev, h])
     if (useDB) await habitsService.upsertHabit(userId, h)
     return h

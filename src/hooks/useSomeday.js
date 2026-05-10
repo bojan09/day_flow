@@ -11,7 +11,7 @@ export function useSomeday() {
 
   const addItem = (title) => {
     if (!title.trim()) return
-    setItems(prev => [{ id: Date.now().toString(), title: title.trim(), createdAt: new Date().toISOString() }, ...prev])
+    setItems(prev => [{ id: `${Date.now()}-${Math.random().toString(36).slice(2,9)}`, title: title.trim(), createdAt: new Date().toISOString() }, ...prev])
   }
 
   const removeItem   = (id)       => setItems(prev => prev.filter(i => i.id !== id))

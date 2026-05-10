@@ -36,7 +36,7 @@ export function useIdeas() {
 
   const addIdea = (data) => {
     const idea = {
-      id: Date.now().toString(), title: data.title.trim(), description: data.description || '',
+      id: `${Date.now()}-${Math.random().toString(36).slice(2,9)}`, title: data.title.trim(), description: data.description || '',
       category: data.category || 'Other', status: 'Raw', stars: 0,
       tags: data.tags || [], linkedGoalId: null,
       createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),

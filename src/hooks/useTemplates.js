@@ -9,7 +9,7 @@ export function useTemplates() {
 
   const saveTemplate = (name, tasks) => {
     const tmpl = {
-      id:        Date.now().toString(),
+      id:        `${Date.now()}-${Math.random().toString(36).slice(2,9)}`,
       name:      name.trim(),
       tasks:     tasks.map(t => ({ title: t.title, priority: t.priority, category: t.category, estimateMins: t.estimateMins })),
       createdAt: new Date().toISOString(),
