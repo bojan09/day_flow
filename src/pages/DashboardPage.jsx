@@ -63,8 +63,48 @@ import { spawnRecurringTasks }    from '../services/recurringEngine'
 import { spawnRecurringWorkouts } from '../services/recurringWorkoutsEngine'
 
 export default function DashboardPage() {
-  const [activeTab, setActiveTab] = useState('today')
+  // Tab state persisted in URL hash so refresh preserves current tab
+  const [activeTab, setActiveTabRaw] = useState(() => {
+    const hash = window.location.hash.slice(1)
+    const valid = ['today','tasks','habits','focus','calendar','timeblock','projects',
+      'notes','ideas','braindump','bookmarks','workouts','routines','challenges',
+      'goals','insights','balance','search','achievements','weeklyreview']
+    return valid.includes(hash) ? hash : 'today'
+  })
+
+  const setActiveTab = (tab) => {
+    setActiveTabRaw(tab)
+    window.history.replaceState(null, '', `#${tab}`)
+  }
+
+  const [showQuickCapture, setShowQuickCapture] = useState(false)
   const handleTabChange = setActiveTab   // alias used throughout
+
+  // Handle PWA app shortcuts and share target via URL params
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const action = params.get('action')
+    const shareUrl   = params.get('url')
+    const shareTitle = params.get('title')
+    const shareText  = params.get('text')
+
+    if (action === 'add-task')  { setActiveTab('tasks');   setShowQuickCapture(true) }
+    if (action === 'log-mood')  { setActiveTab('today') }
+    if (action === 'focus')     { setActiveTab('focus') }
+    if (action === 'habits')    { setActiveTab('habits') }
+
+    // Share target — auto-create bookmark from shared URL
+    if (shareUrl || shareTitle) {
+      const title = shareTitle || shareText || shareUrl || 'Shared link'
+      const url   = shareUrl   || ''
+      if (url || title) {
+        bookmarks.addBookmark({ title: title.slice(0, 80), url, tags: ['shared'] })
+        setActiveTab('bookmarks')
+        // Clean URL params
+        window.history.replaceState({}, '', '/')
+      }
+    }
+  }, [])
 
   // ── Data hooks ──────────────────────────────────────────────────────────────
   const tasks           = useTasks()
@@ -97,16 +137,17 @@ export default function DashboardPage() {
   const onboarding = useOnboarding()
   const score = useDailyScore({ tasks, habits, mood, gratitude, water })
 
-  // Recurring engine — runs once after data loads, ref prevents double-fire
-  const spawnedRef = useRef(false)
+  // Recurring engine — uses date-keyed localStorage flag so it only runs
+  // ONCE per calendar day regardless of how many times DashboardPage remounts
   useEffect(() => {
-    // Wait until tasks are actually loaded (non-empty or synced)
-    if (spawnedRef.current) return
-    if (tasks.tasks === undefined) return
-    spawnedRef.current = true
+    if (!tasks.synced) return  // wait for Supabase data to load first
+    const today    = new Date().toISOString().split('T')[0]
+    const flagKey  = `dayflow_spawned_${today}`
+    if (sessionStorage.getItem(flagKey)) return
+    sessionStorage.setItem(flagKey, '1')
     spawnRecurringTasks(tasks.tasks, tasks.addTask)
     spawnRecurringWorkouts(workouts.sessions, workouts.addSession)
-  }, [tasks.tasks.length, workouts.sessions.length])
+  }, [tasks.synced])
 
   const handleWriteNote = (prompt) => {
     notes.addNote({ title: 'Reflection', content: `Prompt: ${prompt}\n\n`, tags: ['reflection'] })

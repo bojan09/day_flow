@@ -1,6 +1,7 @@
 // Hook: useWorkouts
 // Purpose: Workout session CRUD — log sessions with exercises, sets, reps, duration.
 import { usePersistedState } from './usePersistedState'
+import { useRef }           from 'react'
 import { getTodayKey, getDateKey } from '../utils/dateUtils'
 
 const KEY = 'workouts'
@@ -17,6 +18,7 @@ export const MUSCLE_GROUPS = [
 
 export function useWorkouts() {
   const [sessions, setSessions] = usePersistedState(KEY, [])
+  const pendingDeletesRef = useRef(new Set())
 
   // ── Session CRUD ────────────────────────────────────────────────────────────
 
@@ -41,8 +43,12 @@ export function useWorkouts() {
   const updateSession = (id, updates) =>
     setSessions(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s))
 
-  const deleteSession = (id) =>
+  const deleteSession = (id) => {
+    pendingDeletesRef.current.add(id)
     setSessions(prev => prev.filter(s => s.id !== id))
+    // Clear pending flag after 3s to absorb delayed sync events
+    setTimeout(() => pendingDeletesRef.current.delete(id), 3000)
+  }
 
   const toggleComplete = (id) =>
     setSessions(prev =>

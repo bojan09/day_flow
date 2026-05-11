@@ -64,7 +64,7 @@ export default function SideNav({ activeTab, onTabChange, theme, onSetTheme }) {
     >
       {/* Logo */}
       <button
-        onClick={() => { navigate('/dashboard'); onTabChange('tasks') }}
+        onClick={() => { navigate('/dashboard'); onTabChange('today') }}
         className="font-serif text-xl mb-6 pl-2 text-left hover:opacity-70 transition-opacity flex-shrink-0"
         style={{ color: 'var(--text)' }}
         aria-label="Go to tasks"

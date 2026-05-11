@@ -9,6 +9,8 @@ const PRECACHE_URLS = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/offline.html',
+  '/favicon.svg',
 ]
 
 // ── Install ────────────────────────────────────────────────────────────────────
@@ -31,6 +33,29 @@ self.addEventListener('activate', event => {
       )
     ).then(() => self.clients.claim())
   )
+
+  // Register periodic sync if supported
+  if ('periodicSync' in self.registration) {
+    try {
+      await self.registration.periodicSync.register('dayflow-refresh', {
+        minInterval: 30 * 60 * 1000, // 30 minutes
+      })
+    } catch (e) {
+      // Periodic sync not permitted — silently skip
+    }
+  }
+})
+
+// Periodic background sync handler
+self.addEventListener('periodicsync', event => {
+  if (event.tag === 'dayflow-refresh') {
+    event.waitUntil(
+      // Notify app to re-fetch data when it next opens
+      self.clients.matchAll({ type: 'window' }).then(clients =>
+        clients.forEach(client => client.postMessage({ type: 'BACKGROUND_SYNC' }))
+      )
+    )
+  }
 })
 
 // ── Fetch ──────────────────────────────────────────────────────────────────────
@@ -78,7 +103,7 @@ self.addEventListener('fetch', event => {
             caches.open(SHELL_CACHE).then(cache => cache.put(request, clone))
           }
           return response
-        }).catch(() => caches.match('/index.html'))
+        }).catch(() => caches.match('/offline.html'))
 
         // Return cached immediately, but refresh cache in background
         return cached || fetchPromise
@@ -97,7 +122,7 @@ self.addEventListener('fetch', event => {
         }
         return response
       })
-      .catch(() => caches.match(request) || caches.match('/index.html'))
+      .catch(() => caches.match(request) || caches.match('/offline.html'))
   )
 })
 

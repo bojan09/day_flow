@@ -9,13 +9,21 @@ export function registerSW() {
 }
 
 // Listen for messages from service worker (background sync)
-export function listenForSWMessages(onSyncQueue) {
+export function listenForSWMessages(onSyncQueue, onBackgroundSync) {
   if (!('serviceWorker' in navigator)) return
   navigator.serviceWorker.addEventListener('message', (event) => {
-    if (event.data?.type === 'SYNC_QUEUE') {
-      onSyncQueue?.()
-    }
+    if (event.data?.type === 'SYNC_QUEUE')    onSyncQueue?.()
+    if (event.data?.type === 'BACKGROUND_SYNC') onBackgroundSync?.()
   })
+}
+
+// Register periodic sync permission (call after user gesture)
+export async function requestPeriodicSync() {
+  if (!('periodicSync' in ServiceWorkerRegistration.prototype)) return false
+  try {
+    const status = await navigator.permissions.query({ name: 'periodic-background-sync' })
+    return status.state === 'granted'
+  } catch { return false }
 }
 
 // Store the install prompt event for later use

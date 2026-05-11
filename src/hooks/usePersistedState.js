@@ -24,10 +24,20 @@ export function usePersistedState(key, defaultValue) {
     if (!useDB) return
     loadedRef.current = false
     kvService.get(userId, key).then(remote => {
-      if (remote !== null) {
+      // FIX: only overwrite local state if remote has actual data
+      // Prevents empty Supabase response from wiping good localStorage data
+      const isEmpty = remote === null || remote === undefined ||
+        (Array.isArray(remote) && remote.length === 0) ||
+        (typeof remote === 'object' && !Array.isArray(remote) && Object.keys(remote).length === 0)
+
+      if (!isEmpty) {
         setValueRaw(remote)
         storage.set(key, remote)
       }
+      loadedRef.current = true
+    }).catch(err => {
+      // Network error — keep existing local data, don't overwrite
+      console.warn(`[DayFlow] usePersistedState(${key}): load failed, keeping local data`)
       loadedRef.current = true
     })
   }, [userId, key])

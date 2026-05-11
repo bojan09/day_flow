@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DayFlow — Offline</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #FAFAF8;
+      color: #2C2C2A;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: #FFFFFF;
+      border: 1px solid #E8E5DF;
+      border-radius: 24px;
+      padding: 40px 32px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+
+    .icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #EEF4ED, #D4E8D0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 24px;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    p {
+      font-size: 14px;
+      color: #7A7774;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .tip {
+      background: #EEF4ED;
+      border: 1px solid #C8DFC8;
+      border-radius: 16px;
+      padding: 16px;
+      margin: 24px 0;
+      text-align: left;
+    }
+
+    .tip p {
+      color: #3B6B4B;
+      font-size: 13px;
+      margin: 0;
+    }
+
+    .tip strong { display: block; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    button {
+      background: #3B6B4B;
+      color: white;
+      border: none;
+      border-radius: 100px;
+      padding: 12px 28px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    button:hover  { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(59,107,75,0.3); }
+    button:active { transform: scale(0.97); }
+
+    .status {
+      margin-top: 16px;
+      font-size: 12px;
+      color: #B0ADA8;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #EF4444;
+      margin-right: 6px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">📡</div>
+    <h1>You're offline</h1>
+    <p>DayFlow can't reach the server right now.</p>
+    <p>Don't worry — any changes you've made are saved and will sync automatically when you reconnect.</p>
+
+    <div class="tip">
+      <p>
+        <strong>✓ Your data is safe</strong>
+        Everything is stored locally and queued for sync. You won't lose anything.
+      </p>
+    </div>
+
+    <button onclick="window.location.reload()">
+      Try again
+    </button>
+
+    <p class="status">
+      <span class="dot"></span>
+      Waiting for connection…
+    </p>
+  </div>
+
+  <script>
+    // Auto-reload when connection is restored
+    window.addEventListener('online', () => {
+      window.location.reload()
+    })
+  </script>
+</body>
+</html>

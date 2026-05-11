@@ -1,13 +1,14 @@
 // Hook: useTasks
-// Purpose: Task CRUD — localStorage fallback with optional Supabase sync + real-time
-import { useState, useEffect, useCallback } from 'react'
-import { storage } from '../services/storage'
-import { tasksService } from '../services/supabaseDataService'
+// Purpose: Task CRUD — localStorage fallback with optional Supabase sync + real-time.
+//          Fixes: delete race condition, || synced overwrite bug, realtime dedup guard.
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { storage }        from '../services/storage'
+import { tasksService }   from '../services/supabaseDataService'
 import { subscribeToTable } from '../services/realtimeService'
-import { useAuth } from './useAuth'
+import { useAuth }        from './useAuth'
 import { isSupabaseConfigured } from '../services/supabaseClient'
-import { withRetry }           from '../utils/withRetry'
-import { getTodayKey } from '../utils/dateUtils'
+import { withRetry }      from '../utils/withRetry'
+import { getTodayKey }    from '../utils/dateUtils'
 
 const KEY = 'tasks'
 
@@ -19,30 +20,39 @@ export function useTasks() {
   const [tasks, setTasks]   = useState(() => storage.get(KEY, []))
   const [synced, setSynced] = useState(false)
 
-  // Load from Supabase on mount / user change
+  // Track IDs we've locally deleted — prevents realtime from restoring them
+  // before the Supabase DELETE has committed
+  const pendingDeletesRef = useRef(new Set())
+
+  // ── Load from Supabase on mount / user change ──────────────────────────────
   useEffect(() => {
     if (!useDB) { setSynced(true); return }
     tasksService.getAll(userId).then(rows => {
-      if (rows.length > 0 || synced) {
-        setTasks(rows)
-        storage.set(KEY, rows)
+      // FIX: never overwrite with empty — only update if Supabase returned data
+      if (rows.length > 0) {
+        // Filter out any pending local deletes that haven't committed yet
+        const filtered = rows.filter(r => !pendingDeletesRef.current.has(r.id))
+        setTasks(filtered)
+        storage.set(KEY, filtered)
       }
       setSynced(true)
     })
   }, [userId])
 
-  // Real-time subscription
+  // ── Real-time subscription ─────────────────────────────────────────────────
   useEffect(() => {
     if (!useDB) return
     return subscribeToTable('tasks', userId, () => {
       tasksService.getAll(userId).then(rows => {
-        setTasks(rows)
-        storage.set(KEY, rows)
+        // FIX: filter out pending deletes before applying realtime update
+        const filtered = rows.filter(r => !pendingDeletesRef.current.has(r.id))
+        setTasks(filtered)
+        storage.set(KEY, filtered)
       })
     })
   }, [userId])
 
-  // Persist to localStorage always
+  // ── Persist to localStorage when offline ──────────────────────────────────
   useEffect(() => { if (!useDB) storage.set(KEY, tasks) }, [tasks])
 
   const persist = useCallback(async (task) => {
@@ -50,19 +60,37 @@ export function useTasks() {
   }, [useDB, userId])
 
   const remove = useCallback(async (id) => {
-    if (useDB) await tasksService.delete(userId, id)
+    if (useDB) {
+      // FIX: mark as pending delete BEFORE the async call
+      // This prevents the realtime listener from restoring it
+      pendingDeletesRef.current.add(id)
+      await tasksService.delete(userId, id)
+      // Keep in pending set for 3s to absorb any delayed realtime events
+      setTimeout(() => pendingDeletesRef.current.delete(id), 3000)
+    }
   }, [useDB, userId])
 
+  // ── CRUD ───────────────────────────────────────────────────────────────────
   const addTask = (task) => {
     const t = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2,9)}`, title: task.title?.trim() || '',
-      priority: task.priority || 'medium', category: task.category || 'Personal',
-      date: task.date || getTodayKey(), completed: false, completedAt: null,
-      isFocus: false, estimateMins: task.estimateMins || null,
-      isRecurring: task.isRecurring || false, recurDays: task.recurDays || [],
-      recurringFrom: task.recurringFrom || null, projectId: task.projectId || null,
-      subTasks: task.subTasks || [], notes: task.notes || '',
-      createdAt: new Date().toISOString(),
+      id: `${Date.now()}-${Math.random().toString(36).slice(2,9)}`,
+      title:        task.title?.trim()      || '',
+      priority:     task.priority           || 'medium',
+      category:     task.category           || 'Personal',
+      date:         task.date               || getTodayKey(),
+      completed:    false,
+      completedAt:  null,
+      isFocus:      false,
+      estimateMins: task.estimateMins       || null,
+      dueTime:      task.dueTime            || '',
+      customMins:   task.customMins         || '',
+      isRecurring:  task.isRecurring        || false,
+      recurDays:    task.recurDays          || [],
+      recurringFrom: task.recurringFrom     || null,
+      projectId:    task.projectId          || null,
+      subTasks:     task.subTasks           || [],
+      notes:        task.notes              || '',
+      createdAt:    new Date().toISOString(),
       ...(useDB ? { user_id: userId } : {}),
     }
     setTasks(prev => [t, ...prev])
@@ -80,12 +108,12 @@ export function useTasks() {
   }
 
   const deleteTask = (id) => {
+    // Optimistic remove from UI immediately
     setTasks(prev => prev.filter(t => t.id !== id))
     remove(id)
   }
 
   const toggleTask = (id) => {
-    // Optimistic update — UI changes immediately
     let targetTask = null
     setTasks(prev => prev.map(t => {
       if (t.id !== id) return t
@@ -93,12 +121,9 @@ export function useTasks() {
       targetTask = updated
       return updated
     }))
-    // Persist with retry — revert on persistent failure
     if (targetTask) {
       withRetry(() => persist(targetTask), {
-        errorMessage: 'Could not save task — please check your connection',
         onFail: () => {
-          // Revert the optimistic update
           setTasks(prev => prev.map(t =>
             t.id === id ? { ...t, completed: !t.completed, completedAt: t.completed ? null : t.completedAt } : t
           ))
@@ -115,13 +140,13 @@ export function useTasks() {
     }))
   }
 
-  const getTasksByDate   = (dateKey) => tasks.filter(t => t.date === dateKey)
-  const getTodayTasks    = ()        => getTasksByDate(getTodayKey())
-  const getFocusTask     = ()        => tasks.find(t => t.isFocus && t.date === getTodayKey()) || null
+  const getTasksByDate       = (dateKey) => tasks.filter(t => t.date === dateKey)
+  const getTodayTasks        = ()        => getTasksByDate(getTodayKey())
+  const getFocusTask         = ()        => tasks.find(t => t.isFocus && t.date === getTodayKey()) || null
   const getTotalEstimateMins = (dateKey = getTodayKey()) =>
     getTasksByDate(dateKey).reduce((s, t) => s + (t.estimateMins || 0), 0)
-  const isOverdue        = (task)    => task.date < getTodayKey() && !task.completed
-  const isDueToday       = (task)    => task.date === getTodayKey() && !task.completed
+  const isOverdue  = (task) => task.date < getTodayKey() && !task.completed
+  const isDueToday = (task) => task.date === getTodayKey() && !task.completed
 
   return {
     tasks, synced, addTask, updateTask, deleteTask, toggleTask, setFocus,
