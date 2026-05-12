@@ -1,7 +1,7 @@
 // Hook: useWorkouts
 // Purpose: Workout session CRUD — log sessions with exercises, sets, reps, duration.
 import { usePersistedState } from './usePersistedState'
-import { useRef }           from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { getTodayKey, getDateKey } from '../utils/dateUtils'
 
 const KEY = 'workouts'
@@ -19,6 +19,9 @@ export const MUSCLE_GROUPS = [
 export function useWorkouts() {
   const [sessions, setSessions] = usePersistedState(KEY, [])
   const pendingDeletesRef = useRef(new Set())
+  // synced is true once usePersistedState has attempted to load from Supabase
+  // We use a simple effect that sets true after first render
+  const [synced, setSynced] = useState(false)
 
   // ── Session CRUD ────────────────────────────────────────────────────────────
 
@@ -126,8 +129,27 @@ export function useWorkouts() {
     return Object.values(pbs).sort((a, b) => b.date.localeCompare(a.date))
   }
 
+  // Deduplicate sessions on load — remove exact title+date duplicates
+  // Keeps the OLDEST entry (lowest id/createdAt) per title+date pair
+  useEffect(() => {
+    if (sessions.length < 2) { setSynced(true); return }
+    const seen = new Map()
+    const deduped = sessions.filter(s => {
+      const key = `${s.title}__${s.date}`
+      if (seen.has(key)) return false
+      seen.set(key, true)
+      return true
+    })
+    if (deduped.length !== sessions.length) {
+      setSessions(deduped)
+      console.info(`[DayFlow] Removed ${sessions.length - deduped.length} duplicate workout(s)`)
+    }
+    const t = setTimeout(() => setSynced(true), 500)
+    return () => clearTimeout(t)
+  }, [sessions.length])
+
   return {
-    sessions,
+    sessions, synced,
     addSession, updateSession, deleteSession, toggleComplete, toggleSet,
     getByDate, getToday, getRecent,
     getTotalThisWeek, getWeeklyVolume, getPersonalBests,

@@ -56,6 +56,7 @@ import { useCustomCategories } from '../hooks/useCustomCategories'
 import { useAchievements    } from '../hooks/useAchievements'
 import { useMoodTheme       } from '../hooks/useMoodTheme'
 import { useOnboarding     } from '../hooks/useOnboarding'
+import { usePersistedState } from '../hooks/usePersistedState'
 import OnboardingFlow       from '../components/onboarding/OnboardingFlow'
 import FeatureTooltip       from '../components/ui/FeatureTooltip'
 import VoiceCommandBar     from '../components/voice/VoiceCommandBar'
@@ -137,17 +138,18 @@ export default function DashboardPage() {
   const onboarding = useOnboarding()
   const score = useDailyScore({ tasks, habits, mood, gratitude, water })
 
-  // Recurring engine — uses date-keyed localStorage flag so it only runs
-  // ONCE per calendar day regardless of how many times DashboardPage remounts
+  // Recurring engine — persisted spawn flag prevents duplicates across
+  // tab closes, refreshes, and remounts. Keyed by today's date so it
+  // resets automatically at midnight.
+  const [spawnedDate, setSpawnedDate] = usePersistedState('recurring_spawned_date', '')
   useEffect(() => {
-    if (!tasks.synced) return  // wait for Supabase data to load first
-    const today    = new Date().toISOString().split('T')[0]
-    const flagKey  = `dayflow_spawned_${today}`
-    if (sessionStorage.getItem(flagKey)) return
-    sessionStorage.setItem(flagKey, '1')
+    if (!tasks.synced || !workouts.synced) return  // wait for BOTH to load
+    const today = new Date().toISOString().split('T')[0]
+    if (spawnedDate === today) return   // already ran today
+    setSpawnedDate(today)
     spawnRecurringTasks(tasks.tasks, tasks.addTask)
     spawnRecurringWorkouts(workouts.sessions, workouts.addSession)
-  }, [tasks.synced])
+  }, [tasks.synced, workouts.synced])
 
   const handleWriteNote = (prompt) => {
     notes.addNote({ title: 'Reflection', content: `Prompt: ${prompt}\n\n`, tags: ['reflection'] })
