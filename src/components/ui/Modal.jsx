@@ -1,18 +1,10 @@
 // Component: Modal
-// Purpose: Floating dialog — no body scroll lock, no overflow restrictions.
-//          Page remains fully scrollable while modal is open.
-//          Modal content is fully visible and internally scrollable.
-//
-// Design:
-//   - position:fixed overlay — does NOT touch document.body at all
-//   - Outer wrapper uses flex centering so modal is always in view
-//   - Panel has no max-height restriction — grows with content
-//   - If content is taller than viewport, the OVERLAY itself scrolls
-//     so all content stays reachable without locking the page
+// Purpose: Viewport-centered dialog. Panel is max 85vh tall with internal scroll
+//          so buttons are always reachable regardless of content height.
+//          No body style changes — page remains scrollable behind the overlay.
 import { useEffect } from 'react'
 
 export default function Modal({ isOpen, onClose, title, children }) {
-  // Close on Escape key — no body style changes ever
   useEffect(() => {
     if (!isOpen) return
     const handler = (e) => { if (e.key === 'Escape') onClose() }
@@ -24,48 +16,36 @@ export default function Modal({ isOpen, onClose, title, children }) {
 
   return (
     <>
-      {/* Backdrop — fixed, covers viewport, click to close */}
+      {/* Backdrop */}
       <div
         className="fixed inset-0 animate-fade-in"
-        style={{
-          backgroundColor: 'var(--overlay)',
-          zIndex: 9998,
-        }}
+        style={{ backgroundColor: 'var(--overlay)', zIndex: 9998 }}
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Scroll container — fixed, full viewport, scrollable */}
-      {/* This lets modal content taller than screen remain reachable */}
+      {/* Centering wrapper — fixed, does NOT scroll itself */}
       <div
-        className="fixed inset-0 flex items-start justify-center sm:items-center p-4 sm:p-6"
-        style={{
-          zIndex:    9999,
-          overflowY: 'auto',  // the CONTAINER scrolls, not the page, not the modal
-        }}
-        onClick={onClose}
+        className="fixed inset-0 flex items-center justify-center p-4"
+        style={{ zIndex: 9999, pointerEvents: 'none' }}
       >
-        {/* Panel — no max-height, grows naturally */}
+        {/* Panel — max 85vh, header pinned, body scrolls */}
         <div
-          className="
-            relative w-full rounded-2xl my-auto
-            sm:max-w-lg
-            animate-scale-in
-          "
+          className="w-full sm:max-w-lg rounded-2xl flex flex-col animate-scale-in"
           style={{
             backgroundColor: 'var(--surface)',
-            boxShadow: '0 8px 40px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.08)',
-            // No max-height — never clips content
-            // No overflow — never hides content
+            boxShadow:       '0 8px 40px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.08)',
+            maxHeight:       '85vh',       // never taller than viewport
+            pointerEvents:   'auto',
           }}
           role="dialog"
           aria-modal="true"
           aria-labelledby="modal-title"
           onClick={e => e.stopPropagation()}
         >
-          {/* Header */}
+          {/* Header — always visible, never scrolls */}
           <div
-            className="flex items-center justify-between px-5 py-4 border-b"
+            className="flex items-center justify-between px-5 py-4 border-b flex-shrink-0"
             style={{ borderColor: 'var(--border-soft)' }}
           >
             <h3
@@ -87,8 +67,11 @@ export default function Modal({ isOpen, onClose, title, children }) {
             </button>
           </div>
 
-          {/* Body — no restrictions */}
-          <div className="p-5">
+          {/* Body — this is the ONLY thing that scrolls */}
+          <div
+            className="p-5 overflow-y-auto flex-1"
+            style={{ overscrollBehavior: 'contain' }}
+          >
             {children}
           </div>
         </div>
