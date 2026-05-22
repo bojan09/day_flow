@@ -25,7 +25,6 @@ export default function BottomNav({ activeTab, onTabChange, onOpenDrawer }) {
               <button
                 key={i}
                 onClick={() => onTabChange(moduleId)}
-                onLongPress={() => setShowCustomizer(true)}
                 className="flex flex-col items-center justify-center gap-0.5 flex-1 py-2 min-h-[56px] relative transition-all active:scale-95"
                 style={{ color: active ? 'var(--accent)' : 'var(--text-faint)' }}
                 aria-label={mod.label}

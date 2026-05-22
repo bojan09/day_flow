@@ -103,7 +103,7 @@ export default function EmojiPicker({ value, onChange, onClose }) {
           {Object.keys(EMOJI_CATEGORIES).map(cat => {
             const active = tab === cat
             return (
-              <button
+              <button type="button"
                 key={cat}
                 onClick={() => handleTabChange(cat)}
                 className="flex-shrink-0 text-lg w-9 h-9 rounded-xl flex items-center justify-center transition-all"
@@ -141,7 +141,7 @@ export default function EmojiPicker({ value, onChange, onClose }) {
             </p>
           </div>
         ) : displayed.map((emoji, i) => (
-          <button
+          <button type="button"
             key={`${emoji}-${i}`}
             onClick={() => { onChange(emoji); onClose?.() }}
             className="text-xl w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 hover:scale-110"
@@ -165,7 +165,7 @@ export default function EmojiPicker({ value, onChange, onClose }) {
           <span className="text-xs" style={{ color: 'var(--text-faint)' }}>selected</span>
         </div>
         {onClose && (
-          <button
+          <button type="button"
             onClick={onClose}
             className="text-xs font-semibold px-3 py-1.5 rounded-full text-white"
             style={{ backgroundColor: 'var(--accent)' }}

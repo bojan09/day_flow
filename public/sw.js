@@ -23,7 +23,7 @@ self.addEventListener('install', event => {
 })
 
 // ── Activate ───────────────────────────────────────────────────────────────────
-self.addEventListener('activate', event => {
+self.addEventListener('activate', async event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(

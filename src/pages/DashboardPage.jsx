@@ -31,6 +31,7 @@ import { useTasks           } from '../hooks/useTasks'
 import { useNotes           } from '../hooks/useNotes'
 import { useHabits          } from '../hooks/useHabits'
 import { useMood            } from '../hooks/useMood'
+import { useAuth } from '../hooks/useAuth'
 import { useTheme           } from '../hooks/useTheme'
 import { useIntention       } from '../hooks/useIntention'
 import { useGoals           } from '../hooks/useGoals'
@@ -134,19 +135,23 @@ export default function DashboardPage() {
   const catData         = useCustomCategories()
   const achievements    = useAchievements({ tasks, habits, notes, goals, xp, workouts, mood })
   const { theme, setTheme } = useTheme()
+  const { user }             = useAuth()
   const moodTheme  = useMoodTheme(mood, theme)
   const onboarding = useOnboarding()
   const score = useDailyScore({ tasks, habits, mood, gratitude, water })
 
-  // Recurring engine — persisted spawn flag prevents duplicates across
-  // tab closes, refreshes, and remounts. Keyed by today's date so it
-  // resets automatically at midnight.
-  const [spawnedDate, setSpawnedDate] = usePersistedState('recurring_spawned_date', '')
+  // Recurring engine — synchronous localStorage guard (never async).
+  // Key = userId + today's date → unique per user, auto-expires at midnight.
+  // Runs only after both data sources are confirmed synced.
   useEffect(() => {
-    if (!tasks.synced || !workouts.synced) return  // wait for BOTH to load
-    const today = new Date().toISOString().split('T')[0]
-    if (spawnedDate === today) return   // already ran today
-    setSpawnedDate(today)
+    if (!tasks.synced || !workouts.synced) return
+    const today   = new Date().toISOString().split('T')[0]
+    const uid     = user?.id || 'demo'
+    const flagKey = `df_spawned_${uid}_${today}`
+    try {
+      if (localStorage.getItem(flagKey)) return
+      localStorage.setItem(flagKey, '1')
+    } catch { return }
     spawnRecurringTasks(tasks.tasks, tasks.addTask)
     spawnRecurringWorkouts(workouts.sessions, workouts.addSession)
   }, [tasks.synced, workouts.synced])
