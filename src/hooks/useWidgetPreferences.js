@@ -16,6 +16,15 @@ export const WIDGET_REGISTRY = [
   { id: 'quick-note',   title: 'Quick Note',    emoji: '📝', defaultOpen: false, alwaysVisible: false },
   { id: 'mini-habits',  title: 'Mini Habits',   emoji: '⚡', defaultOpen: false, alwaysVisible: false },
   { id: 'daily-summary', title: 'Daily Summary', emoji: '📊', defaultOpen: true,  alwaysVisible: false },
+
+  // ── Module widgets — full-feature mini cards shown on Today ───────────────
+  { id: 'module-projects',   title: 'Projects',   emoji: '🗂️', defaultOpen: true,  alwaysVisible: false, isModule: true },
+  { id: 'module-goals',      title: 'Goals',      emoji: '🏆', defaultOpen: true,  alwaysVisible: false, isModule: true },
+  { id: 'module-workouts',   title: 'Workouts',   emoji: '🏋️', defaultOpen: true,  alwaysVisible: false, isModule: true },
+  { id: 'module-challenges', title: 'Challenges', emoji: '🎯', defaultOpen: true,  alwaysVisible: false, isModule: true },
+  { id: 'module-calendar',   title: 'Calendar',   emoji: '📅', defaultOpen: true,  alwaysVisible: false, isModule: true },
+  { id: 'module-notes',      title: 'Notes',      emoji: '📝', defaultOpen: true,  alwaysVisible: false, isModule: true },
+  { id: 'module-ideas',      title: 'Ideas',      emoji: '💡', defaultOpen: true,  alwaysVisible: false, isModule: true },
 ]
 
 const DEFAULT_PREFS = {

@@ -57,6 +57,7 @@ import { useCustomCategories } from '../hooks/useCustomCategories'
 import { useAchievements    } from '../hooks/useAchievements'
 import { useMoodTheme       } from '../hooks/useMoodTheme'
 import { useOnboarding     } from '../hooks/useOnboarding'
+import { useTimeblocks    } from '../hooks/useTimeblocks'
 import { usePersistedState } from '../hooks/usePersistedState'
 import OnboardingFlow       from '../components/onboarding/OnboardingFlow'
 import FeatureTooltip       from '../components/ui/FeatureTooltip'
@@ -137,7 +138,8 @@ export default function DashboardPage() {
   const { theme, setTheme } = useTheme()
   const { user }             = useAuth()
   const moodTheme  = useMoodTheme(mood, theme)
-  const onboarding = useOnboarding()
+  const onboarding  = useOnboarding()
+  const timeblocks  = useTimeblocks()
   const score = useDailyScore({ tasks, habits, mood, gratitude, water })
 
   // Recurring engine — synchronous localStorage guard (never async).
@@ -180,7 +182,7 @@ export default function DashboardPage() {
       <DashboardLayout activeTab={activeTab} onTabChange={handleTabChange} theme={theme} onSetTheme={setTheme}>
 
         {/* ── Plan ─────────────────────────────────────────────────────────── */}
-        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={handleTabChange} xp={xp} goals={goals} />}
+        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={handleTabChange} xp={xp} goals={goals} projects={projects} workouts={workouts} challenges={challenges} ideas={ideas} timeblocks={timeblocks} />}
         {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={handleTabChange} energy={energy} habits={habits} ideas={ideas} />}
         {activeTab === 'calendar'   && <CalendarView tasks={tasks} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} />}
         {activeTab === 'timeblock'  && <TimeBlockView tasks={tasks} />}
@@ -213,7 +215,7 @@ export default function DashboardPage() {
       <FeatureTooltip id="voice-command">
         <VoiceCommandBar tasks={tasks} habits={habits} notes={notes} ideas={ideas} />
       </FeatureTooltip>
-      <WeeklyReview tasks={tasks} habits={habits} mood={mood} />
+      <WeeklyReview tasks={tasks} habits={habits} mood={mood} notes={notes} />
     </>
   )
 }

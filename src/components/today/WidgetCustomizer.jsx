@@ -55,9 +55,11 @@ export default function WidgetCustomizer({ isOpen, onClose, widgetPrefs, adaptiv
           Drag to reorder · 📌 Pin to top · 🙈 Hide · Tap ✦ to show hidden
         </p>
 
-        {/* Widget list */}
+        {/* Core widgets */}
+        <p className="text-[10px] font-semibold uppercase tracking-widest mb-2"
+          style={{ color: 'var(--text-faint)' }}>Core widgets</p>
         <div className="space-y-1.5">
-          {allIds.map((id, i) => {
+          {allIds.filter(id => !WIDGET_REGISTRY.find(w => w.id === id)?.isModule).map((id, i) => {
             const meta    = getMeta(id)
             const hidden  = widgetPrefs.isHidden(id)
             const pinned  = widgetPrefs.isPinned(id)
@@ -144,6 +146,39 @@ export default function WidgetCustomizer({ isOpen, onClose, widgetPrefs, adaptiv
                     {hidden ? '👁' : '🙈'}
                   </button>
                 </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Module widgets */}
+        <p className="text-[10px] font-semibold uppercase tracking-widest mt-5 mb-2"
+          style={{ color: 'var(--text-faint)' }}>Dashboard modules</p>
+        <p className="text-xs mb-2" style={{ color: 'var(--text-faint)' }}>
+          Show full feature previews on Today
+        </p>
+        <div className="space-y-1.5">
+          {allIds.filter(id => WIDGET_REGISTRY.find(w => w.id === id)?.isModule).map((id, i) => {
+            const meta   = getMeta(id)
+            const hidden = widgetPrefs.isHidden(id)
+            return (
+              <div key={id}
+                className="flex items-center gap-3 px-4 py-3 rounded-2xl border"
+                style={{ backgroundColor: hidden ? 'var(--bg-secondary)' : 'var(--surface)', borderColor: 'var(--border)', opacity: hidden ? 0.6 : 1 }}
+              >
+                <span className="text-base">{meta.emoji}</span>
+                <span className="flex-1 text-sm font-medium" style={{ color: hidden ? 'var(--text-faint)' : 'var(--text)' }}>
+                  {meta.title}
+                </span>
+                <button type="button"
+                  onClick={() => widgetPrefs.toggleHide(id)}
+                  className="text-xs px-3 py-1.5 rounded-full font-medium transition-all"
+                  style={hidden
+                    ? { backgroundColor: 'var(--accent)', color: 'white' }
+                    : { backgroundColor: 'var(--bg-secondary)', color: 'var(--text-muted)' }
+                  }>
+                  {hidden ? 'Show' : 'Hide'}
+                </button>
               </div>
             )
           })}
