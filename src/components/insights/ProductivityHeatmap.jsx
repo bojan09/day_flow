@@ -57,7 +57,7 @@ export default function ProductivityHeatmap({ tasks, habits }) {
     }
 
     return { cells: days, weeks, maxCount }
-  }, [tasks, habits, view])
+  }, [tasks.tasks, habits.habits, habits.log, view])
 
   // Month labels — find first day of each month in the cells
   const monthLabels = useMemo(() => {

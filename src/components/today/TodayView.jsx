@@ -37,7 +37,7 @@ import MiniHabitWidget    from '../habits/MiniHabitWidget'
 import WidgetCustomizer   from './WidgetCustomizer'
 import { useAdaptiveDashboard }  from '../../hooks/useAdaptiveDashboard'
 import { useWidgetPreferences, WIDGET_REGISTRY } from '../../hooks/useWidgetPreferences'
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 
 // Adaptive default orders by time context
 const MORNING_ORDER   = ['mood','tasks-today','habits-today','energy','water','focus-task','gratitude','affirmations','quick-note']
@@ -77,7 +77,8 @@ export default function TodayView({
   const adaptive   = useAdaptiveDashboard({ tasks, habits, mood, energy, xp: { getLevelInfo: () => null } })
   const { analysis } = useSmartScheduler({ tasks, energy, habits })
   const widgetPrefs = useWidgetPreferences()
-  const scoreData  = useMemo(() => score.calculate(), [tasks, habits, mood, water])
+  // score now exposes todayScore directly — no re-calculation needed
+  const scoreData = score.total !== undefined ? score : score.calculate?.()
   const [showCustomizer, setShowCustomizer] = useState(false)
 
   // Pick adaptive default order based on time context

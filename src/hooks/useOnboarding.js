@@ -2,6 +2,7 @@
 // Purpose: Tracks whether the user has completed onboarding.
 //          Persisted to Supabase via usePersistedState so it's device-consistent.
 import { usePersistedState } from './usePersistedState'
+import { useState, useEffect } from 'react'
 
 export const STARTER_PACKS = {
   student: {
@@ -86,16 +87,29 @@ const DEFAULT_STATE = {
 
 export function useOnboarding() {
   const [state, setState] = usePersistedState('onboarding_v1', DEFAULT_STATE)
+  // loaded: wait for usePersistedState to resolve from Supabase before showing
+  // onboarding — prevents false-positive flash on first render when state is default
+  // Use a short delay after mount to avoid flashing the wizard
+  // while usePersistedState is fetching from Supabase
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    // Wait 800ms — enough for Supabase KV to respond on most connections
+    // If state loads before then, the 800ms still protects against the default flash
+    const t = setTimeout(() => setMounted(true), 800)
+    return () => clearTimeout(t)
+  }, [])
 
   const setStep        = (step)  => setState(s => ({ ...s, step }))
   const setName        = (name)  => setState(s => ({ ...s, name }))
   const setPack        = (pack)  => setState(s => ({ ...s, pack }))
   const setTheme       = (theme) => setState(s => ({ ...s, theme }))
   const complete       = ()      => setState(s => ({ ...s, completed: true, completedAt: new Date().toISOString() }))
-  const skip           = ()      => setState(s => ({ ...s, skipped: true,   completed: true }))
+  const skip           = ()      => setState(s => ({ ...s, skipped: true, completed: true }))
   const reset          = ()      => setState(DEFAULT_STATE)
 
-  const shouldShow = !state.completed && !state.skipped
+  // Only show after Supabase has responded (prevents flash on cold load)
+  // Also never show if already completed or skipped
+  const shouldShow = mounted && !state.completed && !state.skipped
 
   return { state, setStep, setName, setPack, setTheme, complete, skip, reset, shouldShow }
 }

@@ -26,7 +26,7 @@ export default function SomedayList({ someday, tasks }) {
       <form onSubmit={handleAdd} className="flex gap-2">
         <input value={input} onChange={e => setInput(e.target.value)}
           placeholder="Capture an idea for later..."
-          className="flex-1 text-sm bg-transparent outline-none [color:var(--text)] placeholder-ink-faint" />
+          className="flex-1 text-sm bg-transparent outline-none [color:var(--text)] [placeholder-color:var(--text-faint)]" />
         <button type="submit" disabled={!input.trim()}
           className="text-xs [color:var(--accent)] font-medium disabled:opacity-30 hover:[color:var(--accent)] transition-colors">
           Add
@@ -46,7 +46,7 @@ export default function SomedayList({ someday, tasks }) {
               type="date"
               value={sched[item.id] || ''}
               onChange={e => setSched(p => ({ ...p, [item.id]: e.target.value }))}
-              className="text-[11px] border [border-color:var(--border)] rounded-lg px-1.5 py-1 outline-none focus:ring-1 focus:ring-forest-200 [color:var(--text-muted)] opacity-0 group-hover:opacity-100 transition-opacity w-28"
+              className="text-[11px] border [border-color:var(--border)] rounded-lg px-1.5 py-1 outline-none focus:ring-1 focus:[box-shadow:0_0_0_3px_var(--accent-light)] [color:var(--text-muted)] opacity-0 group-hover:opacity-100 transition-opacity w-28"
             />
             <button
               onClick={() => handleSchedule(item.id)}
@@ -65,7 +65,7 @@ export default function SomedayList({ someday, tasks }) {
       <form onSubmit={handleAdd} className="flex gap-2 border-t [border-color:var(--border-soft)] pt-3">
         <input value={input} onChange={e => setInput(e.target.value)}
           placeholder="Add another idea..."
-          className="flex-1 text-sm bg-transparent outline-none [color:var(--text)] placeholder-ink-faint" />
+          className="flex-1 text-sm bg-transparent outline-none [color:var(--text)] [placeholder-color:var(--text-faint)]" />
         <button type="submit" disabled={!input.trim()}
           className="text-xs [color:var(--accent)] font-medium disabled:opacity-30 hover:[color:var(--accent)] transition-colors">
           Add

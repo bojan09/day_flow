@@ -49,7 +49,7 @@ export default function MonthlyLetter({ monthlyLetter }) {
 
   if (writing && !current) {
     return (
-      <Card className="border-forest-100 [background-color:var(--accent-light)]">
+      <Card className="[border-color:var(--border)] [background-color:var(--accent-light)]">
         <div className="flex items-start justify-between mb-3">
           <div>
             <p className="text-xs font-medium uppercase tracking-wider [color:var(--accent)] mb-0.5">📬 Monthly Letter</p>
@@ -69,7 +69,7 @@ export default function MonthlyLetter({ monthlyLetter }) {
           onChange={e => setContent(e.target.value)}
           placeholder="Dear future me..."
           rows={5}
-          className="w-full text-sm [background-color:var(--surface)] border [border-color:var(--accent-mid)] rounded-xl px-4 py-3 outline-none resize-none focus:ring-2 focus:ring-forest-300 [color:var(--text)] placeholder-forest-300/60 font-serif leading-relaxed"
+          className="w-full text-sm [background-color:var(--surface)] border [border-color:var(--accent-mid)] rounded-xl px-4 py-3 outline-none resize-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)] [color:var(--text)] [placeholder-color:var(--accent-mid)] font-serif leading-relaxed"
         />
         <button
           onClick={handleSave}

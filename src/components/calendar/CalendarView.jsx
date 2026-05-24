@@ -110,7 +110,7 @@ export default function CalendarView({ tasks, categories, onAddCategory, onRemov
                 <li key={t.id} className="flex items-center gap-2.5">
                   <button onClick={() => tasks.toggleTask(t.id)}
                     className={`w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center text-[9px] transition-all ${
-                      t.completed ? '[background-color:var(--accent)] border-forest-500 text-white' : '[border-color:var(--border)] hover:border-forest-400'
+                      t.completed ? '[background-color:var(--accent)] [border-color:var(--accent)] text-white' : '[border-color:var(--border)] hover:[border-color:var(--accent-mid)]'
                     }`}>{t.completed && '✓'}</button>
                   <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${CAT_DOT[t.category] || '[background-color:var(--border)]'}`} />
                   <span className={`text-sm flex-1 truncate ${t.completed ? 'line-through [color:var(--text-faint)]' : '[color:var(--text)]'}`}>

@@ -99,7 +99,7 @@ export function useSmartScheduler({ tasks, energy, habits }) {
       topRecommendation,
       activeTasks: activeTasks.length,
     }
-  }, [tasks, energy, today])
+  }, [tasks.tasks, energy?.level, today])
 
   // ── Build context string for AI ───────────────────────────────────────────
   const buildAIContext = () => {

@@ -57,7 +57,7 @@ export default function HabitRulesPanel({ habits, habitRules }) {
           </p>
           <div className="flex items-center gap-2">
             <select value={trigger} onChange={e => setTrigger(e.target.value)}
-              className="flex-1 text-sm px-3 py-2 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] outline-none focus:ring-2 focus:ring-forest-200 [color:var(--text)]">
+              className="flex-1 text-sm px-3 py-2 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] outline-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)] [color:var(--text)]">
               <option value="">If…</option>
               {list.map(h => (
                 <option key={h.id} value={h.id}>{h.icon} {h.name}</option>
@@ -65,7 +65,7 @@ export default function HabitRulesPanel({ habits, habitRules }) {
             </select>
             <span className="[color:var(--text-faint)] text-sm flex-shrink-0">→</span>
             <select value={action} onChange={e => setAction(e.target.value)}
-              className="flex-1 text-sm px-3 py-2 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] outline-none focus:ring-2 focus:ring-forest-200 [color:var(--text)]">
+              className="flex-1 text-sm px-3 py-2 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] outline-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)] [color:var(--text)]">
               <option value="">Then…</option>
               {list.filter(h => h.id !== trigger).map(h => (
                 <option key={h.id} value={h.id}>{h.icon} {h.name}</option>

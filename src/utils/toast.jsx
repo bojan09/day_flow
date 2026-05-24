@@ -38,7 +38,7 @@ export function useToast() {
 }
 
 const TOAST_STYLES = {
-  success: 'bg-forest-500 text-white',
+  success: '[background-color:var(--accent)] text-white',
   error:   'bg-red-500 text-white',
   info:    'bg-blue-500 text-white',
   default: 'bg-ink text-white',

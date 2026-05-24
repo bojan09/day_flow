@@ -12,6 +12,7 @@ import AuthGuard     from './components/auth/AuthGuard'
 import SmartRoot     from './components/auth/SmartRoot'
 import { AuthProvider }  from './hooks/useAuth'
 import { ToastProvider } from './utils/toast.jsx'
+import ErrorBoundary    from './components/ui/ErrorBoundary'
 
 export default function App() {
   return (
@@ -32,7 +33,9 @@ export default function App() {
             path="/dashboard"
             element={
               <AuthGuard>
-                <DashboardPage />
+                <ErrorBoundary>
+                  <DashboardPage />
+                </ErrorBoundary>
               </AuthGuard>
             }
           />

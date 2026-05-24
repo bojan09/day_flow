@@ -19,7 +19,7 @@ export function useBookmarks() {
 
   useEffect(() => {
     if (!useDB) return
-    bookmarksService.getAll(userId).then(rows => { setBookmarks(rows); storage.set(KEY, rows) })
+    bookmarksService.getAll(userId).then(rows => { if (rows.length > 0) { setBookmarks(rows); storage.set(KEY, rows) } })
   }, [userId])
 
   useEffect(() => {

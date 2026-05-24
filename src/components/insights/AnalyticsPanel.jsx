@@ -36,24 +36,25 @@ export default function AnalyticsPanel({ tasks }) {
     Array.from({ length: 7 }, (_, i) => getDateKey(subDays(new Date(), i))),
   [])
 
-  const weekTasks = tasks.tasks.filter(t => last7Keys.includes(t.date))
-  const completed = weekTasks.filter(t => t.completed).length
-  const total     = weekTasks.length
-  const rate      = total > 0 ? Math.round((completed / total) * 100) : 0
-
-  const catMap = weekTasks.reduce((acc, t) => {
-    acc[t.category] = (acc[t.category] || 0) + 1
-    return acc
-  }, {})
-  const categories = Object.entries(catMap).sort((a, b) => b[1] - a[1])
-
-  const daily = [...last7Keys].reverse().map(key => ({
-    label: format(new Date(key + 'T12:00:00'), 'EEE'),
-    done:  tasks.tasks.filter(t => t.date === key && t.completed).length,
-    total: tasks.tasks.filter(t => t.date === key).length,
-  }))
-
-  const maxDone = Math.max(...daily.map(d => d.done), 1)
+  // All calculations memoised on tasks.tasks reference
+  const { weekTasks, completed, total, rate, categories, daily, maxDone } = useMemo(() => {
+    const weekTasks  = tasks.tasks.filter(t => last7Keys.includes(t.date))
+    const completed  = weekTasks.filter(t => t.completed).length
+    const total      = weekTasks.length
+    const rate       = total > 0 ? Math.round((completed / total) * 100) : 0
+    const catMap     = weekTasks.reduce((acc, t) => {
+      acc[t.category] = (acc[t.category] || 0) + 1
+      return acc
+    }, {})
+    const categories = Object.entries(catMap).sort((a, b) => b[1] - a[1])
+    const daily      = [...last7Keys].reverse().map(key => ({
+      label: format(new Date(key + 'T12:00:00'), 'EEE'),
+      done:  tasks.tasks.filter(t => t.date === key && t.completed).length,
+      total: tasks.tasks.filter(t => t.date === key).length,
+    }))
+    const maxDone = Math.max(...daily.map(d => d.done), 1)
+    return { weekTasks, completed, total, rate, categories, daily, maxDone }
+  }, [tasks.tasks, last7Keys])
 
   return (
     <div className="space-y-4">

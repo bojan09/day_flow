@@ -81,7 +81,7 @@ export default function BrainDump({ tasks, ideas, notes }) {
               value={text}
               onChange={e => setText(e.target.value)}
               placeholder={`Just write. One thought per line.\n\nExamples:\nCall dentist tomorrow\nWhat if I built a habit app?\nHad a great conversation with Sarah\nTodo: finish the report\nWhy am I always tired on Mondays?\nBuy groceries on the way home`}
-              className="w-full px-5 py-4 text-sm [color:var(--text)] leading-relaxed bg-transparent outline-none resize-none min-h-72 placeholder-ink-faint/40 font-serif"
+              className="w-full px-5 py-4 text-sm [color:var(--text)] leading-relaxed bg-transparent outline-none resize-none min-h-72 [placeholder-color:var(--text-faint)] font-serif"
             />
           </div>
           <div className="flex items-center justify-between">

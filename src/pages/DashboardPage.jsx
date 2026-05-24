@@ -1,7 +1,7 @@
 // Page: DashboardPage
 // Purpose: Root app page — owns all state hooks, renders active tab.
 //          Hosts QuickCapture + KeyboardShortcuts as global overlays.
-import { useState, useEffect, useRef, lazy, Suspense } from 'react'
+import { useState, useEffect, lazy, Suspense, useCallback } from 'react'
 import DashboardLayout    from '../layouts/DashboardLayout'
 import TabSkeleton        from '../components/ui/TabSkeleton'
 import TodayView          from '../components/today/TodayView'
@@ -75,10 +75,10 @@ export default function DashboardPage() {
     return valid.includes(hash) ? hash : 'today'
   })
 
-  const setActiveTab = (tab) => {
+  const setActiveTab = useCallback((tab) => {
     setActiveTabRaw(tab)
     window.history.replaceState(null, '', `#${tab}`)
-  }
+  }, [])
 
   const [showQuickCapture, setShowQuickCapture] = useState(false)
   const handleTabChange = setActiveTab   // alias used throughout
@@ -144,9 +144,14 @@ export default function DashboardPage() {
 
   // Recurring engine — synchronous localStorage guard (never async).
   // Key = userId + today's date → unique per user, auto-expires at midnight.
-  // Runs only after both data sources are confirmed synced.
+  // Waits for: auth resolved + both data sources synced.
+  // If Supabase not configured (demo mode), userId = 'demo' is intentional.
   useEffect(() => {
+    const isConfigured = isSupabaseConfigured()
+    // Wait for auth to resolve when Supabase is configured
+    if (isConfigured && !user) return
     if (!tasks.synced || !workouts.synced) return
+
     const today   = new Date().toISOString().split('T')[0]
     const uid     = user?.id || 'demo'
     const flagKey = `df_spawned_${uid}_${today}`
@@ -156,12 +161,12 @@ export default function DashboardPage() {
     } catch { return }
     spawnRecurringTasks(tasks.tasks, tasks.addTask)
     spawnRecurringWorkouts(workouts.sessions, workouts.addSession)
-  }, [tasks.synced, workouts.synced])
+  }, [user, tasks.synced, workouts.synced])
 
-  const handleWriteNote = (prompt) => {
+  const handleWriteNote = useCallback((prompt) => {
     notes.addNote({ title: 'Reflection', content: `Prompt: ${prompt}\n\n`, tags: ['reflection'] })
     setActiveTab('notes')
-  }
+  }, [notes.addNote, setActiveTab])
 
   return (
     <>

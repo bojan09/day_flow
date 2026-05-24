@@ -30,7 +30,7 @@ export default function ReflectionPrompt({ onWriteNote }) {
   const next = () => setIdx(i => (i + 1) % PROMPTS.length)
 
   return (
-    <Card className="[background-color:var(--accent-light)] border-forest-100">
+    <Card className="[background-color:var(--accent-light)] [border-color:var(--border)]">
       <div className="flex items-start justify-between gap-3 mb-3">
         <p className="text-xs font-medium uppercase tracking-wider [color:var(--accent)]">Daily Reflection</p>
         <button

@@ -20,7 +20,7 @@ export function useProjects() {
 
   useEffect(() => {
     if (!useDB) return
-    projectsService.getAll(userId).then(rows => { setProjects(rows); storage.set(KEY, rows) })
+    projectsService.getAll(userId).then(rows => { if (rows.length > 0) { setProjects(rows); storage.set(KEY, rows) } })
   }, [userId])
 
   useEffect(() => {

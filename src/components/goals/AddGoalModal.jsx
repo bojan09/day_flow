@@ -27,7 +27,7 @@ export default function AddGoalModal({ isOpen, onClose, onAdd }) {
           <textarea value={form.description} onChange={e => set('description', e.target.value)}
             placeholder="Why does this matter to you?"
             rows={2}
-            className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] text-sm [color:var(--text)] outline-none resize-none focus:ring-2 focus:ring-forest-200 placeholder-ink-faint/50" />
+            className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] text-sm [color:var(--text)] outline-none resize-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)] [placeholder-color:var(--text-faint)]" />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -37,7 +37,7 @@ export default function AddGoalModal({ isOpen, onClose, onAdd }) {
               {GOAL_TYPES.map(t => (
                 <button key={t} type="button" onClick={() => set('type', t)}
                   className={`py-2 rounded-xl text-sm font-medium transition-all border ${
-                    form.type === t ? '[background-color:var(--accent)] text-white border-forest-500' : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'
+                    form.type === t ? '[background-color:var(--accent)] text-white [border-color:var(--accent)]' : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'
                   }`}>{t}</button>
               ))}
             </div>

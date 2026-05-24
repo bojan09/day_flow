@@ -54,7 +54,7 @@ export default function CategoryTrends({ tasks }) {
       .sort((a, b) => b.totalTasks - a.totalTasks)
 
     return { weeks, categories }
-  }, [tasks])
+  }, [tasks.tasks])
 
   if (categories.length === 0) {
     return (

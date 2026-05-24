@@ -154,7 +154,7 @@ export default function ProjectsView({ projects, tasks }) {
             <textarea value={form.description} onChange={e => set('description', e.target.value)}
               placeholder="What is this project about?"
               rows={2}
-              className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] text-sm [color:var(--text)] outline-none resize-none focus:ring-2 focus:ring-forest-200 placeholder-ink-faint/50" />
+              className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] text-sm [color:var(--text)] outline-none resize-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)] [placeholder-color:var(--text-faint)]" />
           </div>
           <div>
             <p className="text-xs font-medium [color:var(--text-muted)] uppercase tracking-wide mb-2">Colour</p>

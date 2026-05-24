@@ -1,6 +1,6 @@
 // Hook: useNotes
 // Purpose: Notes CRUD with tags, word count, Supabase sync, and real-time
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { storage } from '../services/storage'
 import { notesService } from '../services/supabaseDataService'
 import { subscribeToTable } from '../services/realtimeService'
@@ -13,7 +13,8 @@ const KEY = 'notes'
 export function useNotes() {
   const { user }  = useAuth()
   const userId    = user?.id
-  const useDB     = isSupabaseConfigured() && !!userId
+  const useDB            = isSupabaseConfigured() && !!userId
+  const pendingDeletesRef = useRef(new Set())
 
   const [notes, setNotes]   = useState(() => storage.get(KEY, []))
   const [synced, setSynced] = useState(false)
@@ -21,7 +22,7 @@ export function useNotes() {
   useEffect(() => {
     if (!useDB) { setSynced(true); return }
     notesService.getAll(userId).then(rows => {
-      if (rows.length > 0 || synced) { setNotes(rows); storage.set(KEY, rows) }
+      if (rows.length > 0) { setNotes(rows); storage.set(KEY, rows) }
       setSynced(true)
     })
   }, [userId])
@@ -29,7 +30,10 @@ export function useNotes() {
   useEffect(() => {
     if (!useDB) return
     return subscribeToTable('notes', userId, () => {
-      notesService.getAll(userId).then(rows => { setNotes(rows); storage.set(KEY, rows) })
+      notesService.getAll(userId).then(rawRows => {
+        const rows = rawRows.filter(n => !pendingDeletesRef.current.has(n.id))
+        if (rows.length > 0) { setNotes(rows); storage.set(KEY, rows) }
+      })
     })
   }, [userId])
 
@@ -61,8 +65,12 @@ export function useNotes() {
   }
 
   const deleteNote = (id) => {
+    pendingDeletesRef.current.add(id)
     setNotes(prev => prev.filter(n => n.id !== id))
-    if (useDB) notesService.delete(userId, id)
+    if (useDB) {
+      notesService.delete(userId, id)
+      setTimeout(() => pendingDeletesRef.current.delete(id), 3000)
+    }
   }
 
   const togglePin = (id) => updateNote(id, { pinned: !notes.find(n => n.id === id)?.pinned })

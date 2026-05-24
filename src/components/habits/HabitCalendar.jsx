@@ -30,7 +30,7 @@ export default function HabitCalendar({ habits }) {
             <button key={h.id} onClick={() => setSelected(h.id)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium flex-shrink-0 transition-all border ${
                 (selectedHabit || habits.habits[0]?.id) === h.id
-                  ? '[background-color:var(--accent)] text-white border-forest-500'
+                  ? '[background-color:var(--accent)] text-white [border-color:var(--accent)]'
                   : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'
               }`}>
               <span>{h.icon}</span>{h.name}
@@ -73,7 +73,7 @@ export default function HabitCalendar({ habits }) {
                 onClick={() => habits.toggleHabitDay(habit.id, dateKey)}
                 className={`aspect-square rounded-full flex items-center justify-center text-xs font-medium transition-all ${
                   done  ? '[background-color:var(--accent)] text-white shadow-sm'
-                  : today ? 'border-2 border-forest-400 [color:var(--accent)] hover:[background-color:var(--accent-light)]'
+                  : today ? 'border-2 [border-color:var(--accent-mid)] [color:var(--accent)] hover:[background-color:var(--accent-light)]'
                   : '[color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'
                 }`}
               >

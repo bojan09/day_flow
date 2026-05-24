@@ -63,7 +63,7 @@ export default function NotesView({ notes }) {
             </button>
             {NOTE_TAGS.map(tag => (
               <button key={tag} onClick={() => setFilterTag(filterTag === tag ? null : tag)}
-                className={`px-3 py-1 rounded-full text-xs font-medium flex-shrink-0 transition-all border ${filterTag === tag ? '[background-color:var(--accent)] text-white border-forest-500' : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'}`}>
+                className={`px-3 py-1 rounded-full text-xs font-medium flex-shrink-0 transition-all border ${filterTag === tag ? '[background-color:var(--accent)] text-white [border-color:var(--accent)]' : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'}`}>
                 #{tag}
               </button>
             ))}

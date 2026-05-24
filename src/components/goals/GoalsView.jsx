@@ -33,6 +33,7 @@ function XPBar({ xp }) {
 }
 
 export default function GoalsView({ goals, xp }) {
+  if (!goals?.goals) return null
   const [modal, setModal]           = useState(false)
   const [activeType, setActiveType] = useState('All')
 

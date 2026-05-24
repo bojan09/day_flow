@@ -88,7 +88,7 @@ export default function BookmarksView({ bookmarks }) {
         {BOOKMARK_TAGS.map(t => (
           <button key={t} onClick={() => setTag(tagFilter === t ? null : t)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium flex-shrink-0 transition-all border ${
-              tagFilter === t ? '[background-color:var(--accent)] text-white border-forest-500' : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'
+              tagFilter === t ? '[background-color:var(--accent)] text-white [border-color:var(--accent)]' : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'
             }`}>#{t}</button>
         ))}
       </div>
@@ -109,19 +109,19 @@ export default function BookmarksView({ bookmarks }) {
             <label className="text-xs font-medium [color:var(--text-muted)] uppercase tracking-wide block mb-1.5">URL</label>
             <input autoFocus value={form.url} onChange={e => set('url', e.target.value)}
               placeholder="https://..."
-              className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] text-sm [color:var(--text)] outline-none focus:ring-2 focus:ring-forest-200" />
+              className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] text-sm [color:var(--text)] outline-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)]" />
           </div>
           <div>
             <label className="text-xs font-medium [color:var(--text-muted)] uppercase tracking-wide block mb-1.5">Title (optional)</label>
             <input value={form.title} onChange={e => set('title', e.target.value)}
               placeholder="Descriptive title..."
-              className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] text-sm [color:var(--text)] outline-none focus:ring-2 focus:ring-forest-200" />
+              className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] text-sm [color:var(--text)] outline-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)]" />
           </div>
           <div>
             <label className="text-xs font-medium [color:var(--text-muted)] uppercase tracking-wide block mb-1.5">Note (optional)</label>
             <input value={form.note} onChange={e => set('note', e.target.value)}
               placeholder="Why are you saving this?"
-              className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] text-sm [color:var(--text)] outline-none focus:ring-2 focus:ring-forest-200" />
+              className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] text-sm [color:var(--text)] outline-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)]" />
           </div>
           <div>
             <p className="text-xs font-medium [color:var(--text-muted)] uppercase tracking-wide mb-2">Tags</p>
@@ -129,7 +129,7 @@ export default function BookmarksView({ bookmarks }) {
               {BOOKMARK_TAGS.map(t => (
                 <button key={t} type="button" onClick={() => toggleFormTag(t)}
                   className={`px-3 py-1 rounded-full text-xs font-medium transition-all border ${
-                    form.tags.includes(t) ? '[background-color:var(--accent)] text-white border-forest-500' : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'
+                    form.tags.includes(t) ? '[background-color:var(--accent)] text-white [border-color:var(--accent)]' : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'
                   }`}>#{t}</button>
               ))}
             </div>

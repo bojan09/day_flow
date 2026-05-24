@@ -20,7 +20,7 @@ export function useGoals() {
 
   useEffect(() => {
     if (!useDB) return
-    goalsService.getAll(userId).then(rows => { setGoals(rows); storage.set(KEY, rows) })
+    goalsService.getAll(userId).then(rows => { if (rows.length > 0) { setGoals(rows); storage.set(KEY, rows) } })
   }, [userId])
 
   useEffect(() => {

@@ -2,7 +2,6 @@
 // Purpose: 5-step first-run wizard — shown once to new users.
 //          Steps: Welcome → Name → Starter Pack → Theme → Done
 //          Seeds habits, tasks, and goals from the chosen starter pack.
-import { useState } from 'react'
 import { STARTER_PACKS } from '../../hooks/useOnboarding'
 import { getTodayKey } from '../../utils/dateUtils'
 

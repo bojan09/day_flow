@@ -33,7 +33,7 @@ export default function NLPTaskInput({ onAdd }) {
             value={input}
             onChange={handleChange}
             placeholder='Try: "Call dentist tomorrow high priority"'
-            className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--surface)] text-sm [color:var(--text)] outline-none focus:ring-2 focus:ring-forest-200 focus:border-forest-400 placeholder-ink-faint/60 transition-all"
+            className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--surface)] text-sm [color:var(--text)] outline-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)] focus:[border-color:var(--accent-mid)] [placeholder-color:var(--text-faint)] transition-all"
           />
         </div>
         <button type="submit" disabled={!input.trim()}

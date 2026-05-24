@@ -125,9 +125,9 @@ export default function VoiceCommandBar({ tasks, habits, notes, ideas }) {
       {/* Floating mic button — above the + QuickCapture button */}
       <button
         onClick={() => { setOpen(v => !v); setError(null); setFeedback(null) }}
-        className="fixed z-[var(--z-nav)] w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-lg transition-all active:scale-90 hover:scale-105"
+        className="fixed z-[var(--z-drawer)] w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-lg transition-all active:scale-90 hover:scale-105"
         style={{
-          bottom:          'calc(env(safe-area-inset-bottom, 0px) + 5.5rem)',
+          bottom:          'calc(env(safe-area-inset-bottom, 0px) + 8rem)',
           right:           '1rem',
           backgroundColor: listening ? '#EF4444' : 'var(--surface)',
           border:          `2px solid ${listening ? '#EF4444' : 'var(--accent-mid)'}`,
@@ -154,7 +154,7 @@ export default function VoiceCommandBar({ tasks, habits, notes, ideas }) {
           <div
             className="fixed z-[9991] w-80 rounded-2xl border p-4 animate-scale-in"
             style={{
-              bottom:          'calc(env(safe-area-inset-bottom, 0px) + 9.5rem)',
+              bottom:          'calc(env(safe-area-inset-bottom, 0px) + 12rem)',
               right:           '1rem',
               maxWidth:        'min(320px, calc(100vw - 2rem))',
               backgroundColor: 'var(--surface)',

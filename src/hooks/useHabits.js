@@ -1,6 +1,6 @@
 // Hook: useHabits
 // Purpose: Habit tracking with frequency, streaks, Supabase sync, and real-time
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { storage } from '../services/storage'
 import { habitsService } from '../services/supabaseDataService'
 import { subscribeToTables } from '../services/realtimeService'
@@ -12,7 +12,8 @@ import { startOfWeek, addDays } from 'date-fns'
 export function useHabits() {
   const { user }  = useAuth()
   const userId    = user?.id
-  const useDB     = isSupabaseConfigured() && !!userId
+  const useDB            = isSupabaseConfigured() && !!userId
+  const pendingDeletesRef = useRef(new Set())
 
   const [habits, setHabits] = useState(() => storage.get('habits', []))
   const [log,    setLog]    = useState(() => storage.get('habit_log', {}))
@@ -20,7 +21,8 @@ export function useHabits() {
 
   const loadFromDB = useCallback(() => {
     if (!useDB) return
-    habitsService.getAll(userId).then(({ habits: rows, log: dbLog }) => {
+    habitsService.getAll(userId).then(({ habits: rawRows, log: dbLog }) => {
+      const rows = rawRows.filter(h => !pendingDeletesRef.current.has(h.id))
       setHabits(rows); setLog(dbLog)
       storage.set('habits', rows); storage.set('habit_log', dbLog)
       setSynced(true)
@@ -49,8 +51,12 @@ export function useHabits() {
   }
 
   const deleteHabit = async (id) => {
+    pendingDeletesRef.current.add(id)
     setHabits(prev => prev.filter(h => h.id !== id))
-    if (useDB) await habitsService.deleteHabit(userId, id)
+    if (useDB) {
+      await habitsService.deleteHabit(userId, id)
+      setTimeout(() => pendingDeletesRef.current.delete(id), 3000)
+    }
   }
 
   const toggleHabitDay = async (habitId, date = getTodayKey()) => {
@@ -63,10 +69,19 @@ export function useHabits() {
   const isHabitDone  = (habitId, date = getTodayKey()) => !!log[`${habitId}_${date}`]
 
   const getStreak = (habitId) => {
-    let streak = 0; const cursor = new Date()
+    let streak = 0
+    const cursor = new Date()
+    // If today isn't done yet, start counting from yesterday
+    // so a streak of 6 days doesn't show as 0 just because today isn't ticked yet
+    const todayKey = getDateKey(cursor)
+    if (!log[`${habitId}_${todayKey}`]) {
+      cursor.setDate(cursor.getDate() - 1)
+    }
     while (true) {
-      if (log[`${habitId}_${getDateKey(cursor)}`]) { streak++; cursor.setDate(cursor.getDate() - 1) }
-      else break
+      if (log[`${habitId}_${getDateKey(cursor)}`]) {
+        streak++
+        cursor.setDate(cursor.getDate() - 1)
+      } else break
     }
     return streak
   }

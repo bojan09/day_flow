@@ -70,7 +70,7 @@ export default function Modal({ isOpen, onClose, title, children }) {
           {/* Body — this is the ONLY thing that scrolls */}
           <div
             className="p-5 overflow-y-auto flex-1"
-            style={{ overscrollBehavior: 'contain' }}
+            style={{ overscrollBehavior: 'contain', WebkitOverflowScrolling: 'touch' }}
           >
             {children}
           </div>

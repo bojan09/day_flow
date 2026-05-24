@@ -20,7 +20,7 @@ export function useIdeas() {
 
   useEffect(() => {
     if (!useDB) return
-    ideasService.getAll(userId).then(rows => { setIdeas(rows); storage.set(KEY, rows) })
+    ideasService.getAll(userId).then(rows => { if (rows.length > 0) { setIdeas(rows); storage.set(KEY, rows) } })
   }, [userId])
 
   useEffect(() => {

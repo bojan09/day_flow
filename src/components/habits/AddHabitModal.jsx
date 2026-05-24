@@ -39,7 +39,7 @@ export default function AddHabitModal({ isOpen, onClose, onAdd, existingHabits =
             {FREQUENCIES.map(f => (
               <button key={f.id} type="button" onClick={() => setFrequency(f.id)}
                 className={`py-2 rounded-xl text-sm font-medium transition-all border ${
-                  frequency === f.id ? '[background-color:var(--accent)] text-white border-forest-500' : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'
+                  frequency === f.id ? '[background-color:var(--accent)] text-white [border-color:var(--accent)]' : '[border-color:var(--border)] [color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'
                 }`}>{f.label}</button>
             ))}
           </div>

@@ -112,7 +112,7 @@ export default function AuthPage() {
             className="font-serif text-3xl hover:opacity-80 transition-opacity"
             style={{ color: 'var(--text)' }}
           >
-            Day<em className="not-italic text-forest-500">Flow</em>
+            Day<em className="not-italic [color:var(--accent)]">Flow</em>
           </button>
           <p className="text-sm mt-1.5" style={{ color: 'var(--text-faint)' }}>
             {mode === MODES.signup

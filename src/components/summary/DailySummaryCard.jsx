@@ -3,7 +3,6 @@ import { memo } from 'react'
 // Purpose: Complete daily recap — tasks done, habits hit, mood, water, XP earned.
 //          Shown in InsightsView and surfaced in Today's evening mode.
 import { format, subDays } from 'date-fns'
-import { useMemo } from 'react'
 import { getTodayKey, getDateKey } from '../../utils/dateUtils'
 
 function StatPill({ label, value, sub, color = 'var(--accent)' }) {

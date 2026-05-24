@@ -114,7 +114,7 @@ export default function WeeklyMonthlyComparison({ tasks, habits, mood }) {
         avgMood:   { current: avgMood(thisMonthDays),   previous: avgMood(lastMonthDays)   },
       },
     }
-  }, [tasks, habits, mood])
+  }, [tasks.tasks, habits.habits, habits.log, mood.moods])
 
   return (
     <div className="space-y-4">

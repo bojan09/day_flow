@@ -86,7 +86,7 @@ export default function TaskTemplates({ templates, tasks }) {
             <p className="text-xs font-medium [color:var(--text-muted)] uppercase tracking-wide mb-1.5">Template name</p>
             <input value={name} onChange={e => setName(e.target.value)} autoFocus
               placeholder="e.g. Monday morning routine"
-              className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] text-sm outline-none focus:ring-2 focus:ring-forest-200 [color:var(--text)]" />
+              className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] text-sm outline-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)] [color:var(--text)]" />
           </div>
           <div>
             <p className="text-xs [color:var(--text-faint)] mb-2">Tasks to save ({todayTasks.length}):</p>
