@@ -27,6 +27,7 @@ export default function App() {
 
           {/* Auth page — sign in / sign up */}
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/auth/*" element={<AuthPage />} />
 
           {/* Protected dashboard */}
           <Route

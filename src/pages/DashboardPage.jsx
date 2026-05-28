@@ -31,7 +31,8 @@ import { useTasks           } from '../hooks/useTasks'
 import { useNotes           } from '../hooks/useNotes'
 import { useHabits          } from '../hooks/useHabits'
 import { useMood            } from '../hooks/useMood'
-import { useAuth } from '../hooks/useAuth'
+import { useAuth }             from '../hooks/useAuth'
+import { isSupabaseConfigured } from '../services/supabaseClient'
 import { useTheme           } from '../hooks/useTheme'
 import { useIntention       } from '../hooks/useIntention'
 import { useGoals           } from '../hooks/useGoals'
@@ -207,7 +208,7 @@ export default function DashboardPage() {
         {activeTab === 'bookmarks'  && <BookmarksView bookmarks={bookmarks} />}
 
         {/* ── Reflect ──────────────────────────────────────────────────────── */}
-        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} xp={xp} achievements={achievements} energy={energy} goals={goals} water={water} moodTheme={moodTheme} />}
+        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} xp={xp} achievements={achievements} energy={energy} goals={goals} water={water} moodTheme={moodTheme} workouts={workouts} ideas={ideas} bookmarks={bookmarks} />}
         {activeTab === 'balance'    && <BalanceView wheel={wheel} />}
         {activeTab === 'focus'      && <FocusMode tasks={tasks} xp={xp} pomodoroHistory={pomodoroHistory} />}
         {activeTab === 'achievements' && <AchievementsView achievements={achievements} xp={xp} />}

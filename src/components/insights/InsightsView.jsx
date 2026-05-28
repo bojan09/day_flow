@@ -34,7 +34,7 @@ export default function InsightsView({
   mood, habits, tasks, notes, goals,
   theme, onSetTheme, onWriteNote,
   intentions, xp, achievements, energy, water,
-  moodTheme,
+  moodTheme, workouts, ideas, bookmarks,
 }) {
   const [tab, setTab] = useState('overview')
 
@@ -156,8 +156,12 @@ export default function InsightsView({
               Data &amp; Notifications
             </p>
             <ExportPanel
-              tasks={tasks} notes={notes} habits={habits}
-              moods={mood.moods} intentions={intentions}
+              tasks={tasks}        notes={notes}
+              habits={habits}      moods={mood.moods}
+              intentions={intentions} goals={goals}
+              workouts={workouts}  ideas={ideas}
+              bookmarks={bookmarks} water={water}
+              energy={energy}
             />
           </div>
         </div>

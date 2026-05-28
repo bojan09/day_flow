@@ -1,3 +1,4 @@
+import ViewSkeleton from '../ui/ViewSkeleton'
 // Component: WorkoutsView
 // Purpose: Full workouts tab — stats, session list, add/edit modal, personal bests
 import { useState } from 'react'
@@ -110,6 +111,8 @@ export default function WorkoutsView({ workouts }) {
     { id: 'done',  label: 'Done'    },
   ]
 
+
+  if (!workouts.synced) return <ViewSkeleton type="workouts" />
   return (
     <div className="max-w-2xl mx-auto space-y-4 pt-2">
 

@@ -35,7 +35,6 @@ export default {
       keyframes: {
         fadeIn:       { from: { opacity: '0' }, to: { opacity: '1' } },
         fadeUp:       { from: { opacity: '0', transform: 'translateY(16px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
-        fadeDown:     { from: { opacity: '0', transform: 'translateY(-8px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
         scaleIn:      { from: { opacity: '0', transform: 'scale(0.95)' }, to: { opacity: '1', transform: 'scale(1)' } },
         slideUp:      { from: { transform: 'translateY(100%)' }, to: { transform: 'translateY(0)' } },
         slideRight:   { from: { opacity: '0', transform: 'translateX(-12px)' }, to: { opacity: '1', transform: 'translateX(0)' } },
@@ -45,6 +44,7 @@ export default {
         toastOut:     { from: { opacity: '1', transform: 'scale(1)' }, to: { opacity: '0', transform: 'scale(0.94)' } },
         float:        { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-6px)' } },
         pulseRing:    { '0%': { transform: 'scale(1)', opacity: '1' }, '100%': { transform: 'scale(1.5)', opacity: '0' } },
+        fadeDown:     { '0%': { opacity: '0', transform: 'translateY(-8px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
         springIn:     { '0%': { transform: 'scale(0.7)', opacity: '0' }, '60%': { transform: 'scale(1.05)' }, '80%': { transform: 'scale(0.97)' }, '100%': { transform: 'scale(1)', opacity: '1' } },
         ripple:       { '0%': { transform: 'scale(0)', opacity: '0.4' }, '100%': { transform: 'scale(2.5)', opacity: '0' } },
         xpFloat:      { '0%': { opacity: '1', transform: 'translateY(0) scale(1)' }, '60%': { opacity: '1', transform: 'translateY(-20px) scale(1.1)' }, '100%': { opacity: '0', transform: 'translateY(-36px) scale(0.9)' } },
@@ -68,6 +68,7 @@ export default {
         'toast-out':    'toastOut 0.2s ease forwards',
         'float':        'float 3s ease-in-out infinite',
         'pulse-ring':   'pulseRing 1.5s ease-out infinite',
+        'fade-down':    'fadeDown 0.2s ease-out forwards',
         'spring-in':    'springIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards',
         'ripple':       'ripple 0.5s ease-out forwards',
         'xp-float':     'xpFloat 0.9s ease-out forwards',

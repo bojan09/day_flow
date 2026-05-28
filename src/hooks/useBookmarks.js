@@ -13,13 +13,14 @@ export const BOOKMARK_TAGS = ['article', 'video', 'tool', 'inspiration', 'refere
 export function useBookmarks() {
   const { user }  = useAuth()
   const userId    = user?.id
-  const useDB     = isSupabaseConfigured() && !!userId
+  const useDB            = isSupabaseConfigured() && !!userId
+  const [synced, setSynced] = useState(false)
 
   const [bookmarks, setBookmarks] = useState(() => storage.get(KEY, []))
 
   useEffect(() => {
     if (!useDB) return
-    bookmarksService.getAll(userId).then(rows => { if (rows.length > 0) { setBookmarks(rows); storage.set(KEY, rows) } })
+    bookmarksService.getAll(userId).then(rows => { if (rows.length > 0) { setBookmarks(rows); storage.set(KEY, rows) }; setSynced(true) })
   }, [userId])
 
   useEffect(() => {
@@ -47,5 +48,5 @@ export function useBookmarks() {
   const toggleRead     = (id)           => updateBookmark(id, { read: !bookmarks.find(b => b.id === id)?.read })
   const unread                          = bookmarks.filter(b => !b.read)
 
-  return { bookmarks, addBookmark, updateBookmark, deleteBookmark, toggleRead, unread }
+  return { bookmarks, synced, addBookmark, updateBookmark, deleteBookmark, toggleRead, unread }
 }

@@ -1,3 +1,4 @@
+import ViewSkeleton from '../ui/ViewSkeleton'
 // Component: GoalsView
 // Purpose: Goals tab — XP level bar, type filter, goal cards with milestones
 import { useState } from 'react'
@@ -33,7 +34,6 @@ function XPBar({ xp }) {
 }
 
 export default function GoalsView({ goals, xp }) {
-  if (!goals?.goals) return null
   const [modal, setModal]           = useState(false)
   const [activeType, setActiveType] = useState('All')
 
@@ -41,6 +41,9 @@ export default function GoalsView({ goals, xp }) {
     ? goals.goals
     : goals.goals.filter(g => g.type === activeType)
 
+
+  if (!goals.synced) return <ViewSkeleton type="goals" />
+  if (!goals?.goals) return null
   return (
     <div className="max-w-2xl mx-auto space-y-4 pt-2">
       <XPBar xp={xp} />

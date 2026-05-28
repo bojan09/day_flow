@@ -14,13 +14,14 @@ export const GOAL_CATEGORIES = ['Career', 'Health', 'Learning', 'Finance', 'Pers
 export function useGoals() {
   const { user }  = useAuth()
   const userId    = user?.id
-  const useDB     = isSupabaseConfigured() && !!userId
+  const useDB            = isSupabaseConfigured() && !!userId
+  const [synced, setSynced] = useState(false)
 
   const [goals, setGoals] = useState(() => storage.get(KEY, []))
 
   useEffect(() => {
     if (!useDB) return
-    goalsService.getAll(userId).then(rows => { if (rows.length > 0) { setGoals(rows); storage.set(KEY, rows) } })
+    goalsService.getAll(userId).then(rows => { if (rows.length > 0) { setGoals(rows); storage.set(KEY, rows) }; setSynced(true) })
   }, [userId])
 
   useEffect(() => {
@@ -63,5 +64,5 @@ export function useGoals() {
     return Math.round((goal.milestones.filter(m => m.done).length / goal.milestones.length) * 100)
   }
 
-  return { goals, addGoal, updateGoal, deleteGoal, toggleGoal, addMilestone, toggleMilestone, getProgress }
+  return { goals, synced, addGoal, updateGoal, deleteGoal, toggleGoal, addMilestone, toggleMilestone, getProgress }
 }

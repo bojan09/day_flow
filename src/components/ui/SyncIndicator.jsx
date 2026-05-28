@@ -1,86 +1,167 @@
 // Component: SyncIndicator
-// Purpose: Combined connection + sync status in the TopBar.
-//          Shows realtime Supabase state AND offline queue state.
-//          Hidden entirely in demo mode (no Supabase configured).
-import { useState, useEffect } from 'react'
-import { supabase, isSupabaseConfigured } from '../../services/supabaseClient'
+// Purpose: TopBar sync status dot — shows connected/syncing/offline/error.
+//          When queue > 0 shows pending count. Error state has a retry button.
+import { useState } from 'react'
 import { useOfflineQueueContext } from '../../hooks/useOfflineQueue'
 
-export default function SyncIndicator() {
-  const [realtimeStatus, setRealtimeStatus] = useState('idle')
-  const offline = useOfflineQueueContext() || { isOnline: true, queueLength: 0, replaying: false }
+const STATES = {
+  offline:    { color: '#9CA3AF', label: 'Offline',         pulse: false },
+  syncing:    { color: '#F59E0B', label: 'Syncing…',        pulse: true  },
+  error:      { color: '#EF4444', label: 'Sync error',      pulse: false },
+  pending:    { color: '#F59E0B', label: 'Pending sync',    pulse: true  },
+  connected:  { color: '#3B6B4B', label: 'Synced',          pulse: false },
+}
 
-  useEffect(() => {
-    if (!isSupabaseConfigured()) return
-    setRealtimeStatus('connecting')
-    let channel
-    try {
-      channel = supabase
-        .channel('__presence__')
-        .subscribe(state => {
-          if      (state === 'SUBSCRIBED')    setRealtimeStatus('connected')
-          else if (state === 'CLOSED')        setRealtimeStatus('error')
-          else if (state === 'CHANNEL_ERROR') setRealtimeStatus('error')
-          else                                setRealtimeStatus('connecting')
-        })
-    } catch {
-      setRealtimeStatus('error')
-    }
-    return () => { if (channel) supabase.removeChannel(channel) }
-  }, [])
+export default function SyncIndicator({ isConfigured }) {
+  const offline   = useOfflineQueueContext()
+  const [open,    setOpen]    = useState(false)
 
-  if (!isSupabaseConfigured()) return null
+  if (!isConfigured) return null
 
-  // Offline takes priority
-  if (!offline.isOnline) {
-    return (
-      <div
-        className="flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-medium"
-        style={{ color: '#EF4444' }}
-        title={`Offline — ${offline.queueLength} change${offline.queueLength !== 1 ? 's' : ''} queued`}
-      >
-        <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: '#EF4444' }} />
-        <span className="hidden sm:inline">
-          Offline{offline.queueLength > 0 ? ` (${offline.queueLength})` : ''}
-        </span>
-      </div>
-    )
+  const { isOnline, queueLength, replaying, realtimeStatus } = offline || {}
+
+  // Determine current state
+  const currentState =
+    !isOnline                       ? 'offline'   :
+    replaying                       ? 'syncing'   :
+    realtimeStatus === 'error'      ? 'error'     :
+    (queueLength > 0)               ? 'pending'   :
+    'connected'
+
+  const cfg  = STATES[currentState]
+
+  const handleRetry = () => {
+    // Force page reload to re-establish Supabase real-time connection
+    window.location.reload()
   }
-
-  // Replaying queue
-  if (offline.replaying) {
-    return (
-      <div
-        className="flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-medium"
-        style={{ color: '#F59E0B' }}
-        title={`Syncing ${offline.queueLength} queued change${offline.queueLength !== 1 ? 's' : ''}…`}
-      >
-        <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 animate-pulse" style={{ backgroundColor: '#F59E0B' }} />
-        <span className="hidden sm:inline">Syncing…</span>
-      </div>
-    )
-  }
-
-  // Realtime channel status
-  const CONFIG = {
-    connected:  { color: '#3B6B4B', label: 'Synced',      pulse: false },
-    connecting: { color: '#F59E0B', label: 'Connecting…', pulse: true  },
-    error:      { color: '#EF4444', label: 'Sync error',  pulse: false },
-    idle:       { color: '#F59E0B', label: 'Connecting…', pulse: true  },
-  }
-  const c = CONFIG[realtimeStatus]
 
   return (
-    <div
-      className="flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-medium"
-      style={{ color: c.color }}
-      title={`Status: ${realtimeStatus}`}
-    >
-      <span
-        className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${c.pulse ? 'animate-pulse' : ''}`}
-        style={{ backgroundColor: c.color }}
-      />
-      <span className="hidden sm:inline">{c.label}</span>
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(v => !v)}
+        className="flex items-center gap-1.5 transition-opacity hover:opacity-80"
+        aria-label={`Sync status: ${cfg.label}`}
+      >
+        {/* Dot */}
+        <span className="relative flex h-2 w-2">
+          {cfg.pulse && (
+            <span
+              className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+              style={{ backgroundColor: cfg.color }}
+            />
+          )}
+          <span
+            className="relative inline-flex rounded-full h-2 w-2"
+            style={{ backgroundColor: cfg.color }}
+          />
+        </span>
+
+        {/* Label */}
+        <span className="text-xs hidden sm:inline" style={{ color: 'var(--text-faint)' }}>
+          {cfg.label}
+        </span>
+
+        {/* Pending count badge */}
+        {queueLength > 0 && isOnline && (
+          <span
+            className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white leading-none"
+            style={{ backgroundColor: '#F59E0B' }}
+          >
+            {queueLength}
+          </span>
+        )}
+      </button>
+
+      {/* Dropdown detail panel */}
+      {open && (
+        <>
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+          <div
+            className="absolute right-0 top-8 z-50 w-64 rounded-2xl border py-3 shadow-lg"
+            style={{
+              backgroundColor: 'var(--surface)',
+              borderColor:     'var(--border)',
+              boxShadow:       'var(--shadow-modal)',
+            }}
+          >
+            {/* Header */}
+            <div className="px-4 pb-2 border-b" style={{ borderColor: 'var(--border-soft)' }}>
+              <div className="flex items-center gap-2">
+                <span
+                  className="w-2 h-2 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: cfg.color }}
+                />
+                <p className="text-sm font-semibold" style={{ color: 'var(--text)' }}>
+                  {cfg.label}
+                </p>
+              </div>
+            </div>
+
+            {/* Detail rows */}
+            <div className="px-4 py-2 space-y-2">
+              {/* Online status */}
+              <div className="flex items-center justify-between text-xs">
+                <span style={{ color: 'var(--text-muted)' }}>Connection</span>
+                <span
+                  className="font-medium"
+                  style={{ color: isOnline ? '#10B981' : '#EF4444' }}
+                >
+                  {isOnline ? 'Online' : 'Offline'}
+                </span>
+              </div>
+
+              {/* Queue count */}
+              <div className="flex items-center justify-between text-xs">
+                <span style={{ color: 'var(--text-muted)' }}>Pending writes</span>
+                <span className="font-medium" style={{ color: queueLength > 0 ? '#F59E0B' : '#10B981' }}>
+                  {queueLength > 0 ? `${queueLength} queued` : 'All synced'}
+                </span>
+              </div>
+
+              {/* Realtime status */}
+              <div className="flex items-center justify-between text-xs">
+                <span style={{ color: 'var(--text-muted)' }}>Real-time</span>
+                <span
+                  className="font-medium"
+                  style={{ color: realtimeStatus === 'connected' ? '#10B981' : 'var(--text-faint)' }}
+                >
+                  {realtimeStatus === 'connected' ? 'Connected'
+                    : realtimeStatus === 'error'   ? 'Error'
+                    : 'Connecting…'}
+                </span>
+              </div>
+            </div>
+
+            {/* Actions */}
+            {(realtimeStatus === 'error' || !isOnline === false && queueLength > 0) && (
+              <div className="px-4 pt-2 border-t" style={{ borderColor: 'var(--border-soft)' }}>
+                <button
+                  type="button"
+                  onClick={handleRetry}
+                  className="w-full py-2 rounded-xl text-xs font-semibold text-white transition-all"
+                  style={{ backgroundColor: 'var(--accent)' }}
+                >
+                  ↻ Reconnect now
+                </button>
+              </div>
+            )}
+
+            {/* Offline explanation */}
+            {!isOnline && (
+              <div className="px-4 pt-2 border-t" style={{ borderColor: 'var(--border-soft)' }}>
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--text-faint)' }}>
+                  You're offline. All changes are saved locally and will sync automatically when your connection returns.
+                </p>
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   )
 }

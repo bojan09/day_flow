@@ -3,7 +3,8 @@
 //          Solid background, no glassmorphism.
 import { useNavigate }  from 'react-router-dom'
 import { formatDate }   from '../../utils/dateUtils'
-import SyncIndicator    from '../ui/SyncIndicator'
+import SyncIndicator       from '../ui/SyncIndicator'
+import { isSupabaseConfigured } from '../../services/supabaseClient'
 import ThemeToggle      from '../ui/ThemeToggle'
 
 const TITLES = {
@@ -51,7 +52,7 @@ export default function TopBar({ activeTab, onTabChange, theme, onSetTheme }) {
 
       {/* Right actions */}
       <div className="flex items-center gap-1 flex-shrink-0">
-        <SyncIndicator />
+        <SyncIndicator isConfigured={isSupabaseConfigured()} />
 
         {/* Theme toggle — compact single-button cycle */}
         {theme && onSetTheme && (

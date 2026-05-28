@@ -12,7 +12,8 @@ export function AuthProvider({ children }) {
   const [user,    setUser]    = useState(null)
   const [session, setSession] = useState(null)
   // Only show loading if Supabase is configured — demo mode skips it
-  const [loading, setLoading] = useState(isSupabaseConfigured())
+  const [loading,      setLoading]      = useState(isSupabaseConfigured())
+  const [recoveryMode, setRecoveryMode] = useState(false)
 
   useEffect(() => {
     if (!isSupabaseConfigured()) {
@@ -29,12 +30,14 @@ export function AuthProvider({ children }) {
 
     // Listen for all auth state transitions
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (event, session) => {
         setSession(session)
         setUser(session?.user ?? null)
-        // If session was cleared externally (token expiry, other tab sign-out)
-        // loading should always be false after first resolution
         setLoading(false)
+        // PASSWORD_RECOVERY fires when user clicks the reset link in their email
+        // Flag this so AuthPage can show the update-password form
+        if (event === 'PASSWORD_RECOVERY') setRecoveryMode(true)
+        if (event === 'USER_UPDATED')      setRecoveryMode(false)
       }
     )
 
@@ -83,6 +86,23 @@ export function AuthProvider({ children }) {
     window.location.replace('/welcome')
   }
 
+  const resetPassword = async (email) => {
+    if (!supabase) return { error: new Error('Supabase not configured') }
+    return supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth?mode=update-password`,
+    })
+  }
+
+  const updatePassword = async (newPassword) => {
+    if (!supabase) return { error: new Error('Supabase not configured') }
+    return supabase.auth.updateUser({ password: newPassword })
+  }
+
+  const resendVerification = async (email) => {
+    if (!supabase) return { error: new Error('Supabase not configured') }
+    return supabase.auth.resend({ type: 'signup', email })
+  }
+
   const updateProfile = async (updates) => {
     if (!supabase || !user) return { error: new Error('Not available') }
     return supabase.from('profiles').upsert({ id: user.id, ...updates }).select().single()
@@ -99,6 +119,10 @@ export function AuthProvider({ children }) {
       signInWithProvider,
       signOut,
       updateProfile,
+      resetPassword,
+      updatePassword,
+      resendVerification,
+      recoveryMode,
     }}>
       {children}
     </AuthContext.Provider>

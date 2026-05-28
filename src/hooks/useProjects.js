@@ -14,13 +14,14 @@ export const PROJECT_CATEGORIES = ['Work', 'Personal', 'Creative', 'Learning', '
 export function useProjects() {
   const { user }  = useAuth()
   const userId    = user?.id
-  const useDB     = isSupabaseConfigured() && !!userId
+  const useDB            = isSupabaseConfigured() && !!userId
+  const [synced, setSynced] = useState(false)
 
   const [projects, setProjects] = useState(() => storage.get(KEY, []))
 
   useEffect(() => {
     if (!useDB) return
-    projectsService.getAll(userId).then(rows => { if (rows.length > 0) { setProjects(rows); storage.set(KEY, rows) } })
+    projectsService.getAll(userId).then(rows => { if (rows.length > 0) { setProjects(rows); storage.set(KEY, rows) }; setSynced(true) })
   }, [userId])
 
   useEffect(() => {
@@ -50,5 +51,5 @@ export function useProjects() {
   const getProgress   = (projectId, allTasks) => { const t = allTasks.filter(x => x.projectId === projectId); return t.length ? Math.round((t.filter(x => x.completed).length / t.length) * 100) : 0 }
   const getTaskCount  = (projectId, allTasks) => allTasks.filter(t => t.projectId === projectId).length
 
-  return { projects, addProject, updateProject, deleteProject, setStatus, getProgress, getTaskCount }
+  return { projects, synced, addProject, updateProject, deleteProject, setStatus, getProgress, getTaskCount }
 }

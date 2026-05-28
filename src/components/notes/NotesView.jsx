@@ -1,3 +1,4 @@
+import ViewSkeleton from '../ui/ViewSkeleton'
 // Component: NotesView
 // Purpose: Notes tab with tag filter + date range filter, list, and editor
 import { useState } from 'react'
@@ -41,6 +42,8 @@ export default function NotesView({ notes }) {
     .filter(n => !filterTag || n.tags.includes(filterTag))
     .filter(applyDateFilter)
 
+
+  if (!notes.synced) return <ViewSkeleton type="notes" />
   return (
     <div className="max-w-4xl mx-auto pt-2">
       <div className="flex gap-4 h-[calc(100vh-140px)]">

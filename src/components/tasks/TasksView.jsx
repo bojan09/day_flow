@@ -1,3 +1,4 @@
+import ViewSkeleton from '../ui/ViewSkeleton'
 // Component: TasksView
 // Purpose: Tasks tab — NLP input, color categories, sub-task detail modal, duplicate, templates, someday
 import { useState } from 'react'
@@ -52,7 +53,9 @@ export default function TasksView({ tasks, templates, someday, projects, categor
   const sorted = [...filtered].sort((a, b) => {
     if (a.completed !== b.completed) return a.completed ? 1 : -1
     const p = { high: 0, medium: 1, low: 2 }
-    return (p[a.priority] ?? 1) - (p[b.priority] ?? 1)
+  
+  if (!tasks.synced) return <ViewSkeleton type="tasks" />
+  return (p[a.priority] ?? 1) - (p[b.priority] ?? 1)
   })
 
   const overdueCount = tasks.tasks.filter(t => tasks.isOverdue(t)).length

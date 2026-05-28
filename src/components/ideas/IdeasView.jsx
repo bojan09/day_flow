@@ -1,3 +1,4 @@
+import ViewSkeleton from '../ui/ViewSkeleton'
 // Component: IdeasView
 // Purpose: Idea tracker — capture, edit, status board, ratings, goal linking, resurface
 import { useState } from 'react'
@@ -236,6 +237,8 @@ export default function IdeasView({ ideas, goals, categories, onAddCategory, onR
   const openAdd  = ()     => { setEditing(null);  setModal('add')  }
   const close    = ()     => { setModal(false);    setEditing(null) }
 
+
+  if (!ideas.synced) return <ViewSkeleton type="ideas" />
   return (
     <div className="max-w-2xl mx-auto space-y-4 pt-2">
 

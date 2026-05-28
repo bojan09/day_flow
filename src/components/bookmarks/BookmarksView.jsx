@@ -1,3 +1,4 @@
+import ViewSkeleton from '../ui/ViewSkeleton'
 // Component: BookmarksView
 // Purpose: Save URLs with title, tags, read/unread state, and notes
 import { useState } from 'react'
@@ -64,6 +65,8 @@ export default function BookmarksView({ bookmarks }) {
     .filter(b => filter === 'unread' ? !b.read : filter === 'read' ? b.read : true)
     .filter(b => !tagFilter || b.tags.includes(tagFilter))
 
+
+  if (!bookmarks.synced) return <ViewSkeleton type="bookmarks" />
   return (
     <div className="max-w-2xl mx-auto space-y-4 pt-2">
       <div className="flex items-center justify-between">

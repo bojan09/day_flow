@@ -14,13 +14,14 @@ export const IDEA_CATEGORIES = ['Business', 'Creative', 'Personal', 'Technical',
 export function useIdeas() {
   const { user }  = useAuth()
   const userId    = user?.id
-  const useDB     = isSupabaseConfigured() && !!userId
+  const useDB            = isSupabaseConfigured() && !!userId
+  const [synced, setSynced] = useState(false)
 
   const [ideas, setIdeas] = useState(() => storage.get(KEY, []))
 
   useEffect(() => {
     if (!useDB) return
-    ideasService.getAll(userId).then(rows => { if (rows.length > 0) { setIdeas(rows); storage.set(KEY, rows) } })
+    ideasService.getAll(userId).then(rows => { if (rows.length > 0) { setIdeas(rows); storage.set(KEY, rows) }; setSynced(true) })
   }, [userId])
 
   useEffect(() => {
@@ -61,5 +62,5 @@ export function useIdeas() {
     return old.length > 0 ? old[Math.floor(Math.random() * old.length)] : null
   }
 
-  return { ideas, addIdea, updateIdea, deleteIdea, setStatus, setStars, linkGoal, getRandomOldIdea }
+  return { ideas, synced, addIdea, updateIdea, deleteIdea, setStatus, setStars, linkGoal, getRandomOldIdea }
 }

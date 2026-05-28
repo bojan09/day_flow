@@ -1,3 +1,4 @@
+import ViewSkeleton from '../ui/ViewSkeleton'
 // Component: HabitsView
 // Purpose: Habits tab — weekly/calendar toggle, rules panel, pairing suggestions, confetti
 import { useState, useCallback, useRef } from 'react'
@@ -36,6 +37,8 @@ export default function HabitsView({ habits, habitRules }) {
     }, 50)
   }, [toggleHabitDay, getStreak, habitRules, notifications])
 
+
+  if (!habits.synced) return <ViewSkeleton type="habits" />
   return (
     <div className="max-w-2xl mx-auto space-y-5 pt-2">
       <Confetti trigger={confetti} />
