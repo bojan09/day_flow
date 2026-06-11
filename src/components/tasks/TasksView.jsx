@@ -1,4 +1,5 @@
 import ViewSkeleton from '../ui/ViewSkeleton'
+import { useToast } from '../../utils/toast'
 // Component: TasksView
 // Purpose: Tasks tab — NLP input, color categories, sub-task detail modal, duplicate, templates, someday
 import { useState } from 'react'
@@ -37,6 +38,7 @@ const CAT_DOT = {
 }
 
 export default function TasksView({ tasks, templates, someday, projects, categories, onAddCategory, onRemoveCategory, onTabChange, energy, habits, ideas }) {
+  const { toast } = useToast()
   const [filter,     setFilter]  = useState('Today')
   const [modalOpen,  setModal]   = useState(false)
   const [detailTask,   setDetail]      = useState(null)
@@ -158,8 +160,8 @@ export default function TasksView({ tasks, templates, someday, projects, categor
                       title="Open in Schedule"
                     >⏰</button>
                   )}
-                  <button aria-label="Close" onClick={() => tasks.deleteTask(t.id)}
-                    className="opacity-0 group-hover:opacity-100 [color:var(--text-faint)] hover:text-red-400 text-xs p-1 transition-all">✕</button>
+                  <button aria-label="Delete task" onClick={() => { tasks.deleteTask(t.id); toast.undo('Task deleted', () => tasks.restoreTask(t)) }}
+                    className="tap-target opacity-0 group-hover:opacity-100 [color:var(--text-faint)] hover:text-red-400 text-xs p-1 transition-all">✕</button>
                 </div>
               </li>
             ))}

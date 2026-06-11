@@ -46,6 +46,9 @@ export function useGoals() {
   }
 
   const updateGoal  = (id, updates) => setGoals(prev => prev.map(g => { if (g.id !== id) return g; const u = { ...g, ...updates }; persist(u); return u }))
+  // Restore a previously deleted goal with its original id/milestones (undo)
+  const restoreGoal = (g) => { setGoals(prev => [g, ...prev]); persist(g) }
+
   const deleteGoal  = (id)          => { setGoals(prev => prev.filter(g => g.id !== id)); if (useDB) goalsService.delete(userId, id) }
   const toggleGoal  = (id)          => updateGoal(id, { completed: !goals.find(g => g.id === id)?.completed })
 
@@ -64,5 +67,5 @@ export function useGoals() {
     return Math.round((goal.milestones.filter(m => m.done).length / goal.milestones.length) * 100)
   }
 
-  return { goals, synced, addGoal, updateGoal, deleteGoal, toggleGoal, addMilestone, toggleMilestone, getProgress }
+  return { goals, synced, addGoal, restoreGoal, updateGoal, deleteGoal, toggleGoal, addMilestone, toggleMilestone, getProgress }
 }

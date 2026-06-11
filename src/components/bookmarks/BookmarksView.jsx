@@ -1,4 +1,5 @@
 import ViewSkeleton from '../ui/ViewSkeleton'
+import { useToast } from '../../utils/toast'
 // Component: BookmarksView
 // Purpose: Save URLs with title, tags, read/unread state, and notes
 import { useState } from 'react'
@@ -36,8 +37,8 @@ function BookmarkCard({ b, bookmarks }) {
             className={`text-[10px] px-2 py-1 rounded-full border font-medium transition-all ${
               b.read ? '[background-color:var(--bg-secondary)] text-stone-500 [border-color:var(--border)]' : '[background-color:var(--accent-light)] [color:var(--accent)] [border-color:var(--accent-mid)] hover:[background-color:var(--accent-light)]'
             }`}>{b.read ? 'Read ✓' : 'Unread'}</button>
-          <button aria-label="Delete bookmark" onClick={() => bookmarks.deleteBookmark(b.id)}
-            className="[color:var(--text-faint)] hover:text-red-400 text-xs p-0.5 transition-colors text-center">✕</button>
+          <button aria-label="Delete bookmark" onClick={() => { bookmarks.deleteBookmark(b.id); toast.undo('Bookmark deleted', () => bookmarks.restoreBookmark(b)) }}
+            className="tap-target [color:var(--text-faint)] hover:text-red-400 text-xs p-0.5 transition-colors text-center">✕</button>
         </div>
       </div>
     </div>
@@ -45,6 +46,7 @@ function BookmarkCard({ b, bookmarks }) {
 }
 
 export default function BookmarksView({ bookmarks }) {
+  const { toast } = useToast()
   const [modal,   setModal]   = useState(false)
   const [filter,  setFilter]  = useState('all')
   const [tagFilter, setTag]   = useState(null)

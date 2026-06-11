@@ -98,6 +98,13 @@ export function useTasks() {
     return t
   }
 
+  // Restore a previously deleted task with its original id/state (undo)
+  const restoreTask = (t) => {
+    pendingDeletesRef.current.delete(t.id)
+    setTasks(prev => [t, ...prev])
+    persist(t)
+  }
+
   const updateTask = (id, updates) => {
     setTasks(prev => prev.map(t => {
       if (t.id !== id) return t
@@ -149,7 +156,7 @@ export function useTasks() {
   const isDueToday = (task) => task.date === getTodayKey() && !task.completed
 
   return {
-    tasks, synced, addTask, updateTask, deleteTask, toggleTask, setFocus,
+    tasks, synced, addTask, restoreTask, updateTask, deleteTask, toggleTask, setFocus,
     getTodayTasks, getTasksByDate, getFocusTask,
     getTotalEstimateMins, isOverdue, isDueToday,
   }

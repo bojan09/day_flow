@@ -29,7 +29,7 @@ export default function FocusTask({ tasks }) {
             {focus.title}
           </span>
           <button aria-label="Remove focus task" onClick={() => tasks.setFocus(focus.id)}
-            className="text-white/50 hover:text-white text-xs transition-colors">✕</button>
+            className="tap-target text-white/50 hover:text-white text-xs transition-colors">✕</button>
         </div>
       ) : (
         <div className="space-y-1.5 max-h-36 overflow-y-auto scrollbar-hide">

@@ -45,6 +45,14 @@ export function useHabits() {
     return h
   }
 
+  // Restore a previously deleted habit with its original id (undo) —
+  // keeps streak history intact since the log is keyed by habit id.
+  const restoreHabit = async (h) => {
+    pendingDeletesRef.current.delete(h.id)
+    setHabits(prev => [...prev, h])
+    if (useDB) await habitsService.upsertHabit(userId, h)
+  }
+
   const updateHabit = async (id, updates) => {
     setHabits(prev => prev.map(h => h.id === id ? { ...h, ...updates } : h))
     if (useDB) await habitsService.upsertHabit(userId, { ...habits.find(h => h.id === id), ...updates })
@@ -97,5 +105,5 @@ export function useHabits() {
     return Math.round((habits.filter(h => isHabitDone(h.id)).length / habits.length) * 100)
   }
 
-  return { habits, log, synced, addHabit, updateHabit, deleteHabit, toggleHabitDay, isHabitDone, getStreak, getWeeklyCount, getMaxStreak, getTodayCompletion }
+  return { habits, log, synced, addHabit, restoreHabit, updateHabit, deleteHabit, toggleHabitDay, isHabitDone, getStreak, getWeeklyCount, getMaxStreak, getTodayCompletion }
 }

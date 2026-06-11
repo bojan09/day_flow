@@ -164,7 +164,7 @@ Return at most 15 results. Return [] if nothing matches. No explanation, just th
           />
           {query && (
             <button aria-label="Clear search" type="button" onClick={() => { setQuery(''); setAiResult([]) }}
-              className="text-sm flex-shrink-0" style={{ color: 'var(--text-faint)' }}>✕</button>
+              className="tap-target text-sm flex-shrink-0" style={{ color: 'var(--text-faint)' }}>✕</button>
           )}
         </div>
         {mode === 'ai' && (

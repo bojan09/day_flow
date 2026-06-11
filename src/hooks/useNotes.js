@@ -64,6 +64,13 @@ export function useNotes() {
     }))
   }
 
+  // Restore a previously deleted note with its original id/content (undo)
+  const restoreNote = (n) => {
+    pendingDeletesRef.current.delete(n.id)
+    setNotes(prev => [n, ...prev])
+    persist(n)
+  }
+
   const deleteNote = (id) => {
     pendingDeletesRef.current.add(id)
     setNotes(prev => prev.filter(n => n.id !== id))
@@ -83,5 +90,5 @@ export function useNotes() {
     return new Date(b.updatedAt) - new Date(a.updatedAt)
   })
 
-  return { notes: sorted, synced, addNote, updateNote, deleteNote, togglePin, getWordCount, getReadTime }
+  return { notes: sorted, synced, addNote, restoreNote, updateNote, deleteNote, togglePin, getWordCount, getReadTime }
 }

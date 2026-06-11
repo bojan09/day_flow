@@ -14,7 +14,7 @@
     --border-soft:    #F0EDE8;
     --text:           #1A1A1A;
     --text-muted:     #737373;
-    --text-faint:     #A8A29E;
+    --text-faint:     #8A847C;
     --accent:         #3B6B4B;
     --accent-light:   #EEF4ED;
     --accent-mid:     #A7C9A0;
@@ -34,7 +34,7 @@
     --border-soft:    #222622;
     --text:           #EBE8E1;
     --text-muted:     #9B9890;
-    --text-faint:     #5A5754;
+    --text-faint:     #807D76;
     --accent:         #5FAF74;
     --accent-light:   #162A1E;
     --accent-mid:     #274D35;
@@ -54,7 +54,7 @@
     --border-soft:    #D4E4D1;
     --text:           #1A2A1A;
     --text-muted:     #4A6A4A;
-    --text-faint:     #8AAA8A;
+    --text-faint:     #5F7F5F;
     --accent:         #2A5A3A;
     --accent-light:   #D4EDD4;
     --accent-mid:     #8ABF8A;
@@ -156,6 +156,15 @@
 }
 
 @layer components {
+  /* Expands a small button's touch area to ~44px without visual change.
+     The ::after pseudo-element is part of the button, so it captures taps. */
+  .tap-target { position: relative; }
+  .tap-target::after {
+    content: '';
+    position: absolute;
+    inset: -10px;
+  }
+
   /* ── Theme-aware surface classes ── */
   .bg-surface   { background-color: var(--surface); }
   .bg-surface-raised { background-color: var(--surface-raised); }
@@ -194,7 +203,7 @@
 
   /* ── Tab active indicator ── */
   .tab-active { @apply bg-forest-500 text-white shadow-sm; }
-  .tab-idle   { color: var(--text-faint); } .tab-idle:hover { background-color: var(--bg-secondary); color: var(--text); }
+  .tab-idle   { color: var(--text-muted); } .tab-idle:hover { background-color: var(--bg-secondary); color: var(--text); }
 
   /* ── Input base ── */
   .input-base {

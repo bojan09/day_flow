@@ -170,7 +170,7 @@ export default function VoiceCommandBar({ tasks, habits, notes, ideas }) {
               <button
                 aria-label="Close voice commands"
                 onClick={() => { setOpen(false); stopListening() }}
-                className="text-sm w-6 h-6 flex items-center justify-center rounded-full transition-colors"
+                className="tap-target text-sm w-6 h-6 flex items-center justify-center rounded-full transition-colors"
                 style={{ color: 'var(--text-faint)' }}
                 onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
                 onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}

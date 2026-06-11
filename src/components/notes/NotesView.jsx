@@ -1,4 +1,5 @@
 import ViewSkeleton from '../ui/ViewSkeleton'
+import { useToast } from '../../utils/toast'
 // Component: NotesView
 // Purpose: Notes tab with tag filter + date range filter, list, and editor
 import { useState } from 'react'
@@ -15,6 +16,7 @@ const DATE_FILTERS = [
 ]
 
 export default function NotesView({ notes }) {
+  const { toast } = useToast()
   const [activeId,    setActiveId]    = useState(null)
   const [filterTag,   setFilterTag]   = useState(null)
   const [dateFilter,  setDateFilter]  = useState('all')
@@ -74,7 +76,7 @@ export default function NotesView({ notes }) {
 
           <NotesList notes={displayNotes} activeId={activeId} onSelect={setActiveId}
             onNew={handleNew}
-            onDelete={(id) => { notes.deleteNote(id); if (activeId === id) setActiveId(null) }}
+            onDelete={(id) => { const n = notes.notes.find(x => x.id === id); notes.deleteNote(id); if (activeId === id) setActiveId(null); if (n) toast.undo('Note deleted', () => notes.restoreNote(n)) }}
             onTogglePin={notes.togglePin} />
         </div>
 

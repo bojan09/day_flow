@@ -2,15 +2,29 @@
 // Purpose: Viewport-centered dialog. Panel is max 85vh tall with internal scroll
 //          so buttons are always reachable regardless of content height.
 //          No body style changes — page remains scrollable behind the overlay.
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+
+const FOCUSABLE = 'input, textarea, select, button:not([aria-label="Close"]), [href], [tabindex]:not([tabindex="-1"])'
 
 export default function Modal({ isOpen, onClose, title, children }) {
+  const panelRef    = useRef(null)
+  const restoreRef  = useRef(null)
+
   useEffect(() => {
     if (!isOpen) return
     const handler = (e) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [isOpen, onClose])
+
+  // Focus management: move focus into the panel on open, restore on close
+  useEffect(() => {
+    if (!isOpen) return
+    restoreRef.current = document.activeElement
+    const target = panelRef.current?.querySelector(FOCUSABLE) || panelRef.current
+    target?.focus?.()
+    return () => restoreRef.current?.focus?.()
+  }, [isOpen])
 
   if (!isOpen) return null
 
@@ -41,6 +55,8 @@ export default function Modal({ isOpen, onClose, title, children }) {
           role="dialog"
           aria-modal="true"
           aria-labelledby="modal-title"
+          ref={panelRef}
+          tabIndex={-1}
           onClick={e => e.stopPropagation()}
         >
           {/* Header — always visible, never scrolls */}

@@ -1,6 +1,7 @@
 // Component: GoalCard
 // Purpose: Single goal — progress ring, milestones, inline edit modal.
 import { useState, memo } from 'react'
+import { useToast } from '../../utils/toast'
 import Modal from '../ui/Modal'
 import { GOAL_TYPES, GOAL_CATEGORIES } from '../../hooks/useGoals'
 
@@ -94,6 +95,7 @@ function EditGoalModal({ goal, goals, onClose }) {
 }
 
 const GoalCardImpl = memo(function GoalCard({ goal, goals, xp }) {
+  const { toast } = useToast()
   const [expanded,  setExpanded]  = useState(false)
   const [editing,   setEditing]   = useState(false)
   const [newMs,     setNewMs]     = useState('')
@@ -179,7 +181,7 @@ const GoalCardImpl = memo(function GoalCard({ goal, goals, xp }) {
                     onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
                     onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
                     title="Edit goal">✏️</button>
-                  <button onClick={() => goals.deleteGoal(goal.id)}
+                  <button onClick={() => { goals.deleteGoal(goal.id); toast.undo('Goal deleted', () => goals.restoreGoal(goal)) }}
                     className="w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors"
                     style={{ color: 'var(--text-faint)' }}
                     onMouseOver={e => { e.currentTarget.style.backgroundColor = '#fef2f2'; e.currentTarget.style.color = '#ef4444' }}

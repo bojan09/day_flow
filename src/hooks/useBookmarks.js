@@ -44,9 +44,12 @@ export function useBookmarks() {
   }
 
   const updateBookmark = (id, updates) => setBookmarks(prev => prev.map(b => { if (b.id !== id) return b; const u = { ...b, ...updates }; persist(u); return u }))
+  // Restore a previously deleted bookmark with its original id (undo)
+  const restoreBookmark = (b) => { setBookmarks(prev => [b, ...prev]); persist(b) }
+
   const deleteBookmark = (id)           => { setBookmarks(prev => prev.filter(b => b.id !== id)); if (useDB) bookmarksService.delete(userId, id) }
   const toggleRead     = (id)           => updateBookmark(id, { read: !bookmarks.find(b => b.id === id)?.read })
   const unread                          = bookmarks.filter(b => !b.read)
 
-  return { bookmarks, synced, addBookmark, updateBookmark, deleteBookmark, toggleRead, unread }
+  return { bookmarks, synced, addBookmark, restoreBookmark, updateBookmark, deleteBookmark, toggleRead, unread }
 }

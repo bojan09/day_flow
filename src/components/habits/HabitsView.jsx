@@ -1,4 +1,5 @@
 import ViewSkeleton from '../ui/ViewSkeleton'
+import { useToast } from '../../utils/toast'
 // Component: HabitsView
 // Purpose: Habits tab — weekly/calendar toggle, rules panel, pairing suggestions, confetti
 import { useState, useCallback, useRef } from 'react'
@@ -16,6 +17,7 @@ import { notifications } from '../../services/notificationService'
 const MILESTONE_STREAKS = [7, 14, 30, 60, 100]
 
 export default function HabitsView({ habits, habitRules }) {
+  const { toast } = useToast()
   const [modalOpen, setModal]    = useState(false)
   const [confetti,  setConfetti] = useState(false)
   const [view,      setView]     = useState('week')
@@ -92,7 +94,7 @@ export default function HabitsView({ habits, habitRules }) {
                 <HabitRow key={h.id} habit={h} weekDays={weekDays}
                   isHabitDone={isHabitDone} toggleHabitDay={handleToggle}
                   streak={getStreak(h.id)} weeklyCount={getWeeklyCount(h.id)}
-                  onDelete={deleteHabit} onEdit={updateHabit} />
+                  onDelete={(id) => { const hb = list.find(x => x.id === id); deleteHabit(id); if (hb) toast.undo('Habit deleted', () => habits.restoreHabit(hb)) }} onEdit={updateHabit} />
               ))}
             </div>
           )}

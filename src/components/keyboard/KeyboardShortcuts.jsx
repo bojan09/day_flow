@@ -59,7 +59,7 @@ export default function KeyboardShortcuts({ onTabChange }) {
           </h3>
           <button aria-label="Close shortcuts"
             onClick={() => setShowHelp(false)}
-            className="text-sm transition-colors"
+            className="tap-target text-sm transition-colors"
             style={{ color: 'var(--text-faint)' }}
           >
             ✕
