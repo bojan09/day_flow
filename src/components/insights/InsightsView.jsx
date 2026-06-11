@@ -142,8 +142,11 @@ export default function InsightsView({
                   aria-label="Toggle mood-responsive UI"
                 >
                   <span
-                    className="absolute top-0.5 w-5 h-5 rounded-full shadow transition-transform bg-white duration-200"
-                    style={{ transform: moodTheme.enabled ? 'translateX(22px)' : 'translateX(2px)' }}
+                    className="absolute top-0.5 w-5 h-5 rounded-full shadow transition-transform duration-200"
+                    style={{
+                      backgroundColor: 'var(--surface-raised)',
+                      transform: moodTheme.enabled ? 'translateX(22px)' : 'translateX(2px)',
+                    }}
                   />
                 </button>
               </div>

@@ -65,6 +65,11 @@ import FeatureTooltip       from '../components/ui/FeatureTooltip'
 import VoiceCommandBar     from '../components/voice/VoiceCommandBar'
 import { spawnRecurringTasks }    from '../services/recurringEngine'
 import { spawnRecurringWorkouts } from '../services/recurringWorkoutsEngine'
+import { getTodayKey }            from '../utils/dateUtils'
+
+// ── Weekly Review overlay helpers ───────────────────────────────────────────
+const isSundayToday = () => new Date().getDay() === 0
+const weeklyReviewDismissKey = () => `df_wr_dismissed_${getTodayKey()}`
 
 export default function DashboardPage() {
   // Tab state persisted in URL hash so refresh preserves current tab
@@ -82,6 +87,21 @@ export default function DashboardPage() {
   }, [])
 
   const [showQuickCapture, setShowQuickCapture] = useState(false)
+
+  // Weekly Review overlay — only auto-shows on Sundays, once per day
+  const [showWeeklyOverlay, setShowWeeklyOverlay] = useState(() => {
+    try {
+      return isSundayToday() && !localStorage.getItem(weeklyReviewDismissKey())
+    } catch {
+      return false
+    }
+  })
+
+  const handleDismissWeeklyOverlay = () => {
+    setShowWeeklyOverlay(false)
+    try { localStorage.setItem(weeklyReviewDismissKey(), '1') } catch { /* ignore */ }
+  }
+
   const handleTabChange = setActiveTab   // alias used throughout
 
   // Handle PWA app shortcuts and share target via URL params
@@ -221,7 +241,19 @@ export default function DashboardPage() {
       <FeatureTooltip id="voice-command">
         <VoiceCommandBar tasks={tasks} habits={habits} notes={notes} ideas={ideas} />
       </FeatureTooltip>
-      <WeeklyReview tasks={tasks} habits={habits} mood={mood} notes={notes} />
+
+      {/* Weekly Review overlay — Sunday only, once per day, lazy-loaded safely */}
+      {showWeeklyOverlay && (
+        <Suspense fallback={null}>
+          <WeeklyReview
+            tasks={tasks}
+            habits={habits}
+            mood={mood}
+            notes={notes}
+            onClose={handleDismissWeeklyOverlay}
+          />
+        </Suspense>
+      )}
     </>
   )
 }

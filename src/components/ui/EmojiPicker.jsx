@@ -26,7 +26,7 @@ const KEYWORD_MAP = {
   job: '💼', money: '💰', cash: '💰', star: '⭐', fire: '🔥', goal: '🎯',
   target: '🎯', rocket: '🚀', plant: '🌱', grow: '🌱', idea: '💡', brain: '🧠',
   think: '🧠', happy: '😊', smile: '😊', love: '🥰', cool: '😎', sad: '😢',
-  angry: '😡', sleep: '😴', coffee: '☕', food: '🍎', fruit: '🍎', eat: '🍕',
+  angry: '😡', drowsy: '😴', tired: '😴', coffee: '☕', food: '🍎', fruit: '🍎', eat: '🍕',
   cook: '🍳', music: '🎵', song: '🎵', art: '🎨', paint: '🎨', game: '🎮',
   play: '🎮', travel: '✈️', car: '🚗', sun: '☀️', moon: '🌙', rain: '🌧️',
   tree: '🌲', flower: '🌸', sport: '⚽', ball: '⚽', win: '🏆', award: '🏆',

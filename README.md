@@ -1,0 +1,132 @@
+# DayFlow
+
+A professional daily planner and productivity application. Built with React, Vite, Tailwind CSS, and Supabase.
+
+## Features
+
+- **Today View** — Adaptive daily command center with pinnable, hideable widgets ordered by time of day
+- **Tasks** — NLP-powered task entry, priority levels, categories, recurring tasks, sub-tasks, projects
+- **Habits** — Streak tracking, habit rules, loop optimiser, weekly calendar heatmap
+- **Goals** — Milestone tracking, AI goal breakdown, forecasting
+- **Focus** — Pomodoro timer with session history and XP rewards
+- **Notes / Ideas / Brain Dump / Bookmarks** — Full thought capture system
+- **Insights** — Productivity heatmap, mood chart, category trends, weekly/monthly comparisons
+- **AI Coach** — Weekly coaching, auto-journal drafts, daily feedback (Anthropic API)
+- **Balance Wheel** — Life area scoring
+- **Workouts** — Recurring session tracking
+- **Calendar / Schedule** — Monthly calendar view and time-block planner
+- **PWA** — Installable, offline-first with background sync, push notifications
+- **3 Themes** — Light, Dark, Forest with full CSS variable design system
+- **Gamification** — XP, level system, achievements, streak celebrations
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | React 18 + Vite 5 |
+| Styling | Tailwind CSS 3 + CSS variables |
+| Routing | React Router 6 |
+| Backend / Auth | Supabase |
+| Dates | date-fns 3 |
+| Animations | GSAP 3 + Tailwind keyframes |
+| AI | Anthropic Claude API |
+| Deployment | Vercel |
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- A Supabase project (or run in demo/localStorage mode without one)
+
+### Local Setup
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/bojan09/day_flow.git
+cd day_flow
+
+# 2. Install dependencies
+npm install
+
+# 3. Configure environment (optional — app runs in demo mode without this)
+cp .env.example .env.local
+# Edit .env.local and add your Supabase credentials:
+# VITE_SUPABASE_URL=https://your-project.supabase.co
+# VITE_SUPABASE_ANON_KEY=your-anon-key
+
+# 4. Start development server
+npm run dev
+```
+
+The app runs at `http://localhost:5173`.
+
+**Demo mode:** If no `.env.local` is provided, the app runs fully in localStorage mode with no authentication required. All features work except cloud sync.
+
+### Supabase Setup
+
+Run the migration files in your Supabase SQL editor in this order:
+
+1. `supabase/schema.sql` — Main tables and RLS policies
+2. `supabase/storage.sql` — Storage bucket for avatar uploads
+3. `supabase/push-subscriptions.sql` — Push notification subscriptions
+4. `supabase/email-templates.sql` — Custom auth email templates (optional)
+5. `supabase/oauth-setup.sql` — Google OAuth configuration (optional)
+
+For push notifications, set the `VITE_VAPID_PUBLIC_KEY` environment variable.
+
+### Build for Production
+
+```bash
+npm run build
+# Output in /dist
+```
+
+## Project Structure
+
+```
+src/
+├── components/       # All UI components, grouped by feature
+│   ├── auth/         # Auth forms, guards, user menu
+│   ├── dashboard/    # App shell: TopBar, SideNav, BottomNav, MobileDrawer
+│   ├── today/        # Today view and all its widgets
+│   ├── tasks/        # Task management
+│   ├── habits/       # Habit tracking
+│   ├── insights/     # Analytics and AI coaching
+│   ├── ui/           # Shared primitives: Button, Card, Modal, etc.
+│   └── ...           # One directory per feature
+├── hooks/            # Custom React hooks (data + UI state)
+├── services/         # Supabase client, mappers, storage, notifications
+├── layouts/          # DashboardLayout
+├── pages/            # Route-level page components
+└── utils/            # Date helpers, constants, toast, PWA utilities
+```
+
+## Architecture Notes
+
+- **No inline CSS** — all colours use CSS variables (`var(--bg)`, `var(--accent)`, etc.) for theme compatibility
+- **camelCase ↔ snake_case** — all Supabase reads/writes pass through `src/services/mappers.js`
+- **Offline-first** — writes queue locally when offline and replay on reconnect via `useOfflineQueue`
+- **Lazy loading** — secondary and tertiary views are code-split for fast initial load
+- **Auth** — `useAuth` (JSX) is the single canonical auth hook; do not create a `.js` duplicate
+
+## Deployment
+
+The project is configured for Vercel (`vercel.json` handles SPA routing). Any static host works.
+
+```bash
+# Deploy with Vercel CLI
+vercel --prod
+```
+
+Set the following environment variables in your hosting provider:
+
+| Variable | Required | Description |
+|---|---|---|
+| `VITE_SUPABASE_URL` | Recommended | Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Recommended | Supabase anon key |
+| `VITE_VAPID_PUBLIC_KEY` | Optional | For push notifications |
+
+## License
+
+Private project — all rights reserved.
