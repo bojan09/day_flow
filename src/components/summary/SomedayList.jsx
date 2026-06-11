@@ -55,7 +55,7 @@ export default function SomedayList({ someday, tasks }) {
             >
               Schedule →
             </button>
-            <button onClick={() => someday.removeItem(item.id)}
+            <button aria-label="Delete item" onClick={() => someday.removeItem(item.id)}
               className="[color:var(--text-faint)] hover:text-red-400 text-xs p-1 opacity-0 group-hover:opacity-100 transition-all">
               ✕
             </button>

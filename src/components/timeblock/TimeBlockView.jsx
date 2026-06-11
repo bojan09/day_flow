@@ -242,7 +242,7 @@ export default function TimeBlockView({ tasks }) {
                           }}
                         />
                         <button onClick={() => addCustomEntry(hour)} className="text-[10px] font-semibold" style={{ color: 'var(--accent)' }}>Add</button>
-                        <button onClick={() => { setAddingTo(null); setEntryText('') }} className="text-[10px]" style={{ color: 'var(--text-faint)' }}>✕</button>
+                        <button aria-label="Close" onClick={() => { setAddingTo(null); setEntryText('') }} className="text-[10px]" style={{ color: 'var(--text-faint)' }}>✕</button>
                       </div>
                     )}
 

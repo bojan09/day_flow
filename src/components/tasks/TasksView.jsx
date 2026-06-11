@@ -158,7 +158,7 @@ export default function TasksView({ tasks, templates, someday, projects, categor
                       title="Open in Schedule"
                     >⏰</button>
                   )}
-                  <button onClick={() => tasks.deleteTask(t.id)}
+                  <button aria-label="Close" onClick={() => tasks.deleteTask(t.id)}
                     className="opacity-0 group-hover:opacity-100 [color:var(--text-faint)] hover:text-red-400 text-xs p-1 transition-all">✕</button>
                 </div>
               </li>

@@ -2,6 +2,7 @@
 // Purpose: Generates a short personalised daily reflection using the Anthropic API.
 //          Uses real task, habit, mood, and water data — nothing fabricated.
 import { useState } from 'react'
+import { callClaude } from '../../services/aiService'
 import { format, subDays } from 'date-fns'
 import { getTodayKey, getDateKey } from '../../utils/dateUtils'
 
@@ -49,13 +50,7 @@ export default function AIDailyFeedback({ tasks, habits, mood, water }) {
     try {
       const context = buildDayContext({ tasks, habits, mood, water })
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model:      'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          system: `You are a warm, insightful daily productivity coach giving end-of-day feedback.
+      const text = await callClaude(`You are a warm, insightful daily productivity coach giving end-of-day feedback.
 
 Based on the user's actual data, provide a personalised daily reflection in exactly this format:
 
@@ -64,14 +59,8 @@ Based on the user's actual data, provide a personalised daily reflection in exac
 **Tomorrow's focus:** [One clear priority or intention for tomorrow]
 
 Keep it under 80 words total. Be direct and personal. Sound like a coach, not a robot.
-Never say "it seems" or "based on the data". Just speak directly.`,
-          messages: [{ role: 'user', content: context }],
-        }),
-      })
-
-      if (!response.ok) throw new Error(`API error ${response.status}`)
-      const data = await response.json()
-      const text = data.content?.[0]?.text || ''
+Never say "it seems" or "based on the data". Just speak directly.`, context)
+      
       setOutput(text)
       setGenerated(true)
     } catch (err) {

@@ -1,7 +1,37 @@
 // Config: Vite build tool configuration
-// v6.4: manual chunk splitting for optimal caching and lazy loading
+// Function-based manualChunks: object form previously let rollup merge
+// react into vendor-router, producing a 0.04kB vendor-react chunk.
 import { defineConfig } from 'vite'
 import react           from '@vitejs/plugin-react'
+
+// View chunk groups (paths matched against module id)
+const VIEW_CHUNKS = {
+  'views-core': [
+    '/components/today/TodayView',
+    '/components/tasks/TasksView',
+    '/components/habits/HabitsView',
+    '/components/focus/FocusMode',
+  ],
+  'views-secondary': [
+    '/components/notes/NotesView',
+    '/components/goals/GoalsView',
+    '/components/calendar/CalendarView',
+    '/components/workouts/WorkoutsView',
+    '/components/insights/InsightsView',
+  ],
+  'views-tertiary': [
+    '/components/balance/BalanceView',
+    '/components/braindump/BrainDump',
+    '/components/challenges/ChallengesView',
+    '/components/projects/ProjectsView',
+    '/components/bookmarks/BookmarksView',
+    '/components/weekly/WeeklyReview',
+    '/components/ideas/IdeasView',
+    '/components/routines/RoutinesView',
+    '/components/timeblock/TimeBlockView',
+    '/components/search/SearchView',
+  ],
+}
 
 export default defineConfig({
   plugins: [react()],
@@ -16,47 +46,23 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Vendor chunk — rarely changes, cached long-term
-          'vendor-react':    ['react', 'react-dom'],
-          'vendor-router':   ['react-router-dom'],
-          'vendor-dates':    ['date-fns'],
-          'vendor-supabase': ['@supabase/supabase-js'],
-
-          // Core views — loaded on first visit
-          'views-core':  [
-            './src/components/today/TodayView',
-            './src/components/tasks/TasksView',
-            './src/components/habits/HabitsView',
-            './src/components/focus/FocusMode',
-          ],
-
-          // Secondary views — lazy loaded
-          'views-secondary': [
-            './src/components/notes/NotesView',
-            './src/components/goals/GoalsView',
-            './src/components/calendar/CalendarView',
-            './src/components/workouts/WorkoutsView',
-            './src/components/insights/InsightsView',
-          ],
-
-          // Tertiary views — loaded on demand
-          'views-tertiary': [
-            './src/components/balance/BalanceView',
-            './src/components/braindump/BrainDump',
-            './src/components/challenges/ChallengesView',
-            './src/components/projects/ProjectsView',
-            './src/components/bookmarks/BookmarksView',
-            './src/components/weekly/WeeklyReview',
-            './src/components/ideas/IdeasView',
-            './src/components/routines/RoutinesView',
-            './src/components/timeblock/TimeBlockView',
-            './src/components/search/SearchView',
-          ],
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react-router'))    return 'vendor-router'
+            if (id.includes('/react/') ||
+                id.includes('/react-dom/') ||
+                id.includes('/scheduler/'))     return 'vendor-react'
+            if (id.includes('date-fns'))        return 'vendor-dates'
+            if (id.includes('@supabase'))       return 'vendor-supabase'
+            return 'vendor-misc'
+          }
+          for (const [chunk, paths] of Object.entries(VIEW_CHUNKS)) {
+            if (paths.some(p => id.includes(p))) return chunk
+          }
+          return undefined
         },
       },
     },
-    // Warn when a chunk exceeds 500kb
     chunkSizeWarningLimit: 500,
   },
 })

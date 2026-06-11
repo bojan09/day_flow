@@ -3,6 +3,7 @@
 //          identifies patterns (skipped on weekends, evenings, etc.) and suggests
 //          specific changes using the Anthropic API.
 import { useState, useMemo } from 'react'
+import { callClaude } from '../../services/aiService'
 import { subDays, getDay, format } from 'date-fns'
 import { getDateKey } from '../../utils/dateUtils'
 
@@ -63,13 +64,7 @@ export default function HabitLoopOptimizer({ habits }) {
   const generate = async () => {
     setLoading(true); setError(null); setOutput('')
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model:      'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          system: `You are a habit coach analysing a user's habit consistency data from the last 28 days.
+      const text = await callClaude(`You are a habit coach analysing a user's habit consistency data from the last 28 days.
 
 Provide exactly 3 actionable suggestions in this format:
 
@@ -80,13 +75,8 @@ Rules:
 - Only suggest changes for habits with <60% consistency
 - Be specific about WHEN and HOW — not just "try harder"
 - Keep each suggestion under 30 words total
-- If all habits are above 60%, say "All habits are performing well — keep going!"`,
-          messages: [{ role: 'user', content: `HABIT DATA (last 28 days):\n${context.summary}` }],
-        }),
-      })
-      if (!response.ok) throw new Error(`${response.status}`)
-      const data = await response.json()
-      setOutput(data.content?.[0]?.text || '')
+- If all habits are above 60%, say "All habits are performing well — keep going!"`, `HABIT DATA (last 28 days):\n${context.summary}`)
+      setOutput(text)
     } catch (err) {
       setError('Could not reach AI. Check your connection.')
     } finally {

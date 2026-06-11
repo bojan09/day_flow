@@ -87,7 +87,7 @@ export default function FeatureTooltip({ id, children }) {
             />
             <p className="text-xs font-semibold text-white mb-0.5">{hint.title}</p>
             <p className="text-[11px] text-white opacity-90 leading-snug">{hint.body}</p>
-            <button
+            <button aria-label="Dismiss tip"
               onClick={dismiss}
               className="mt-2 text-[10px] text-white opacity-75 hover:opacity-100 transition-opacity"
             >

@@ -4,6 +4,7 @@
 import { useState, useEffect, lazy, Suspense, useCallback } from 'react'
 import DashboardLayout    from '../layouts/DashboardLayout'
 import TabSkeleton        from '../components/ui/TabSkeleton'
+import ViewErrorBoundary  from '../components/ui/ViewErrorBoundary'
 import TodayView          from '../components/today/TodayView'
 import TasksView          from '../components/tasks/TasksView'
 const NotesView = lazy(() => import('../components/notes/NotesView'))
@@ -206,6 +207,7 @@ export default function DashboardPage() {
 
       <Suspense fallback={<TabSkeleton />}>
       <DashboardLayout activeTab={activeTab} onTabChange={handleTabChange} theme={theme} onSetTheme={setTheme}>
+      <ViewErrorBoundary key={activeTab}>
 
         {/* ── Plan ─────────────────────────────────────────────────────────── */}
         {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={handleTabChange} xp={xp} goals={goals} projects={projects} workouts={workouts} challenges={challenges} ideas={ideas} timeblocks={timeblocks} />}
@@ -234,6 +236,7 @@ export default function DashboardPage() {
         {activeTab === 'achievements' && <AchievementsView achievements={achievements} xp={xp} />}
         {activeTab === 'search'     && <SearchView tasks={tasks} notes={notes} habits={habits} goals={goals} ideas={ideas} bookmarks={bookmarks} />}
 
+      </ViewErrorBoundary>
       </DashboardLayout>
       </Suspense>
 

@@ -36,7 +36,7 @@ function BookmarkCard({ b, bookmarks }) {
             className={`text-[10px] px-2 py-1 rounded-full border font-medium transition-all ${
               b.read ? '[background-color:var(--bg-secondary)] text-stone-500 [border-color:var(--border)]' : '[background-color:var(--accent-light)] [color:var(--accent)] [border-color:var(--accent-mid)] hover:[background-color:var(--accent-light)]'
             }`}>{b.read ? 'Read ✓' : 'Unread'}</button>
-          <button onClick={() => bookmarks.deleteBookmark(b.id)}
+          <button aria-label="Delete bookmark" onClick={() => bookmarks.deleteBookmark(b.id)}
             className="[color:var(--text-faint)] hover:text-red-400 text-xs p-0.5 transition-colors text-center">✕</button>
         </div>
       </div>

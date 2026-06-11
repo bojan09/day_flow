@@ -1,3 +1,21 @@
-/node_modules
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.vercel/
+
+# Environment — never commit secrets
 .env
-.env.local
+.env.*
+!.env.example
+
+# Logs & OS noise
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/

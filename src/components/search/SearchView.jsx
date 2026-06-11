@@ -4,6 +4,7 @@
 //          2. AI natural language search ("show me gym stuff last week")
 //             — sends context to Claude, returns ranked results
 import { useState, useMemo } from 'react'
+import { callClaude } from '../../services/aiService'
 import { useDebounce }       from '../../hooks/useDebounce'
 import { subDays, format }   from 'date-fns'
 import { getDateKey }        from '../../utils/dateUtils'
@@ -124,26 +125,12 @@ export default function SearchView({ tasks, notes, habits, goals, ideas, bookmar
     const index = corpus.map((item, i) => `[${i}] ${item.type}: ${item.title}${item.date ? ` (${item.date})` : ''}`).join('\n')
 
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model:      'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          system: `You are a search engine for a personal productivity app. 
+      const text = (await callClaude(`You are a search engine for a personal productivity app. 
 The user gives a natural language query. You get an index of all their data.
 Return ONLY a JSON array of the index numbers that match the query, ordered by relevance.
 Example response: [3, 17, 42, 8]
-Return at most 15 results. Return [] if nothing matches. No explanation, just the JSON array.`,
-          messages: [{
-            role: 'user',
-            content: `Query: "${query}"\n\nData index:\n${index.slice(0, 6000)}`,
-          }],
-        }),
-      })
-      if (!response.ok) throw new Error(`${response.status}`)
-      const data = await response.json()
-      const text = data.content?.[0]?.text || '[]'
+Return at most 15 results. Return [] if nothing matches. No explanation, just the JSON array.`, `Query: "${query}"\n\nData index:\n${index.slice(0, 6000)}`)) || '[]'
+      // text already resolved by callClaude
       const indices = JSON.parse(text.replace(/```json|```/g, '').trim())
       setAiResult(indices.map(i => corpus[i]).filter(Boolean))
     } catch (err) {
@@ -176,7 +163,7 @@ Return at most 15 results. Return [] if nothing matches. No explanation, just th
             style={{ color: 'var(--text)' }}
           />
           {query && (
-            <button type="button" onClick={() => { setQuery(''); setAiResult([]) }}
+            <button aria-label="Clear search" type="button" onClick={() => { setQuery(''); setAiResult([]) }}
               className="text-sm flex-shrink-0" style={{ color: 'var(--text-faint)' }}>✕</button>
           )}
         </div>

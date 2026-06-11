@@ -3,6 +3,7 @@
 //          Weekly Coach, Auto-Journal, and Goal Breakdown.
 //          Each feature builds a rich context from the user's real data.
 import { useState } from 'react'
+import { callClaude } from '../../services/aiService'
 import { format, subDays } from 'date-fns'
 import { getDateKey } from '../../utils/dateUtils'
 
@@ -40,24 +41,6 @@ Type: ${goal.type} | Category: ${goal.category}
 Description: ${goal.description || 'none'}
 Current milestones:\n${milestones}
 `.trim()
-}
-
-// ── API call helper ────────────────────────────────────────────────────────────
-
-async function callClaude(systemPrompt, userMessage) {
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({
-      model:      'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      system:     systemPrompt,
-      messages:   [{ role: 'user', content: userMessage }],
-    }),
-  })
-  if (!response.ok) throw new Error(`API error ${response.status}`)
-  const data = await response.json()
-  return data.content?.[0]?.text || ''
 }
 
 // ── Weekly Coach ───────────────────────────────────────────────────────────────

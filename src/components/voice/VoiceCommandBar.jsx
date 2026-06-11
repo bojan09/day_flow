@@ -124,6 +124,7 @@ export default function VoiceCommandBar({ tasks, habits, notes, ideas }) {
     <>
       {/* Floating mic button — above the + QuickCapture button */}
       <button
+        aria-label="Voice commands"
         onClick={() => { setOpen(v => !v); setError(null); setFeedback(null) }}
         className="fixed z-[var(--z-drawer)] w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-lg transition-all active:scale-90 hover:scale-105"
         style={{
@@ -167,6 +168,7 @@ export default function VoiceCommandBar({ tasks, habits, notes, ideas }) {
                 🎙 Voice Commands
               </p>
               <button
+                aria-label="Close voice commands"
                 onClick={() => { setOpen(false); stopListening() }}
                 className="text-sm w-6 h-6 flex items-center justify-center rounded-full transition-colors"
                 style={{ color: 'var(--text-faint)' }}

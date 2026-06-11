@@ -3,6 +3,7 @@
 //          summary with reflection prompts. Shows any day (not just Sunday) via
 //          manual trigger, and auto-shows on Sunday.
 import { useState, useMemo } from 'react'
+import { callClaude } from '../../services/aiService'
 import { subDays, format }   from 'date-fns'
 import { MOODS }             from '../../hooks/useMood'
 import { getDateKey }        from '../../utils/dateUtils'
@@ -61,33 +62,19 @@ export default function WeeklyReview({ tasks, habits, mood, notes, onClose }) {
   const generateDraft = async () => {
     setLoading(true); setError(null); setAiDraft('')
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model:      'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          system: `You are a thoughtful personal coach writing a weekly review draft for the user.
+      const text = await callClaude(`You are a thoughtful personal coach writing a weekly review draft for the user.
 Write a warm, personal 3-paragraph review in first person (as if the user wrote it).
 Paragraph 1: What happened this week — reference specific numbers naturally.
 Paragraph 2: What went well and what was challenging — be honest, not just positive.
 Paragraph 3: One clear intention or focus for next week based on the patterns.
-Keep it under 120 words. No headers, no bullet points. Conversational and genuine.`,
-          messages: [{
-            role: 'user',
-            content: `Week of ${ctx.weekOf} – ${ctx.weekEnd}:
+Keep it under 120 words. No headers, no bullet points. Conversational and genuine.`, `Week of ${ctx.weekOf} – ${ctx.weekEnd}:
 Tasks: ${ctx.tasks.done}/${ctx.tasks.total} completed (${ctx.tasks.rate}%)
 Mood average: ${ctx.avgMood ? `${ctx.avgMood}/5` : 'not tracked'}
 Best habit streak: ${ctx.bestStreak} days
 Top habit: ${ctx.topHabit ? `${ctx.topHabit.name} (${ctx.topHabit.pct}%)` : 'none'}
 Struggled with: ${ctx.lowHabit ? `${ctx.lowHabit.name} (${ctx.lowHabit.pct}%)` : 'none'}
-Notes written: ${ctx.weekNotes}`,
-          }],
-        }),
-      })
-      if (!response.ok) throw new Error(`${response.status}`)
-      const data = await response.json()
-      setAiDraft(data.content?.[0]?.text || '')
+Notes written: ${ctx.weekNotes}`)
+      setAiDraft(text)
     } catch (err) {
       setError('Could not generate draft. Check your connection.')
     } finally {
@@ -113,7 +100,7 @@ Notes written: ${ctx.weekNotes}`,
                 {ctx.weekOf} — {ctx.weekEnd}
               </h2>
             </div>
-            <button type="button" onClick={handleClose}
+            <button aria-label="Close weekly review" type="button" onClick={handleClose}
               className="w-8 h-8 rounded-full flex items-center justify-center text-white/70 hover:text-white transition-colors"
               style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}>
               ✕

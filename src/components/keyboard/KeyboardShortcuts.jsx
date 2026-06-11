@@ -57,7 +57,7 @@ export default function KeyboardShortcuts({ onTabChange }) {
           <h3 className="font-serif text-lg" style={{ color: 'var(--text)' }}>
             Keyboard shortcuts
           </h3>
-          <button
+          <button aria-label="Close shortcuts"
             onClick={() => setShowHelp(false)}
             className="text-sm transition-colors"
             style={{ color: 'var(--text-faint)' }}

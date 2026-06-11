@@ -3,6 +3,7 @@
 //          weather-style energy forecast. Shown only in morning context (before noon).
 //          Generated once per day and cached so it doesn't re-fire on re-render.
 import { useState, useEffect } from 'react'
+import { callClaude } from '../../services/aiService'
 import { format } from 'date-fns'
 import { getTodayKey } from '../../utils/dateUtils'
 
@@ -52,13 +53,7 @@ export default function SmartMorningBrief({ tasks, habits, mood, goals }) {
     setLoading(true); setError(null)
     try {
       const context  = buildMorningContext({ tasks, habits, mood, goals })
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model:      'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          system: `You are a morning coach delivering a brief, energising daily briefing.
+      const text = await callClaude(`You are a morning coach delivering a brief, energising daily briefing.
 
 Format your response exactly like this (no markdown headers, just this structure):
 
@@ -68,13 +63,8 @@ Format your response exactly like this (no markdown headers, just this structure
 ⚡ Watch out: [One potential friction point or challenge to be ready for]
 💪 Win: [The one small win that will make today feel successful]
 
-Keep the total response under 60 words. Be direct and energising. No fluff.`,
-          messages: [{ role: 'user', content: context }],
-        }),
-      })
-      if (!response.ok) throw new Error(`${response.status}`)
-      const data = await response.json()
-      const text = data.content?.[0]?.text || ''
+Keep the total response under 60 words. Be direct and energising. No fluff.`, context)
+      
       setBrief(text)
       // Brief is in-memory only — regenerates each session
     } catch (err) {

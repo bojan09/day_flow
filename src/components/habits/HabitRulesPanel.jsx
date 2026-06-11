@@ -39,7 +39,7 @@ export default function HabitRulesPanel({ habits, habitRules }) {
                   <span>{act.icon}</span>
                   <span className="[color:var(--text-muted)]">{act.name}</span>
                 </div>
-                <button
+                <button aria-label="Delete rule"
                   onClick={() => habitRules.deleteRule(rule.id)}
                   className="[color:var(--text-faint)] hover:text-red-400 text-xs p-1 opacity-0 group-hover:opacity-100 transition-all"
                 >✕</button>

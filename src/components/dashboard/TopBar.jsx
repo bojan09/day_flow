@@ -60,6 +60,7 @@ export default function TopBar({ activeTab, onTabChange, theme, onSetTheme }) {
         )}
 
         <button
+          aria-label="Search"
           onClick={() => onTabChange('search')}
           className="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors"
           style={{ color: 'var(--text-muted)' }}

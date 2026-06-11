@@ -126,6 +126,9 @@ Set the following environment variables in your hosting provider:
 | `VITE_SUPABASE_URL` | Recommended | Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Recommended | Supabase anon key |
 | `VITE_VAPID_PUBLIC_KEY` | Optional | For push notifications |
+| `ANTHROPIC_API_KEY` | For AI features | **Server-side only** — set in Vercel project env. Powers all AI features via the `/api/ai` proxy. Never prefix with `VITE_`. |
+
+AI features call the `/api/ai` Vercel serverless function, so they work on the deployed app (or `vercel dev` locally) — not under plain `vite dev`.
 
 ## License
 

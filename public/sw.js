@@ -2,8 +2,8 @@
 // Purpose: Offline-first caching — shell cache-first, API network-first.
 //          v6: Fixed Response body clone race condition.
 
-const SHELL_CACHE   = 'dayflow-shell-v3'
-const DYNAMIC_CACHE = 'dayflow-dynamic-v3'
+const SHELL_CACHE   = 'dayflow-shell-v4'
+const DYNAMIC_CACHE = 'dayflow-dynamic-v4'
 
 const PRECACHE_URLS = [
   '/',
@@ -91,21 +91,53 @@ self.addEventListener('fetch', event => {
     return
   }
 
-  // ── App shell & static assets — cache-first, update in background ────────
+  // ── Navigations / index.html — NETWORK-FIRST ─────────────────────────────
+  // Cache-first here caused stale deploys: an old cached index.html points at
+  // hashed chunk files deleted by the new deploy, breaking the app.
+  if (request.mode === 'navigate' || url.pathname === '/' || url.pathname.endsWith('/index.html')) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          if (response.ok) {
+            const clone = response.clone()
+            caches.open(SHELL_CACHE).then(cache => cache.put(request, clone))
+          }
+          return response
+        })
+        .catch(async () =>
+          (await caches.match(request)) || caches.match('/offline.html')
+        )
+    )
+    return
+  }
+
+  // ── Hashed build assets (/assets/*) — cache-first, immutable ─────────────
+  if (url.origin === self.location.origin && url.pathname.startsWith('/assets/')) {
+    event.respondWith(
+      caches.match(request).then(cached =>
+        cached || fetch(request).then(response => {
+          if (response.ok) {
+            const clone = response.clone()
+            caches.open(SHELL_CACHE).then(cache => cache.put(request, clone))
+          }
+          return response
+        })
+      )
+    )
+    return
+  }
+
+  // ── Other same-origin static files — stale-while-revalidate ──────────────
   if (url.origin === self.location.origin) {
     event.respondWith(
       caches.match(request).then(cached => {
-        // Clone the request before passing to fetch (request body can only be read once)
         const fetchPromise = fetch(request).then(response => {
           if (response.ok) {
-            // Clone IMMEDIATELY — before any await/then that could consume the body
             const clone = response.clone()
             caches.open(SHELL_CACHE).then(cache => cache.put(request, clone))
           }
           return response
         }).catch(() => caches.match('/offline.html'))
-
-        // Return cached immediately, but refresh cache in background
         return cached || fetchPromise
       })
     )

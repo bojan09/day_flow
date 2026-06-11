@@ -28,7 +28,7 @@ export default function FocusTask({ tasks }) {
           <span className={`flex-1 font-serif text-lg text-white leading-snug ${focus.completed ? 'line-through opacity-50' : ''}`}>
             {focus.title}
           </span>
-          <button onClick={() => tasks.setFocus(focus.id)}
+          <button aria-label="Remove focus task" onClick={() => tasks.setFocus(focus.id)}
             className="text-white/50 hover:text-white text-xs transition-colors">✕</button>
         </div>
       ) : (

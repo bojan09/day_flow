@@ -2,6 +2,7 @@
 // Purpose: AI-powered scheduling assistant — analyses backlog + schedule gaps
 //          and suggests when to do overdue/unscheduled tasks. Uses Anthropic API.
 import { useState } from 'react'
+import { callClaude } from '../../services/aiService'
 import { useSmartScheduler } from '../../hooks/useSmartScheduler'
 
 function ScheduleBar({ day }) {
@@ -38,13 +39,7 @@ export default function SmartSchedulerPanel({ tasks, energy, habits, onTabChange
     setLoading(true); setError(null); setOutput('')
     try {
       const context  = buildAIContext()
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({
-          model:      'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          system: `You are a focused productivity scheduler. Given the user's task backlog and 7-day schedule, provide:
+      const text = await callClaude(`You are a focused productivity scheduler. Given the user's task backlog and 7-day schedule, provide:
 
 1. **Reschedule these first:** List 2-3 overdue tasks with specific day suggestions (e.g. "Move 'X' to Thursday — it's your lightest day")
 2. **Schedule gaps:** Identify 1-2 days with room for unscheduled tasks
@@ -53,13 +48,8 @@ export default function SmartSchedulerPanel({ tasks, energy, habits, onTabChange
 Rules:
 - Be specific: name actual tasks and days, never generic advice
 - Keep it under 120 words total
-- Don't mention "based on data" — speak directly like a coach`,
-          messages: [{ role: 'user', content: context }],
-        }),
-      })
-      if (!response.ok) throw new Error(`${response.status}`)
-      const data = await response.json()
-      setOutput(data.content?.[0]?.text || '')
+- Don't mention "based on data" — speak directly like a coach`, context)
+      setOutput(text)
     } catch (err) {
       setError('Could not reach AI. Check your connection.')
     } finally {

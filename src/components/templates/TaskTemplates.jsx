@@ -61,7 +61,7 @@ export default function TaskTemplates({ templates, tasks }) {
                       className="text-[10px] px-2 py-1 rounded-full [background-color:var(--accent)] text-white hover:[background-color:var(--accent)] transition-colors">
                       Apply
                     </button>
-                    <button onClick={() => setApplyId(null)}
+                    <button onClick={() => setApplyId(null)} aria-label="Cancel apply"
                       className="text-[10px] [color:var(--text-faint)] hover:[color:var(--text)]">✕</button>
                   </div>
                 ) : (
@@ -70,7 +70,7 @@ export default function TaskTemplates({ templates, tasks }) {
                       className="text-[10px] px-2.5 py-1 rounded-full [background-color:var(--accent-light)] [color:var(--accent)] border [border-color:var(--accent-mid)] hover:[background-color:var(--accent-light)] transition-colors">
                       Apply
                     </button>
-                    <button onClick={() => templates.deleteTemplate(tmpl.id)}
+                    <button onClick={() => templates.deleteTemplate(tmpl.id)} aria-label="Delete template"
                       className="[color:var(--text-faint)] hover:text-red-400 text-xs p-1 transition-colors">✕</button>
                   </div>
                 )}
