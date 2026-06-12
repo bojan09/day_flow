@@ -24,7 +24,7 @@ export default function DashboardLayout({ children, activeTab, onTabChange, them
     <div className="flex" style={{ backgroundColor: 'var(--bg)', minHeight: '100vh' }}>
 
       {/* Desktop sidebar — fixed width, full height */}
-      <aside className="hidden md:flex w-60 flex-shrink-0">
+      <aside className="hidden md:flex w-60 flex-shrink-0 h-screen sticky top-0 overflow-y-auto">
         <SideNav activeTab={activeTab} onTabChange={onTabChange} theme={theme} onSetTheme={onSetTheme} />
       </aside>
 
@@ -39,7 +39,7 @@ export default function DashboardLayout({ children, activeTab, onTabChange, them
         <MigrationBanner userId={user?.id} />
 
         {/* flex-1 pushes AppFooter to the very bottom */}
-        <main className="flex-1 overflow-y-auto pb-28 md:pb-4 px-4 sm:px-6 md:px-8 pt-5">
+        <main className="flex-1 overflow-y-auto pb-24 md:pb-4 px-4 sm:px-6 md:px-8 pt-5">
           <PageTransition tabKey={activeTab}>{children}</PageTransition>
         </main>
 

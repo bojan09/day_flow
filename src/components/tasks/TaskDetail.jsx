@@ -24,6 +24,11 @@ export default function TaskDetail({
   const [subText,  setSubText]  = useState('')
   const [dirty,    setDirty]    = useState(false)
 
+  const [isRec,   setIsRec]   = useState(task?.isRecurring || false)
+  const [recDays, setRecDays] = useState(task?.recurDays || [])
+  const [recEnd,  setRecEnd]  = useState(task?.recurEndDate || '')
+  const [recStat, setRecStat] = useState(task?.recurStatus || 'active')
+
   if (!task) return null
 
   const subs     = task.subTasks || []
@@ -34,6 +39,10 @@ export default function TaskDetail({
     tasks.updateTask(task.id, {
       title:    title.trim() || task.title,
       priority, date, category, notes: note,
+      isRecurring: isRec,
+      recurDays:   isRec ? recDays : [],
+      recurEndDate: isRec ? (recEnd || null) : null,
+      recurStatus:  isRec ? recStat : 'active',
     })
     setDirty(false)
   }
@@ -225,6 +234,45 @@ export default function TaskDetail({
             </div>
           </div>
         )}
+
+        {/* Repeat / Recurrence */}
+        <div>
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-medium uppercase tracking-wide" style={{ color: 'var(--text-muted)' }}>
+              Repeat
+            </label>
+            <button type="button" aria-label="Toggle repeat"
+              onClick={() => { setIsRec(v => !v); mark() }}
+              className={`w-9 h-5 rounded-full transition-colors relative ${isRec ? '[background-color:var(--accent)]' : '[background-color:var(--border)]'}`}>
+              <span className="absolute top-0.5 w-4 h-4 rounded-full transition-transform"
+                style={{ backgroundColor: 'var(--surface)', transform: isRec ? 'translateX(18px)' : 'translateX(2px)' }} />
+            </button>
+          </div>
+          {isRec && (
+            <div className="mt-2 space-y-2">
+              <div className="flex gap-1.5 flex-wrap">
+                {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => (
+                  <button key={d} type="button"
+                    onClick={() => { setRecDays(prev => prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d]); mark() }}
+                    className={`w-10 h-8 rounded-lg text-xs font-medium transition-all ${recDays.includes(d) ? '[background-color:var(--accent)] text-white' : '[background-color:var(--bg-secondary)] [color:var(--text-muted)]'}`}>
+                    {d}
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-center gap-2">
+                <input type="date" value={recEnd} aria-label="Repeat end date"
+                  onChange={e => { setRecEnd(e.target.value); mark() }}
+                  className="input-base flex-1" />
+                <button type="button"
+                  onClick={() => { setRecStat(v => v === 'active' ? 'paused' : 'active'); mark() }}
+                  className="px-3 py-2 rounded-xl text-xs font-semibold"
+                  style={{ backgroundColor: recStat === 'active' ? 'var(--bg-secondary)' : 'var(--accent)', color: recStat === 'active' ? 'var(--text)' : '#fff' }}>
+                  {recStat === 'active' ? 'Pause' : 'Resume'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Actions */}
         <div className="flex gap-3 pt-1">
