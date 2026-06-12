@@ -7,6 +7,7 @@ import Card          from '../ui/Card'
 import Badge         from '../ui/Badge'
 import Modal         from '../ui/Modal'
 import TaskForm      from './TaskForm'
+import RecurrencePanel from './RecurrencePanel'
 import QuickTaskBar          from './QuickTaskBar'
 import SmartSchedulerPanel  from './SmartSchedulerPanel'
 import NLPTaskInput  from './NLPTaskInput'
@@ -39,6 +40,7 @@ const CAT_DOT = {
 
 export default function TasksView({ tasks, templates, someday, projects, categories, onAddCategory, onRemoveCategory, onTabChange, energy, habits, ideas }) {
   const { toast } = useToast()
+  const [recurTask, setRecurTask] = useState(null)
   const [filter,     setFilter]  = useState('Today')
   const [modalOpen,  setModal]   = useState(false)
   const [detailTask,   setDetail]      = useState(null)
@@ -55,10 +57,10 @@ export default function TasksView({ tasks, templates, someday, projects, categor
   const sorted = [...filtered].sort((a, b) => {
     if (a.completed !== b.completed) return a.completed ? 1 : -1
     const p = { high: 0, medium: 1, low: 2 }
-  
-  if (!tasks.synced) return <ViewSkeleton type="tasks" />
-  return (p[a.priority] ?? 1) - (p[b.priority] ?? 1)
+    return (p[a.priority] ?? 1) - (p[b.priority] ?? 1)
   })
+
+  if (!tasks.synced) return <ViewSkeleton type="tasks" />
 
   const overdueCount = tasks.tasks.filter(t => tasks.isOverdue(t)).length
 
@@ -136,7 +138,13 @@ export default function TasksView({ tasks, templates, someday, projects, categor
                     {tasks.isOverdue(t)   && <span className="text-[11px] font-medium text-red-500 bg-red-50 px-1.5 rounded">Overdue</span>}
                     {tasks.isDueToday(t)  && <span className="text-[11px] font-medium text-amber-600 bg-amber-50 px-1.5 rounded">Due today</span>}
                     {t.estimateMins       && <span className="text-[11px] [color:var(--text-faint)]">⏱ {t.estimateMins < 60 ? `${t.estimateMins}m` : `${t.estimateMins/60}h`}</span>}
-                    {t.isRecurring        && <span className="text-[11px] [color:var(--accent)]">🔁</span>}
+                    {t.isRecurring        && (
+                      <button type="button" aria-label="Manage recurrence"
+                        onClick={e => { e.stopPropagation(); setRecurTask(t) }}
+                        className="text-[11px] [color:var(--accent)] hover:opacity-70 transition-opacity">
+                        🔁{(t.recurStatus ?? 'active') !== 'active' && <span className="ml-0.5 [color:var(--text-muted)]">paused</span>}
+                      </button>
+                    )}
                     {(t.subTasks?.length) > 0 && <span className="text-[11px] [color:var(--text-faint)]">· {t.subTasks.filter(s=>s.done).length}/{t.subTasks.length} sub</span>}
                     {t.projectId && projects?.find(p => p.id === t.projectId) && (
                       <span className="text-[10px] px-1.5 py-0.5 rounded font-medium" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-faint)' }}>
@@ -188,6 +196,9 @@ export default function TasksView({ tasks, templates, someday, projects, categor
       )}
 
       <Modal isOpen={modalOpen} onClose={() => setModal(false)} title="New Task">
+        {recurTask && (
+          <RecurrencePanel task={recurTask} onUpdate={tasks.updateTask} onClose={() => setRecurTask(null)} />
+        )}
         <TaskForm onSubmit={t => { tasks.addTask(t); setModal(false) }} onCancel={() => setModal(false)} projects={projects || []} categories={categories} onAddCategory={onAddCategory} onRemoveCategory={onRemoveCategory} />
       </Modal>
 

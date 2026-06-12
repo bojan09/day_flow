@@ -52,6 +52,8 @@ create table if not exists public.tasks (
   is_recurring   boolean default false,
   recur_days     text[],
   recurring_from text,
+  recur_status   text default 'active',
+  recur_end_date text,
   project_id     text,
   sub_tasks      jsonb default '[]',
   notes          text default '',

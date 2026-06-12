@@ -10,7 +10,12 @@ export function spawnRecurringTasks(allTasks, addTask) {
   const todayDayNum = new Date().getDay()  // 0 = Sun, 1 = Mon …
 
   allTasks
-    .filter(t => t.isRecurring && t.recurDays?.length > 0)
+    .filter(t =>
+      t.isRecurring &&
+      t.recurDays?.length > 0 &&
+      (t.recurStatus ?? 'active') === 'active' &&
+      (!t.recurEndDate || getTodayKey() <= t.recurEndDate)
+    )
     .forEach(template => {
       const shouldRunToday = template.recurDays.some(d => DAY_MAP[d] === todayDayNum)
       if (!shouldRunToday) return

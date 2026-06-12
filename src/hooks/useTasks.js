@@ -86,6 +86,8 @@ export function useTasks() {
       customMins:   task.customMins         || '',
       isRecurring:  task.isRecurring        || false,
       recurDays:    task.recurDays          || [],
+      recurStatus:  task.recurStatus        || 'active',
+      recurEndDate: task.recurEndDate       || null,
       recurringFrom: task.recurringFrom     || null,
       projectId:    task.projectId          || null,
       subTasks:     task.subTasks           || [],
