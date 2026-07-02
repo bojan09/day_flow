@@ -74,7 +74,7 @@ export default function HabitsView({ habits, habitRules }) {
           <div className="overflow-x-auto">
           <div
             className="grid items-center px-3 sm:px-5 py-3 border-b"
-            style={{ gridTemplateColumns: 'var(--habit-label-col, 96px) repeat(7, minmax(0,1fr))', gap: '0.25rem', borderColor: 'var(--border-soft)' }}
+            style={{ gridTemplateColumns: 'var(--habit-label-col, 124px) repeat(7, minmax(1.75rem,1fr))', gap: '0.25rem', borderColor: 'var(--border-soft)' }}
           >
             <span className="text-xs uppercase tracking-wider" style={{ color: 'var(--text-faint)' }}>Habit</span>
             {weekDays.map(d => (

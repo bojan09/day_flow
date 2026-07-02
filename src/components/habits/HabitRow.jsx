@@ -77,7 +77,7 @@ function HabitRow({ habit, weekDays, isHabitDone, toggleHabitDay, streak, weekly
     <>
       <div
         className="hover-surface group grid items-center gap-2 px-3 sm:px-5 py-3 transition-colors"
-        style={{ gridTemplateColumns: 'var(--habit-label-col, 96px) repeat(7, minmax(0,1fr))', gap: '0.25rem' }}
+        style={{ gridTemplateColumns: 'var(--habit-label-col, 124px) repeat(7, minmax(1.75rem,1fr))', gap: '0.25rem' }}
       >
         <div className="flex items-center gap-2 min-w-0">
           <span className="text-xl flex-shrink-0 leading-none">{habit.icon}</span>

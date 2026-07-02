@@ -329,6 +329,6 @@
 }
 
 @layer components {
-  :root { --habit-label-col: 96px; }
+  :root { --habit-label-col: 124px; }
   @media (min-width: 640px) { :root { --habit-label-col: minmax(160px, 1fr); } }
 }
