@@ -12,7 +12,7 @@ export function spawnRecurringWorkouts(allSessions, addSession) {
   const todayDOM    = todayDate.getDate()
 
   allSessions
-    .filter(s => s.recurrence && s.recurrence !== 'none')
+    .filter(s => s.recurrence && s.recurrence !== 'none' && (s.recurStatus ?? 'active') === 'active')
     .forEach(template => {
       let shouldFire = false
       if (template.recurrence === 'daily') {

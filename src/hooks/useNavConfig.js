@@ -17,6 +17,7 @@ export const ALL_MODULES = [
   { id: 'challenges', label: 'Challenges',emoji: '🎯' },
   { id: 'projects',   label: 'Projects',  emoji: '🗂️' },
   { id: 'ideas',      label: 'Ideas',     emoji: '💡' },
+  { id: 'repeating',  label: 'Repeating', emoji: '🔁' },
 ]
 
 const DEFAULT_NAV = ['today', 'tasks', 'habits', 'focus']

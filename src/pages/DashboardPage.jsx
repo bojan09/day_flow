@@ -17,6 +17,7 @@ const BalanceView = lazy(() => import('../components/balance/BalanceView'))
 const WorkoutsView = lazy(() => import('../components/workouts/WorkoutsView'))
 const AchievementsView = lazy(() => import('../components/insights/AchievementsView'))
 const TimeBlockView = lazy(() => import('../components/timeblock/TimeBlockView'))
+const RepeatingView = lazy(() => import('../components/repeating/RepeatingView'))
 const CalendarView = lazy(() => import('../components/calendar/CalendarView'))
 const IdeasView = lazy(() => import('../components/ideas/IdeasView'))
 const BrainDump = lazy(() => import('../components/braindump/BrainDump'))
@@ -76,7 +77,7 @@ export default function DashboardPage() {
   const [activeTab, setActiveTabRaw] = useState(() => {
     const hash = window.location.hash.slice(1)
     const valid = ['today','tasks','habits','focus','calendar','timeblock','projects',
-      'notes','ideas','braindump','bookmarks','workouts','routines','challenges',
+      'notes','ideas','braindump','bookmarks','workouts','routines','challenges','repeating',
       'goals','insights','balance','search','achievements','weeklyreview']
     return valid.includes(hash) ? hash : 'today'
   })
@@ -221,6 +222,7 @@ export default function DashboardPage() {
         {activeTab === 'challenges' && <ChallengesView challenges={challenges} />}
         {activeTab === 'goals'      && <GoalsView goals={goals} xp={xp} />}
         {activeTab === 'workouts'   && <WorkoutsView workouts={workouts} />}
+        {activeTab === 'repeating'  && <RepeatingView tasks={tasks} workouts={workouts} />}
 
         {/* ── Think ────────────────────────────────────────────────────────── */}
         {activeTab === 'notes'      && <NotesView notes={notes} />}

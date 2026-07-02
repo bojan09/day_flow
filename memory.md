@@ -35,3 +35,15 @@ Last updated: 2026-07-02
 - SideNav active-item hover guarded: className conditional so active gradient not overridden
 - Only remaining inline hover = src/components/voice/VoiceCommandBar.jsx (unused, pending deletion)
 - Build clean. Next priorities unchanged: (1) push to GitHub, (2) delete voice/, (4) Playwright tests, (5) bundle re-audit
+
+## Session 2026-07-02 (Repeating Items page)
+- New top-level tab "Repeating" (🔁) in SideNav Build section + nav config + DashboardPage lazy route
+- Architecture: adapter pattern for scalability
+  - src/services/repeating/{types,taskAdapter,workoutAdapter}.js normalize each source to shared RepeatingItem shape
+  - src/hooks/useRepeatingItems.js aggregates + sorts (active first, soonest next)
+  - src/components/repeating/{RepeatingView,RepeatingItemRow}.jsx — filters (type/frequency/status) + search, pause/resume, edit (tasks reuse RecurrencePanel), stop
+  - To add a new recurring type later: write one adapter + spread into useRepeatingItems. No page changes.
+- Workouts: added recurStatus (active/paused) to addSession default + engine gate (recurringWorkoutsEngine skips paused). No DB migration — workouts use usePersistedState KV blob.
+- Task edit modal (TaskDetail) ALREADY had labeled title input (autoFocus, top). WorkoutForm already has title + recurrence control. Item #3 was already satisfied — no change.
+- Two recurrence models remain divergent by design (tasks: recurDays[]+recurStatus+recurEndDate; workouts: recurrence string+recurStatus). Adapters bridge them. Full unification (Option B) deferred — not justified.
+- Build clean.

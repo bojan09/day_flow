@@ -115,22 +115,22 @@ export default function TasksView({ tasks, templates, someday, projects, categor
             {/* Show all when small list, paginate when large */}
             {(sorted.length > 50 ? sorted.slice(0, visibleCount) : sorted).map((t, idx) => (
               <li key={t.id}
-                className="flex items-center gap-3 px-5 py-3.5 hover:[background-color:var(--bg-secondary)]/50 transition-colors group cursor-pointer animate-fade-up"
+                className="flex items-start gap-3 px-5 py-3.5 hover:[background-color:var(--bg-secondary)]/50 transition-colors group cursor-pointer animate-fade-up"
                 style={{ animationDelay: `${Math.min(idx * 35, 350)}ms`, animationFillMode: 'both' }}
                 onClick={() => setDetail(t)}>
                 {/* Color dot */}
-                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${CAT_DOT[t.category] ?? '[background-color:var(--border)]'}`} />
+                <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-1.5 ${CAT_DOT[t.category] ?? '[background-color:var(--border)]'}`} />
 
                 <button
                   onClick={e => { e.stopPropagation(); tasks.toggleTask(t.id) }}
-                  className={`w-5 h-5 rounded-md border-2 flex-shrink-0 flex items-center justify-center text-xs transition-all ${
+                  className={`w-5 h-5 rounded-md border-2 flex-shrink-0 mt-0.5 flex items-center justify-center text-xs transition-all ${
                     t.completed ? '[background-color:var(--accent)] [border-color:var(--accent)] text-white' : '[border-color:var(--border)] hover:[border-color:var(--accent-mid)]'
                   }`}>
                   {t.completed && '✓'}
                 </button>
 
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm truncate ${t.completed ? 'line-through [color:var(--text-faint)]' : '[color:var(--text)]'}`}>{t.title}</p>
+                  <p className={`text-sm leading-snug line-clamp-2 ${t.completed ? 'line-through [color:var(--text-faint)]' : '[color:var(--text)]'}`}>{t.title}</p>
                   <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                     <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${CAT_COLORS[t.category] ?? '[background-color:var(--bg-secondary)] text-stone-600'}`}>
                       {t.category}
@@ -154,7 +154,7 @@ export default function TasksView({ tasks, templates, someday, projects, categor
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 flex-shrink-0" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5" onClick={e => e.stopPropagation()}>
                   <Badge label={t.priority} color={t.priority} />
                   <button onClick={() => tasks.setFocus(t.id)}
                     className={`text-sm p-1 rounded opacity-0 group-hover:opacity-100 transition-all ${t.isFocus ? 'opacity-100 [color:var(--accent)]' : '[color:var(--text-faint)] hover:[color:var(--accent)]'}`}>

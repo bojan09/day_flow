@@ -19,6 +19,7 @@ const SECTIONS = [
     { id: 'challenges', label: 'Challenges', emoji: '🎯' },
     { id: 'goals',      label: 'Goals',      emoji: '🏆' },
     { id: 'workouts',   label: 'Workouts',   emoji: '🏋️' },
+    { id: 'repeating',  label: 'Repeating',  emoji: '🔁' },
   ]},
   { label: 'Think', tabs: [
     { id: 'notes',     label: 'Notes',      emoji: '📝' },
