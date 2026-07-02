@@ -46,10 +46,8 @@ export default function WelcomeFooter() {
                   <li key={item}>
                     <a
                       href="#"
-                      className="text-sm transition-colors"
+                      className="hover-text text-sm transition-colors"
                       style={{ color: 'var(--text-muted)' }}
-                      onMouseOver={e => e.target.style.color = 'var(--text)'}
-                      onMouseOut={e => e.target.style.color = 'var(--text-muted)'}
                     >
                       {item}
                     </a>
@@ -71,10 +69,8 @@ export default function WelcomeFooter() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate('/auth?mode=signin')}
-              className="text-xs transition-colors"
+              className="hover-text-muted text-xs transition-colors"
               style={{ color: 'var(--text-faint)' }}
-              onMouseOver={e => e.target.style.color = 'var(--text-muted)'}
-              onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
             >
               Login
             </button>

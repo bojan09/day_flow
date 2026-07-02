@@ -47,10 +47,8 @@ export default function InstallPromptBanner() {
         </div>
         <button
           onClick={() => setDismissed(true)}
-          className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-sm"
+          className="hover-surface flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-sm"
           style={{ color: 'var(--text-faint)' }}
-          onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-          onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
           aria-label="Dismiss"
         >✕</button>
       </div>

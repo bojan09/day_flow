@@ -22,10 +22,8 @@ export default function AffirmationsCard({ affirmations, plain = false }) {
         </p>
         <button
           onClick={() => setEditing(e => !e)}
-          className="text-xs font-medium transition-colors"
+          className="hover-text-accent text-xs font-medium transition-colors"
           style={{ color: 'var(--text-faint)' }}
-          onMouseOver={e => e.target.style.color = 'var(--accent)'}
-          onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
         >
           {editing ? 'Done' : 'Edit'}
         </button>
@@ -56,10 +54,8 @@ export default function AffirmationsCard({ affirmations, plain = false }) {
               />
               <button
                 onClick={() => affirmations.removeAffirmation(i)}
-                className="text-xs opacity-0 group-hover:opacity-100 transition-all"
+                className="hover-danger text-xs opacity-0 group-hover:opacity-100 transition-all"
                 style={{ color: 'var(--text-faint)' }}
-                onMouseOver={e => e.target.style.color = '#ef4444'}
-                onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
               >✕</button>
             </div>
           ))}

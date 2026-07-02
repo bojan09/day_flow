@@ -33,10 +33,8 @@ function WeekStrip() {
       >
         <button
           onClick={() => setWeekOffset(w => w - 1)}
-          className="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors"
+          className="hover-surface w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors"
           style={{ color: 'var(--text-faint)' }}
-          onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-          onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
           aria-label="Previous week"
         >‹</button>
 
@@ -50,10 +48,8 @@ function WeekStrip() {
 
         <button
           onClick={() => setWeekOffset(w => w + 1)}
-          className="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors"
+          className="hover-surface w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors"
           style={{ color: 'var(--text-faint)' }}
-          onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-          onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
           aria-label="Next week"
         >›</button>
       </div>

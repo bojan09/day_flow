@@ -63,7 +63,6 @@ import { useTimeblocks    } from '../hooks/useTimeblocks'
 import { usePersistedState } from '../hooks/usePersistedState'
 import OnboardingFlow       from '../components/onboarding/OnboardingFlow'
 import FeatureTooltip       from '../components/ui/FeatureTooltip'
-import VoiceCommandBar     from '../components/voice/VoiceCommandBar'
 import { spawnRecurringTasks }    from '../services/recurringEngine'
 import { spawnRecurringWorkouts } from '../services/recurringWorkoutsEngine'
 import { getTodayKey }            from '../utils/dateUtils'
@@ -241,9 +240,6 @@ export default function DashboardPage() {
       </Suspense>
 
       <QuickCapture tasks={tasks} ideas={ideas} notes={notes} habits={habits} onTabChange={handleTabChange} />
-      <FeatureTooltip id="voice-command">
-        <VoiceCommandBar tasks={tasks} habits={habits} notes={notes} ideas={ideas} />
-      </FeatureTooltip>
 
       {/* Weekly Review overlay — Sunday only, once per day, lazy-loaded safely */}
       {showWeeklyOverlay && (

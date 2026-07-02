@@ -94,10 +94,8 @@ export default function CategoryPicker({ value, onChange, categories, onAddCateg
           <button
             type="button"
             onClick={() => setAdding(true)}
-            className="px-3 py-1.5 rounded-full text-xs font-medium transition-all border border-dashed"
+            className="hover-accent-soft px-3 py-1.5 rounded-full text-xs font-medium transition-all border border-dashed"
             style={{ borderColor: 'var(--accent-mid)', color: 'var(--accent)' }}
-            onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--accent-light)'}
-            onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
           >
             + Custom
           </button>

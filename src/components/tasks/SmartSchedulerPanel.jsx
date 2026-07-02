@@ -67,10 +67,8 @@ Rules:
       {/* Header — tap to expand */}
       <button
         onClick={() => setOpen(v => !v)}
-        className="w-full flex items-center justify-between px-5 py-4 transition-colors text-left"
+        className="hover-surface w-full flex items-center justify-between px-5 py-4 transition-colors text-left"
         style={{ minHeight: '60px' }}
-        onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-        onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
       >
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--text-faint)' }}>
@@ -192,10 +190,8 @@ Rules:
                 </button>
                 <button
                   onClick={() => setOutput('')}
-                  className="px-4 py-2.5 rounded-xl border text-sm transition-colors"
+                  className="hover-surface px-4 py-2.5 rounded-xl border text-sm transition-colors"
                   style={{ borderColor: 'var(--border)', color: 'var(--text-faint)' }}
-                  onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-                  onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
                   ↻
                 </button>

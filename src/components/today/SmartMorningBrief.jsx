@@ -102,10 +102,8 @@ Keep the total response under 60 words. Be direct and energising. No fluff.`, co
           </div>
           <button
             onClick={dismiss}
-            className="text-xs transition-colors w-6 h-6 flex items-center justify-center rounded-full"
+            className="hover-accent-mid text-xs transition-colors w-6 h-6 flex items-center justify-center rounded-full"
             style={{ color: 'var(--accent)' }}
-            onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--accent-mid)'}
-            onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
             aria-label="Dismiss"
           >✕</button>
         </div>

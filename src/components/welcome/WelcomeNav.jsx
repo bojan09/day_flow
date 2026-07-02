@@ -41,10 +41,8 @@ export default function WelcomeNav() {
             <a
               href={item.href}
               onClick={e => scrollTo(e, item.href)}
-              className="text-sm font-light transition-colors"
+              className="hover-text text-sm font-light transition-colors"
               style={{ color: 'var(--text-muted)' }}
-              onMouseOver={e => e.target.style.color = 'var(--text)'}
-              onMouseOut={e => e.target.style.color = 'var(--text-muted)'}
             >
               {item.label}
             </a>
@@ -56,10 +54,8 @@ export default function WelcomeNav() {
       <div className="flex items-center gap-2">
         <button
           onClick={() => navigate('/auth?mode=signin')}
-          className="hidden sm:block px-4 py-2 rounded-full text-sm font-medium transition-colors"
+          className="hover-text hidden sm:block px-4 py-2 rounded-full text-sm font-medium transition-colors"
           style={{ color: 'var(--text-muted)' }}
-          onMouseOver={e => e.target.style.color = 'var(--text)'}
-          onMouseOut={e => e.target.style.color = 'var(--text-muted)'}
         >
           Login
         </button>

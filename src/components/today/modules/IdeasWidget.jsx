@@ -17,9 +17,7 @@ function IdeasWidget({ ideas, onTabChange }) {
         recent.map(i => (
           <button type="button" key={i.id}
             onClick={() => onTabChange?.('ideas')}
-            className="w-full flex items-center gap-2.5 py-1.5 text-left rounded-xl transition-colors"
-            onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-            onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
+            className="hover-surface w-full flex items-center gap-2.5 py-1.5 text-left rounded-xl transition-colors"
           >
             <span className="text-base">💡</span>
             <span className="text-sm font-medium truncate flex-1" style={{ color: 'var(--text)' }}>

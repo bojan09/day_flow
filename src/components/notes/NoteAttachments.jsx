@@ -67,10 +67,8 @@ export default function NoteAttachments({ noteId, attachments = [], onUpdate }) 
               </div>
               <button
                 onClick={() => handleDelete(a)}
-                className="opacity-0 group-hover:opacity-100 text-xs p-1 transition-all"
+                className="hover-danger opacity-0 group-hover:opacity-100 text-xs p-1 transition-all"
                 style={{ color: 'var(--text-faint)' }}
-                onMouseOver={e => e.currentTarget.style.color = '#ef4444'}
-                onMouseOut={e => e.currentTarget.style.color = 'var(--text-faint)'}
               >✕</button>
             </div>
           ))}
@@ -81,8 +79,6 @@ export default function NoteAttachments({ noteId, attachments = [], onUpdate }) 
       <label
         className="flex items-center gap-2 px-3 py-2 rounded-xl border border-dashed cursor-pointer transition-all"
         style={{ borderColor: 'var(--border)', color: 'var(--text-faint)' }}
-        onMouseOver={e => e.currentTarget.style.borderColor = 'var(--accent)'}
-        onMouseOut={e => e.currentTarget.style.borderColor = 'var(--border)'}
       >
         <span className="text-base">{uploading ? '⏳' : '📎'}</span>
         <span className="text-xs">{uploading ? 'Uploading…' : 'Attach file'}</span>

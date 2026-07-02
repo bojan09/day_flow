@@ -38,10 +38,8 @@ export default function Navbar() {
         {NAV_LINKS.map(item => (
           <li key={item.label}>
             <a href={item.href} onClick={e => handleNavClick(e, item.href)}
-              className="text-sm font-light transition-colors"
-              style={{ color: 'var(--text-muted)' }}
-              onMouseOver={e => e.target.style.color = 'var(--text)'}
-              onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>
+              className="hover-text text-sm font-light transition-colors"
+              style={{ color: 'var(--text-muted)' }}>
               {item.label}
             </a>
           </li>
@@ -50,10 +48,8 @@ export default function Navbar() {
 
       <div className="flex items-center gap-2">
         <button onClick={() => navigate('/auth')}
-          className="hidden sm:block px-4 py-2 rounded-full text-sm font-light transition-colors"
-          style={{ color: 'var(--text-muted)' }}
-          onMouseOver={e => e.target.style.color = 'var(--text)'}
-          onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>
+          className="hover-text hidden sm:block px-4 py-2 rounded-full text-sm font-light transition-colors"
+          style={{ color: 'var(--text-muted)' }}>
           Sign in
         </button>
         <button onClick={() => navigate('/auth')}

@@ -32,10 +32,8 @@ function TodayHabitStrip({ habits }) {
               <li key={h.id}>
                 <button
                   onClick={() => toggleHabitDay(h.id)}
-                  className="w-full flex items-center gap-3 px-5 transition-colors text-left"
+                  className="hover-surface w-full flex items-center gap-3 px-5 transition-colors text-left"
                   style={{ minHeight: '52px' }}
-                  onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-                  onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
                   aria-pressed={done}
                 >
                   {/* Circle toggle */}

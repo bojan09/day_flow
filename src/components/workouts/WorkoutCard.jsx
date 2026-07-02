@@ -98,25 +98,15 @@ const WorkoutCardImpl = memo(function WorkoutCard({ session, workouts, onEdit })
             </button>
             <button
               onClick={() => onEdit(session)}
-              className="w-7 h-7 rounded-full flex items-center justify-center text-sm transition-colors"
+              className="hover-surface w-7 h-7 rounded-full flex items-center justify-center text-sm transition-colors"
               style={{ color: 'var(--text-faint)' }}
-              onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-              onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               ✏️
             </button>
             <button
               onClick={() => workouts.deleteSession(session.id)}
-              className="w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors"
+              className="hover-danger w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors"
               style={{ color: 'var(--text-faint)' }}
-              onMouseOver={e => {
-                e.currentTarget.style.backgroundColor = '#fef2f2'
-                e.currentTarget.style.color = '#ef4444'
-              }}
-              onMouseOut={e => {
-                e.currentTarget.style.backgroundColor = 'transparent'
-                e.currentTarget.style.color = 'var(--text-faint)'
-              }}
             >
               ✕
             </button>

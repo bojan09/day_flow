@@ -51,6 +51,9 @@ export function useIdeas() {
     const u = { ...i, ...updates, updatedAt: new Date().toISOString() }; persist(u); return u
   }))
 
+  // Restore a previously deleted idea with its original id (undo)
+  const restoreIdea = (i) => { setIdeas(prev => [i, ...prev]); persist(i) }
+
   const deleteIdea = (id) => { setIdeas(prev => prev.filter(i => i.id !== id)); if (useDB) ideasService.delete(userId, id) }
   const setStatus  = (id, status) => updateIdea(id, { status })
   const setStars   = (id, stars)  => updateIdea(id, { stars })
@@ -62,5 +65,5 @@ export function useIdeas() {
     return old.length > 0 ? old[Math.floor(Math.random() * old.length)] : null
   }
 
-  return { ideas, synced, addIdea, updateIdea, deleteIdea, setStatus, setStars, linkGoal, getRandomOldIdea }
+  return { ideas, synced, addIdea, restoreIdea, updateIdea, deleteIdea, setStatus, setStars, linkGoal, getRandomOldIdea }
 }

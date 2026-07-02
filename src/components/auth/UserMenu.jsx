@@ -40,10 +40,8 @@ export default function UserMenu({ onOpenSettings }) {
       {/* Trigger */}
       <button
         onClick={() => setOpen(o => !o)}
-        className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl w-full transition-all text-left"
+        className="hover-surface flex items-center gap-2.5 px-2.5 py-2 rounded-xl w-full transition-all text-left"
         style={{ color: 'var(--text-muted)' }}
-        onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-        onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
         aria-expanded={open}
         aria-haspopup="menu"
       >
@@ -93,10 +91,8 @@ export default function UserMenu({ onOpenSettings }) {
             {onOpenSettings && (
               <button
                 onClick={() => { onOpenSettings(); setOpen(false) }}
-                className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm transition-colors text-left"
+                className="hover-surface flex items-center gap-2.5 w-full px-4 py-2.5 text-sm transition-colors text-left"
                 style={{ color: 'var(--text-muted)' }}
-                onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-                onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
               >
                 <span>⚙️</span> Account settings
               </button>
@@ -107,10 +103,8 @@ export default function UserMenu({ onOpenSettings }) {
             {/* Sign out */}
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm transition-colors text-left"
+              className="hover-danger flex items-center gap-2.5 w-full px-4 py-2.5 text-sm transition-colors text-left"
               style={{ color: '#ef4444' }}
-              onMouseOver={e => e.currentTarget.style.backgroundColor = '#fef2f2'}
-              onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               <span>🚪</span> Sign out
             </button>

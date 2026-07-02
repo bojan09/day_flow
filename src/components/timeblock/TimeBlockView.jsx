@@ -165,10 +165,8 @@ export default function TimeBlockView({ tasks }) {
                         </span>
                         <button
                           onClick={() => clearSlot(hour)}
-                          className="text-[10px] w-5 h-5 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+                          className="hover-danger text-[10px] w-5 h-5 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
                           style={{ color: 'var(--text-faint)' }}
-                          onMouseOver={e => { e.currentTarget.style.backgroundColor = '#fef2f2'; e.currentTarget.style.color = '#ef4444' }}
-                          onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-faint)' }}
                         >✕</button>
                       </div>
                     )}
@@ -191,10 +189,8 @@ export default function TimeBlockView({ tasks }) {
                         >✏️</button>
                         <button
                           onClick={() => removeCustomEntry(hour)}
-                          className="text-[10px] w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                          className="hover-danger text-[10px] w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
                           style={{ color: 'var(--text-faint)' }}
-                          onMouseOver={e => { e.currentTarget.style.color = '#ef4444' }}
-                          onMouseOut={e => { e.currentTarget.style.color = 'var(--text-faint)' }}
                         >✕</button>
                       </div>
                     )}
@@ -249,10 +245,8 @@ export default function TimeBlockView({ tasks }) {
                     {!hasContent && !isAdding && (
                       <button
                         onClick={() => { setAddingTo(hour); setEntryText('') }}
-                        className="text-[10px] transition-colors w-full text-left"
+                        className="hover-text-accent text-[10px] transition-colors w-full text-left"
                         style={{ color: 'var(--text-faint)' }}
-                        onMouseOver={e => e.target.style.color = 'var(--accent)'}
-                        onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
                       >
                         + add entry
                       </button>

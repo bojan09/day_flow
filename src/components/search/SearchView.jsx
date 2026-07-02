@@ -207,10 +207,8 @@ Return at most 15 results. Return [] if nothing matches. No explanation, just th
           ].map(hint => (
             <button type="button" key={hint}
               onClick={() => setQuery(hint.replace(/"/g, ''))}
-              className="w-full text-left px-4 py-2.5 rounded-xl border text-sm transition-colors"
-              style={{ borderColor: 'var(--border)', color: 'var(--text-muted)', backgroundColor: 'var(--surface)' }}
-              onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-              onMouseOut={e => e.currentTarget.style.backgroundColor = 'var(--surface)'}>
+              className="hover-surface w-full text-left px-4 py-2.5 rounded-xl border text-sm transition-colors"
+              style={{ borderColor: 'var(--border)', color: 'var(--text-muted)', backgroundColor: 'var(--surface)' }}>
               {hint}
             </button>
           ))}

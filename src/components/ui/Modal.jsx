@@ -73,10 +73,8 @@ export default function Modal({ isOpen, onClose, title, children }) {
             </h3>
             <button
               onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center rounded-full text-sm transition-colors ml-2 flex-shrink-0"
+              className="hover-surface w-8 h-8 flex items-center justify-center rounded-full text-sm transition-colors ml-2 flex-shrink-0"
               style={{ color: 'var(--text-muted)' }}
-              onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-              onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
               aria-label="Close"
             >
               ✕

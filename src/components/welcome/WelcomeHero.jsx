@@ -47,19 +47,15 @@ export default function WelcomeHero() {
       <div className="flex flex-row items-center justify-center gap-3 flex-wrap opacity-0 animate-fade-up-d3">
         <button
           onClick={() => navigate('/auth?mode=signup')}
-          className="px-8 py-3.5 rounded-full text-white font-medium text-base transition-all hover:-translate-y-0.5 active:scale-95 whitespace-nowrap"
+          className="hover-lift px-8 py-3.5 rounded-full text-white font-medium text-base transition-all hover:-translate-y-0.5 active:scale-95 whitespace-nowrap"
           style={{ backgroundColor: 'var(--accent)' }}
-          onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 24px rgba(59,107,75,0.35)'}
-          onMouseOut={e => e.currentTarget.style.boxShadow = 'none'}
         >
           Get Started — Free
         </button>
         <button
           onClick={() => navigate('/auth?mode=signin')}
-          className="px-8 py-3.5 rounded-full text-base font-medium transition-all border hover:-translate-y-0.5 active:scale-95 whitespace-nowrap"
+          className="hover-surface px-8 py-3.5 rounded-full text-base font-medium transition-all border hover:-translate-y-0.5 active:scale-95 whitespace-nowrap"
           style={{ color: 'var(--text-muted)', borderColor: 'var(--border)', backgroundColor: 'transparent' }}
-          onMouseOver={e => { e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'; e.currentTarget.style.borderColor = 'var(--text-faint)' }}
-          onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.borderColor = 'var(--border)' }}
         >
           Login
         </button>

@@ -1,6 +1,7 @@
 // Component: HabitRow
 // Purpose: Single habit row — 7-day toggle circles, streak, edit, delete.
 import { memo, useState } from 'react'
+import { habitDisplayName } from '../../utils/habitLabels'
 import Modal       from '../ui/Modal'
 import EmojiPicker from '../ui/EmojiPicker'
 import Input  from '../ui/Input'
@@ -75,34 +76,36 @@ function HabitRow({ habit, weekDays, isHabitDone, toggleHabitDay, streak, weekly
   return (
     <>
       <div
-        className="group grid items-center gap-2 px-5 py-3 transition-colors"
-        style={{ gridTemplateColumns: '1fr repeat(7, 2rem)', gap: '0.5rem' }}
-        onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-        onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
+        className="hover-surface group grid items-center gap-2 px-3 sm:px-5 py-3 transition-colors"
+        style={{ gridTemplateColumns: 'var(--habit-label-col, 96px) repeat(7, minmax(0,1fr))', gap: '0.25rem' }}
       >
-        <div className="flex items-center gap-2 min-w-0 pr-1">
-          <span className="text-lg flex-shrink-0">{habit.icon}</span>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium truncate" style={{ color: 'var(--text)' }}>{habit.name}</p>
-            <div className="flex items-center gap-2">
-              {streak > 0 && <p className="text-[10px] text-amber-500">{streak}🔥</p>}
-              <p className="text-[10px]" style={{ color: 'var(--text-faint)' }}>{freqLabel}</p>
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-xl flex-shrink-0 leading-none">{habit.icon}</span>
+          <div className="flex-1 min-w-0 overflow-hidden">
+            <div className="text-sm font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis" style={{ color: 'var(--text)' }}>
+              {habitDisplayName(habit)}
+            </div>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="text-[10px] capitalize flex-shrink-0" style={{ color: 'var(--text-muted)' }}>{freqLabel}</span>
+              {streak > 0 && (
+                <span className="text-[10px] font-semibold flex-shrink-0" style={{ color: 'var(--accent)' }}>🔥{streak}</span>
+              )}
             </div>
           </div>
           {/* Edit + delete — visible on hover */}
           <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
             <button
               onClick={() => setEditing(true)}
-              className="w-6 h-6 rounded-full flex items-center justify-center text-xs transition-colors"
+              aria-label="Edit habit"
+              className="tap-target w-6 h-6 rounded-full flex items-center justify-center text-xs transition-colors"
               style={{ color: 'var(--text-faint)' }}
               title="Edit habit"
             >✏️</button>
             <button
               onClick={() => onDelete(habit.id)}
-              className="w-6 h-6 rounded-full flex items-center justify-center text-xs transition-colors"
+              aria-label="Delete habit"
+              className="tap-target hover-danger w-6 h-6 rounded-full flex items-center justify-center text-xs transition-colors"
               style={{ color: 'var(--text-faint)' }}
-              onMouseOver={e => e.currentTarget.style.color = '#ef4444'}
-              onMouseOut={e => e.currentTarget.style.color = 'var(--text-faint)'}
               title="Delete habit"
             >✕</button>
           </div>
@@ -116,7 +119,7 @@ function HabitRow({ habit, weekDays, isHabitDone, toggleHabitDay, streak, weekly
             <button
               key={dateKey}
               onClick={() => toggleHabitDay(habit.id, dateKey)}
-              className="w-7 h-7 mx-auto rounded-full border-2 flex items-center justify-center text-[10px] transition-all"
+              className="w-6 h-6 sm:w-7 sm:h-7 mx-auto rounded-full border-2 flex items-center justify-center text-[10px] transition-all"
               style={done
                 ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)', color: 'white' }
                 : today

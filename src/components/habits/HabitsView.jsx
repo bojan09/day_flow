@@ -71,15 +71,16 @@ export default function HabitsView({ habits, habitRules }) {
         <HabitCalendar habits={habits} />
       ) : (
         <Card noPad>
+          <div className="overflow-x-auto">
           <div
-            className="grid items-center px-5 py-3 border-b"
-            style={{ gridTemplateColumns: '1fr repeat(7, 2rem)', gap: '0.5rem', borderColor: 'var(--border-soft)' }}
+            className="grid items-center px-3 sm:px-5 py-3 border-b"
+            style={{ gridTemplateColumns: 'var(--habit-label-col, 96px) repeat(7, minmax(0,1fr))', gap: '0.25rem', borderColor: 'var(--border-soft)' }}
           >
             <span className="text-xs uppercase tracking-wider" style={{ color: 'var(--text-faint)' }}>Habit</span>
             {weekDays.map(d => (
               <span
                 key={d.toISOString()}
-                className="text-center text-[10px] font-medium uppercase"
+                className="text-[10px] font-medium uppercase mx-auto text-center"
                 style={{ color: isToday(d) ? 'var(--accent)' : 'var(--text-faint)' }}
               >
                 {format(d, 'EEE')[0]}
@@ -98,6 +99,7 @@ export default function HabitsView({ habits, habitRules }) {
               ))}
             </div>
           )}
+          </div>
         </Card>
       )}
 

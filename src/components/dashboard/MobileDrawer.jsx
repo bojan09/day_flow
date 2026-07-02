@@ -81,10 +81,8 @@ function DrawerProfile({ onSignOut }) {
       </div>
       <button
         onClick={onSignOut}
-        className="flex-shrink-0 text-xs px-3 py-1.5 rounded-full border transition-colors"
+        className="hover-danger flex-shrink-0 text-xs px-3 py-1.5 rounded-full border transition-colors"
         style={{ borderColor: 'var(--border)', color: 'var(--text-faint)' }}
-        onMouseOver={e => { e.currentTarget.style.backgroundColor = '#fef2f2'; e.currentTarget.style.color = '#ef4444'; e.currentTarget.style.borderColor = '#fecaca' }}
-        onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-faint)'; e.currentTarget.style.borderColor = 'var(--border)' }}
       >
         Sign out
       </button>

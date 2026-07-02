@@ -117,10 +117,8 @@ export default function WidgetCustomizer({ isOpen, onClose, widgetPrefs, adaptiv
                   {!hidden && (
                     <button
                       onClick={() => widgetPrefs.togglePin(id)}
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all"
+                      className="hover-surface w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all"
                       style={{ color: pinned ? 'var(--accent)' : 'var(--text-faint)' }}
-                      onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-                      onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
                       title={pinned ? 'Unpin' : 'Pin to top'}
                     >
                       {pinned ? '📌' : '📍'}
@@ -137,10 +135,8 @@ export default function WidgetCustomizer({ isOpen, onClose, widgetPrefs, adaptiv
                         setOrder(prev => [...prev, id])
                       }
                     }}
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all"
+                    className="hover-surface w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all"
                     style={{ color: hidden ? 'var(--accent)' : 'var(--text-faint)' }}
-                    onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-                    onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
                     title={hidden ? 'Show widget' : 'Hide widget'}
                   >
                     {hidden ? '👁' : '🙈'}
@@ -188,10 +184,8 @@ export default function WidgetCustomizer({ isOpen, onClose, widgetPrefs, adaptiv
         <div className="flex gap-2 pt-1">
           <button
             onClick={handleReset}
-            className="px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors"
+            className="hover-surface px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors"
             style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
-            onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-            onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
           >
             Reset to default
           </button>

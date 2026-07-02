@@ -156,10 +156,8 @@ export default function TaskDetail({
                   >{s.text}</span>
                   <button
                     onClick={() => deleteSub(s.id)}
-                    className="opacity-0 group-hover:opacity-100 text-xs transition-all"
+                    className="hover-danger opacity-0 group-hover:opacity-100 text-xs transition-all"
                     style={{ color: 'var(--text-faint)' }}
-                    onMouseOver={e => e.target.style.color = '#ef4444'}
-                    onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
                   >✕</button>
                 </li>
               ))}
@@ -223,10 +221,8 @@ export default function TaskDetail({
                     tasks.deleteTask(task.id)
                     onClose()
                   }}
-                  className="px-4 py-2 rounded-xl text-sm font-medium border transition-colors"
+                  className="hover-surface px-4 py-2 rounded-xl text-sm font-medium border transition-colors"
                   style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
-                  onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-                  onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
                   💡 Move to Ideas
                 </button>

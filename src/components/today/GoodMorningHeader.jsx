@@ -80,7 +80,7 @@ function GoodMorningHeader({ intention }) {
         ) : (
           <button
             onClick={() => setEditing(true)}
-            className="w-full text-left transition-colors rounded-xl px-4 py-2.5 border"
+            className="hover-accent-soft w-full text-left transition-colors rounded-xl px-4 py-2.5 border"
             style={{
               color:           text ? 'var(--text)' : 'var(--text-faint)',
               borderColor:     'var(--border)',
@@ -88,8 +88,6 @@ function GoodMorningHeader({ intention }) {
               fontStyle:       text ? 'normal' : 'italic',
               fontSize:        'var(--text-sm)',
             }}
-            onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--accent-mid)'; e.currentTarget.style.backgroundColor = 'var(--accent-light)' }}
-            onMouseOut={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.backgroundColor = 'var(--bg)' }}
           >
             {text || 'Set your intention for today…'}
             {text && (

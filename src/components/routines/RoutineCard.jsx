@@ -88,10 +88,8 @@ export default function RoutineCard({ routine, routines, onEdit, onDelete }) {
           {/* Edit */}
           <button
             onClick={() => onEdit(routine)}
-            className="w-7 h-7 rounded-full flex items-center justify-center text-sm transition-colors"
+            className="hover-surface w-7 h-7 rounded-full flex items-center justify-center text-sm transition-colors"
             style={{ color: 'var(--text-faint)' }}
-            onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-            onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
             title="Edit routine"
           >
             ✏️
@@ -100,16 +98,8 @@ export default function RoutineCard({ routine, routines, onEdit, onDelete }) {
           {/* Delete */}
           <button
             onClick={() => setConfirmDel(true)}
-            className="w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors"
+            className="hover-danger w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors"
             style={{ color: 'var(--text-faint)' }}
-            onMouseOver={e => {
-              e.currentTarget.style.backgroundColor = '#fef2f2'
-              e.currentTarget.style.color = '#ef4444'
-            }}
-            onMouseOut={e => {
-              e.currentTarget.style.backgroundColor = 'transparent'
-              e.currentTarget.style.color = 'var(--text-faint)'
-            }}
             title="Delete routine"
           >
             ✕
@@ -127,10 +117,8 @@ export default function RoutineCard({ routine, routines, onEdit, onDelete }) {
           <div className="flex gap-2">
             <button
               onClick={() => setConfirmDel(false)}
-              className="px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors"
+              className="hover-danger px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors"
               style={{ borderColor: '#fca5a5', color: '#b91c1c', backgroundColor: 'transparent' }}
-              onMouseOver={e => e.currentTarget.style.backgroundColor = '#fee2e2'}
-              onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               Cancel
             </button>
@@ -241,10 +229,8 @@ export default function RoutineCard({ routine, routines, onEdit, onDelete }) {
           {completion > 0 && (
             <button
               onClick={() => routines.resetRoutine(routine.id)}
-              className="text-[11px] transition-colors"
+              className="hover-text-muted text-[11px] transition-colors"
               style={{ color: 'var(--text-faint)' }}
-              onMouseOver={e => e.target.style.color = 'var(--text-muted)'}
-              onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
             >
               Reset
             </button>

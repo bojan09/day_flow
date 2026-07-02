@@ -43,10 +43,8 @@ export default function CTASection() {
           </button>
           <button
             onClick={() => navigate('/dashboard')}
-            className="px-6 py-4 rounded-full text-sm font-light transition-all border"
-            style={{ color: 'var(--text-muted)', borderColor: 'var(--border)' }}
-            onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-            onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}>
+            className="hover-surface px-6 py-4 rounded-full text-sm font-light transition-all border"
+            style={{ color: 'var(--text-muted)', borderColor: 'var(--border)' }}>
             Try without signing up
           </button>
         </div>

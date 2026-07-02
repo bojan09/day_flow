@@ -57,19 +57,15 @@ export default function WelcomeCTA() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <button
             onClick={() => navigate('/auth?mode=signup')}
-            className="px-10 py-4 rounded-full text-white font-medium text-base transition-all hover:-translate-y-1 active:scale-95"
+            className="hover-lift px-10 py-4 rounded-full text-white font-medium text-base transition-all hover:-translate-y-1 active:scale-95"
             style={{ backgroundColor: 'var(--accent)' }}
-            onMouseOver={e => e.currentTarget.style.boxShadow = '0 8px 24px rgba(59,107,75,0.35)'}
-            onMouseOut={e => e.currentTarget.style.boxShadow = 'none'}
           >
             Create free account
           </button>
           <button
             onClick={() => navigate('/dashboard')}
-            className="px-6 py-4 rounded-full text-sm font-light transition-all border"
+            className="hover-surface px-6 py-4 rounded-full text-sm font-light transition-all border"
             style={{ color: 'var(--text-muted)', borderColor: 'var(--border)' }}
-            onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-            onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
           >
             Try without signing up
           </button>

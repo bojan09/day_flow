@@ -10,10 +10,8 @@ export default function LandingFooter() {
         <div className="flex items-center gap-6">
           {['Privacy', 'Terms', 'Contact'].map(link => (
             <a key={link} href="#"
-              className="text-xs transition-colors"
+              className="hover-text-muted text-xs transition-colors"
               style={{ color: 'var(--text-faint)' }}
-              onMouseOver={e => e.target.style.color = 'var(--text-muted)'}
-              onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
             >{link}</a>
           ))}
         </div>

@@ -41,10 +41,8 @@ export default function HeroSection() {
         </button>
         <button
           onClick={() => navigate('/dashboard')}
-          className="px-8 py-3.5 rounded-full font-light text-base transition-all border hover:-translate-y-0.5"
+          className="hover-surface px-8 py-3.5 rounded-full font-light text-base transition-all border hover:-translate-y-0.5"
           style={{ color: 'var(--text-muted)', borderColor: 'var(--border)' }}
-          onMouseOver={e => { e.currentTarget.style.backgroundColor = 'var(--bg-secondary)' }}
-          onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent' }}
         >
           Try demo
         </button>

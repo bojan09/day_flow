@@ -176,16 +176,12 @@ const GoalCardImpl = memo(function GoalCard({ goal, goals, xp }) {
                     {goal.completed ? '✓ Done' : 'Complete'}
                   </button>
                   <button onClick={() => setEditing(true)}
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-sm transition-colors"
+                    className="hover-surface w-7 h-7 rounded-full flex items-center justify-center text-sm transition-colors"
                     style={{ color: 'var(--text-faint)' }}
-                    onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-                    onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
                     title="Edit goal">✏️</button>
                   <button onClick={() => { goals.deleteGoal(goal.id); toast.undo('Goal deleted', () => goals.restoreGoal(goal)) }}
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors"
-                    style={{ color: 'var(--text-faint)' }}
-                    onMouseOver={e => { e.currentTarget.style.backgroundColor = '#fef2f2'; e.currentTarget.style.color = '#ef4444' }}
-                    onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-faint)' }}>✕</button>
+                    className="hover-danger w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors"
+                    style={{ color: 'var(--text-faint)' }}>✕</button>
                 </div>
               </div>
 

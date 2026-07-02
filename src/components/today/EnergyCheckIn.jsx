@@ -22,10 +22,8 @@ export default function EnergyCheckIn({ energy }) {
         </div>
         <button
           onClick={() => energy.setTodayEnergy(null)}
-          className="text-xs flex-shrink-0 transition-colors"
+          className="hover-text text-xs flex-shrink-0 transition-colors"
           style={{ color: 'var(--text-faint)' }}
-          onMouseOver={e => e.target.style.color = 'var(--text)'}
-          onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
         >Change</button>
       </div>
     )
@@ -41,10 +39,8 @@ export default function EnergyCheckIn({ energy }) {
           <button
             key={w.id}
             onClick={() => energy.setTodayEnergy(w.id)}
-            className="flex flex-col items-center gap-1.5 py-4 rounded-2xl border transition-all active:scale-95"
+            className="hover-accent-soft flex flex-col items-center gap-1.5 py-4 rounded-2xl border transition-all active:scale-95"
             style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg-secondary)', minHeight: '80px' }}
-            onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--accent-mid)'; e.currentTarget.style.backgroundColor = 'var(--accent-light)' }}
-            onMouseOut={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.backgroundColor = 'var(--bg-secondary)' }}
           >
             <span className="text-2xl">{w.emoji}</span>
             <span className="text-xs font-semibold" style={{ color: 'var(--text)' }}>{w.label}</span>

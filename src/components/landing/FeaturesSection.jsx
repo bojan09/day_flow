@@ -19,15 +19,13 @@ export default function FeaturesSection() {
         {FEATURES.map((f, i) => (
           <div
             key={f.title}
-            className="group rounded-2xl p-6 border transition-all duration-200 hover:-translate-y-1 opacity-0 animate-fade-up"
+            className="hover-lift group rounded-2xl p-6 border transition-all duration-200 hover:-translate-y-1 opacity-0 animate-fade-up"
             style={{
               backgroundColor: 'var(--surface)',
               borderColor: 'var(--border)',
               boxShadow: 'var(--shadow-card)',
               animationDelay: `${i * 0.06}s`,
             }}
-            onMouseOver={e => e.currentTarget.style.boxShadow = 'var(--shadow-hover)'}
-            onMouseOut={e => e.currentTarget.style.boxShadow = 'var(--shadow-card)'}
           >
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center text-lg mb-4 border transition-colors"

@@ -87,7 +87,7 @@ export default function SideNav({ activeTab, onTabChange, theme, onSetTheme }) {
                 <button
                   key={t.id}
                   onClick={() => onTabChange(t.id)}
-                  className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-sm font-medium transition-all text-left"
+                  className={`${activeTab === t.id ? '' : 'hover-surface hover-text'} flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-sm font-medium transition-all text-left`}
                   style={activeTab === t.id
                     ? {
                         background:  'linear-gradient(90deg, var(--accent) 0%, var(--accent-mid) 100%)',
@@ -96,18 +96,6 @@ export default function SideNav({ activeTab, onTabChange, theme, onSetTheme }) {
                       }
                     : { color: 'var(--text-muted)' }
                   }
-                  onMouseOver={e => {
-                    if (activeTab !== t.id) {
-                      e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'
-                      e.currentTarget.style.color = 'var(--text)'
-                    }
-                  }}
-                  onMouseOut={e => {
-                    if (activeTab !== t.id) {
-                      e.currentTarget.style.backgroundColor = 'transparent'
-                      e.currentTarget.style.color = 'var(--text-muted)'
-                    }
-                  }}
                 >
                   <span className="text-sm w-4 text-center">{t.emoji}</span>
                   {t.label}

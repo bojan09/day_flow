@@ -156,6 +156,32 @@
 }
 
 @layer components {
+  /* Hover utilities — replace inline onMouseOver/onMouseOut handlers.
+     Transparent by default; colour applies only on hover (pointer devices). */
+  .hover-surface        { transition: background-color var(--transition-base); }
+  .hover-surface:hover  { background-color: var(--bg-secondary); }
+
+  .hover-accent-soft        { transition: background-color var(--transition-base); }
+  .hover-accent-soft:hover  { background-color: var(--accent-light); }
+
+  .hover-accent-mid        { transition: background-color var(--transition-base); }
+  .hover-accent-mid:hover  { background-color: var(--accent-mid); }
+
+  /* Destructive hover: soft red bg + red text */
+  .hover-danger        { transition: background-color var(--transition-base), color var(--transition-base); }
+  .hover-danger:hover  { background-color: #fef2f2; color: #ef4444; }
+  [data-theme="dark"] .hover-danger:hover { background-color: #2a1414; }
+
+  /* Text-only hover shifts */
+  .hover-text        { transition: color var(--transition-base); }
+  .hover-text:hover  { color: var(--text); }
+  .hover-text-muted        { transition: color var(--transition-base); }
+  .hover-text-muted:hover  { color: var(--text-muted); }
+  .hover-text-accent        { transition: color var(--transition-base); }
+  .hover-text-accent:hover  { color: var(--accent); }
+  .hover-lift        { transition: box-shadow var(--transition-base); }
+  .hover-lift:hover  { box-shadow: var(--shadow-hover, 0 8px 24px rgba(59,107,75,0.25)); }
+
   /* Expands a small button's touch area to ~44px without visual change.
      The ::after pseudo-element is part of the button, so it captures taps. */
   .tap-target { position: relative; }
@@ -300,4 +326,9 @@
 
   /* Prevent text selection on interactive elements */
   .no-select { user-select: none; -webkit-user-select: none; }
+}
+
+@layer components {
+  :root { --habit-label-col: 96px; }
+  @media (min-width: 640px) { :root { --habit-label-col: minmax(160px, 1fr); } }
 }

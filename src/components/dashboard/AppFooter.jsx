@@ -22,8 +22,6 @@ export default function AppFooter() {
         <button
           onClick={signOut}
           style={{ color: "var(--text-faint)" }}
-          onMouseOver={(e) => (e.target.style.color = "#ef4444")}
-          onMouseOut={(e) => (e.target.style.color = "var(--text-faint)")}
         >
           Sign out
         </button>

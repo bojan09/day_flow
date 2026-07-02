@@ -94,9 +94,7 @@ export default function GoalForecaster({ goals }) {
             <div key={goal.id}>
               <button
                 onClick={() => setExpanded(isOpen ? null : goal.id)}
-                className="w-full px-5 py-4 text-left transition-colors"
-                onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-                onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                className="hover-surface w-full px-5 py-4 text-left transition-colors"
               >
                 <div className="flex items-start gap-3">
                   {/* Progress ring */}

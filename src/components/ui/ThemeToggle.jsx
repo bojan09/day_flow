@@ -15,10 +15,8 @@ export default function ThemeToggle({ theme, onSetTheme, compact = false }) {
     return (
       <button
         onClick={() => onSetTheme(next.id)}
-        className="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all active:scale-90"
+        className="hover-surface w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all active:scale-90"
         style={{ color: 'var(--text-muted)' }}
-        onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-        onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
         title={`Theme: ${current.label} — click for ${next.label}`}
         aria-label={`Theme: ${current.label}. Click for ${next.label}`}
       >

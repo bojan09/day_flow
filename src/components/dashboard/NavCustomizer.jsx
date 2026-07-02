@@ -44,10 +44,8 @@ export default function NavCustomizer({ isOpen, onClose, navItems, setSlot, rese
         {/* Reset */}
         <button
           onClick={() => { resetToDefault(); onClose() }}
-          className="w-full py-2.5 rounded-xl border text-sm font-medium transition-colors"
+          className="hover-surface w-full py-2.5 rounded-xl border text-sm font-medium transition-colors"
           style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
-          onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-          onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
         >
           Reset to default
         </button>

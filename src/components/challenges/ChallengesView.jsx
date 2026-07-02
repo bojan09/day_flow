@@ -58,18 +58,14 @@ function ChallengeCard({ c, challenges, onEdit }) {
               <div className="flex gap-1 flex-shrink-0">
                 <button
                   onClick={() => onEdit(c)}
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-sm transition-colors"
+                  className="hover-surface w-7 h-7 rounded-full flex items-center justify-center text-sm transition-colors"
                   style={{ color: 'var(--text-faint)' }}
-                  onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-                  onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
                   title="Edit challenge"
                 >✏️</button>
                 <button
                   onClick={() => challenges.deleteChallenge(c.id)}
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors"
+                  className="hover-danger w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors"
                   style={{ color: 'var(--text-faint)' }}
-                  onMouseOver={e => { e.currentTarget.style.backgroundColor = '#fef2f2'; e.currentTarget.style.color = '#ef4444' }}
-                  onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-faint)' }}
                   title="Delete"
                 >✕</button>
               </div>
@@ -302,10 +298,8 @@ export default function ChallengesView({ challenges }) {
               <button
                 key={p.title}
                 onClick={() => challenges.startChallenge(p)}
-                className="flex items-center gap-2 p-3 rounded-xl border text-sm font-medium transition-all active:scale-95 text-left"
+                className="hover-accent-mid flex items-center gap-2 p-3 rounded-xl border text-sm font-medium transition-all active:scale-95 text-left"
                 style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-muted)' }}
-                onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--accent-mid)'; e.currentTarget.style.color = 'var(--text)' }}
-                onMouseOut={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-muted)' }}
               >
                 <span className="text-xl flex-shrink-0">{p.emoji}</span>
                 <span className="truncate">{p.title}</span>

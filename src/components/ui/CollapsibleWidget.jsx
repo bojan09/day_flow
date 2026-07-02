@@ -48,10 +48,8 @@ export default function CollapsibleWidget({
           <div className="relative">
             <button
               onClick={(e) => { e.stopPropagation(); setShowMenu(v => !v) }}
-              className="w-7 h-7 rounded-full flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+              className="hover-surface w-7 h-7 rounded-full flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
               style={{ color: 'var(--text-faint)' }}
-              onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-              onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
             >⋯</button>
 
             {showMenu && (
@@ -64,10 +62,8 @@ export default function CollapsibleWidget({
                 {onTogglePin && (
                   <button
                     onClick={() => { onTogglePin(id); setShowMenu(false) }}
-                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-left transition-colors"
+                    className="hover-surface w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-left transition-colors"
                     style={{ color: isPinned ? 'var(--accent)' : 'var(--text-muted)' }}
-                    onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-                    onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
                     <span>{isPinned ? '📌' : '📍'}</span>
                     {isPinned ? 'Unpin from top' : 'Pin to top'}
@@ -76,16 +72,8 @@ export default function CollapsibleWidget({
                 {onToggleHide && (
                   <button
                     onClick={() => { onToggleHide(id); setShowMenu(false) }}
-                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-left transition-colors"
+                    className="hover-danger w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-left transition-colors"
                     style={{ color: 'var(--text-muted)' }}
-                    onMouseOver={e => {
-                      e.currentTarget.style.backgroundColor = '#fef2f2'
-                      e.currentTarget.style.color = '#ef4444'
-                    }}
-                    onMouseOut={e => {
-                      e.currentTarget.style.backgroundColor = 'transparent'
-                      e.currentTarget.style.color = 'var(--text-muted)'
-                    }}
                   >
                     <span>🙈</span>
                     Hide this widget

@@ -158,10 +158,8 @@ Never say "it seems" or "based on the data". Just speak directly.`, context)
             {/* Regenerate */}
             <button
               onClick={() => { setGenerated(false); setOutput('') }}
-              className="w-full py-2 rounded-xl text-xs font-medium border transition-colors"
+              className="hover-surface w-full py-2 rounded-xl text-xs font-medium border transition-colors"
               style={{ borderColor: 'var(--border)', color: 'var(--text-faint)' }}
-              onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-              onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               ↻ Generate again
             </button>

@@ -39,10 +39,8 @@ function TodayTaskList({ tasks }) {
           {todayTasks.map(t => (
             <li
               key={t.id}
-              className="flex items-center gap-3 px-5 group transition-colors"
+              className="hover-surface flex items-center gap-3 px-5 group transition-colors"
               style={{ minHeight: '52px' }}
-              onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-              onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               {/* Checkbox — 44px tap target */}
               <button
@@ -76,10 +74,8 @@ function TodayTaskList({ tasks }) {
               {/* Delete — 44px tap target */}
               <button
                 onClick={() => tasks.deleteTask(t.id)}
-                className="w-11 h-11 flex-shrink-0 flex items-center justify-center -mr-2 opacity-0 group-hover:opacity-100 transition-all"
+                className="hover-danger w-11 h-11 flex-shrink-0 flex items-center justify-center -mr-2 opacity-0 group-hover:opacity-100 transition-all"
                 style={{ color: 'var(--text-faint)' }}
-                onMouseOver={e => e.currentTarget.style.color = '#ef4444'}
-                onMouseOut={e => e.currentTarget.style.color = 'var(--text-faint)'}
                 aria-label="Delete task"
               >✕</button>
             </li>

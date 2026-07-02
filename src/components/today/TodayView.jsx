@@ -125,10 +125,8 @@ export default function TodayView({
         <FeatureTooltip id="widget-customize">
           <button
             onClick={() => setShowCustomizer(true)}
-            className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-all"
+            className="hover-surface flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-all"
             style={{ borderColor: 'var(--border)', color: 'var(--text-faint)' }}
-            onMouseOver={e => { e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'; e.currentTarget.style.color = 'var(--text-muted)' }}
-            onMouseOut={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--text-faint)' }}
           >
             ✦ Customize
           </button>

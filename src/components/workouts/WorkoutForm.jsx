@@ -186,10 +186,8 @@ export default function WorkoutForm({ initial, onSubmit, onCancel }) {
               </span>
               <button
                 type="button" onClick={() => removeExercise(ex.id)}
-                className="text-xs transition-colors"
+                className="hover-danger text-xs transition-colors"
                 style={{ color: 'var(--text-faint)' }}
-                onMouseOver={e => e.target.style.color = '#ef4444'}
-                onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
               >
                 Remove
               </button>
@@ -225,9 +223,7 @@ export default function WorkoutForm({ initial, onSubmit, onCancel }) {
                 </select>
                 <button
                   type="button" onClick={() => removeSet(ex.id, s.id)}
-                  className="text-xs ml-auto" style={{ color: 'var(--text-faint)' }}
-                  onMouseOver={e => e.target.style.color = '#ef4444'}
-                  onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
+                  className="hover-danger text-xs ml-auto" style={{ color: 'var(--text-faint)' }}
                 >✕</button>
               </div>
             ))}
@@ -306,10 +302,8 @@ export default function WorkoutForm({ initial, onSubmit, onCancel }) {
       <div className="flex gap-3 pt-1">
         <button
           type="button" onClick={onCancel}
-          className="flex-1 py-2.5 rounded-xl text-sm font-medium border transition-colors"
+          className="hover-surface flex-1 py-2.5 rounded-xl text-sm font-medium border transition-colors"
           style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
-          onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-          onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
         >
           Cancel
         </button>

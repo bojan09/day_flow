@@ -67,18 +67,8 @@ export default function EndOfDayReview({ tasks }) {
               <button
                 key={ans.value}
                 onClick={() => { setFocusHit(ans.value); setStep(1) }}
-                className="py-3 rounded-2xl text-sm font-medium border transition-all active:scale-95"
+                className="hover-accent-soft py-3 rounded-2xl text-sm font-medium border transition-all active:scale-95"
                 style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
-                onMouseOver={e => {
-                  e.currentTarget.style.backgroundColor = 'var(--accent-light)'
-                  e.currentTarget.style.borderColor     = 'var(--accent-mid)'
-                  e.currentTarget.style.color           = 'var(--accent)'
-                }}
-                onMouseOut={e => {
-                  e.currentTarget.style.backgroundColor = 'transparent'
-                  e.currentTarget.style.borderColor     = 'var(--border)'
-                  e.currentTarget.style.color           = 'var(--text-muted)'
-                }}
               >
                 {ans.label}
               </button>

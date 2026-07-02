@@ -1,6 +1,7 @@
 // Component: HabitRulesPanel
 // Purpose: Create "If habit A done → auto-complete habit B" rules
 import { useState } from 'react'
+import { habitDisplayName } from '../../utils/habitLabels'
 import Card from '../ui/Card'
 
 export default function HabitRulesPanel({ habits, habitRules }) {
@@ -34,10 +35,10 @@ export default function HabitRulesPanel({ habits, habitRules }) {
               <div key={rule.id} className="flex items-center gap-2 group">
                 <div className="flex-1 flex items-center gap-2 [background-color:var(--bg)] rounded-xl px-3 py-2 text-sm">
                   <span>{trig.icon}</span>
-                  <span className="[color:var(--text-muted)]">{trig.name}</span>
+                  <span className="[color:var(--text-muted)] truncate">{habitDisplayName(trig)}</span>
                   <span className="[color:var(--text-faint)] text-xs">→</span>
                   <span>{act.icon}</span>
-                  <span className="[color:var(--text-muted)]">{act.name}</span>
+                  <span className="[color:var(--text-muted)] truncate">{habitDisplayName(act)}</span>
                 </div>
                 <button aria-label="Delete rule"
                   onClick={() => habitRules.deleteRule(rule.id)}
@@ -55,24 +56,24 @@ export default function HabitRulesPanel({ habits, habitRules }) {
           <p className="text-xs [color:var(--text-faint)] mb-1.5">
             When I complete <strong>If</strong> habit, auto-complete <strong>Then</strong> habit:
           </p>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
             <select value={trigger} onChange={e => setTrigger(e.target.value)}
-              className="flex-1 text-sm px-3 py-2 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] outline-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)] [color:var(--text)]">
+              className="w-full sm:flex-1 min-w-0 text-sm px-3 py-2 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] outline-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)] [color:var(--text)]">
               <option value="">If…</option>
               {list.map(h => (
-                <option key={h.id} value={h.id}>{h.icon} {h.name}</option>
+                <option key={h.id} value={h.id}>{h.icon} {habitDisplayName(h)}</option>
               ))}
             </select>
-            <span className="[color:var(--text-faint)] text-sm flex-shrink-0">→</span>
+            <span className="[color:var(--text-faint)] text-sm flex-shrink-0 self-center hidden sm:block">→</span>
             <select value={action} onChange={e => setAction(e.target.value)}
-              className="flex-1 text-sm px-3 py-2 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] outline-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)] [color:var(--text)]">
+              className="w-full sm:flex-1 min-w-0 text-sm px-3 py-2 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] outline-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)] [color:var(--text)]">
               <option value="">Then…</option>
               {list.filter(h => h.id !== trigger).map(h => (
-                <option key={h.id} value={h.id}>{h.icon} {h.name}</option>
+                <option key={h.id} value={h.id}>{h.icon} {habitDisplayName(h)}</option>
               ))}
             </select>
             <button type="submit" disabled={!trigger || !action}
-              className="px-3 py-2 rounded-xl [background-color:var(--accent)] text-white text-xs font-medium hover:[background-color:var(--accent)] disabled:opacity-40 transition-colors flex-shrink-0">
+              className="w-full sm:w-auto px-4 py-2 rounded-xl [background-color:var(--accent)] text-white text-xs font-medium disabled:opacity-40 transition-colors flex-shrink-0">
               Add
             </button>
           </div>

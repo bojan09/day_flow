@@ -18,9 +18,7 @@ function NotesWidget({ notes, onTabChange }) {
         recent.map(n => (
           <button type="button" key={n.id}
             onClick={() => onTabChange?.('notes')}
-            className="w-full flex items-start gap-2.5 py-1.5 text-left rounded-xl transition-colors"
-            onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-            onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
+            className="hover-surface w-full flex items-start gap-2.5 py-1.5 text-left rounded-xl transition-colors"
           >
             <span className="text-base flex-shrink-0">📝</span>
             <div className="flex-1 min-w-0">

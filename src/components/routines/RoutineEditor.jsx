@@ -215,10 +215,8 @@ export default function RoutineEditor({ initial, onSubmit, onCancel }) {
                 <button
                   type="button"
                   onClick={() => removeStep(step.id)}
-                  className="text-xs flex-shrink-0 transition-colors w-5 text-center"
+                  className="hover-danger text-xs flex-shrink-0 transition-colors w-5 text-center"
                   style={{ color: 'var(--text-faint)' }}
-                  onMouseOver={e => e.target.style.color = '#ef4444'}
-                  onMouseOut={e => e.target.style.color = 'var(--text-faint)'}
                 >✕</button>
               </div>
             ))}
@@ -265,10 +263,8 @@ export default function RoutineEditor({ initial, onSubmit, onCancel }) {
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 py-2.5 rounded-xl text-sm font-medium border transition-colors"
+          className="hover-surface flex-1 py-2.5 rounded-xl text-sm font-medium border transition-colors"
           style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
-          onMouseOver={e => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
-          onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
         >
           Cancel
         </button>

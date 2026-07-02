@@ -13,12 +13,6 @@ export default function GoogleButton({ onClick, loading }) {
         color:           '#3c4043',
         boxShadow:       '0 1px 2px rgba(0,0,0,0.08)',
       }}
-      onMouseOver={e => {
-        if (!loading) e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.12)'
-      }}
-      onMouseOut={e => {
-        e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.08)'
-      }}
     >
       {loading ? (
         <span className="w-4 h-4 border-2 border-[#4285F4] border-t-transparent rounded-full animate-spin" />
