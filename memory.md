@@ -47,3 +47,11 @@ Last updated: 2026-07-02
 - Task edit modal (TaskDetail) ALREADY had labeled title input (autoFocus, top). WorkoutForm already has title + recurrence control. Item #3 was already satisfied — no change.
 - Two recurrence models remain divergent by design (tasks: recurDays[]+recurStatus+recurEndDate; workouts: recurrence string+recurStatus). Adapters bridge them. Full unification (Option B) deferred — not justified.
 - Build clean.
+
+## Session 2026-07-07 (bug fixes + LH a11y)
+- Completed-task persistence: code path was correct end-to-end. Root cause = live Supabase missing recur_status/recur_end_date columns → every task upsert 400s silently → completion reverts. FIX: run supabase/migration-recurrence-controls.sql. Hardened tasksService.upsert to THROW on error (was swallowed) so this can't hide again.
+- Lighthouse habits page a11y (was 0.73): added aria-label+aria-pressed to 31 day-toggle circles; bumped --text-faint to AA all themes (light #726C63, dark #949089, forest #4E6E4E); tap-target on SyncIndicator + BottomNav customize pill; aria-label on 2 habit-chain selects; habits header flex-wrap.
+- Build clean.
+## Known issues / pending
+- USER MUST run supabase/migration-recurrence-controls.sql on live DB (blocks task writes)
+- Verify Lighthouse re-run after deploy

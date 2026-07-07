@@ -6,7 +6,7 @@ import Modal       from '../ui/Modal'
 import EmojiPicker from '../ui/EmojiPicker'
 import Input  from '../ui/Input'
 import { getDateKey } from '../../utils/dateUtils'
-import { isToday } from 'date-fns'
+import { isToday, format } from 'date-fns'
 import { HABIT_ICONS } from '../../utils/constants'
 
 const FREQUENCIES = [
@@ -119,7 +119,9 @@ function HabitRow({ habit, weekDays, isHabitDone, toggleHabitDay, streak, weekly
             <button
               key={dateKey}
               onClick={() => toggleHabitDay(habit.id, dateKey)}
-              className="w-6 h-6 sm:w-7 sm:h-7 mx-auto rounded-full border-2 flex items-center justify-center text-[10px] transition-all"
+              aria-label={`${habitDisplayName(habit)} — ${format(day, 'EEEE')} ${done ? 'done, tap to undo' : 'not done, tap to mark done'}`}
+              aria-pressed={done}
+              className="tap-target w-6 h-6 sm:w-7 sm:h-7 mx-auto rounded-full border-2 flex items-center justify-center text-[10px] transition-all"
               style={done
                 ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)', color: 'white' }
                 : today

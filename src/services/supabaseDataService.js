@@ -48,7 +48,10 @@ export const tasksService = {
     if (!isSupabaseConfigured()) return
     const row = taskMapper.toDB({ ...task, user_id: userId })
     const { error } = await supabase.from('tasks').upsert(row)
-    if (error) console.error('[DayFlow] tasksService.upsert:', error.message)
+    if (error) {
+      console.error('[DayFlow] tasksService.upsert:', error.message)
+      throw new Error(error.message)
+    }
   },
 
   async delete(userId, id) {

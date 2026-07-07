@@ -79,7 +79,7 @@ export default function BottomNav({ activeTab, onTabChange, onOpenDrawer }) {
         {/* Customize hint */}
         <button
           onClick={() => setShowCustomizer(true)}
-          className="absolute -top-7 right-3 text-[10px] px-2 py-0.5 rounded-full border transition-all"
+          className="tap-target absolute -top-7 right-3 text-[10px] px-2 py-1 rounded-full border transition-all"
           style={{
             backgroundColor: 'var(--surface)',
             borderColor:     'var(--border)',

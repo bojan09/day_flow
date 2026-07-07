@@ -45,7 +45,7 @@ export default function HabitsView({ habits, habitRules }) {
     <div className="max-w-2xl mx-auto space-y-5 pt-2">
       <Confetti trigger={confetti} />
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
         <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{list.length} habit{list.length !== 1 ? 's' : ''}</p>
         <div className="flex gap-2">
           <div className="flex rounded-full p-0.5" style={{ backgroundColor: 'var(--bg-secondary)' }}>

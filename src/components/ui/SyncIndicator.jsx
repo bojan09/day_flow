@@ -40,7 +40,7 @@ export default function SyncIndicator({ isConfigured }) {
       <button
         type="button"
         onClick={() => setOpen(v => !v)}
-        className="flex items-center gap-1.5 transition-opacity hover:opacity-80"
+        className="tap-target flex items-center gap-1.5 transition-opacity hover:opacity-80 min-h-[44px]"
         aria-label={`Sync status: ${cfg.label}`}
       >
         {/* Dot */}

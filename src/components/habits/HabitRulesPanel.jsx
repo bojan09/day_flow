@@ -57,7 +57,7 @@ export default function HabitRulesPanel({ habits, habitRules }) {
             When I complete <strong>If</strong> habit, auto-complete <strong>Then</strong> habit:
           </p>
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <select value={trigger} onChange={e => setTrigger(e.target.value)}
+            <select value={trigger} onChange={e => setTrigger(e.target.value)} aria-label="If habit"
               className="w-full sm:flex-1 min-w-0 text-sm px-3 py-2 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] outline-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)] [color:var(--text)]">
               <option value="">If…</option>
               {list.map(h => (
@@ -65,7 +65,7 @@ export default function HabitRulesPanel({ habits, habitRules }) {
               ))}
             </select>
             <span className="[color:var(--text-faint)] text-sm flex-shrink-0 self-center hidden sm:block">→</span>
-            <select value={action} onChange={e => setAction(e.target.value)}
+            <select value={action} onChange={e => setAction(e.target.value)} aria-label="Then habit"
               className="w-full sm:flex-1 min-w-0 text-sm px-3 py-2 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] outline-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)] [color:var(--text)]">
               <option value="">Then…</option>
               {list.filter(h => h.id !== trigger).map(h => (
