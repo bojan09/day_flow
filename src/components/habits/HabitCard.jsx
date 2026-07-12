@@ -3,9 +3,10 @@
 //          Replaces the shared weekly-grid row. `last7` is an array of 7
 //          booleans/nulls (done/not-done/future) for the current week, oldest
 //          first — computed by the caller from `log` (see HabitsView).
+import { memo } from 'react'
 import { habitDisplayName } from '../../utils/habitLabels'
 
-export default function HabitCard({ habit, doneToday, last7, onToggleToday, streak, frequencyLabel, onEdit, onDelete }) {
+function HabitCard({ habit, doneToday, last7, onToggleToday, streak, frequencyLabel, onEdit, onDelete }) {
   const name = habitDisplayName(habit)
   return (
     <div className="group rounded-2xl p-4 flex items-center justify-between gap-3"
@@ -67,3 +68,5 @@ export default function HabitCard({ habit, doneToday, last7, onToggleToday, stre
     </div>
   )
 }
+
+export default memo(HabitCard)

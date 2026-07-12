@@ -52,6 +52,7 @@ export default function HabitsView({ habits, habitRules }) {
     }, 50)
   }, [toggleHabitDay, getStreak, habitRules, notifications])
 
+  const handleToggleToday = useCallback((habitId) => handleToggle(habitId, getTodayKey()), [handleToggle])
 
   if (!habits.synced) return <ViewSkeleton type="habits" />
   return (
@@ -94,7 +95,7 @@ export default function HabitsView({ habits, habitRules }) {
               habit={h}
               doneToday={isHabitDone(h.id)}
               last7={weekDays.map(d => isFuture(d) ? null : isHabitDone(h.id, getDateKey(d)))}
-              onToggleToday={(habitId) => handleToggle(habitId, getTodayKey())}
+              onToggleToday={handleToggleToday}
               streak={getStreak(h.id)}
               frequencyLabel={h.frequency === 'daily' ? 'daily' : `${getWeeklyCount(h.id)}/${h.frequency}× wk`}
               onEdit={handleEdit}

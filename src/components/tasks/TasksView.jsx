@@ -2,7 +2,7 @@ import ViewSkeleton from '../ui/ViewSkeleton'
 import { useToast } from '../../utils/toast'
 // Component: TasksView
 // Purpose: Tasks tab — NLP input, color categories, sub-task detail modal, duplicate, templates, someday
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import Modal         from '../ui/Modal'
 import TaskForm      from './TaskForm'
 import RecurrencePanel from './RecurrencePanel'
@@ -54,7 +54,7 @@ export default function TasksView({ tasks, templates, someday, projects, categor
       .forEach(t => tasks.addTask({ ...t, date: tomorrow }))
   }
 
-  const handleDelete = (t) => { tasks.deleteTask(t.id); toast.undo('Task deleted', () => tasks.restoreTask(t)) }
+  const handleDelete = useCallback((t) => { tasks.deleteTask(t.id); toast.undo('Task deleted', () => tasks.restoreTask(t)) }, [tasks, toast])
 
   return (
     <div className="max-w-2xl mx-auto space-y-4 pt-2">

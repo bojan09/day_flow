@@ -5,6 +5,7 @@
 //          call fails, is rate-limited, or returns something unparseable —
 //          capture must never be blocked by AI unavailability.
 import { parseNLTask } from './nlpParser.js'
+import { callClaude } from './aiService.js'
 
 const VALID_TYPES = ['task', 'habit', 'routine', 'event']
 
@@ -28,12 +29,7 @@ function localFallback(text) {
  *        AI-call function (defaults to the real callClaude proxy wrapper; tests
  *        inject a fake so this module has no network dependency in tests).
  */
-export async function classifyCapture(text, caller) {
-  if (!caller) {
-    const { callClaude } = await import('./aiService.js')
-    caller = callClaude
-  }
-
+export async function classifyCapture(text, caller = callClaude) {
   let raw
   try {
     raw = await caller(SYSTEM_PROMPT, text)

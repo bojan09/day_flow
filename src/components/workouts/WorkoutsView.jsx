@@ -1,7 +1,7 @@
 import ViewSkeleton from '../ui/ViewSkeleton'
 // Component: WorkoutsView
 // Purpose: Full workouts tab — stats, session list, add/edit modal, personal bests
-import { useState } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import WorkoutStatsBar from './WorkoutStatsBar'
 import WorkoutCard     from './WorkoutCard'
 import WorkoutForm     from './WorkoutForm'
@@ -13,7 +13,7 @@ import { getWeekDays, getDateKey, getTodayKey } from '../../utils/dateUtils'
 // Mini weekly frequency bar chart
 function WeeklyBar({ workouts }) {
   const data    = workouts.getWeeklyVolume()
-  const maxCount = Math.max(...data.map(d => d.count), 1)
+  const maxCount = useMemo(() => Math.max(...data.map(d => d.count), 1), [data])
 
   return (
     <div
@@ -89,9 +89,9 @@ export default function WorkoutsView({ workouts }) {
   const [filter,   setFilter]   = useState('today') // 'all' | 'today' | 'done'
   const [selectedDate, setSelectedDate] = useState(getTodayKey())
 
-  const openAdd  = ()          => { setEditing(null);    setModal('add')  }
-  const openEdit = (session)   => { setEditing(session); setModal('edit') }
-  const close    = ()          => { setModal(false);     setEditing(null) }
+  const openAdd  = useCallback(()          => { setEditing(null);    setModal('add')  }, [])
+  const openEdit = useCallback((session)   => { setEditing(session); setModal('edit') }, [])
+  const close    = useCallback(()          => { setModal(false);     setEditing(null) }, [])
 
   const handleSubmit = (data) => {
     if (modal === 'edit' && editing) {
@@ -102,11 +102,11 @@ export default function WorkoutsView({ workouts }) {
     close()
   }
 
-  const visible = workouts.sessions.filter(s => {
+  const visible = useMemo(() => workouts.sessions.filter(s => {
     if (filter === 'today') return s.date === new Date().toISOString().split('T')[0]
     if (filter === 'done')  return s.completed
     return true
-  })
+  }), [workouts.sessions, filter])
 
   const FILTER_TABS = [
     { id: 'all',   label: 'All'     },
@@ -114,7 +114,7 @@ export default function WorkoutsView({ workouts }) {
     { id: 'done',  label: 'Done'    },
   ]
 
-  const weekDays = getWeekDays().map(d => {
+  const weekDays = useMemo(() => getWeekDays().map(d => {
     const dateKey = getDateKey(d)
     const daySessions = workouts.sessions.filter(s => s.date === dateKey)
     const state = daySessions.length === 0
@@ -125,7 +125,7 @@ export default function WorkoutsView({ workouts }) {
       label: d.toLocaleDateString('en', { weekday: 'short' })[0],
       state,
     }
-  })
+  }), [workouts.sessions])
 
   if (!workouts.synced) return <ViewSkeleton type="workouts" />
   return (
