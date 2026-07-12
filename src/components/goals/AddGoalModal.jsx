@@ -4,16 +4,36 @@ import { useState } from 'react'
 import Modal from '../ui/Modal'
 import Input from '../ui/Input'
 import { GOAL_TYPES, GOAL_CATEGORIES } from '../../hooks/useGoals'
+import { draftGoalMilestones } from '../../services/routinePlanService'
 
 export default function AddGoalModal({ isOpen, onClose, onAdd }) {
   const [form, setForm] = useState({ title: '', description: '', type: 'Yearly', category: 'Personal', targetDate: '' })
+  const [milestones, setMilestones] = useState([])
+  const [goalText, setGoalText] = useState('')
+  const [drafting, setDrafting] = useState(false)
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
+
+  const handleDraft = async () => {
+    if (!goalText.trim()) return
+    setDrafting(true)
+    const drafted = await draftGoalMilestones(goalText.trim())
+    if (drafted.length > 0) {
+      setMilestones(drafted.map((m, i) => ({
+        id: `draft-${i}`,
+        text: m.description ? `${m.title} — ${m.description}` : m.title,
+        done: false,
+      })))
+    }
+    setDrafting(false)
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!form.title.trim()) return
-    onAdd(form)
+    onAdd({ ...form, milestones })
     setForm({ title: '', description: '', type: 'Yearly', category: 'Personal', targetDate: '' })
+    setMilestones([])
+    setGoalText('')
   }
 
   return (
@@ -23,8 +43,8 @@ export default function AddGoalModal({ isOpen, onClose, onAdd }) {
           value={form.title} onChange={e => set('title', e.target.value)} autoFocus />
 
         <div>
-          <label className="text-xs font-medium [color:var(--text-muted)] uppercase tracking-wide block mb-1.5">Description (optional)</label>
-          <textarea value={form.description} onChange={e => set('description', e.target.value)}
+          <label htmlFor="goal-description" className="text-xs font-medium [color:var(--text-muted)] uppercase tracking-wide block mb-1.5">Description (optional)</label>
+          <textarea id="goal-description" value={form.description} onChange={e => set('description', e.target.value)}
             placeholder="Why does this matter to you?"
             rows={2}
             className="w-full px-4 py-2.5 rounded-xl border [border-color:var(--border)] [background-color:var(--bg)] text-sm [color:var(--text)] outline-none resize-none focus:ring-2 focus:[box-shadow:0_0_0_3px_var(--accent-light)] [placeholder-color:var(--text-faint)]" />
@@ -57,6 +77,34 @@ export default function AddGoalModal({ isOpen, onClose, onAdd }) {
 
         <Input label="Target date (optional)" type="date"
           value={form.targetDate} onChange={e => set('targetDate', e.target.value)} />
+
+        {/* AI draft entry point (only when no milestones have been drafted/added yet) */}
+        {milestones.length === 0 && (
+          <div className="rounded-xl p-3 space-y-2" style={{ backgroundColor: 'var(--accent-light)' }}>
+            <input value={goalText} onChange={e => setGoalText(e.target.value)}
+              placeholder="Describe the goal, e.g. 'run a half marathon this year'"
+              className="w-full bg-transparent text-sm outline-none" style={{ color: 'var(--text)' }} />
+            <button type="button" onClick={handleDraft} disabled={drafting || !goalText.trim()}
+              className="text-sm font-medium disabled:opacity-40" style={{ color: 'var(--accent)' }}>
+              {drafting ? 'Drafting…' : '✨ Draft milestones with AI'}
+            </button>
+          </div>
+        )}
+
+        {milestones.length > 0 && (
+          <div>
+            <p className="text-xs font-medium [color:var(--text-muted)] uppercase tracking-wide mb-2">Milestones (draft)</p>
+            <ul className="space-y-1.5">
+              {milestones.map(m => (
+                <li key={m.id} className="flex items-center justify-between gap-2 text-sm [color:var(--text)] rounded-lg px-3 py-2 border [border-color:var(--border)]">
+                  <span className="flex-1">{m.text}</span>
+                  <button type="button" onClick={() => setMilestones(prev => prev.filter(x => x.id !== m.id))}
+                    className="text-xs [color:var(--text-faint)] hover:[color:var(--text)]">Remove</button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         <div className="flex gap-3 pt-1">
           <button type="button" onClick={onClose}

@@ -69,8 +69,8 @@ const AREA_TIPS = {
 function FocusAreaCard({ area, score }) {
   return (
     <div
-      className="flex items-start gap-3 p-3.5 rounded-xl border"
-      style={{ backgroundColor: 'var(--bg)', borderColor: 'var(--border)' }}
+      className="flex items-start gap-3 p-3.5 rounded-xl"
+      style={{ backgroundColor: 'var(--bg)', boxShadow: 'var(--shadow-card)' }}
     >
       <span className="text-xl flex-shrink-0 mt-0.5">{area.emoji}</span>
       <div className="flex-1 min-w-0">
@@ -129,8 +129,8 @@ export default function BalanceView({ wheel }) {
       {/* Summary row */}
       <div className="grid grid-cols-3 gap-3">
         <div
-          className="rounded-2xl border p-4 text-center"
-          style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+          className="rounded-2xl p-4 text-center"
+          style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
         >
           <p className="text-[10px] font-medium uppercase tracking-wider mb-1" style={{ color: 'var(--text-faint)' }}>
             Avg score
@@ -141,8 +141,8 @@ export default function BalanceView({ wheel }) {
           <p className="text-[10px]" style={{ color: 'var(--text-faint)' }}>out of 10</p>
         </div>
         <div
-          className="rounded-2xl border p-4 text-center"
-          style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+          className="rounded-2xl p-4 text-center"
+          style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
         >
           <p className="text-[10px] font-medium uppercase tracking-wider mb-1" style={{ color: 'var(--text-faint)' }}>
             Months tracked
@@ -153,8 +153,8 @@ export default function BalanceView({ wheel }) {
           <p className="text-[10px]" style={{ color: 'var(--text-faint)' }}>recorded</p>
         </div>
         <div
-          className="rounded-2xl border p-4 text-center"
-          style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+          className="rounded-2xl p-4 text-center"
+          style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
         >
           <p className="text-[10px] font-medium uppercase tracking-wider mb-1" style={{ color: 'var(--text-faint)' }}>
             Low areas
@@ -192,8 +192,8 @@ export default function BalanceView({ wheel }) {
       {/* History tab */}
       {tab === 'history' && (
         <div
-          className="rounded-2xl border p-5"
-          style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+          className="rounded-2xl p-5"
+          style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
         >
           <div className="flex items-center gap-2 mb-3 overflow-x-auto pb-1">
             {LIFE_AREAS.map(a => (
@@ -228,8 +228,8 @@ export default function BalanceView({ wheel }) {
         <div className="space-y-3">
           {sortedLow.length === 0 ? (
             <div
-              className="rounded-2xl border p-8 text-center"
-              style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+              className="rounded-2xl p-8 text-center"
+              style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
             >
               <p className="text-3xl mb-3">🎉</p>
               <p className="font-serif text-lg mb-1" style={{ color: 'var(--text)' }}>

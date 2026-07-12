@@ -119,11 +119,12 @@ export default function TaskForm({
       {/* Due time + custom duration */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs font-medium uppercase tracking-wide block mb-1.5"
+          <label htmlFor="task-due-time" className="text-xs font-medium uppercase tracking-wide block mb-1.5"
             style={{ color: 'var(--text-muted)' }}>
             Due time
           </label>
           <input
+            id="task-due-time"
             type="time"
             value={form.dueTime}
             onChange={e => set('dueTime', e.target.value)}
@@ -132,11 +133,12 @@ export default function TaskForm({
           />
         </div>
         <div>
-          <label className="text-xs font-medium uppercase tracking-wide block mb-1.5"
+          <label htmlFor="task-custom-duration" className="text-xs font-medium uppercase tracking-wide block mb-1.5"
             style={{ color: 'var(--text-muted)' }}>
             Custom duration
           </label>
           <input
+            id="task-custom-duration"
             type="text"
             value={form.customMins}
             onChange={e => set('customMins', e.target.value)}
@@ -150,9 +152,18 @@ export default function TaskForm({
       {/* Recurring */}
       <div>
         <label className="flex items-center gap-2 cursor-pointer select-none">
+          {/* Real checkbox drives the state and is what keyboard/AT users interact
+              with; it's visually hidden and the styled div below is purely
+              decorative, kept in sync via form.isRecurring (unchanged visuals). */}
+          <input
+            type="checkbox"
+            checked={form.isRecurring}
+            onChange={e => set('isRecurring', e.target.checked)}
+            className="peer sr-only"
+          />
           <div
-            onClick={() => set('isRecurring', !form.isRecurring)}
-            className={`w-9 h-5 rounded-full transition-colors relative ${form.isRecurring ? '[background-color:var(--accent)]' : '[background-color:var(--border)]'}`}
+            aria-hidden="true"
+            className={`w-9 h-5 rounded-full transition-colors relative peer-focus-visible:ring-2 peer-focus-visible:ring-offset-1 [--tw-ring-color:var(--accent)] ${form.isRecurring ? '[background-color:var(--accent)]' : '[background-color:var(--border)]'}`}
           >
             <div className={`absolute top-0.5 w-4 h-4 [background-color:var(--surface)] rounded-full shadow transition-transform ${form.isRecurring ? 'translate-x-4' : 'translate-x-0.5'}`} />
           </div>

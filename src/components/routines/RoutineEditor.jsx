@@ -3,6 +3,8 @@
 //          Handles both new routines and editing existing ones.
 import { useState } from 'react'
 import { ROUTINE_TIMES, ROUTINE_EMOJIS } from '../../hooks/useRoutines'
+import StepBuilderCard from './StepBuilderCard'
+import { draftRoutine } from '../../services/routinePlanService'
 
 const TIME_LABELS = {
   morning: '🌅 Morning',
@@ -23,6 +25,16 @@ export default function RoutineEditor({ initial, onSubmit, onCancel }) {
   const [newStepText,     setNewStepText]     = useState('')
   const [newStepDuration, setNewStepDuration] = useState('5')
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const [goalText, setGoalText] = useState('')
+  const [drafting, setDrafting] = useState(false)
+
+  const handleDraft = async () => {
+    if (!goalText.trim()) return
+    setDrafting(true)
+    const drafted = await draftRoutine(goalText.trim())
+    if (drafted.length > 0) setSteps(drafted)
+    setDrafting(false)
+  }
 
   // ── Step management ─────────────────────────────────────────────────────────
 
@@ -37,8 +49,7 @@ export default function RoutineEditor({ initial, onSubmit, onCancel }) {
     setNewStepDuration('5')
   }
 
-  const updateStepText     = (id, text)     => setSteps(prev => prev.map(s => s.id === id ? { ...s, text }     : s))
-  const updateStepDuration = (id, duration) => setSteps(prev => prev.map(s => s.id === id ? { ...s, duration } : s))
+  const updateStepFull      = (id, updated)  => setSteps(prev => prev.map(s => s.id === id ? { ...s, ...updated } : s))
   const removeStep         = (id)           => setSteps(prev => prev.filter(s => s.id !== id))
 
   const moveStep = (idx, dir) => {
@@ -109,11 +120,12 @@ export default function RoutineEditor({ initial, onSubmit, onCancel }) {
 
         {/* Name */}
         <div className="flex-1">
-          <label className="text-xs font-medium uppercase tracking-wide block mb-1.5"
+          <label htmlFor="routine-name" className="text-xs font-medium uppercase tracking-wide block mb-1.5"
             style={{ color: 'var(--text-muted)' }}>
             Routine name *
           </label>
           <input
+            id="routine-name"
             autoFocus
             value={name}
             onChange={e => setName(e.target.value)}
@@ -162,63 +174,42 @@ export default function RoutineEditor({ initial, onSubmit, onCancel }) {
           )}
         </div>
 
+        {/* AI draft entry point (only for a brand-new, empty step list) */}
+        {steps.length === 0 && (
+          <div className="rounded-xl p-3 space-y-2 mb-3" style={{ backgroundColor: 'var(--accent-light)' }}>
+            <input
+              value={goalText}
+              onChange={e => setGoalText(e.target.value)}
+              placeholder="Describe the routine, e.g. 'morning routine for deep work'"
+              className="w-full bg-transparent text-sm outline-none"
+              style={{ color: 'var(--text)' }}
+            />
+            <button
+              type="button"
+              onClick={handleDraft}
+              disabled={drafting || !goalText.trim()}
+              className="text-sm font-medium disabled:opacity-40"
+              style={{ color: 'var(--accent)' }}
+            >
+              {drafting ? 'Drafting…' : '✨ Draft with AI'}
+            </button>
+          </div>
+        )}
+
         {/* Existing steps */}
         {steps.length > 0 && (
           <div className="space-y-2 mb-3">
             {steps.map((step, idx) => (
-              <div
+              <StepBuilderCard
                 key={step.id}
-                className="flex items-center gap-2 p-2.5 rounded-xl border"
-                style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' }}
-              >
-                {/* Reorder arrows */}
-                <div className="flex flex-col gap-0.5 flex-shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => moveStep(idx, -1)}
-                    disabled={idx === 0}
-                    className="text-[10px] leading-none disabled:opacity-20 transition-opacity"
-                    style={{ color: 'var(--text-faint)' }}
-                  >▲</button>
-                  <button
-                    type="button"
-                    onClick={() => moveStep(idx, 1)}
-                    disabled={idx === steps.length - 1}
-                    className="text-[10px] leading-none disabled:opacity-20 transition-opacity"
-                    style={{ color: 'var(--text-faint)' }}
-                  >▼</button>
-                </div>
-
-                {/* Step text */}
-                <input
-                  value={step.text}
-                  onChange={e => updateStepText(step.id, e.target.value)}
-                  className="flex-1 text-sm bg-transparent outline-none min-w-0"
-                  style={{ color: 'var(--text)' }}
-                />
-
-                {/* Duration */}
-                <div className="flex items-center gap-1 flex-shrink-0">
-                  <input
-                    type="number"
-                    min="1"
-                    max="120"
-                    value={step.duration}
-                    onChange={e => updateStepDuration(step.id, Number(e.target.value))}
-                    className="w-10 text-xs text-center px-1 py-1 rounded-lg border outline-none"
-                    style={inputStyle}
-                  />
-                  <span className="text-[10px]" style={{ color: 'var(--text-faint)' }}>m</span>
-                </div>
-
-                {/* Remove */}
-                <button
-                  type="button"
-                  onClick={() => removeStep(step.id)}
-                  className="hover-danger text-xs flex-shrink-0 transition-colors w-5 text-center"
-                  style={{ color: 'var(--text-faint)' }}
-                >✕</button>
-              </div>
+                step={step}
+                index={idx}
+                total={steps.length}
+                onChange={updated => updateStepFull(step.id, updated)}
+                onMoveUp={() => moveStep(idx, -1)}
+                onMoveDown={() => moveStep(idx, 1)}
+                onRemove={() => removeStep(step.id)}
+              />
             ))}
           </div>
         )}

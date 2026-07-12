@@ -23,7 +23,7 @@ function ProjectCard({ project, projects, tasks, onEdit }) {
   const done         = projectTasks.filter(t => t.completed).length
 
   return (
-    <div className="[background-color:var(--surface)] rounded-2xl border [border-color:var(--border-soft)] shadow-sm overflow-hidden">
+    <div className="[background-color:var(--surface)] rounded-2xl overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
       <div className="p-4">
         <div className="flex items-start gap-3">
           <div className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: project.color }} />
@@ -50,7 +50,7 @@ function ProjectCard({ project, projects, tasks, onEdit }) {
               <button key={s} onClick={() => projects.setStatus(project.id, s)}
                 title={s}
                 className={`w-2 h-2 rounded-full transition-all ${project.status === s ? 'scale-150' : 'opacity-30 hover:opacity-70'}`}
-                style={{ backgroundColor: s === 'Active' ? '#3B6B4B' : s === 'On Hold' ? '#F59E0B' : '#A8A29E' }} />
+                style={{ backgroundColor: s === 'Active' ? 'var(--accent)' : s === 'On Hold' ? '#F59E0B' : '#A8A29E' }} />
             ))}
             <button onClick={() => setExpanded(e => !e)}
               className="hover-surface ml-1 w-7 h-7 rounded-full flex items-center justify-center text-[11px] transition-colors"

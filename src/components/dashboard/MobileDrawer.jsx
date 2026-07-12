@@ -8,6 +8,9 @@ import { useProfile } from '../../hooks/useProfile'
 import ThemeToggle    from '../ui/ThemeToggle'
 import { isSupabaseConfigured } from '../../services/supabaseClient'
 
+// Same focusable-element query Modal.jsx uses for its initial-focus target.
+const FOCUSABLE = 'input, textarea, select, button, [href], [tabindex]:not([tabindex="-1"])'
+
 const SECTIONS = [
   { label: 'Plan', tabs: [
     { id: 'today',     label: 'Today',     emoji: '☀️' },
@@ -33,7 +36,6 @@ const SECTIONS = [
     { id: 'insights',     label: 'Insights',     emoji: '📊' },
     { id: 'balance',      label: 'Balance',       emoji: '⚖️' },
     { id: 'search',       label: 'Search',        emoji: '🔍' },
-    { id: 'achievements', label: 'Achievements',  emoji: '🏅' },
   ]},
 ]
 
@@ -97,6 +99,7 @@ export default function MobileDrawer({
 }) {
   const { signOut }  = useAuth()
   const sheetRef     = useRef(null)
+  const restoreRef   = useRef(null)
   const dragStartY   = useRef(null)
   const dragCurrentY = useRef(0)
 
@@ -104,6 +107,24 @@ export default function MobileDrawer({
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
+  }, [isOpen])
+
+  // Escape-to-close — same pattern as Modal.jsx
+  useEffect(() => {
+    if (!isOpen) return
+    const handler = (e) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [isOpen, onClose])
+
+  // Focus management: move focus into the sheet on open, restore on close —
+  // same pattern as Modal.jsx
+  useEffect(() => {
+    if (!isOpen) return
+    restoreRef.current = document.activeElement
+    const target = sheetRef.current?.querySelector(FOCUSABLE) || sheetRef.current
+    target?.focus?.()
+    return () => restoreRef.current?.focus?.()
   }, [isOpen])
 
   // ── Swipe-to-close (Phase 4.0.6) ──────────────────────────────────────────
@@ -167,6 +188,7 @@ export default function MobileDrawer({
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
+        tabIndex={-1}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}

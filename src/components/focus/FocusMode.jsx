@@ -12,7 +12,7 @@ const MODES = [
 
 function pad(n) { return String(n).padStart(2, '0') }
 
-export default function FocusMode({ tasks, xp, pomodoroHistory }) {
+export default function FocusMode({ tasks, pomodoroHistory }) {
   const [mode,    setMode]    = useState('focus')
   const [secs,    setSecs]    = useState(25 * 60)
   const [running, setRunning] = useState(false)
@@ -48,7 +48,6 @@ export default function FocusMode({ tasks, xp, pomodoroHistory }) {
     if (mode === 'focus') {
       const focused = tasks.getTodayTasks().find(t => t.id === taskId)
       pomodoroHistory.logSession(current.mins, focused?.title || '')
-      xp.awardXP('FOCUS_SESSION')
       notifications.send('✅ Focus session done!', 'Take a well-earned break.')
     } else {
       notifications.send('⏱ Break over!', 'Ready for another session?')
@@ -80,9 +79,9 @@ export default function FocusMode({ tasks, xp, pomodoroHistory }) {
       <div className="flex flex-col items-center">
         <div className="relative">
           <svg width="220" height="220" viewBox="0 0 220 220" className="-rotate-90">
-            <circle cx="110" cy="110" r="88" fill="none" stroke="#F1EDE8" strokeWidth="10"/>
+            <circle cx="110" cy="110" r="88" fill="none" stroke="var(--border)" strokeWidth="10"/>
             <circle cx="110" cy="110" r="88" fill="none"
-              stroke={mode==='focus' ? '#3B6B4B' : mode==='short' ? '#3B82F6' : '#8B5CF6'}
+              stroke={mode==='focus' ? 'var(--accent)' : mode==='short' ? '#3B82F6' : '#8B5CF6'}
               strokeWidth="10" strokeLinecap="round"
               strokeDasharray={`${circ - dash} ${dash}`}
               style={{ transition: 'stroke-dasharray 1s linear' }}/>
@@ -112,7 +111,7 @@ export default function FocusMode({ tasks, xp, pomodoroHistory }) {
 
       {/* Task picker */}
       {todayPending.length > 0 && (
-        <div className="[background-color:var(--surface)] rounded-2xl border [border-color:var(--border-soft)] p-4">
+        <div className="[background-color:var(--surface)] rounded-2xl p-4" style={{ boxShadow: 'var(--shadow-card)' }}>
           <p className="text-xs font-medium [color:var(--text-faint)] uppercase tracking-wider mb-2">Focusing on</p>
           <div className="space-y-1.5 max-h-36 overflow-y-auto scrollbar-hide">
             {todayPending.map(t => (

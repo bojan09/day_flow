@@ -16,7 +16,7 @@ const FREQUENCIES = [
   { id: '5',     label: '5× / week' },
 ]
 
-function EditHabitModal({ habit, onSave, onClose }) {
+export function EditHabitModal({ habit, onSave, onClose }) {
   const [name,      setName]      = useState(habit.name)
   const [icon,      setIcon]      = useState(habit.icon)
   const [frequency, setFrequency] = useState(

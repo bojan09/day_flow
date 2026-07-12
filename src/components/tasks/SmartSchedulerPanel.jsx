@@ -3,7 +3,7 @@
 //          and suggests when to do overdue/unscheduled tasks. Uses Anthropic API.
 import { useState } from 'react'
 import { callClaude } from '../../services/aiService'
-import { useSmartScheduler } from '../../hooks/useSmartScheduler'
+import { useSmartScheduler, getAIScheduleSuggestions } from '../../hooks/useSmartScheduler'
 
 function ScheduleBar({ day }) {
   const maxTasks = 8
@@ -34,6 +34,9 @@ export default function SmartSchedulerPanel({ tasks, energy, habits, onTabChange
   const [loading, setLoading] = useState(false)
   const [error,   setError]   = useState(null)
   const [open,    setOpen]    = useState(false)
+  const [aiSuggestions, setAiSuggestions] = useState([])
+  const [aiTargets,     setAiTargets]     = useState([])
+  const [loadingAI,     setLoadingAI]     = useState(false)
 
   const generate = async () => {
     setLoading(true); setError(null); setOutput('')
@@ -58,6 +61,21 @@ Rules:
   }
 
   const { overdue, unscheduled, next7, lightDays, avgCompletion } = analysis
+
+  const fetchAISuggestions = async () => {
+    setLoadingAI(true)
+    const targets = [...overdue, ...unscheduled]
+    const suggestions = await getAIScheduleSuggestions(targets, next7, analysis.todayEnergy)
+    setAiTargets(targets)
+    setAiSuggestions(suggestions)
+    setLoadingAI(false)
+  }
+
+  const acceptSuggestion = (s) => {
+    tasks.updateTask(s.taskId, { date: s.suggestedDate })
+    setAiSuggestions(prev => prev.filter(x => x.taskId !== s.taskId))
+  }
+  const dismissSuggestion = (s) => setAiSuggestions(prev => prev.filter(x => x.taskId !== s.taskId))
 
   return (
     <div
@@ -198,6 +216,56 @@ Rules:
               </div>
             </div>
           )}
+
+          {/* AI schedule suggestions (on-demand, additive to heuristic block above) */}
+          <div className="mt-4 pt-4 border-t" style={{ borderColor: 'var(--border-soft)' }}>
+            <button
+              onClick={fetchAISuggestions}
+              disabled={loadingAI}
+              className="w-full py-2.5 rounded-xl border text-sm font-semibold transition-colors disabled:opacity-60"
+              style={{ borderColor: 'var(--border)', color: 'var(--text)' }}
+            >
+              {loadingAI ? 'Thinking…' : '✨ Get AI suggestions'}
+            </button>
+
+            {aiSuggestions.length > 0 && (
+              <div className="mt-3 space-y-2">
+                {aiSuggestions.map(s => {
+                  const target = aiTargets.find(t => t.id === s.taskId) || tasks.tasks.find(t => t.id === s.taskId)
+                  return (
+                    <div
+                      key={s.taskId}
+                      className="rounded-xl border p-3"
+                      style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg)' }}
+                    >
+                      <p className="text-sm font-medium" style={{ color: 'var(--text)' }}>
+                        {target?.title || 'Task'} → <span style={{ color: 'var(--accent)' }}>{s.suggestedDate}</span>
+                      </p>
+                      {s.reason && (
+                        <p className="text-xs mt-0.5" style={{ color: 'var(--text-faint)' }}>{s.reason}</p>
+                      )}
+                      <div className="flex gap-2 mt-2">
+                        <button
+                          onClick={() => acceptSuggestion(s)}
+                          className="flex-1 py-1.5 rounded-lg text-xs font-semibold text-white transition-all"
+                          style={{ backgroundColor: 'var(--accent)' }}
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => dismissSuggestion(s)}
+                          className="hover-surface px-3 py-1.5 rounded-lg border text-xs transition-colors"
+                          style={{ borderColor: 'var(--border)', color: 'var(--text-faint)' }}
+                        >
+                          Dismiss
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

@@ -17,7 +17,6 @@ const TITLES = {
   ideas:      'Ideas',      braindump:  'Brain Dump',
   routines:   'Routines',   challenges: 'Challenges',
   projects:   'Projects',   bookmarks:  'Bookmarks',
-  achievements: 'Achievements',
 }
 
 export default function TopBar({ activeTab, onTabChange, theme, onSetTheme }) {
@@ -65,7 +64,6 @@ export default function TopBar({ activeTab, onTabChange, theme, onSetTheme }) {
           className="hover-surface w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors"
           style={{ color: 'var(--text-muted)' }}
           title="Search (/)"
-          aria-label="Search"
         >
           🔍
         </button>

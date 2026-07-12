@@ -38,8 +38,8 @@ function IdeaCard({ idea, ideas, goals, onEdit }) {
 
   return (
     <div
-      className="rounded-2xl border overflow-hidden"
-      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+      className="rounded-2xl overflow-hidden"
+      style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
     >
       <div className="p-4">
         <div className="flex items-start gap-3">

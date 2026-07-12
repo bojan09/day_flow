@@ -2,10 +2,11 @@
 // Purpose: Full routines tab — create, edit, delete routines and run daily checklists.
 //          Sorted by time of day. Modal editor for create/edit.
 import { useState } from 'react'
-import RoutineCard   from './RoutineCard'
-import RoutineEditor from './RoutineEditor'
-import Modal         from '../ui/Modal'
-import EmptyState    from '../ui/EmptyState'
+import RoutineCard    from './RoutineCard'
+import RoutineEditor  from './RoutineEditor'
+import RoutineRunMode from './RoutineRunMode'
+import Modal          from '../ui/Modal'
+import EmptyState     from '../ui/EmptyState'
 
 // Sort routines by natural time-of-day order
 const TIME_ORDER = { morning: 0, midday: 1, evening: 2, anytime: 3 }
@@ -19,10 +20,25 @@ function sortByTime(routines) {
 export default function RoutinesView({ routines }) {
   const [modal,   setModal]   = useState(false)   // 'add' | 'edit'
   const [editing, setEditing] = useState(null)     // routine being edited
+  const [running, setRunning] = useState(null)     // routine currently in run mode
 
   const openAdd  = ()         => { setEditing(null);    setModal('add')  }
   const openEdit = (routine)  => { setEditing(routine); setModal('edit') }
   const close    = ()         => { setModal(false);     setEditing(null) }
+
+  const openRun = (routine) => setRunning(routine)
+
+  const finishRun = () => {
+    if (running) {
+      // Mark every step of the running routine as done for today.
+      running.steps.forEach(step => {
+        if (!routines.isStepDone(running.id, step.id)) {
+          routines.toggleStep(running.id, step.id)
+        }
+      })
+    }
+    setRunning(null)
+  }
 
   const handleSubmit = (data) => {
     if (modal === 'edit' && editing) {
@@ -106,6 +122,7 @@ export default function RoutinesView({ routines }) {
               routines={routines}
               onEdit={openEdit}
               onDelete={handleDelete}
+              onRun={openRun}
             />
           ))}
         </div>
@@ -123,6 +140,16 @@ export default function RoutinesView({ routines }) {
           onCancel={close}
         />
       </Modal>
+
+      {/* Run mode overlay */}
+      {running && (
+        <RoutineRunMode
+          routine={running}
+          steps={running.steps}
+          onExit={() => setRunning(null)}
+          onFinish={finishRun}
+        />
+      )}
     </div>
   )
 }

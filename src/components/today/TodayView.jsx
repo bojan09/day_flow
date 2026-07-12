@@ -35,6 +35,7 @@ import NotesWidget       from './modules/NotesWidget'
 import IdeasWidget       from './modules/IdeasWidget'
 import MiniHabitWidget    from '../habits/MiniHabitWidget'
 import WidgetCustomizer   from './WidgetCustomizer'
+import BentoGrid, { BentoCell } from './BentoGrid'
 import { useAdaptiveDashboard }  from '../../hooks/useAdaptiveDashboard'
 import { useWidgetPreferences, WIDGET_REGISTRY } from '../../hooks/useWidgetPreferences'
 import { useState } from 'react'
@@ -71,10 +72,10 @@ function WidgetContent({ id, tasks, habits, notes, mood, energy, gratitude, wate
 
 export default function TodayView({
   tasks, habits, notes, mood, intention, gratitude,
-  water, score, monthlyLetter, energy, affirmations, onTabChange, xp,
+  water, score, monthlyLetter, energy, affirmations, onTabChange,
   goals, projects, workouts, challenges, ideas, timeblocks,
 }) {
-  const adaptive   = useAdaptiveDashboard({ tasks, habits, mood, energy, xp: { getLevelInfo: () => null } })
+  const adaptive   = useAdaptiveDashboard({ tasks, habits, mood, energy })
   const { analysis } = useSmartScheduler({ tasks, energy, habits })
   const widgetPrefs = useWidgetPreferences()
   // score now exposes todayScore directly — no re-calculation needed
@@ -133,32 +134,35 @@ export default function TodayView({
         </FeatureTooltip>
       </div>
 
-      {/* Dynamic widget list */}
-      {orderedIds.map(id => {
-        const meta    = getMeta(id)
-        const content = <WidgetContent id={id} {...widgetProps} />
-        if (!content) return null
+      {/* Dynamic widget list — bento grid */}
+      <BentoGrid>
+        {orderedIds.map((id, idx) => {
+          const meta    = getMeta(id)
+          const content = <WidgetContent id={id} {...widgetProps} />
+          if (!content) return null
 
-        return (
-          <CollapsibleWidget
-            key={id}
-            id={id}
-            title={meta.title}
-            emoji={meta.emoji}
-            defaultOpen={meta.defaultOpen}
-            isPinned={widgetPrefs.isPinned(id)}
-            onTogglePin={widgetPrefs.togglePin}
-            onToggleHide={widgetPrefs.toggleHide}
-          >
-            {content}
-          </CollapsibleWidget>
-        )
-      })}
+          return (
+            <BentoCell key={id} size={idx === 0 ? 'hero' : 'standard'}>
+              <CollapsibleWidget
+                id={id}
+                title={meta.title}
+                emoji={meta.emoji}
+                defaultOpen={meta.defaultOpen}
+                isPinned={widgetPrefs.isPinned(id)}
+                onTogglePin={widgetPrefs.togglePin}
+                onToggleHide={widgetPrefs.toggleHide}
+              >
+                {content}
+              </CollapsibleWidget>
+            </BentoCell>
+          )
+        })}
+      </BentoGrid>
 
       {/* Evening: daily summary recap */}
       {isEvening && (
         <CollapsibleWidget id="daily-summary" emoji="📊" title="Today's Summary" defaultOpen={true}>
-          <DailySummaryCard tasks={tasks} habits={habits} mood={mood} water={water} xp={xp} />
+          <DailySummaryCard tasks={tasks} habits={habits} mood={mood} water={water} />
         </CollapsibleWidget>
       )}
 

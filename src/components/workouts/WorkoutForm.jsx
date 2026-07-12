@@ -3,8 +3,13 @@
 import { useState } from 'react'
 import { WORKOUT_TYPES, MUSCLE_GROUPS } from '../../hooks/useWorkouts'
 import { getTodayKey } from '../../utils/dateUtils'
+import WorkoutTemplatePicker from './WorkoutTemplatePicker'
 
-export default function WorkoutForm({ initial, onSubmit, onCancel }) {
+export default function WorkoutForm({ initial, sessions = [], onSubmit, onCancel }) {
+  const isEditing = !!initial
+  // Only show the "start from template" picker when creating a brand new session.
+  const [started, setStarted] = useState(isEditing)
+
   const [form, setForm] = useState({
     title:        initial?.title        || '',
     type:         initial?.type         || 'Strength',
@@ -16,6 +21,45 @@ export default function WorkoutForm({ initial, onSubmit, onCancel }) {
     recurrence:   initial?.recurrence   || 'none',
   })
   const [newExName, setNewExName] = useState('')
+
+  // Last 5 distinct-by-type sessions, newest first — used as quick-start templates.
+  const recentSessions = (() => {
+    const seenTypes = new Set()
+    const sorted = [...sessions].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    const result = []
+    for (const s of sorted) {
+      if (seenTypes.has(s.type)) continue
+      seenTypes.add(s.type)
+      result.push(s)
+      if (result.length >= 5) break
+    }
+    return result
+  })()
+
+  const handlePickTemplate = (session) => {
+    setForm(p => ({
+      ...p,
+      title:        session.title        || p.title,
+      type:         session.type         || p.type,
+      muscleGroups: session.muscleGroups || p.muscleGroups,
+      exercises:    (session.exercises || []).map(ex => ({
+        ...ex,
+        id:   Date.now().toString() + Math.random().toString(36).slice(2, 6),
+        sets: (ex.sets || []).map(s => ({ ...s, id: Date.now().toString() + Math.random().toString(36).slice(2, 6), done: false })),
+      })),
+    }))
+    setStarted(true)
+  }
+
+  if (!isEditing && !started) {
+    return (
+      <WorkoutTemplatePicker
+        recentSessions={recentSessions}
+        onPick={handlePickTemplate}
+        onBlank={() => setStarted(true)}
+      />
+    )
+  }
 
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
 
@@ -76,11 +120,12 @@ export default function WorkoutForm({ initial, onSubmit, onCancel }) {
 
       {/* Title */}
       <div>
-        <label className="text-xs font-medium uppercase tracking-wide block mb-1.5"
+        <label htmlFor="workout-title" className="text-xs font-medium uppercase tracking-wide block mb-1.5"
           style={{ color: 'var(--text-muted)' }}>
           Workout name *
         </label>
         <input
+          id="workout-title"
           autoFocus
           value={form.title}
           onChange={e => set('title', e.target.value)}
@@ -93,11 +138,12 @@ export default function WorkoutForm({ initial, onSubmit, onCancel }) {
       {/* Date + Duration */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs font-medium uppercase tracking-wide block mb-1.5"
+          <label htmlFor="workout-date" className="text-xs font-medium uppercase tracking-wide block mb-1.5"
             style={{ color: 'var(--text-muted)' }}>
             Date
           </label>
           <input
+            id="workout-date"
             type="date"
             value={form.date}
             onChange={e => set('date', e.target.value)}
@@ -106,11 +152,12 @@ export default function WorkoutForm({ initial, onSubmit, onCancel }) {
           />
         </div>
         <div>
-          <label className="text-xs font-medium uppercase tracking-wide block mb-1.5"
+          <label htmlFor="workout-duration" className="text-xs font-medium uppercase tracking-wide block mb-1.5"
             style={{ color: 'var(--text-muted)' }}>
             Duration (min)
           </label>
           <input
+            id="workout-duration"
             type="number"
             min="1" max="300"
             value={form.durationMins}
@@ -223,6 +270,7 @@ export default function WorkoutForm({ initial, onSubmit, onCancel }) {
                 </select>
                 <button
                   type="button" onClick={() => removeSet(ex.id, s.id)}
+                  aria-label="Remove set"
                   className="hover-danger text-xs ml-auto" style={{ color: 'var(--text-faint)' }}
                 >✕</button>
               </div>
@@ -284,11 +332,12 @@ export default function WorkoutForm({ initial, onSubmit, onCancel }) {
 
       {/* Notes */}
       <div>
-        <label className="text-xs font-medium uppercase tracking-wide block mb-1.5"
+        <label htmlFor="workout-notes" className="text-xs font-medium uppercase tracking-wide block mb-1.5"
           style={{ color: 'var(--text-muted)' }}>
           Notes (optional)
         </label>
         <textarea
+          id="workout-notes"
           value={form.notes}
           onChange={e => set('notes', e.target.value)}
           placeholder="How did it feel? Any PRs?"

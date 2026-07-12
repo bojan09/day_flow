@@ -3,6 +3,7 @@
 //          CSS variables throughout — works in all themes.
 import { useState, useEffect } from 'react'
 import { parseNLTask } from '../../services/nlpParser'
+import { classifyCapture } from '../../services/captureClassifier'
 import { getTodayKey } from '../../utils/dateUtils'
 
 const PREFIXES = [
@@ -31,6 +32,7 @@ export default function QuickCapture({ tasks, ideas, notes, habits }) {
   const [open,  setOpen]  = useState(false)
   const [input, setInput] = useState('')
   const [done,  setDone]  = useState(null)
+  const [submitting, setSubmitting] = useState(false)
 
   // Keyboard shortcut — press + anywhere
   useEffect(() => {
@@ -48,7 +50,7 @@ export default function QuickCapture({ tasks, ideas, notes, habits }) {
 
   const currentType = input.trim() ? detect(input) : null
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const raw  = input.trim()
     if (!raw) return
@@ -56,8 +58,20 @@ export default function QuickCapture({ tasks, ideas, notes, habits }) {
     const body = (type !== 'task' || raw.startsWith('!')) ? raw.slice(1).trim() || raw : raw
 
     if (type === 'task') {
-      const parsed = parseNLTask(body)
-      tasks.addTask(parsed || { title: body, date: getTodayKey(), priority: 'medium', category: 'Personal' })
+      setSubmitting(true)
+      let fields
+      try {
+        const result = await classifyCapture(body)
+        fields = result.fields && result.fields.title ? result.fields : null
+      } catch {
+        fields = null
+      }
+      setSubmitting(false)
+      if (!fields) {
+        const parsed = parseNLTask(body)
+        fields = parsed || { title: body, date: getTodayKey(), priority: 'medium', category: 'Personal' }
+      }
+      tasks.addTask(fields)
     } else if (type === 'idea') {
       ideas.addIdea({ title: body, category: 'Other' })
     } else if (type === 'note') {
@@ -172,11 +186,11 @@ export default function QuickCapture({ tasks, ideas, notes, habits }) {
                     </button>
                     <button
                       type="submit"
-                      disabled={!input.trim()}
+                      disabled={!input.trim() || submitting}
                       className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-40 transition-all"
                       style={{ backgroundColor: 'var(--accent)' }}
                     >
-                      Capture
+                      {submitting ? 'Capturing…' : 'Capture'}
                     </button>
                   </div>
                 </form>

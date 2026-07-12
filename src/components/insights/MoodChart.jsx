@@ -40,8 +40,8 @@ export default function MoodChart({ mood }) {
 
   return (
     <div
-      className="rounded-2xl border p-5"
-      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+      className="rounded-2xl p-5"
+      style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
     >
       <div className="flex items-center justify-between mb-4">
         <p className="text-xs font-medium uppercase tracking-wider" style={{ color: 'var(--text-faint)' }}>

@@ -86,10 +86,10 @@ function StepPack({ pack, setPack, onNext, onBack }) {
           <button
             key={key}
             onClick={() => setPack(key)}
-            className="flex flex-col items-start gap-1.5 p-4 rounded-2xl border text-left transition-all active:scale-95"
+            className="flex flex-col items-start gap-1.5 p-4 rounded-2xl text-left transition-all active:scale-95"
             style={pack === key
-              ? { backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', boxShadow: '0 0 0 2px var(--accent)' }
-              : { backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' }
+              ? { backgroundColor: 'var(--accent-light)', boxShadow: '0 0 0 2px var(--accent)' }
+              : { backgroundColor: 'var(--bg-secondary)', boxShadow: 'var(--shadow-card)' }
             }
           >
             <span className="text-2xl">{p.emoji}</span>
@@ -134,10 +134,10 @@ function StepTheme({ theme, setTheme, onNext, onBack }) {
           <button
             key={t.id}
             onClick={() => setTheme(t.id)}
-            className="flex-1 flex flex-col items-center gap-2 py-5 rounded-2xl border transition-all active:scale-95"
+            className="flex-1 flex flex-col items-center gap-2 py-5 rounded-2xl transition-all active:scale-95"
             style={theme === t.id
-              ? { backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent)', boxShadow: '0 0 0 2px var(--accent)' }
-              : { backgroundColor: t.bg, borderColor: 'var(--border)' }
+              ? { backgroundColor: 'var(--accent-light)', boxShadow: '0 0 0 2px var(--accent)' }
+              : { backgroundColor: t.bg, boxShadow: 'var(--shadow-card)' }
             }
           >
             <span className="text-2xl">{t.emoji}</span>
@@ -177,8 +177,8 @@ function StepDone({ name, pack, onFinish }) {
       </p>
       {packData && (
         <div
-          className="w-full rounded-2xl border p-4 mb-5 text-left space-y-1.5"
-          style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' }}
+          className="w-full rounded-2xl p-4 mb-5 text-left space-y-1.5"
+          style={{ backgroundColor: 'var(--bg-secondary)', boxShadow: 'var(--shadow-card)' }}
         >
           {packData.habits.map(h => (
             <p key={h.name} className="text-xs" style={{ color: 'var(--text-muted)' }}>

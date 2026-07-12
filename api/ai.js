@@ -1,16 +1,15 @@
 // API: /api/ai
-// Purpose: Server-side proxy for Anthropic API calls. The API key lives only
-//          in the ANTHROPIC_API_KEY env var on Vercel — never in the client
-//          bundle. Validates input, pins model + token limits server-side,
-//          and applies a best-effort per-IP rate limit.
+// Purpose: Server-side proxy for Groq API calls (OpenAI-compatible chat
+//          completions). The API key lives only in the GROQ_API_KEY env var
+//          on Vercel — never in the client bundle. Validates input, pins
+//          model + token limits server-side, and applies a best-effort
+//          per-IP rate limit tuned to Groq's free tier.
 
-const MODEL      = 'claude-sonnet-4-20250514'
+const MODEL      = 'llama-3.3-70b-versatile'
 const MAX_TOKENS = 1000
 
-// Best-effort in-memory rate limit (per warm serverless instance):
-// 20 requests per IP per 5 minutes.
-const WINDOW_MS = 5 * 60 * 1000
-const LIMIT     = 20
+const WINDOW_MS = 60 * 1000
+const LIMIT     = 30
 const hits      = new Map()
 
 function rateLimited(ip) {
@@ -27,14 +26,14 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const key = process.env.ANTHROPIC_API_KEY
+  const key = process.env.GROQ_API_KEY
   if (!key) {
     return res.status(503).json({ error: 'AI is not configured on this deployment' })
   }
 
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown'
   if (rateLimited(ip)) {
-    return res.status(429).json({ error: 'Too many AI requests — try again in a few minutes' })
+    return res.status(429).json({ error: 'Too many AI requests — try again in a minute' })
   }
 
   const { system, message } = req.body || {}
@@ -45,18 +44,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    const upstream = await fetch('https://api.anthropic.com/v1/messages', {
+    const upstream = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method:  'POST',
       headers: {
-        'Content-Type':      'application/json',
-        'x-api-key':         key,
-        'anthropic-version': '2023-06-01',
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${key}`,
       },
       body: JSON.stringify({
         model:      MODEL,
         max_tokens: MAX_TOKENS,
-        system,
-        messages: [{ role: 'user', content: message }],
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user',   content: message },
+        ],
       }),
     })
 
@@ -65,7 +65,7 @@ export default async function handler(req, res) {
     }
 
     const data = await upstream.json()
-    const text = data.content?.[0]?.text || ''
+    const text = data.choices?.[0]?.message?.content || ''
     return res.status(200).json({ text })
   } catch {
     return res.status(502).json({ error: 'AI service unreachable' })

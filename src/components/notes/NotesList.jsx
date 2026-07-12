@@ -26,11 +26,12 @@ export default function NotesList({ notes, activeId, onSelect, onNew, onDelete, 
           <div
             key={n.id}
             onClick={() => onSelect(n.id)}
-            className={`group relative cursor-pointer rounded-xl border p-3.5 transition-all card-hover min-w-0 ${
+            className={`group relative cursor-pointer rounded-xl p-3.5 transition-all card-hover min-w-0 ${
               activeId === n.id
-                ? '[background-color:var(--accent)] [border-color:var(--accent)] text-white'
-                : '[background-color:var(--surface)] [border-color:var(--border-soft)] hover:[border-color:var(--border)]'
+                ? '[background-color:var(--accent)] text-white'
+                : '[background-color:var(--surface)]'
             }`}
+            style={{ boxShadow: 'var(--shadow-card)' }}
           >
             {n.pinned && (
               <span className="absolute top-2 right-2 text-[10px]">📌</span>

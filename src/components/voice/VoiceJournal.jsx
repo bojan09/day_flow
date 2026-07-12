@@ -8,7 +8,7 @@ import { isSupabaseConfigured } from '../../services/supabaseClient'
 const isSupported = () => 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window
 const canRecord   = () => !!(navigator.mediaDevices?.getUserMedia)
 
-export default function VoiceJournal({ notes, xp }) {
+export default function VoiceJournal({ notes }) {
   const { user }                      = useAuth()
   const [listening,    setListening]  = useState(false)
   const [recording,    setRecording]  = useState(false)
@@ -86,7 +86,6 @@ export default function VoiceJournal({ notes, xp }) {
         tags:        ['journal'],
         attachments: audioPath ? [{ path: audioPath, name: title + '.webm', type: 'audio/webm', isVoice: true }] : [],
       })
-      xp.awardXP('NOTE_WRITTEN', 'voice journal')
       setSaved(true); setTranscript(''); setAudioURL(null)
       setTimeout(() => setSaved(false), 2500)
     } catch (err) {

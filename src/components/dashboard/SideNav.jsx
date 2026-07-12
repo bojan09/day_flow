@@ -4,6 +4,7 @@
 import { useNavigate } from 'react-router-dom'
 import UserMenu    from '../auth/UserMenu'
 import ThemeToggle from '../ui/ThemeToggle'
+import Logo        from '../ui/Logo'
 
 const SECTIONS = [
   { label: 'Plan', tabs: [
@@ -32,7 +33,6 @@ const SECTIONS = [
     { id: 'balance',  label: 'Balance',  emoji: '⚖️' },
     { id: 'focus',    label: 'Focus',    emoji: '⏱️' },
     { id: 'search',   label: 'Search',   emoji: '🔍' },
-    { id: 'achievements', label: 'Achievements', emoji: '🏅' },
   ]},
 ]
 
@@ -66,11 +66,10 @@ export default function SideNav({ activeTab, onTabChange, theme, onSetTheme }) {
       {/* Logo */}
       <button
         onClick={() => { navigate('/dashboard'); onTabChange('today') }}
-        className="font-serif text-xl mb-6 pl-2 text-left hover:opacity-70 transition-opacity flex-shrink-0"
-        style={{ color: 'var(--text)' }}
+        className="mb-6 pl-2 text-left hover:opacity-70 transition-opacity flex-shrink-0"
         aria-label="Go to tasks"
       >
-        Day<em className="not-italic [color:var(--accent)]">Flow</em>
+        <Logo size={26} />
       </button>
 
       {/* Nav sections */}

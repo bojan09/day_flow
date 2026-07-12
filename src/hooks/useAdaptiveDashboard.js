@@ -30,7 +30,7 @@ const CONTEXT_META = {
   night:         { greeting: 'Good night',         emoji: '🌙', desc: 'Rest and recover'            },
 }
 
-export function useAdaptiveDashboard({ tasks, habits, mood, energy, xp }) {
+export function useAdaptiveDashboard({ tasks, habits, mood, energy }) {
   const context = getTimeContext()
   const meta    = CONTEXT_META[context]
   const today   = getTodayKey()
@@ -44,7 +44,6 @@ export function useAdaptiveDashboard({ tasks, habits, mood, energy, xp }) {
   const habitPct       = habits.getTodayCompletion()
   const todayMood      = mood.getTodayMood?.() ?? null
   const todayEnergy    = energy.getTodayEnergy?.() ?? null
-  const levelInfo      = xp.getLevelInfo?.() ?? null
 
   // ── Overdue tasks ──────────────────────────────────────────────────────────
   const overdue = tasks.tasks.filter(t => tasks.isOverdue(t)).length
@@ -119,7 +118,6 @@ export function useAdaptiveDashboard({ tasks, habits, mood, energy, xp }) {
     streakHealth,
     todayMood,
     todayEnergy,
-    levelInfo,
     nudges,
     widgetOrder,
   }

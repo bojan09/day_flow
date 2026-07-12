@@ -11,8 +11,8 @@ const PREVIEWS = {
 export default function ThemePicker({ theme, onSetTheme }) {
   return (
     <div
-      className="rounded-2xl border p-5"
-      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+      className="rounded-2xl p-5"
+      style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
     >
       <p className="text-xs font-medium uppercase tracking-wider mb-4" style={{ color: 'var(--text-faint)' }}>
         Appearance

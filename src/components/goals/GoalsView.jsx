@@ -1,6 +1,6 @@
 import ViewSkeleton from '../ui/ViewSkeleton'
 // Component: GoalsView
-// Purpose: Goals tab — XP level bar, type filter, goal cards with milestones
+// Purpose: Goals tab — type filter, goal cards with milestones
 import { useState } from 'react'
 import GoalCard       from './GoalCard'
 import GoalForecaster from './GoalForecaster'
@@ -8,32 +8,7 @@ import AddGoalModal from './AddGoalModal'
 import EmptyState   from '../ui/EmptyState'
 import { GOAL_TYPES } from '../../hooks/useGoals'
 
-function XPBar({ xp }) {
-  const info = xp.getLevelInfo()
-  return (
-    <div className="[background-color:var(--surface)] rounded-2xl border [border-color:var(--border-soft)] shadow-sm p-4">
-      <div className="flex items-center justify-between mb-2">
-        <span className="font-serif text-base [color:var(--text)]">{info.title}</span>
-        <span className="text-xs font-medium [color:var(--accent)] [background-color:var(--accent-light)] px-2.5 py-0.5 rounded-full">
-          {info.totalXP} XP
-        </span>
-      </div>
-      <div className="h-2 [background-color:var(--bg-secondary)] rounded-full overflow-hidden">
-        <div
-          className="h-full [background-color:var(--accent)] rounded-full transition-all duration-700"
-          style={{ width: `${info.progress}%` }}
-        />
-      </div>
-      {info.next && (
-        <p className="text-[10px] [color:var(--text-faint)] mt-1.5">
-          {info.next.min - info.totalXP} XP to level {info.next.level} · {info.next.title}
-        </p>
-      )}
-    </div>
-  )
-}
-
-export default function GoalsView({ goals, xp }) {
+export default function GoalsView({ goals }) {
   const [modal, setModal]           = useState(false)
   const [activeType, setActiveType] = useState('All')
 
@@ -46,8 +21,6 @@ export default function GoalsView({ goals, xp }) {
   if (!goals?.goals) return null
   return (
     <div className="max-w-2xl mx-auto space-y-4 pt-2">
-      <XPBar xp={xp} />
-
       <div className="flex items-center justify-between">
         <p className="text-sm [color:var(--text-muted)]">{goals.goals.length} goals</p>
         <button
@@ -77,7 +50,7 @@ export default function GoalsView({ goals, xp }) {
         />
       ) : (
         <div className="space-y-4">
-          {visible.map(g => <GoalCard key={g.id} goal={g} goals={goals} xp={xp} />)}
+          {visible.map(g => <GoalCard key={g.id} goal={g} goals={goals} />)}
         </div>
       )}
 

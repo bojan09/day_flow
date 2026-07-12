@@ -60,8 +60,8 @@ export default function GoalForecaster({ goals }) {
   if (forecasts.length === 0) {
     return (
       <div
-        className="rounded-2xl border p-5"
-        style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+        className="rounded-2xl p-5"
+        style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
       >
         <p className="text-xs font-semibold uppercase tracking-widest mb-2" style={{ color: 'var(--text-faint)' }}>
           🔮 Goal Forecasting
@@ -75,8 +75,8 @@ export default function GoalForecaster({ goals }) {
 
   return (
     <div
-      className="rounded-2xl border overflow-hidden"
-      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+      className="rounded-2xl overflow-hidden"
+      style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
     >
       <div className="px-5 pt-5 pb-3 border-b" style={{ borderColor: 'var(--border-soft)' }}>
         <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--text-faint)' }}>

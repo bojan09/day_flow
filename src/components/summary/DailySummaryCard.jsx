@@ -1,6 +1,6 @@
 import { memo } from 'react'
 // Component: DailySummaryCard
-// Purpose: Complete daily recap — tasks done, habits hit, mood, water, XP earned.
+// Purpose: Complete daily recap — tasks done, habits hit, mood, water.
 //          Shown in InsightsView and surfaced in Today's evening mode.
 import { format, subDays } from 'date-fns'
 import { getTodayKey, getDateKey } from '../../utils/dateUtils'
@@ -39,7 +39,7 @@ function DayBar({ label, pct, color }) {
   )
 }
 
-function DailySummaryCard({ tasks, habits, mood, water, xp }) {
+function DailySummaryCard({ tasks, habits, mood, water }) {
   const today = getTodayKey()
 
   // ── Task stats ────────────────────────────────────────────────────────────
@@ -60,9 +60,6 @@ function DailySummaryCard({ tasks, habits, mood, water, xp }) {
 
   // ── Water ─────────────────────────────────────────────────────────────────
   const waterData   = water?.getProgress()
-
-  // ── XP ────────────────────────────────────────────────────────────────────
-  const levelInfo   = xp?.getLevelInfo()
 
   // ── Last 7 days trend ────────────────────────────────────────────────────
   const last7 = Array.from({ length: 7 }, (_, i) => {
@@ -202,31 +199,6 @@ function DailySummaryCard({ tasks, habits, mood, water, xp }) {
             ))}
           </div>
         </div>
-
-        {/* XP progress strip */}
-        {levelInfo && (
-          <div
-            className="mt-4 pt-3 border-t flex items-center gap-3"
-            style={{ borderColor: 'var(--border-soft)' }}
-          >
-            <div className="flex-1">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>
-                  Level {levelInfo.level} — {levelInfo.title}
-                </span>
-                <span className="text-xs" style={{ color: 'var(--text-faint)' }}>
-                  {levelInfo.totalXP} XP
-                </span>
-              </div>
-              <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--border)' }}>
-                <div
-                  className="h-full rounded-full transition-all duration-700"
-                  style={{ width: `${levelInfo.progress}%`, backgroundColor: 'var(--accent)' }}
-                />
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )

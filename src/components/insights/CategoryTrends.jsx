@@ -59,8 +59,8 @@ export default function CategoryTrends({ tasks }) {
   if (categories.length === 0) {
     return (
       <div
-        className="rounded-2xl border p-5 text-center"
-        style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+        className="rounded-2xl p-5 text-center"
+        style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
       >
         <p className="text-sm italic" style={{ color: 'var(--text-faint)' }}>
           Add categorised tasks to see trends.
@@ -71,8 +71,8 @@ export default function CategoryTrends({ tasks }) {
 
   return (
     <div
-      className="rounded-2xl border p-5"
-      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+      className="rounded-2xl p-5"
+      style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
     >
       <p className="text-xs font-medium uppercase tracking-wider mb-4" style={{ color: 'var(--text-faint)' }}>
         📁 Category Trends — 4 Weeks

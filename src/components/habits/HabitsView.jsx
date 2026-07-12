@@ -4,14 +4,15 @@ import { useToast } from '../../utils/toast'
 // Purpose: Habits tab — weekly/calendar toggle, rules panel, pairing suggestions, confetti
 import { useState, useCallback, useRef } from 'react'
 import Card              from '../ui/Card'
-import HabitRow          from './HabitRow'
+import HabitCard          from './HabitCard'
 import AddHabitModal     from './AddHabitModal'
+import { EditHabitModal } from './HabitRow'
 import HabitCalendar     from './HabitCalendar'
 import HabitRulesPanel   from './HabitRulesPanel'
 import Confetti          from '../ui/Confetti'
 import EmptyState        from '../ui/EmptyState'
-import { getWeekDays }   from '../../utils/dateUtils'
-import { format, isToday } from 'date-fns'
+import { getWeekDays, getDateKey, getTodayKey } from '../../utils/dateUtils'
+import { isFuture } from 'date-fns'
 import { notifications } from '../../services/notificationService'
 
 const MILESTONE_STREAKS = [7, 14, 30, 60, 100]
@@ -21,9 +22,21 @@ export default function HabitsView({ habits, habitRules }) {
   const [modalOpen, setModal]    = useState(false)
   const [confetti,  setConfetti] = useState(false)
   const [view,      setView]     = useState('week')
+  const [editingHabit, setEditingHabit] = useState(null)
   const prevStreaks               = useRef({})
   const weekDays                 = getWeekDays()
-  const { habits: list, isHabitDone, toggleHabitDay, addHabit, updateHabit, deleteHabit, getStreak, getWeeklyCount } = habits
+  const { habits: list, isHabitDone, toggleHabitDay, updateHabit, deleteHabit, getStreak, getWeeklyCount } = habits
+
+  const handleDelete = useCallback((habitId) => {
+    const h = list.find(x => x.id === habitId)
+    deleteHabit(habitId)
+    if (h) toast.undo('Habit deleted', () => habits.restoreHabit(h))
+  }, [list, deleteHabit, habits, toast])
+
+  const handleEdit = useCallback((habitId) => {
+    const h = list.find(x => x.id === habitId)
+    if (h) setEditingHabit(h)
+  }, [list])
 
   const handleToggle = useCallback((habitId, dateKey) => {
     // Fire IFTTT rules
@@ -69,44 +82,40 @@ export default function HabitsView({ habits, habitRules }) {
 
       {view === 'calendar' ? (
         <HabitCalendar habits={habits} />
-      ) : (
+      ) : list.length === 0 ? (
         <Card noPad>
-          <div className="overflow-x-auto">
-          <div
-            className="grid items-center px-3 sm:px-5 py-3 border-b"
-            style={{ gridTemplateColumns: 'var(--habit-label-col, 124px) repeat(7, minmax(1.75rem,1fr))', gap: '0.25rem', borderColor: 'var(--border-soft)' }}
-          >
-            <span className="text-xs uppercase tracking-wider" style={{ color: 'var(--text-faint)' }}>Habit</span>
-            {weekDays.map(d => (
-              <span
-                key={d.toISOString()}
-                className="text-[10px] font-medium uppercase mx-auto text-center"
-                style={{ color: isToday(d) ? 'var(--accent)' : 'var(--text-faint)' }}
-              >
-                {format(d, 'EEE')[0]}
-              </span>
-            ))}
-          </div>
-          {list.length === 0 ? (
-            <EmptyState type="habits" title="No habits yet" subtitle="Build a routine — add your first habit." action="+ Add Habit" onAction={() => setModal(true)} />
-          ) : (
-            <div className="divide-y" style={{borderColor: "var(--border-soft)"}}>
-              {list.map(h => (
-                <HabitRow key={h.id} habit={h} weekDays={weekDays}
-                  isHabitDone={isHabitDone} toggleHabitDay={handleToggle}
-                  streak={getStreak(h.id)} weeklyCount={getWeeklyCount(h.id)}
-                  onDelete={(id) => { const hb = list.find(x => x.id === id); deleteHabit(id); if (hb) toast.undo('Habit deleted', () => habits.restoreHabit(hb)) }} onEdit={updateHabit} />
-              ))}
-            </div>
-          )}
-          </div>
+          <EmptyState type="habits" title="No habits yet" subtitle="Build a routine — add your first habit." action="+ Add Habit" onAction={() => setModal(true)} />
         </Card>
+      ) : (
+        <div className="space-y-2">
+          {list.map(h => (
+            <HabitCard
+              key={h.id}
+              habit={h}
+              doneToday={isHabitDone(h.id)}
+              last7={weekDays.map(d => isFuture(d) ? null : isHabitDone(h.id, getDateKey(d)))}
+              onToggleToday={(habitId) => handleToggle(habitId, getTodayKey())}
+              streak={getStreak(h.id)}
+              frequencyLabel={h.frequency === 'daily' ? 'daily' : `${getWeeklyCount(h.id)}/${h.frequency}× wk`}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
       )}
 
       {list.length >= 2 && <HabitRulesPanel habits={habits} habitRules={habitRules} />}
 
       <AddHabitModal isOpen={modalOpen} onClose={() => setModal(false)}
         onAdd={h => { habits.addHabit(h); setModal(false) }} />
+
+      {editingHabit && (
+        <EditHabitModal
+          habit={editingHabit}
+          onSave={(updates) => updateHabit(editingHabit.id, updates)}
+          onClose={() => setEditingHabit(null)}
+        />
+      )}
     </div>
   )
 }

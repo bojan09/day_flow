@@ -15,7 +15,6 @@ const SearchView = lazy(() => import('../components/search/SearchView'))
 const InsightsView = lazy(() => import('../components/insights/InsightsView'))
 const BalanceView = lazy(() => import('../components/balance/BalanceView'))
 const WorkoutsView = lazy(() => import('../components/workouts/WorkoutsView'))
-const AchievementsView = lazy(() => import('../components/insights/AchievementsView'))
 const TimeBlockView = lazy(() => import('../components/timeblock/TimeBlockView'))
 const RepeatingView = lazy(() => import('../components/repeating/RepeatingView'))
 const CalendarView = lazy(() => import('../components/calendar/CalendarView'))
@@ -38,7 +37,6 @@ import { isSupabaseConfigured } from '../services/supabaseClient'
 import { useTheme           } from '../hooks/useTheme'
 import { useIntention       } from '../hooks/useIntention'
 import { useGoals           } from '../hooks/useGoals'
-import { useXP              } from '../hooks/useXP'
 import { useSomeday         } from '../hooks/useSomeday'
 import { useGratitude       } from '../hooks/useGratitude'
 import { useTemplates       } from '../hooks/useTemplates'
@@ -57,7 +55,6 @@ import { useBookmarks       } from '../hooks/useBookmarks'
 import { useAffirmations    } from '../hooks/useAffirmations'
 import { useWorkouts        } from '../hooks/useWorkouts'
 import { useCustomCategories } from '../hooks/useCustomCategories'
-import { useAchievements    } from '../hooks/useAchievements'
 import { useMoodTheme       } from '../hooks/useMoodTheme'
 import { useOnboarding     } from '../hooks/useOnboarding'
 import { useTimeblocks    } from '../hooks/useTimeblocks'
@@ -78,7 +75,7 @@ export default function DashboardPage() {
     const hash = window.location.hash.slice(1)
     const valid = ['today','tasks','habits','focus','calendar','timeblock','projects',
       'notes','ideas','braindump','bookmarks','workouts','routines','challenges','repeating',
-      'goals','insights','balance','search','achievements','weeklyreview']
+      'goals','insights','balance','search','weeklyreview']
     return valid.includes(hash) ? hash : 'today'
   })
 
@@ -139,7 +136,6 @@ export default function DashboardPage() {
   const intention       = useIntention()
   const gratitude       = useGratitude()
   const goals           = useGoals()
-  const xp              = useXP()
   const someday         = useSomeday()
   const templates       = useTemplates()
   const energy          = useEnergy()
@@ -156,7 +152,6 @@ export default function DashboardPage() {
   const affirmations    = useAffirmations()
   const workouts        = useWorkouts()
   const catData         = useCustomCategories()
-  const achievements    = useAchievements({ tasks, habits, notes, goals, xp, workouts, mood })
   const { theme, setTheme } = useTheme()
   const { user }             = useAuth()
   const moodTheme  = useMoodTheme(mood, theme)
@@ -210,7 +205,7 @@ export default function DashboardPage() {
       <ViewErrorBoundary key={activeTab}>
 
         {/* ── Plan ─────────────────────────────────────────────────────────── */}
-        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={handleTabChange} xp={xp} goals={goals} projects={projects} workouts={workouts} challenges={challenges} ideas={ideas} timeblocks={timeblocks} />}
+        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={handleTabChange} goals={goals} projects={projects} workouts={workouts} challenges={challenges} ideas={ideas} timeblocks={timeblocks} />}
         {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={handleTabChange} energy={energy} habits={habits} ideas={ideas} />}
         {activeTab === 'calendar'   && <CalendarView tasks={tasks} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} />}
         {activeTab === 'timeblock'  && <TimeBlockView tasks={tasks} />}
@@ -220,7 +215,7 @@ export default function DashboardPage() {
         {activeTab === 'habits'     && <HabitsView habits={habits} habitRules={habitRules} />}
         {activeTab === 'routines'   && <RoutinesView routines={routines} />}
         {activeTab === 'challenges' && <ChallengesView challenges={challenges} />}
-        {activeTab === 'goals'      && <GoalsView goals={goals} xp={xp} />}
+        {activeTab === 'goals'      && <GoalsView goals={goals} />}
         {activeTab === 'workouts'   && <WorkoutsView workouts={workouts} />}
         {activeTab === 'repeating'  && <RepeatingView tasks={tasks} workouts={workouts} />}
 
@@ -231,10 +226,9 @@ export default function DashboardPage() {
         {activeTab === 'bookmarks'  && <BookmarksView bookmarks={bookmarks} />}
 
         {/* ── Reflect ──────────────────────────────────────────────────────── */}
-        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} xp={xp} achievements={achievements} energy={energy} goals={goals} water={water} moodTheme={moodTheme} workouts={workouts} ideas={ideas} bookmarks={bookmarks} />}
+        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} energy={energy} goals={goals} water={water} moodTheme={moodTheme} workouts={workouts} ideas={ideas} bookmarks={bookmarks} />}
         {activeTab === 'balance'    && <BalanceView wheel={wheel} />}
-        {activeTab === 'focus'      && <FocusMode tasks={tasks} xp={xp} pomodoroHistory={pomodoroHistory} />}
-        {activeTab === 'achievements' && <AchievementsView achievements={achievements} xp={xp} />}
+        {activeTab === 'focus'      && <FocusMode tasks={tasks} pomodoroHistory={pomodoroHistory} />}
         {activeTab === 'search'     && <SearchView tasks={tasks} notes={notes} habits={habits} goals={goals} ideas={ideas} bookmarks={bookmarks} />}
 
       </ViewErrorBoundary>

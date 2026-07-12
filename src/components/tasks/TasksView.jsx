@@ -3,8 +3,6 @@ import { useToast } from '../../utils/toast'
 // Component: TasksView
 // Purpose: Tasks tab — NLP input, color categories, sub-task detail modal, duplicate, templates, someday
 import { useState } from 'react'
-import Card          from '../ui/Card'
-import Badge         from '../ui/Badge'
 import Modal         from '../ui/Modal'
 import TaskForm      from './TaskForm'
 import RecurrencePanel from './RecurrencePanel'
@@ -12,6 +10,7 @@ import QuickTaskBar          from './QuickTaskBar'
 import SmartSchedulerPanel  from './SmartSchedulerPanel'
 import NLPTaskInput  from './NLPTaskInput'
 import TaskDetail    from './TaskDetail'
+import TaskSection   from './TaskSection'
 import EmptyState    from '../ui/EmptyState'
 import TaskTemplates from '../templates/TaskTemplates'
 import SomedayList   from '../summary/SomedayList'
@@ -20,31 +19,12 @@ import { addDays, format } from 'date-fns'
 
 const FILTERS = ['All', 'Today', 'Overdue', 'Pending', 'Done']
 
-const CAT_COLORS = {
-  Work:     'bg-blue-100 text-blue-700',
-  Personal: '[background-color:var(--accent-light)] [color:var(--accent)]',
-  Health:   'bg-emerald-100 text-emerald-700',
-  Learning: 'bg-violet-100 text-violet-700',
-  Finance:  'bg-amber-100 text-amber-700',
-  Other:    '[background-color:var(--bg-secondary)] text-stone-600',
-}
-
-const CAT_DOT = {
-  Work:     'bg-blue-400',
-  Personal: '[background-color:var(--accent)]',
-  Health:   'bg-emerald-500',
-  Learning: 'bg-violet-500',
-  Finance:  'bg-amber-400',
-  Other:    '[background-color:var(--border)]',
-}
-
 export default function TasksView({ tasks, templates, someday, projects, categories, onAddCategory, onRemoveCategory, onTabChange, energy, habits, ideas }) {
   const { toast } = useToast()
   const [recurTask, setRecurTask] = useState(null)
   const [filter,     setFilter]  = useState('Today')
   const [modalOpen,  setModal]   = useState(false)
   const [detailTask,   setDetail]      = useState(null)
-  const [visibleCount, setVisibleCount] = useState(30)
   const todayKey = getTodayKey()
 
   const filtered = tasks.tasks.filter(t => {
@@ -54,11 +34,15 @@ export default function TasksView({ tasks, templates, someday, projects, categor
     if (filter === 'Done')    return t.completed
     return true
   })
-  const sorted = [...filtered].sort((a, b) => {
-    if (a.completed !== b.completed) return a.completed ? 1 : -1
+  const byPriority = (a, b) => {
     const p = { high: 0, medium: 1, low: 2 }
     return (p[a.priority] ?? 1) - (p[b.priority] ?? 1)
-  })
+  }
+
+  const overdueTasks  = filtered.filter(t => !t.completed && tasks.isOverdue(t)).sort(byPriority)
+  const todayTasks    = filtered.filter(t => !t.completed && t.date === todayKey).sort(byPriority)
+  const upcomingTasks = filtered.filter(t => !t.completed && t.date > todayKey).sort(byPriority)
+  const doneTasks     = filtered.filter(t => t.completed).sort(byPriority)
 
   if (!tasks.synced) return <ViewSkeleton type="tasks" />
 
@@ -69,6 +53,8 @@ export default function TasksView({ tasks, templates, someday, projects, categor
     tasks.getTodayTasks().filter(t => !t.completed && !t.isRecurring)
       .forEach(t => tasks.addTask({ ...t, date: tomorrow }))
   }
+
+  const handleDelete = (t) => { tasks.deleteTask(t.id); toast.undo('Task deleted', () => tasks.restoreTask(t)) }
 
   return (
     <div className="max-w-2xl mx-auto space-y-4 pt-2">
@@ -107,86 +93,16 @@ export default function TasksView({ tasks, templates, someday, projects, categor
         ))}
       </div>
 
-      <Card noPad>
-        {sorted.length === 0 ? (
-          <EmptyState type="tasks" title="Nothing here" subtitle="Add a task using the input above." action="+ New Task" onAction={() => setModal(true)} />
-        ) : (
-          <ul className="divide-y [border-color:var(--border-soft)]">
-            {/* Show all when small list, paginate when large */}
-            {(sorted.length > 50 ? sorted.slice(0, visibleCount) : sorted).map((t, idx) => (
-              <li key={t.id}
-                className="flex items-start gap-3 px-5 py-3.5 hover:[background-color:var(--bg-secondary)]/50 transition-colors group cursor-pointer animate-fade-up"
-                style={{ animationDelay: `${Math.min(idx * 35, 350)}ms`, animationFillMode: 'both' }}
-                onClick={() => setDetail(t)}>
-                {/* Color dot */}
-                <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-1.5 ${CAT_DOT[t.category] ?? '[background-color:var(--border)]'}`} />
-
-                <button
-                  onClick={e => { e.stopPropagation(); tasks.toggleTask(t.id) }}
-                  className={`w-5 h-5 rounded-md border-2 flex-shrink-0 mt-0.5 flex items-center justify-center text-xs transition-all ${
-                    t.completed ? '[background-color:var(--accent)] [border-color:var(--accent)] text-white' : '[border-color:var(--border)] hover:[border-color:var(--accent-mid)]'
-                  }`}>
-                  {t.completed && '✓'}
-                </button>
-
-                <div className="flex-1 min-w-0">
-                  <p className={`text-sm leading-snug line-clamp-2 ${t.completed ? 'line-through [color:var(--text-faint)]' : '[color:var(--text)]'}`}>{t.title}</p>
-                  <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${CAT_COLORS[t.category] ?? '[background-color:var(--bg-secondary)] text-stone-600'}`}>
-                      {t.category}
-                    </span>
-                    {tasks.isOverdue(t)   && <span className="text-[11px] font-medium text-red-500 bg-red-50 px-1.5 rounded">Overdue</span>}
-                    {tasks.isDueToday(t)  && <span className="text-[11px] font-medium text-amber-600 bg-amber-50 px-1.5 rounded">Due today</span>}
-                    {t.estimateMins       && <span className="text-[11px] [color:var(--text-faint)]">⏱ {t.estimateMins < 60 ? `${t.estimateMins}m` : `${t.estimateMins/60}h`}</span>}
-                    {t.isRecurring        && (
-                      <button type="button" aria-label="Manage recurrence"
-                        onClick={e => { e.stopPropagation(); setRecurTask(t) }}
-                        className="text-[11px] [color:var(--accent)] hover:opacity-70 transition-opacity">
-                        🔁{(t.recurStatus ?? 'active') !== 'active' && <span className="ml-0.5 [color:var(--text-muted)]">paused</span>}
-                      </button>
-                    )}
-                    {(t.subTasks?.length) > 0 && <span className="text-[11px] [color:var(--text-faint)]">· {t.subTasks.filter(s=>s.done).length}/{t.subTasks.length} sub</span>}
-                    {t.projectId && projects?.find(p => p.id === t.projectId) && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded font-medium" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-faint)' }}>
-                        🗂️ {projects.find(p => p.id === t.projectId)?.name}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5" onClick={e => e.stopPropagation()}>
-                  <Badge label={t.priority} color={t.priority} />
-                  <button onClick={() => tasks.setFocus(t.id)}
-                    className={`text-sm p-1 rounded opacity-0 group-hover:opacity-100 transition-all ${t.isFocus ? 'opacity-100 [color:var(--accent)]' : '[color:var(--text-faint)] hover:[color:var(--accent)]'}`}>
-                    {t.isFocus ? '📌' : '📍'}
-                  </button>
-                  {onTabChange && (
-                    <button
-                      onClick={() => onTabChange('timeblock')}
-                      className="opacity-0 group-hover:opacity-100 text-[11px] px-1.5 py-0.5 rounded transition-all"
-                      style={{ color: 'var(--accent)', backgroundColor: 'var(--accent-light)' }}
-                      title="Open in Schedule"
-                    >⏰</button>
-                  )}
-                  <button aria-label="Delete task" onClick={() => { tasks.deleteTask(t.id); toast.undo('Task deleted', () => tasks.restoreTask(t)) }}
-                    className="tap-target opacity-0 group-hover:opacity-100 [color:var(--text-faint)] hover:text-red-400 text-xs p-1 transition-all">✕</button>
-                </div>
-              </li>
-            ))}
-            {sorted.length > 50 && visibleCount < sorted.length && (
-              <li className="text-center py-3">
-                <button
-                  onClick={() => setVisibleCount(v => v + 30)}
-                  className="text-sm font-medium"
-                  style={{ color: 'var(--accent)' }}
-                >
-                  Show {Math.min(30, sorted.length - visibleCount)} more ({sorted.length - visibleCount} remaining)
-                </button>
-              </li>
-            )}
-          </ul>
-        )}
-      </Card>
+      {filtered.length === 0 ? (
+        <EmptyState type="tasks" title="Nothing here" subtitle="Add a task using the input above." action="+ New Task" onAction={() => setModal(true)} />
+      ) : (
+        <div className="space-y-5">
+          <TaskSection title="Overdue"  tasks={overdueTasks}  urgency="overdue" tasksApi={tasks} projects={projects} onTabChange={onTabChange} onOpenDetail={setDetail} onOpenRecur={setRecurTask} onDelete={handleDelete} />
+          <TaskSection title="Today"    tasks={todayTasks}    urgency="today"   tasksApi={tasks} projects={projects} onTabChange={onTabChange} onOpenDetail={setDetail} onOpenRecur={setRecurTask} onDelete={handleDelete} />
+          <TaskSection title="Upcoming" tasks={upcomingTasks} urgency="future"  tasksApi={tasks} projects={projects} onTabChange={onTabChange} onOpenDetail={setDetail} onOpenRecur={setRecurTask} onDelete={handleDelete} />
+          <TaskSection title="Done"     tasks={doneTasks}     urgency="future"  tasksApi={tasks} projects={projects} onTabChange={onTabChange} onOpenDetail={setDetail} onOpenRecur={setRecurTask} onDelete={handleDelete} />
+        </div>
+      )}
 
       {templates && someday && (
         <>

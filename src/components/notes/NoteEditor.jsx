@@ -37,8 +37,8 @@ export default function NoteEditor({ note, onUpdate, onBack, getWordCount, getRe
 
   return (
     <div
-      className="flex flex-col h-full rounded-2xl border overflow-hidden"
-      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+      className="flex flex-col h-full rounded-2xl overflow-hidden"
+      style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
     >
       {/* Toolbar */}
       <div

@@ -9,7 +9,6 @@ import AnalyticsPanel        from './AnalyticsPanel'
 import SmartStreakBoard      from './SmartStreakBoard'
 import HabitLoopOptimizer  from '../habits/HabitLoopOptimizer'
 import AdvancedAnalytics     from './AdvancedAnalytics'
-import AchievementsView      from './AchievementsView'
 import AICoach               from './AICoach'
 import ProductivityHeatmap   from './ProductivityHeatmap'
 import CategoryTrends        from './CategoryTrends'
@@ -33,7 +32,7 @@ const TABS = [
 export default function InsightsView({
   mood, habits, tasks, notes, goals,
   theme, onSetTheme, onWriteNote,
-  intentions, xp, achievements, energy, water,
+  intentions, energy, water,
   moodTheme, workouts, ideas, bookmarks,
 }) {
   const [tab, setTab] = useState('overview')
@@ -65,7 +64,7 @@ export default function InsightsView({
       {/* ── Overview tab ───────────────────────────────────────────────── */}
       {tab === 'overview' && (
         <div className="space-y-4">
-          <DailySummaryCard tasks={tasks} habits={habits} mood={mood} water={water} xp={xp} />
+          <DailySummaryCard tasks={tasks} habits={habits} mood={mood} water={water} />
           <AIDailyFeedback  tasks={tasks} habits={habits} mood={mood} water={water} />
           <MoodTracker mood={mood} />
           <AnalyticsPanel  tasks={tasks} />
@@ -92,16 +91,6 @@ export default function InsightsView({
           <SmartStreakBoard habits={habits} />
           <HabitLoopOptimizer habits={habits} />
 
-          {achievements && (
-            <>
-              <p className="text-xs font-medium uppercase tracking-widest px-1"
-                style={{ color: 'var(--text-faint)' }}>
-                Achievements
-              </p>
-              <AchievementsView achievements={achievements} xp={xp} />
-            </>
-          )}
-
           {goals && (
             <>
               <p className="text-xs font-medium uppercase tracking-widest px-1"
@@ -112,7 +101,7 @@ export default function InsightsView({
             </>
           )}
 
-          <VoiceJournal notes={notes} xp={xp} />
+          <VoiceJournal notes={notes} />
         </div>
       )}
 
@@ -123,8 +112,8 @@ export default function InsightsView({
 
           {moodTheme && (
             <div
-              className="rounded-2xl border p-5"
-              style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+              className="rounded-2xl p-5"
+              style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
             >
               <div className="flex items-center justify-between">
                 <div>

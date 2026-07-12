@@ -28,8 +28,8 @@ function CompareCard({ label, current, previous, unit = '', higherIsBetter = tru
 
   return (
     <div
-      className="flex flex-col gap-1 p-4 rounded-2xl border"
-      style={{ backgroundColor: bgColor, borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+      className="flex flex-col gap-1 p-4 rounded-2xl"
+      style={{ backgroundColor: bgColor, boxShadow: 'var(--shadow-card)' }}
     >
       <p className="text-[10px] font-medium uppercase tracking-wider" style={{ color: 'var(--text-faint)' }}>
         {label}
@@ -120,8 +120,8 @@ export default function WeeklyMonthlyComparison({ tasks, habits, mood }) {
     <div className="space-y-4">
       {/* Weekly comparison */}
       <div
-        className="rounded-2xl border p-5"
-        style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+        className="rounded-2xl p-5"
+        style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
       >
         <p className="text-xs font-medium uppercase tracking-wider mb-4" style={{ color: 'var(--text-faint)' }}>
           📅 This Week vs Last Week
@@ -136,8 +136,8 @@ export default function WeeklyMonthlyComparison({ tasks, habits, mood }) {
 
       {/* Monthly comparison */}
       <div
-        className="rounded-2xl border p-5"
-        style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+        className="rounded-2xl p-5"
+        style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
       >
         <p className="text-xs font-medium uppercase tracking-wider mb-4" style={{ color: 'var(--text-faint)' }}>
           🗓 {format(new Date(), 'MMMM')} vs {format(subMonths(new Date(), 1), 'MMMM')}

@@ -4,6 +4,34 @@
 import { useMemo } from 'react'
 import { format, addDays, subDays, isWeekend } from 'date-fns'
 import { getTodayKey, getDateKey } from '../utils/dateUtils'
+import { callClaude } from '../services/aiService'
+
+const SCHEDULE_SYSTEM_PROMPT = `You suggest which day (YYYY-MM-DD, within the next 7 days) an overdue or
+unscheduled task should be rescheduled to, given the user's upcoming task load per day and optional energy
+context. Respond with ONLY a JSON array, no prose: [{"taskId": "...", "suggestedDate": "YYYY-MM-DD", "reason": "short human-readable reason"}].`
+
+// ── On-demand AI scheduling suggestions ─────────────────────────────────────
+// Not part of the useMemo above — this is an explicit async action triggered
+// by the user (e.g. a button press), not a value derived on every render.
+export async function getAIScheduleSuggestions(tasksToSchedule, next7Days, todayEnergy) {
+  const context = JSON.stringify({
+    tasks: (tasksToSchedule || []).map(t => ({ id: t.id, title: t.title, priority: t.priority, estimateMins: t.estimateMins })),
+    upcomingLoad: (next7Days || []).map(d => ({
+      date:     d?.dateKey,
+      totalMins: d?.totalMins,
+      isHeavy:   d?.isHeavy,
+      isLight:   d?.isLight,
+    })),
+    todayEnergy: todayEnergy || null,
+  })
+  try {
+    const raw = await callClaude(SCHEDULE_SYSTEM_PROMPT, context)
+    const parsed = JSON.parse(raw.trim())
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
 
 export function useSmartScheduler({ tasks, energy, habits }) {
   const today = getTodayKey()

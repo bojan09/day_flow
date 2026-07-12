@@ -12,7 +12,8 @@ function BookmarkCard({ b, bookmarks }) {
   const domain = (() => { try { return new URL(b.url).hostname.replace('www.', '') } catch { return b.url } })()
 
   return (
-    <div className={`[background-color:var(--surface)] rounded-2xl border shadow-sm p-4 transition-all ${b.read ? 'opacity-60 [border-color:var(--border-soft)]' : '[border-color:var(--border-soft)]'}`}>
+    <div className={`[background-color:var(--surface)] rounded-2xl p-4 transition-all ${b.read ? 'opacity-60' : ''}`}
+      style={{ boxShadow: 'var(--shadow-card)' }}>
       <div className="flex items-start gap-3">
         <div className="w-8 h-8 rounded-lg [background-color:var(--bg-secondary)] flex items-center justify-center text-xs [color:var(--text-muted)] flex-shrink-0 font-medium">
           {domain[0]?.toUpperCase() || '?'}

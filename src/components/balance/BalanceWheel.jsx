@@ -82,8 +82,8 @@ export default function BalanceWheel({ wheel }) {
 
   return (
     <div
-      className="rounded-2xl border p-5"
-      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+      className="rounded-2xl p-5"
+      style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">

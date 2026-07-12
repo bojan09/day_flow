@@ -5,8 +5,10 @@ import { useState } from 'react'
 import WorkoutStatsBar from './WorkoutStatsBar'
 import WorkoutCard     from './WorkoutCard'
 import WorkoutForm     from './WorkoutForm'
+import WeeklyRings     from './WeeklyRings'
 import Modal           from '../ui/Modal'
 import EmptyState      from '../ui/EmptyState'
+import { getWeekDays, getDateKey, getTodayKey } from '../../utils/dateUtils'
 
 // Mini weekly frequency bar chart
 function WeeklyBar({ workouts }) {
@@ -85,6 +87,7 @@ export default function WorkoutsView({ workouts }) {
   const [modal,    setModal]    = useState(false)   // 'add' | 'edit'
   const [editing,  setEditing]  = useState(null)    // session being edited
   const [filter,   setFilter]   = useState('today') // 'all' | 'today' | 'done'
+  const [selectedDate, setSelectedDate] = useState(getTodayKey())
 
   const openAdd  = ()          => { setEditing(null);    setModal('add')  }
   const openEdit = (session)   => { setEditing(session); setModal('edit') }
@@ -111,10 +114,25 @@ export default function WorkoutsView({ workouts }) {
     { id: 'done',  label: 'Done'    },
   ]
 
+  const weekDays = getWeekDays().map(d => {
+    const dateKey = getDateKey(d)
+    const daySessions = workouts.sessions.filter(s => s.date === dateKey)
+    const state = daySessions.length === 0
+      ? 'rest'
+      : daySessions.every(s => s.completed) ? 'done' : 'partial'
+    return {
+      date:  dateKey,
+      label: d.toLocaleDateString('en', { weekday: 'short' })[0],
+      state,
+    }
+  })
 
   if (!workouts.synced) return <ViewSkeleton type="workouts" />
   return (
     <div className="max-w-2xl mx-auto space-y-4 pt-2">
+
+      {/* Weekly rings */}
+      <WeeklyRings days={weekDays} selectedDate={selectedDate} onSelect={setSelectedDate} />
 
       {/* Stats */}
       <WorkoutStatsBar workouts={workouts} />
@@ -187,6 +205,7 @@ export default function WorkoutsView({ workouts }) {
       >
         <WorkoutForm
           initial={modal === 'edit' ? editing : null}
+          sessions={workouts.sessions}
           onSubmit={handleSubmit}
           onCancel={close}
         />

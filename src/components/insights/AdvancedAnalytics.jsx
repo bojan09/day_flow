@@ -10,10 +10,9 @@ import { getDateKey } from '../../utils/dateUtils'
 function StatCard({ label, value, sub, color = 'var(--accent)', warn = false }) {
   return (
     <div
-      className="rounded-2xl border p-4 text-center"
+      className="rounded-2xl p-4 text-center"
       style={{
         backgroundColor: warn ? '#FEF3C7' : 'var(--surface)',
-        borderColor:     warn ? '#FDE68A' : 'var(--border)',
         boxShadow:       'var(--shadow-card)',
       }}
     >
@@ -86,8 +85,8 @@ function EnergyProductivity({ tasks, energy }) {
 
   return (
     <div
-      className="rounded-2xl border p-5"
-      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+      className="rounded-2xl p-5"
+      style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
     >
       <SectionHeader title="⚡ Energy vs Productivity" sub="Do your high-energy days produce more completed tasks?" />
 
@@ -190,8 +189,8 @@ function BurnoutSignal({ tasks, mood }) {
 
   return (
     <div
-      className="rounded-2xl border p-5"
-      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+      className="rounded-2xl p-5"
+      style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
     >
       <SectionHeader title="🔋 Burnout Signal" sub="Based on task load, completion rate, and mood trends" />
 
@@ -283,8 +282,8 @@ function BehaviouralInsights({ tasks }) {
 
   if (insights.length === 0) return (
     <div
-      className="rounded-2xl border p-5"
-      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+      className="rounded-2xl p-5"
+      style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
     >
       <SectionHeader title="🔍 Behavioural Insights" />
       <p className="text-sm italic" style={{ color: 'var(--text-faint)' }}>
@@ -295,8 +294,8 @@ function BehaviouralInsights({ tasks }) {
 
   return (
     <div
-      className="rounded-2xl border p-5"
-      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+      className="rounded-2xl p-5"
+      style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
     >
       <SectionHeader title="🔍 Behavioural Insights" sub="Patterns derived from your task history" />
       <div className="space-y-3">

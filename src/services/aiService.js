@@ -1,6 +1,6 @@
 // Service: aiService
 // Purpose: Single entry point for all AI calls. Talks to the /api/ai
-//          serverless proxy so the Anthropic API key never reaches the
+//          serverless proxy so the Groq API key never reaches the
 //          client. All 7 AI features import callClaude from here.
 
 /**

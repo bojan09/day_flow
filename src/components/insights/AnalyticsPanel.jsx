@@ -19,8 +19,8 @@ const CAT_COLORS = {
 function StatCard({ label, value, sub, color = 'var(--accent)' }) {
   return (
     <div
-      className="flex flex-col items-center text-center p-4 rounded-2xl border"
-      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+      className="flex flex-col items-center text-center p-4 rounded-2xl"
+      style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
     >
       <p className="text-[10px] font-medium uppercase tracking-wider mb-1" style={{ color: 'var(--text-faint)' }}>
         {label}
@@ -68,8 +68,8 @@ export default function AnalyticsPanel({ tasks }) {
 
       {/* Daily bar chart */}
       <div
-        className="rounded-2xl border p-5"
-        style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+        className="rounded-2xl p-5"
+        style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
       >
         <p className="text-xs font-medium uppercase tracking-wider mb-4" style={{ color: 'var(--text-faint)' }}>
           Daily Completions
@@ -100,8 +100,8 @@ export default function AnalyticsPanel({ tasks }) {
       {/* Category breakdown */}
       {categories.length > 0 && (
         <div
-          className="rounded-2xl border p-5"
-          style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+          className="rounded-2xl p-5"
+          style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
         >
           <p className="text-xs font-medium uppercase tracking-wider mb-4" style={{ color: 'var(--text-faint)' }}>
             By Category

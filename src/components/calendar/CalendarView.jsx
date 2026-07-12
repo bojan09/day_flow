@@ -6,6 +6,7 @@ import { getDateKey } from '../../utils/dateUtils'
 import Card from '../ui/Card'
 import Modal from '../ui/Modal'
 import TaskForm from '../tasks/TaskForm'
+import DayDetailPanel from './DayDetailPanel'
 
 const CAT_DOT = {
   Work: 'bg-blue-400', Personal: '[background-color:var(--accent)]', Health: 'bg-emerald-500',
@@ -17,6 +18,8 @@ const LOAD_COLOR = (n) =>
 
 export default function CalendarView({ tasks, categories, onAddCategory, onRemoveCategory }) {
   const [month,       setMonth]       = useState(new Date())
+  // selectedDay: null means "no explicit selection" — the day detail panel
+  // falls back to today (effectiveDay below) so it always has content to show.
   const [selectedDay, setSelectedDay] = useState(null)
   const [addModal,    setAddModal]    = useState(false)
 
@@ -30,10 +33,21 @@ export default function CalendarView({ tasks, categories, onAddCategory, onRemov
   const nextMonth  = () => setMonth(m => new Date(m.getFullYear(), m.getMonth() + 1, 1))
 
   const getDayTasks = (day) => tasks.tasks.filter(t => t.date === getDateKey(day))
-  const selectedTasks = selectedDay ? getDayTasks(selectedDay) : []
+
+  // Day shown in the DayDetailPanel: the explicitly selected day, or today by default.
+  const effectiveDay   = selectedDay || new Date()
+  const effectiveTasks = tasks.getTasksByDate
+    ? tasks.getTasksByDate(getDateKey(effectiveDay))
+    : getDayTasks(effectiveDay)
+
+  // No task-detail/edit view exists yet in this app; clicking a task in the
+  // panel is a no-op placeholder until one is added.
+  const handleOpenTask = () => {}
 
   return (
     <div className="max-w-2xl mx-auto pt-2 space-y-4">
+      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex-1">
       <Card noPad>
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b [border-color:var(--border-soft)]">
@@ -91,41 +105,26 @@ export default function CalendarView({ tasks, categories, onAddCategory, onRemov
           ))}
         </div>
       </Card>
+      </div>
 
-      {/* Day detail panel */}
-      {selectedDay && (
-        <Card>
-          <div className="flex items-center justify-between mb-3">
-            <span className="font-serif text-base [color:var(--text)]">{format(selectedDay, 'EEEE, MMMM d')}</span>
-            <button onClick={() => setAddModal(true)}
-              className="text-xs px-3 py-1.5 rounded-full [background-color:var(--accent)] text-white font-medium hover:[background-color:var(--accent)] transition-colors">
-              + Task
-            </button>
-          </div>
-          {selectedTasks.length === 0 ? (
-            <p className="text-sm [color:var(--text-faint)] italic">No tasks — tap + to add one.</p>
-          ) : (
-            <ul className="space-y-2">
-              {selectedTasks.map(t => (
-                <li key={t.id} className="flex items-center gap-2.5">
-                  <button onClick={() => tasks.toggleTask(t.id)}
-                    className={`w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center text-[9px] transition-all ${
-                      t.completed ? '[background-color:var(--accent)] [border-color:var(--accent)] text-white' : '[border-color:var(--border)] hover:[border-color:var(--accent-mid)]'
-                    }`}>{t.completed && '✓'}</button>
-                  <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${CAT_DOT[t.category] || '[background-color:var(--border)]'}`} />
-                  <span className={`text-sm flex-1 truncate ${t.completed ? 'line-through [color:var(--text-faint)]' : '[color:var(--text)]'}`}>
-                    {t.title}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
-      )}
+      {/* Day detail side panel — desktop: side-by-side, mobile: stacked below grid */}
+      <div className="md:w-72 flex-shrink-0 space-y-3">
+        <button onClick={() => setAddModal(true)}
+          className="w-full text-xs px-3 py-1.5 rounded-full [background-color:var(--accent)] text-white font-medium hover:[background-color:var(--accent)] transition-colors">
+          + Task
+        </button>
+        <DayDetailPanel
+          date={format(effectiveDay, 'EEEE, MMMM d')}
+          dayTasks={effectiveTasks}
+          onToggleTask={tasks.toggleTask}
+          onOpenTask={handleOpenTask}
+        />
+      </div>
+      </div>
 
       <Modal isOpen={addModal} onClose={() => setAddModal(false)} title="New Task">
         <TaskForm
-          onSubmit={t => { tasks.addTask({ ...t, date: selectedDay ? getDateKey(selectedDay) : undefined }); setAddModal(false) }}
+          onSubmit={t => { tasks.addTask({ ...t, date: getDateKey(effectiveDay) }); setAddModal(false) }}
           categories={categories || ['Work','Personal','Health','Learning','Finance','Other']}
           onAddCategory={onAddCategory}
           onRemoveCategory={onRemoveCategory}

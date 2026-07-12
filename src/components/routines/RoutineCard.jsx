@@ -10,7 +10,7 @@ const TIME_LABELS = {
   anytime: '⏰ Anytime',
 }
 
-export default function RoutineCard({ routine, routines, onEdit, onDelete }) {
+export default function RoutineCard({ routine, routines, onEdit, onDelete, onRun }) {
   const [timerStepId, setTimerStepId] = useState(null)
   const [secs,        setSecs]        = useState(0)
   const [running,     setRunning]     = useState(false)
@@ -84,6 +84,19 @@ export default function RoutineCard({ routine, routines, onEdit, onDelete }) {
               {completion}%
             </span>
           </div>
+
+          {/* Run */}
+          {onRun && routine.steps.length > 0 && (
+            <button
+              onClick={() => onRun(routine)}
+              className="hover-surface w-7 h-7 rounded-full flex items-center justify-center text-sm transition-colors"
+              style={{ color: 'var(--accent)' }}
+              title="Run routine"
+              aria-label="Run routine"
+            >
+              ▶
+            </button>
+          )}
 
           {/* Edit */}
           <button

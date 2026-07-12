@@ -34,8 +34,8 @@ function ProgressRing({ tasks, habits }) {
 
   return (
     <div
-      className="rounded-2xl border p-5 flex items-center gap-5 card-hover"
-      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+      className="rounded-3xl p-6 flex items-center gap-5 card-hover"
+      style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
     >
       {/* Animated ring */}
       <div className="relative flex-shrink-0">

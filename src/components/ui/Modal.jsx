@@ -5,6 +5,9 @@
 import { useEffect, useRef } from 'react'
 
 const FOCUSABLE = 'input, textarea, select, button:not([aria-label="Close"]), [href], [tabindex]:not([tabindex="-1"])'
+// Full focusable set (includes the Close button) — used for the Tab-cycle focus
+// trap, where the close button must remain a normal stop in the tab order.
+const FOCUSABLE_ALL = 'input, textarea, select, button, [href], [tabindex]:not([tabindex="-1"])'
 
 export default function Modal({ isOpen, onClose, title, children }) {
   const panelRef    = useRef(null)
@@ -12,7 +15,30 @@ export default function Modal({ isOpen, onClose, title, children }) {
 
   useEffect(() => {
     if (!isOpen) return
-    const handler = (e) => { if (e.key === 'Escape') onClose() }
+    const handler = (e) => {
+      if (e.key === 'Escape') { onClose(); return }
+      if (e.key === 'Tab') {
+        const panel = panelRef.current
+        if (!panel) return
+        const focusables = Array.from(panel.querySelectorAll(FOCUSABLE_ALL))
+          .filter(el => !el.disabled && el.tabIndex !== -1 && el.offsetParent !== null)
+        if (focusables.length === 0) return
+        const first = focusables[0]
+        const last  = focusables[focusables.length - 1]
+        const active = document.activeElement
+        if (e.shiftKey) {
+          if (active === first || !panel.contains(active)) {
+            e.preventDefault()
+            last.focus()
+          }
+        } else {
+          if (active === last || !panel.contains(active)) {
+            e.preventDefault()
+            first.focus()
+          }
+        }
+      }
+    }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [isOpen, onClose])

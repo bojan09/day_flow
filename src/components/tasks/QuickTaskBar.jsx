@@ -4,6 +4,7 @@
 //          Keyboard shortcut: typing anywhere on the Tasks tab focuses this bar.
 import { useState, useRef, useEffect } from 'react'
 import { parseNLTask } from '../../services/nlpParser'
+import { classifyCapture } from '../../services/captureClassifier'
 import { getTodayKey } from '../../utils/dateUtils'
 
 const EXAMPLES = [
@@ -18,6 +19,7 @@ export default function QuickTaskBar({ tasks, onAdded }) {
   const [hint,    setHint]    = useState(null)
   const [success, setSuccess] = useState(false)
   const [focused, setFocused] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const inputRef = useRef(null)
   const placeholder = EXAMPLES[Math.floor(Date.now() / 30000) % EXAMPLES.length]
 
@@ -29,11 +31,24 @@ export default function QuickTaskBar({ tasks, onAdded }) {
     else setHint({ title: value, date: getTodayKey(), priority: 'medium' })
   }, [value])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!value.trim()) return
-    const parsed = parseNLTask(value)
-    tasks.addTask(parsed || { title: value.trim(), date: getTodayKey(), priority: 'medium', category: 'Personal' })
+    const text = value.trim()
+    setSubmitting(true)
+    let fields
+    try {
+      const result = await classifyCapture(text)
+      fields = result.fields && result.fields.title ? result.fields : null
+    } catch {
+      fields = null
+    }
+    setSubmitting(false)
+    if (!fields) {
+      const parsed = parseNLTask(text)
+      fields = parsed || { title: text, date: getTodayKey(), priority: 'medium', category: 'Personal' }
+    }
+    tasks.addTask(fields)
     setValue('')
     setHint(null)
     setSuccess(true)
@@ -73,17 +88,17 @@ export default function QuickTaskBar({ tasks, onAdded }) {
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             placeholder={`Try: "${placeholder}"`}
-            className="flex-1 text-sm bg-transparent outline-none min-h-[36px]"
+            className="flex-1 text-sm bg-transparent outline-none min-h-[36px] disabled:opacity-60"
             style={{ color: 'var(--text)', caretColor: 'var(--accent)' }}
           />
 
           <button
             type="submit"
-            disabled={!value.trim()}
+            disabled={!value.trim() || submitting}
             className="px-4 py-1.5 rounded-full text-sm font-semibold text-white disabled:opacity-30 transition-all active:scale-95 flex-shrink-0"
             style={{ backgroundColor: 'var(--accent)' }}
           >
-            Add
+            {submitting ? '…' : 'Add'}
           </button>
         </div>
 

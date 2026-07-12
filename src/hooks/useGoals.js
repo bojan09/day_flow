@@ -39,7 +39,7 @@ export function useGoals() {
     const g = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2,9)}`, title: data.title.trim(), description: data.description || '',
       type: data.type || 'Yearly', category: data.category || 'Personal', targetDate: data.targetDate || '',
-      milestones: [], completed: false, createdAt: new Date().toISOString(),
+      milestones: Array.isArray(data.milestones) ? data.milestones : [], completed: false, createdAt: new Date().toISOString(),
       ...(useDB ? { user_id: userId } : {}),
     }
     setGoals(prev => [g, ...prev]); persist(g); return g

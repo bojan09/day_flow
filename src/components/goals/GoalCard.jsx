@@ -94,7 +94,7 @@ function EditGoalModal({ goal, goals, onClose }) {
   )
 }
 
-const GoalCardImpl = memo(function GoalCard({ goal, goals, xp }) {
+const GoalCardImpl = memo(function GoalCard({ goal, goals }) {
   const { toast } = useToast()
   const [expanded,  setExpanded]  = useState(false)
   const [editing,   setEditing]   = useState(false)
@@ -111,22 +111,19 @@ const GoalCardImpl = memo(function GoalCard({ goal, goals, xp }) {
 
   const handleToggleMilestone = (msId) => {
     goals.toggleMilestone(goal.id, msId)
-    xp.awardXP('GOAL_MILESTONE', goal.title)
   }
 
   const handleToggleGoal = () => {
     goals.toggleGoal(goal.id)
-    if (!goal.completed) xp.awardXP('GOAL_COMPLETE', goal.title)
   }
 
   return (
     <>
       <div
-        className="rounded-2xl border overflow-hidden card-hover transition-all"
+        className="rounded-2xl overflow-hidden card-hover transition-all"
         style={{
           backgroundColor: 'var(--surface)',
-          borderColor:     goal.completed ? 'var(--accent-mid)' : 'var(--border)',
-          boxShadow:       'var(--shadow-card)',
+          boxShadow:       goal.completed ? '0 0 0 2px var(--accent-mid), var(--shadow-card)' : 'var(--shadow-card)',
           opacity:         goal.completed ? 0.8 : 1,
         }}
       >

@@ -11,7 +11,7 @@ A professional daily planner and productivity application. Built with React, Vit
 - **Focus** — Pomodoro timer with session history and XP rewards
 - **Notes / Ideas / Brain Dump / Bookmarks** — Full thought capture system
 - **Insights** — Productivity heatmap, mood chart, category trends, weekly/monthly comparisons
-- **AI Coach** — Weekly coaching, auto-journal drafts, daily feedback (Anthropic API)
+- **AI Coach** — Weekly coaching, auto-journal drafts, daily feedback (Groq API)
 - **Balance Wheel** — Life area scoring
 - **Workouts** — Recurring session tracking
 - **Calendar / Schedule** — Monthly calendar view and time-block planner
@@ -29,7 +29,7 @@ A professional daily planner and productivity application. Built with React, Vit
 | Backend / Auth | Supabase |
 | Dates | date-fns 3 |
 | Animations | GSAP 3 + Tailwind keyframes |
-| AI | Anthropic Claude API |
+| AI | Groq (Llama) |
 | Deployment | Vercel |
 
 ## Getting Started
@@ -126,7 +126,7 @@ Set the following environment variables in your hosting provider:
 | `VITE_SUPABASE_URL` | Recommended | Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Recommended | Supabase anon key |
 | `VITE_VAPID_PUBLIC_KEY` | Optional | For push notifications |
-| `ANTHROPIC_API_KEY` | For AI features | **Server-side only** — set in Vercel project env. Powers all AI features via the `/api/ai` proxy. Never prefix with `VITE_`. |
+| `GROQ_API_KEY` | For AI features | **Server-side only** — set in Vercel project env. Powers all AI features via the `/api/ai` proxy (Groq free tier). Never prefix with `VITE_`. |
 
 AI features call the `/api/ai` Vercel serverless function, so they work on the deployed app (or `vercel dev` locally) — not under plain `vite dev`.
 

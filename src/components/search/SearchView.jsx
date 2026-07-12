@@ -74,8 +74,8 @@ function ResultCard({ item, query }) {
   const pill = TYPE_PILL[item.type] || TYPE_PILL.Task
   return (
     <div
-      className="flex items-start gap-3 px-4 py-3 rounded-2xl border transition-all card-hover"
-      style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+      className="flex items-start gap-3 px-4 py-3 rounded-2xl transition-all card-hover"
+      style={{ backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)' }}
     >
       <span className="text-xl flex-shrink-0 mt-0.5">{item.icon}</span>
       <div className="flex-1 min-w-0">

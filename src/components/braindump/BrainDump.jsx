@@ -71,7 +71,7 @@ export default function BrainDump({ tasks, ideas, notes }) {
     <div className="max-w-2xl mx-auto pt-2 space-y-4">
       {step === 'write' && (
         <>
-          <div className="[background-color:var(--surface)] rounded-2xl border [border-color:var(--border-soft)] shadow-sm overflow-hidden">
+          <div className="[background-color:var(--surface)] rounded-2xl overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
             <div className="px-5 py-3 border-b [border-color:var(--border-soft)] flex items-center justify-between">
               <p className="text-xs font-medium uppercase tracking-wider [color:var(--text-faint)]">🧠 Brain Dump</p>
               <p className="text-xs [color:var(--text-faint)]">{text.split('\n').filter(l => l.trim()).length} lines</p>
