@@ -4,23 +4,19 @@
 import { useMemo }    from 'react'
 import { getTodayKey } from '../utils/dateUtils'
 
-export function useDailyScore({ tasks, habits, mood, gratitude, water }) {
+export function useDailyScore({ tasks, habits, mood }) {
   const today = getTodayKey()
 
   // Memoised today's score — only recalculates when underlying data changes
   const todayScore = useMemo(() => {
     const dayTasks   = (tasks?.tasks || []).filter(t => t.date === today)
     const done       = dayTasks.filter(t => t.completed).length
-    const taskScore  = dayTasks.length > 0 ? (done / dayTasks.length) * 35 : 0
+    const taskScore  = dayTasks.length > 0 ? (done / dayTasks.length) * 44 : 0
     const habitPct   = (habits?.getTodayCompletion?.() || 0) / 100
-    const habitScore = habitPct * 30
+    const habitScore = habitPct * 37
     const hasMood    = !!mood?.getMoodForDate?.(today)
-    const moodScore  = hasMood ? 15 : 0
-    const gLines     = (gratitude?.getTodayEntry?.() || []).filter(l => l.trim()).length
-    const gratScore  = (gLines / 3) * 10
-    const waterPct   = water ? Math.min(1, (water.getTodayCount?.() || 0) / (water.GOAL || 8)) : 0
-    const waterScore = waterPct * 10
-    const total      = Math.round(taskScore + habitScore + moodScore + gratScore + waterScore)
+    const moodScore  = hasMood ? 19 : 0
+    const total      = Math.round(taskScore + habitScore + moodScore)
     const grade      = total >= 90 ? 'A+' : total >= 80 ? 'A' : total >= 70 ? 'B' : total >= 60 ? 'C' : total >= 50 ? 'D' : 'F'
     const message    =
       total >= 90 ? 'Perfect day. You crushed it! 🏆'  :
@@ -33,24 +29,22 @@ export function useDailyScore({ tasks, habits, mood, gratitude, water }) {
     return {
       total, grade, message,
       breakdown: {
-        tasks:     Math.round(taskScore),
-        habits:    Math.round(habitScore),
-        mood:      Math.round(moodScore),
-        gratitude: Math.round(gratScore),
-        water:     Math.round(waterScore),
+        tasks:  Math.round(taskScore),
+        habits: Math.round(habitScore),
+        mood:   Math.round(moodScore),
       },
       meta: { tasksScheduled: dayTasks.length, tasksDone: done },
     }
-  }, [tasks?.tasks, habits?.log, mood?.moods, gratitude, water, today])
+  }, [tasks?.tasks, habits?.log, mood?.moods, today])
 
   // calculate() kept for backward compat with components that call it
   const calculate = (dateKey = today) => {
     if (dateKey === today) return todayScore
     const dayTasks   = (tasks?.tasks || []).filter(t => t.date === dateKey)
     const done       = dayTasks.filter(t => t.completed).length
-    const taskScore  = dayTasks.length > 0 ? (done / dayTasks.length) * 35 : 0
+    const taskScore  = dayTasks.length > 0 ? (done / dayTasks.length) * 44 : 0
     const habitPct   = (habits?.getTodayCompletion?.() || 0) / 100
-    const total      = Math.round(taskScore + habitPct * 30)
+    const total      = Math.round(taskScore + habitPct * 37)
     const grade      = total >= 90 ? 'A+' : total >= 80 ? 'A' : total >= 70 ? 'B' : total >= 60 ? 'C' : total >= 50 ? 'D' : 'F'
     return { total, grade, message: '', breakdown: {}, meta: { tasksScheduled: dayTasks.length, tasksDone: done } }
   }

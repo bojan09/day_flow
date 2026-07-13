@@ -17,20 +17,14 @@ const SECTIONS = [
   { label: 'Build', tabs: [
     { id: 'habits',     label: 'Habits',     emoji: '🔁' },
     { id: 'routines',   label: 'Routines',   emoji: '🌅' },
-    { id: 'challenges', label: 'Challenges', emoji: '🎯' },
     { id: 'goals',      label: 'Goals',      emoji: '🏆' },
     { id: 'workouts',   label: 'Workouts',   emoji: '🏋️' },
-    { id: 'repeating',  label: 'Repeating',  emoji: '🔁' },
   ]},
   { label: 'Think', tabs: [
-    { id: 'notes',     label: 'Notes',      emoji: '📝' },
-    { id: 'ideas',     label: 'Ideas',      emoji: '💡' },
-    { id: 'braindump', label: 'Brain Dump', emoji: '🧠' },
-    { id: 'bookmarks', label: 'Bookmarks',  emoji: '🔖' },
+    { id: 'capture', label: 'Capture', emoji: '📥' },
   ]},
   { label: 'Reflect', tabs: [
     { id: 'insights', label: 'Insights', emoji: '📊' },
-    { id: 'balance',  label: 'Balance',  emoji: '⚖️' },
     { id: 'focus',    label: 'Focus',    emoji: '⏱️' },
     { id: 'search',   label: 'Search',   emoji: '🔍' },
   ]},
@@ -39,19 +33,14 @@ const SECTIONS = [
 
 // Preload lazy chunks when user hovers a nav item
 const PRELOAD_MAP = {
-  notes:      () => import('../notes/NotesView'),
+  capture:    () => import('../capture/CaptureView'),
   goals:      () => import('../goals/GoalsView'),
   insights:   () => import('../insights/InsightsView'),
   workouts:   () => import('../workouts/WorkoutsView'),
   calendar:   () => import('../calendar/CalendarView'),
-  ideas:      () => import('../ideas/IdeasView'),
-  braindump:  () => import('../braindump/BrainDump'),
   routines:   () => import('../routines/RoutinesView'),
-  challenges: () => import('../challenges/ChallengesView'),
   projects:   () => import('../projects/ProjectsView'),
   search:     () => import('../search/SearchView'),
-  balance:    () => import('../balance/BalanceView'),
-  bookmarks:  () => import('../bookmarks/BookmarksView'),
 }
 const preload = (id) => PRELOAD_MAP[id]?.()
 

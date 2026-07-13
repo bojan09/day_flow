@@ -9,6 +9,7 @@ import { useAuth }        from './useAuth'
 import { isSupabaseConfigured } from '../services/supabaseClient'
 import { withRetry }      from '../utils/withRetry'
 import { getTodayKey }    from '../utils/dateUtils'
+import { computeReminderAt } from '../utils/reminders'
 
 const KEY = 'tasks'
 
@@ -92,6 +93,9 @@ export function useTasks() {
       projectId:    task.projectId          || null,
       subTasks:     task.subTasks           || [],
       notes:        task.notes              || '',
+      reminderTime: task.reminderTime       || '',
+      reminderAt:   computeReminderAt(task.date || getTodayKey(), task.reminderTime),
+      reminderSent: false,
       createdAt:    new Date().toISOString(),
       ...(useDB ? { user_id: userId } : {}),
     }
@@ -110,7 +114,14 @@ export function useTasks() {
   const updateTask = (id, updates) => {
     setTasks(prev => prev.map(t => {
       if (t.id !== id) return t
-      const updated = { ...t, ...updates }
+      const merged = { ...t, ...updates }
+      const newReminderAt = computeReminderAt(merged.date, merged.reminderTime)
+      const reminderChanged = newReminderAt !== t.reminderAt
+      const updated = {
+        ...merged,
+        reminderAt: newReminderAt,
+        reminderSent: reminderChanged ? false : merged.reminderSent,
+      }
       persist(updated)
       return updated
     }))

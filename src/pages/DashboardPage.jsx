@@ -2,28 +2,23 @@
 // Purpose: Root app page — owns all state hooks, renders active tab.
 //          Hosts QuickCapture + KeyboardShortcuts as global overlays.
 import { useState, useEffect, lazy, Suspense, useCallback } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import DashboardLayout    from '../layouts/DashboardLayout'
 import TabSkeleton        from '../components/ui/TabSkeleton'
 import ViewErrorBoundary  from '../components/ui/ViewErrorBoundary'
 import TodayView          from '../components/today/TodayView'
 import TasksView          from '../components/tasks/TasksView'
-const NotesView = lazy(() => import('../components/notes/NotesView'))
 import HabitsView         from '../components/habits/HabitsView'
 const GoalsView = lazy(() => import('../components/goals/GoalsView'))
 import FocusMode          from '../components/focus/FocusMode'
 const SearchView = lazy(() => import('../components/search/SearchView'))
 const InsightsView = lazy(() => import('../components/insights/InsightsView'))
-const BalanceView = lazy(() => import('../components/balance/BalanceView'))
 const WorkoutsView = lazy(() => import('../components/workouts/WorkoutsView'))
 const TimeBlockView = lazy(() => import('../components/timeblock/TimeBlockView'))
-const RepeatingView = lazy(() => import('../components/repeating/RepeatingView'))
 const CalendarView = lazy(() => import('../components/calendar/CalendarView'))
-const IdeasView = lazy(() => import('../components/ideas/IdeasView'))
-const BrainDump = lazy(() => import('../components/braindump/BrainDump'))
+const CaptureView = lazy(() => import('../components/capture/CaptureView'))
 const RoutinesView = lazy(() => import('../components/routines/RoutinesView'))
-const ChallengesView = lazy(() => import('../components/challenges/ChallengesView'))
 const ProjectsView = lazy(() => import('../components/projects/ProjectsView'))
-const BookmarksView = lazy(() => import('../components/bookmarks/BookmarksView'))
 const WeeklyReview = lazy(() => import('../components/weekly/WeeklyReview'))
 import KeyboardShortcuts  from '../components/keyboard/KeyboardShortcuts'
 import QuickCapture       from '../components/quickcapture/QuickCapture'
@@ -38,21 +33,15 @@ import { useTheme           } from '../hooks/useTheme'
 import { useIntention       } from '../hooks/useIntention'
 import { useGoals           } from '../hooks/useGoals'
 import { useSomeday         } from '../hooks/useSomeday'
-import { useGratitude       } from '../hooks/useGratitude'
 import { useTemplates       } from '../hooks/useTemplates'
 import { useEnergy          } from '../hooks/useEnergy'
-import { useWater           } from '../hooks/useWater'
 import { useDailyScore      } from '../hooks/useDailyScore'
-import { useMonthlyLetter   } from '../hooks/useMonthlyLetter'
 import { usePomodoroHistory } from '../hooks/usePomodoroHistory'
 import { useHabitRules      } from '../hooks/useHabitRules'
 import { useIdeas           } from '../hooks/useIdeas'
 import { useRoutines        } from '../hooks/useRoutines'
-import { useChallenges      } from '../hooks/useChallenges'
-import { useBalanceWheel    } from '../hooks/useBalanceWheel'
 import { useProjects        } from '../hooks/useProjects'
 import { useBookmarks       } from '../hooks/useBookmarks'
-import { useAffirmations    } from '../hooks/useAffirmations'
 import { useWorkouts        } from '../hooks/useWorkouts'
 import { useCustomCategories } from '../hooks/useCustomCategories'
 import { useMoodTheme       } from '../hooks/useMoodTheme'
@@ -69,22 +58,65 @@ import { getTodayKey }            from '../utils/dateUtils'
 const isSundayToday = () => new Date().getDay() === 0
 const weeklyReviewDismissKey = () => `df_wr_dismissed_${getTodayKey()}`
 
+// Legacy tab ids now consolidated into the single 'capture' tab — kept as a
+// map so old bookmarked hashes, keyboard shortcuts, and widget "jump to X"
+// buttons still land on the right sub-tab within CaptureView.
+const LEGACY_CAPTURE_TABS = ['notes', 'ideas', 'braindump', 'bookmarks']
+
 export default function DashboardPage() {
   // Tab state persisted in URL hash so refresh preserves current tab
   const [activeTab, setActiveTabRaw] = useState(() => {
     const hash = window.location.hash.slice(1)
+    if (LEGACY_CAPTURE_TABS.includes(hash)) return 'capture'
     const valid = ['today','tasks','habits','focus','calendar','timeblock','projects',
-      'notes','ideas','braindump','bookmarks','workouts','routines','challenges','repeating',
-      'goals','insights','balance','search','weeklyreview']
+      'capture','workouts','routines',
+      'goals','insights','search','weeklyreview']
     return valid.includes(hash) ? hash : 'today'
   })
 
+  // Which capture sub-type CaptureView should show — defaults to 'notes',
+  // but "jump straight to X" callers (keyboard shortcuts, Today widgets,
+  // reflection prompt, share-target) route through here via setActiveTab.
+  const [captureType, setCaptureType] = useState(() => {
+    const hash = window.location.hash.slice(1)
+    return LEGACY_CAPTURE_TABS.includes(hash) ? hash : 'notes'
+  })
+
   const setActiveTab = useCallback((tab) => {
+    if (LEGACY_CAPTURE_TABS.includes(tab)) {
+      setCaptureType(tab)
+      setActiveTabRaw('capture')
+      window.history.replaceState(null, '', '#capture')
+      return
+    }
     setActiveTabRaw(tab)
     window.history.replaceState(null, '', `#${tab}`)
   }, [])
 
   const [showQuickCapture, setShowQuickCapture] = useState(false)
+
+  // Deep-link: open a specific task's detail modal from a notification tap
+  // (e.g. ?openTask=<id>). We capture the id into local state — rather than
+  // reading searchParams.get('openTask') directly on every render — because
+  // clearing the query param below triggers a re-render where searchParams
+  // would already be empty. Local state keeps the id stable across that
+  // re-render so TasksView's mount effect still sees a non-null value.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [openTaskId, setOpenTaskId] = useState(() => searchParams.get('openTask'))
+
+  useEffect(() => {
+    const id = searchParams.get('openTask')
+    if (id) {
+      setActiveTab('tasks')
+      setOpenTaskId(id)
+      // Clear the param so it doesn't re-trigger on next render/refresh
+      setSearchParams(prev => {
+        const next = new URLSearchParams(prev)
+        next.delete('openTask')
+        return next
+      }, { replace: true })
+    }
+  }, [searchParams])
 
   // Weekly Review overlay — only auto-shows on Sundays, once per day
   const [showWeeklyOverlay, setShowWeeklyOverlay] = useState(() => {
@@ -134,22 +166,16 @@ export default function DashboardPage() {
   const habits          = useHabits()
   const mood            = useMood()
   const intention       = useIntention()
-  const gratitude       = useGratitude()
   const goals           = useGoals()
   const someday         = useSomeday()
   const templates       = useTemplates()
   const energy          = useEnergy()
-  const water           = useWater()
-  const monthlyLetter   = useMonthlyLetter()
   const pomodoroHistory = usePomodoroHistory()
   const habitRules      = useHabitRules()
   const ideas           = useIdeas()
   const routines        = useRoutines()
-  const challenges      = useChallenges()
-  const wheel           = useBalanceWheel()
   const projects        = useProjects()
   const bookmarks       = useBookmarks()
-  const affirmations    = useAffirmations()
   const workouts        = useWorkouts()
   const catData         = useCustomCategories()
   const { theme, setTheme } = useTheme()
@@ -157,7 +183,7 @@ export default function DashboardPage() {
   const moodTheme  = useMoodTheme(mood, theme)
   const onboarding  = useOnboarding()
   const timeblocks  = useTimeblocks()
-  const score = useDailyScore({ tasks, habits, mood, gratitude, water })
+  const score = useDailyScore({ tasks, habits, mood })
 
   // Recurring engine — synchronous localStorage guard (never async).
   // Key = userId + today's date → unique per user, auto-expires at midnight.
@@ -201,12 +227,12 @@ export default function DashboardPage() {
       )}
 
       <Suspense fallback={<TabSkeleton />}>
-      <DashboardLayout activeTab={activeTab} onTabChange={handleTabChange} theme={theme} onSetTheme={setTheme}>
+      <DashboardLayout activeTab={activeTab} onTabChange={handleTabChange} theme={theme} onSetTheme={setTheme} tasks={tasks}>
       <ViewErrorBoundary key={activeTab}>
 
         {/* ── Plan ─────────────────────────────────────────────────────────── */}
-        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} gratitude={gratitude} water={water} score={score} monthlyLetter={monthlyLetter} energy={energy} affirmations={affirmations} onTabChange={handleTabChange} goals={goals} projects={projects} workouts={workouts} challenges={challenges} ideas={ideas} timeblocks={timeblocks} />}
-        {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={handleTabChange} energy={energy} habits={habits} ideas={ideas} />}
+        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} score={score} energy={energy} onTabChange={handleTabChange} goals={goals} projects={projects} workouts={workouts} ideas={ideas} timeblocks={timeblocks} />}
+        {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={handleTabChange} energy={energy} habits={habits} ideas={ideas} openTaskId={openTaskId} workouts={workouts} />}
         {activeTab === 'calendar'   && <CalendarView tasks={tasks} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} />}
         {activeTab === 'timeblock'  && <TimeBlockView tasks={tasks} />}
         {activeTab === 'projects'   && <ProjectsView projects={projects} tasks={tasks} />}
@@ -214,20 +240,14 @@ export default function DashboardPage() {
         {/* ── Build ────────────────────────────────────────────────────────── */}
         {activeTab === 'habits'     && <HabitsView habits={habits} habitRules={habitRules} />}
         {activeTab === 'routines'   && <RoutinesView routines={routines} />}
-        {activeTab === 'challenges' && <ChallengesView challenges={challenges} />}
         {activeTab === 'goals'      && <GoalsView goals={goals} />}
         {activeTab === 'workouts'   && <WorkoutsView workouts={workouts} />}
-        {activeTab === 'repeating'  && <RepeatingView tasks={tasks} workouts={workouts} />}
 
         {/* ── Think ────────────────────────────────────────────────────────── */}
-        {activeTab === 'notes'      && <NotesView notes={notes} />}
-        {activeTab === 'ideas'      && <IdeasView ideas={ideas} goals={goals} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} />}
-        {activeTab === 'braindump'  && <BrainDump tasks={tasks} ideas={ideas} notes={notes} />}
-        {activeTab === 'bookmarks'  && <BookmarksView bookmarks={bookmarks} />}
+        {activeTab === 'capture'    && <CaptureView notes={notes} ideas={ideas} bookmarks={bookmarks} tasks={tasks} goals={goals} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} initialType={captureType} />}
 
         {/* ── Reflect ──────────────────────────────────────────────────────── */}
-        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} energy={energy} goals={goals} water={water} moodTheme={moodTheme} workouts={workouts} ideas={ideas} bookmarks={bookmarks} />}
-        {activeTab === 'balance'    && <BalanceView wheel={wheel} />}
+        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} energy={energy} goals={goals} moodTheme={moodTheme} workouts={workouts} ideas={ideas} bookmarks={bookmarks} />}
         {activeTab === 'focus'      && <FocusMode tasks={tasks} pomodoroHistory={pomodoroHistory} />}
         {activeTab === 'search'     && <SearchView tasks={tasks} notes={notes} habits={habits} goals={goals} ideas={ideas} bookmarks={bookmarks} />}
 

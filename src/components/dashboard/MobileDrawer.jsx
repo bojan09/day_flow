@@ -22,19 +22,14 @@ const SECTIONS = [
   { label: 'Build', tabs: [
     { id: 'habits',     label: 'Habits',     emoji: '🔁' },
     { id: 'routines',   label: 'Routines',   emoji: '🌅' },
-    { id: 'challenges', label: 'Challenges', emoji: '🎯' },
     { id: 'goals',      label: 'Goals',      emoji: '🏆' },
     { id: 'workouts',   label: 'Workouts',   emoji: '🏋️' },
   ]},
   { label: 'Think', tabs: [
-    { id: 'notes',     label: 'Notes',      emoji: '📝' },
-    { id: 'ideas',     label: 'Ideas',      emoji: '💡' },
-    { id: 'braindump', label: 'Brain Dump', emoji: '🧠' },
-    { id: 'bookmarks', label: 'Bookmarks',  emoji: '🔖' },
+    { id: 'capture', label: 'Capture', emoji: '📥' },
   ]},
   { label: 'Reflect', tabs: [
     { id: 'insights',     label: 'Insights',     emoji: '📊' },
-    { id: 'balance',      label: 'Balance',       emoji: '⚖️' },
     { id: 'search',       label: 'Search',        emoji: '🔍' },
   ]},
 ]

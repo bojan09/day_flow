@@ -9,7 +9,7 @@ const SHORTCUTS = [
   { key: 'H', desc: 'Habits'     }, { key: 'G', desc: 'Goals'    },
   { key: 'W', desc: 'Workouts'   }, { key: 'I', desc: 'Ideas'    },
   { key: 'F', desc: 'Focus'      }, { key: 'R', desc: 'Routines' },
-  { key: 'L', desc: 'Balance'    }, { key: 'B', desc: 'Brain Dump'},
+  { key: 'B', desc: 'Brain Dump'},
   { key: '/', desc: 'Search'     }, { key: '?', desc: 'This menu' },
 ]
 
@@ -17,7 +17,7 @@ const KEY_MAP = {
   't': 'today',     'k': 'tasks',    'c': 'calendar',
   'n': 'notes',     'h': 'habits',   'g': 'goals',
   'w': 'workouts',  'i': 'ideas',    'f': 'focus',
-  'r': 'routines',  'l': 'balance',  'b': 'braindump',
+  'r': 'routines',  'b': 'braindump',
   '/': 'search',
 }
 

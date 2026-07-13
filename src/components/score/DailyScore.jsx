@@ -12,11 +12,9 @@ const GRADE_COLORS = {
 }
 
 const BREAKDOWN_LABELS = {
-  tasks:     { label: 'Tasks',     max: 35, emoji: '✅' },
-  habits:    { label: 'Habits',    max: 30, emoji: '🔁' },
-  mood:      { label: 'Mood',      max: 15, emoji: '😌' },
-  gratitude: { label: 'Gratitude', max: 10, emoji: '🙏' },
-  water:     { label: 'Hydration', max: 10, emoji: '💧' },
+  tasks:  { label: 'Tasks',  max: 44, emoji: '✅' },
+  habits: { label: 'Habits', max: 37, emoji: '🔁' },
+  mood:   { label: 'Mood',   max: 19, emoji: '😌' },
 }
 
 function DailyScore({ scoreData }) {

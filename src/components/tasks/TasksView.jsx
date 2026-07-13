@@ -2,7 +2,7 @@ import ViewSkeleton from '../ui/ViewSkeleton'
 import { useToast } from '../../utils/toast'
 // Component: TasksView
 // Purpose: Tasks tab — NLP input, color categories, sub-task detail modal, duplicate, templates, someday
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import Modal         from '../ui/Modal'
 import TaskForm      from './TaskForm'
 import RecurrencePanel from './RecurrencePanel'
@@ -14,18 +14,35 @@ import TaskSection   from './TaskSection'
 import EmptyState    from '../ui/EmptyState'
 import TaskTemplates from '../templates/TaskTemplates'
 import SomedayList   from '../summary/SomedayList'
+import RepeatingView from '../repeating/RepeatingView'
 import { getTodayKey } from '../../utils/dateUtils'
 import { addDays, format } from 'date-fns'
 
-const FILTERS = ['All', 'Today', 'Overdue', 'Pending', 'Done']
+const FILTERS = ['All', 'Today', 'Overdue', 'Pending', 'Done', 'Someday', 'Templates', 'Repeating']
 
-export default function TasksView({ tasks, templates, someday, projects, categories, onAddCategory, onRemoveCategory, onTabChange, energy, habits, ideas }) {
+export default function TasksView({ tasks, templates, someday, projects, categories, onAddCategory, onRemoveCategory, onTabChange, energy, habits, ideas, openTaskId, workouts }) {
   const { toast } = useToast()
   const [recurTask, setRecurTask] = useState(null)
   const [filter,     setFilter]  = useState('Today')
   const [modalOpen,  setModal]   = useState(false)
   const [detailTask,   setDetail]      = useState(null)
   const todayKey = getTodayKey()
+
+  // Deep-link: auto-open the task detail modal when navigated here via a
+  // notification tap (?openTask=<id>, handled in DashboardPage).
+  // consumedRef tracks which openTaskId we've already auto-opened, so
+  // unrelated tasks.tasks mutations (add/update/toggle/delete/sync) don't
+  // reopen the modal after the user has closed it.
+  const consumedRef = useRef(null)
+  useEffect(() => {
+    if (openTaskId && consumedRef.current !== openTaskId) {
+      const match = tasks.tasks.find(t => t.id === openTaskId)
+      if (match) {
+        setDetail(match)
+        consumedRef.current = openTaskId
+      }
+    }
+  }, [openTaskId, tasks.tasks])
 
   const filtered = tasks.tasks.filter(t => {
     if (filter === 'Today')   return t.date === todayKey
@@ -93,7 +110,13 @@ export default function TasksView({ tasks, templates, someday, projects, categor
         ))}
       </div>
 
-      {filtered.length === 0 ? (
+      {filter === 'Someday' ? (
+        someday && <SomedayList someday={someday} tasks={tasks} />
+      ) : filter === 'Templates' ? (
+        templates && <TaskTemplates templates={templates} tasks={tasks} />
+      ) : filter === 'Repeating' ? (
+        <RepeatingView tasks={tasks} workouts={workouts} />
+      ) : filtered.length === 0 ? (
         <EmptyState type="tasks" title="Nothing here" subtitle="Add a task using the input above." action="+ New Task" onAction={() => setModal(true)} />
       ) : (
         <div className="space-y-5">
@@ -102,13 +125,6 @@ export default function TasksView({ tasks, templates, someday, projects, categor
           <TaskSection title="Upcoming" tasks={upcomingTasks} urgency="future"  tasksApi={tasks} projects={projects} onTabChange={onTabChange} onOpenDetail={setDetail} onOpenRecur={setRecurTask} onDelete={handleDelete} />
           <TaskSection title="Done"     tasks={doneTasks}     urgency="future"  tasksApi={tasks} projects={projects} onTabChange={onTabChange} onOpenDetail={setDetail} onOpenRecur={setRecurTask} onDelete={handleDelete} />
         </div>
-      )}
-
-      {templates && someday && (
-        <>
-          <TaskTemplates templates={templates} tasks={tasks} />
-          <SomedayList   someday={someday}    tasks={tasks} />
-        </>
       )}
 
       <Modal isOpen={modalOpen} onClose={() => setModal(false)} title="New Task">

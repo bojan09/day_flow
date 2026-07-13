@@ -32,7 +32,7 @@ const TABS = [
 export default function InsightsView({
   mood, habits, tasks, notes, goals,
   theme, onSetTheme, onWriteNote,
-  intentions, energy, water,
+  intentions, energy,
   moodTheme, workouts, ideas, bookmarks,
 }) {
   const [tab, setTab] = useState('overview')
@@ -64,8 +64,8 @@ export default function InsightsView({
       {/* ── Overview tab ───────────────────────────────────────────────── */}
       {tab === 'overview' && (
         <div className="space-y-4">
-          <DailySummaryCard tasks={tasks} habits={habits} mood={mood} water={water} />
-          <AIDailyFeedback  tasks={tasks} habits={habits} mood={mood} water={water} />
+          <DailySummaryCard tasks={tasks} habits={habits} mood={mood} />
+          <AIDailyFeedback  tasks={tasks} habits={habits} mood={mood} />
           <MoodTracker mood={mood} />
           <AnalyticsPanel  tasks={tasks} />
           <WeeklyPersonalBest tasks={tasks} habits={habits} />
@@ -152,7 +152,7 @@ export default function InsightsView({
               habits={habits}      moods={mood.moods}
               intentions={intentions} goals={goals}
               workouts={workouts}  ideas={ideas}
-              bookmarks={bookmarks} water={water}
+              bookmarks={bookmarks}
               energy={energy}
             />
           </div>

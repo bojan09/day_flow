@@ -9,14 +9,13 @@ import ThemeToggle      from '../ui/ThemeToggle'
 
 const TITLES = {
   today:      'Today',      tasks:      'Tasks',
-  notes:      'Notes',      habits:     'Habits',
+  capture:    'Capture',    habits:     'Habits',
   goals:      'Goals',      focus:      'Focus',
   search:     'Search',     insights:   'Insights',
-  balance:    'Balance',    workouts:   'Workouts',
+  workouts:   'Workouts',
   timeblock:  'Schedule',   calendar:   'Calendar',
-  ideas:      'Ideas',      braindump:  'Brain Dump',
-  routines:   'Routines',   challenges: 'Challenges',
-  projects:   'Projects',   bookmarks:  'Bookmarks',
+  routines:   'Routines',
+  projects:   'Projects',
 }
 
 export default function TopBar({ activeTab, onTabChange, theme, onSetTheme }) {

@@ -36,6 +36,9 @@ export const taskMapper = {
     project_id:     task.projectId     ?? null,
     sub_tasks:      task.subTasks      ?? [],
     notes:          task.notes         ?? '',
+    reminder_time:  task.reminderTime  ?? null,
+    reminder_at:    task.reminderAt    ?? null,
+    reminder_sent:  task.reminderSent  ?? false,
     created_at:     task.createdAt,
   }),
 
@@ -58,6 +61,9 @@ export const taskMapper = {
     projectId:      row.project_id     ?? null,
     subTasks:       row.sub_tasks      ?? [],
     notes:          row.notes          ?? '',
+    reminderTime:   row.reminder_time  ?? null,
+    reminderAt:     row.reminder_at    ?? null,
+    reminderSent:   row.reminder_sent  ?? false,
     createdAt:      row.created_at,
   }),
 }

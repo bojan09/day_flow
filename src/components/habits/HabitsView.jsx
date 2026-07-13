@@ -13,9 +13,21 @@ import Confetti          from '../ui/Confetti'
 import EmptyState        from '../ui/EmptyState'
 import { getWeekDays, getDateKey, getTodayKey } from '../../utils/dateUtils'
 import { isFuture } from 'date-fns'
-import { notifications } from '../../services/notificationService'
 
 const MILESTONE_STREAKS = [7, 14, 30, 60, 100]
+
+// Local, in-tab notification for immediate streak feedback while the app is open.
+// Distinct from push notifications (services/pushNotificationService.js), which
+// deliver reminders server-side even when the app is closed.
+function notifyStreakCelebration(streakCount) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return
+  const n = new Notification(`🔥 ${streakCount}-Day Streak!`, {
+    body: "You're on fire — keep your streak alive today!",
+    icon: '/favicon.ico',
+    badge: '/favicon.ico',
+  })
+  setTimeout(() => n.close(), 6000)
+}
 
 export default function HabitsView({ habits, habitRules }) {
   const { toast } = useToast()
@@ -46,11 +58,11 @@ export default function HabitsView({ habits, habitRules }) {
       const s = getStreak(habitId)
       if (MILESTONE_STREAKS.includes(s) && s > (prevStreaks.current[habitId] || 0)) {
         setConfetti(true); setTimeout(() => setConfetti(false), 100)
-        notifications.sendStreakCelebration(s)
+        notifyStreakCelebration(s)
       }
       prevStreaks.current[habitId] = s
     }, 50)
-  }, [toggleHabitDay, getStreak, habitRules, notifications])
+  }, [toggleHabitDay, getStreak, habitRules])
 
   const handleToggleToday = useCallback((habitId) => handleToggle(habitId, getTodayKey()), [handleToggle])
 

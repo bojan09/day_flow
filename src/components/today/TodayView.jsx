@@ -4,7 +4,6 @@
 //          Widget order is driven by time-of-day + user preferences.
 import GoodMorningHeader  from './GoodMorningHeader'
 import EnergyCheckIn      from './EnergyCheckIn'
-import AffirmationsCard   from '../affirmations/AffirmationsCard'
 import FocusTask          from './FocusTask'
 import ProgressRing       from './ProgressRing'
 import TodayTaskList      from './TodayTaskList'
@@ -12,11 +11,8 @@ import TodayHabitStrip    from './TodayHabitStrip'
 import TodayQuickNote     from './TodayQuickNote'
 import WeekStrip          from './WeekStrip'
 import MoodTracker        from '../insights/MoodTracker'
-import GratitudeLog       from '../gratitude/GratitudeLog'
 import EndOfDayReview     from '../summary/EndOfDayReview'
-import WaterTracker       from '../water/WaterTracker'
 import DailyScore         from '../score/DailyScore'
-import MonthlyLetter      from '../monthly/MonthlyLetter'
 import OverdueRescue      from '../tasks/OverdueRescue'
 import DashboardNudges    from './DashboardNudges'
 import CollapsibleWidget  from '../ui/CollapsibleWidget'
@@ -29,7 +25,6 @@ import FeatureTooltip        from '../ui/FeatureTooltip'
 import ProjectsWidget    from './modules/ProjectsWidget'
 import GoalsWidget       from './modules/GoalsWidget'
 import WorkoutsWidget    from './modules/WorkoutsWidget'
-import ChallengesWidget  from './modules/ChallengesWidget'
 import CalendarWidget    from './modules/CalendarWidget'
 import NotesWidget       from './modules/NotesWidget'
 import IdeasWidget       from './modules/IdeasWidget'
@@ -41,28 +36,24 @@ import { useWidgetPreferences, WIDGET_REGISTRY } from '../../hooks/useWidgetPref
 import { useState } from 'react'
 
 // Adaptive default orders by time context
-const MORNING_ORDER   = ['mood','tasks-today','habits-today','energy','water','focus-task','gratitude','affirmations','quick-note']
-const AFTERNOON_ORDER = ['focus-task','tasks-today','habits-today','mood','water','energy','gratitude','quick-note','affirmations']
-const EVENING_ORDER   = ['mood','habits-today','tasks-today','gratitude','water','energy','focus-task','affirmations','quick-note']
+const MORNING_ORDER   = ['mood','tasks-today','habits-today','energy','focus-task','quick-note']
+const AFTERNOON_ORDER = ['focus-task','tasks-today','habits-today','mood','energy','quick-note']
+const EVENING_ORDER   = ['mood','habits-today','tasks-today','energy','focus-task','quick-note']
 
 // Map widget id → the component to render
-function WidgetContent({ id, tasks, habits, notes, mood, energy, gratitude, water, affirmations,
-  goals, projects, workouts, challenges, ideas, timeblocks, onTabChange }) {
+function WidgetContent({ id, tasks, habits, notes, mood, energy,
+  goals, projects, workouts, ideas, timeblocks, onTabChange }) {
   switch (id) {
     case 'mood':               return <MoodTracker mood={mood} />
     case 'tasks-today':        return <TodayTaskList tasks={tasks} />
     case 'habits-today':       return <TodayHabitStrip habits={habits} />
-    case 'water':              return <WaterTracker water={water} />
     case 'energy':             return <EnergyCheckIn energy={energy} />
-    case 'gratitude':          return <GratitudeLog gratitude={gratitude} />
     case 'focus-task':         return <FocusTask tasks={tasks} />
-    case 'affirmations':       return <AffirmationsCard affirmations={affirmations} />
     case 'quick-note':         return <TodayQuickNote notes={notes} />
     case 'mini-habits':        return <MiniHabitWidget habits={habits} />
     case 'module-projects':    return <ProjectsWidget   projects={projects}   tasks={tasks}      onTabChange={onTabChange} />
     case 'module-goals':       return <GoalsWidget      goals={goals}                            onTabChange={onTabChange} />
     case 'module-workouts':    return <WorkoutsWidget   workouts={workouts}                      onTabChange={onTabChange} />
-    case 'module-challenges':  return <ChallengesWidget challenges={challenges}                  onTabChange={onTabChange} />
     case 'module-calendar':    return <CalendarWidget   timeblocks={timeblocks}                  onTabChange={onTabChange} />
     case 'module-notes':       return <NotesWidget      notes={notes}                            onTabChange={onTabChange} />
     case 'module-ideas':       return <IdeasWidget      ideas={ideas}                            onTabChange={onTabChange} />
@@ -71,9 +62,9 @@ function WidgetContent({ id, tasks, habits, notes, mood, energy, gratitude, wate
 }
 
 export default function TodayView({
-  tasks, habits, notes, mood, intention, gratitude,
-  water, score, monthlyLetter, energy, affirmations, onTabChange,
-  goals, projects, workouts, challenges, ideas, timeblocks,
+  tasks, habits, notes, mood, intention,
+  score, energy, onTabChange,
+  goals, projects, workouts, ideas, timeblocks,
 }) {
   const adaptive   = useAdaptiveDashboard({ tasks, habits, mood, energy })
   const { analysis } = useSmartScheduler({ tasks, energy, habits })
@@ -93,16 +84,13 @@ export default function TodayView({
   // Get registry entry for a widget
   const getMeta = (id) => WIDGET_REGISTRY.find(w => w.id === id) ?? { id, title: id, emoji: '📦', defaultOpen: false }
 
-  const widgetProps = { tasks, habits, notes, mood, energy, gratitude, water, affirmations, goals, projects, workouts, challenges, ideas, timeblocks, onTabChange }
+  const widgetProps = { tasks, habits, notes, mood, energy, goals, projects, workouts, ideas, timeblocks, onTabChange }
 
   return (
     <div className="max-w-2xl mx-auto space-y-3 pt-2">
 
       {/* Week strip */}
       <WeekStrip />
-
-      {/* Monthly letter */}
-      <MonthlyLetter monthlyLetter={monthlyLetter} />
 
       {/* Smart nudges */}
       <DashboardNudges nudges={adaptive.nudges} onTabChange={onTabChange} />
@@ -162,7 +150,7 @@ export default function TodayView({
       {/* Evening: daily summary recap */}
       {isEvening && (
         <CollapsibleWidget id="daily-summary" emoji="📊" title="Today's Summary" defaultOpen={true}>
-          <DailySummaryCard tasks={tasks} habits={habits} mood={mood} water={water} />
+          <DailySummaryCard tasks={tasks} habits={habits} mood={mood} />
         </CollapsibleWidget>
       )}
 

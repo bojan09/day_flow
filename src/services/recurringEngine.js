@@ -34,6 +34,7 @@ export function spawnRecurringTasks(allTasks, addTask) {
         estimateMins: template.estimateMins,
         isRecurring:  false,          // instances are not themselves recurring
         recurringFrom: template.id,   // tracks origin
+        reminderTime: template.reminderTime || '',
       })
     })
 }

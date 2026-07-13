@@ -2,7 +2,6 @@
 // Purpose: Pomodoro timer with session logging, history report, and task picker
 import { useState, useEffect, useRef } from 'react'
 import PomodoroReport from '../pomodoro/PomodoroReport'
-import { notifications } from '../../services/notificationService'
 
 const MODES = [
   { id: 'focus', label: 'Focus',       mins: 25, color: '[color:var(--accent)]'  },
@@ -11,6 +10,15 @@ const MODES = [
 ]
 
 function pad(n) { return String(n).padStart(2, '0') }
+
+// Local, in-tab notification for immediate session feedback while the app is open.
+// Distinct from push notifications (services/pushNotificationService.js), which
+// deliver reminders server-side even when the app is closed.
+function notifyLocal(title, body) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return
+  const n = new Notification(title, { body, icon: '/favicon.ico', badge: '/favicon.ico' })
+  setTimeout(() => n.close(), 6000)
+}
 
 export default function FocusMode({ tasks, pomodoroHistory }) {
   const [mode,    setMode]    = useState('focus')
@@ -48,9 +56,9 @@ export default function FocusMode({ tasks, pomodoroHistory }) {
     if (mode === 'focus') {
       const focused = tasks.getTodayTasks().find(t => t.id === taskId)
       pomodoroHistory.logSession(current.mins, focused?.title || '')
-      notifications.send('✅ Focus session done!', 'Take a well-earned break.')
+      notifyLocal('✅ Focus session done!', 'Take a well-earned break.')
     } else {
-      notifications.send('⏱ Break over!', 'Ready for another session?')
+      notifyLocal('⏱ Break over!', 'Ready for another session?')
     }
   }
 

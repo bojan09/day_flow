@@ -10,14 +10,11 @@ export const ALL_MODULES = [
   { id: 'focus',      label: 'Focus',     emoji: '⏱️' },
   { id: 'workouts',   label: 'Workouts',  emoji: '🏋️' },
   { id: 'goals',      label: 'Goals',     emoji: '🏆' },
-  { id: 'notes',      label: 'Notes',     emoji: '📝' },
+  { id: 'capture',    label: 'Capture',   emoji: '📥' },
   { id: 'calendar',   label: 'Calendar',  emoji: '📅' },
   { id: 'insights',   label: 'Insights',  emoji: '📊' },
   { id: 'routines',   label: 'Routines',  emoji: '🌅' },
-  { id: 'challenges', label: 'Challenges',emoji: '🎯' },
   { id: 'projects',   label: 'Projects',  emoji: '🗂️' },
-  { id: 'ideas',      label: 'Ideas',     emoji: '💡' },
-  { id: 'repeating',  label: 'Repeating', emoji: '🔁' },
 ]
 
 const DEFAULT_NAV = ['today', 'tasks', 'habits', 'focus']

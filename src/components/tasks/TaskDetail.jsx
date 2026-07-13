@@ -21,6 +21,7 @@ export default function TaskDetail({
   const [title,    setTitle]    = useState(task?.title    || '')
   const [priority, setPriority] = useState(task?.priority || 'medium')
   const [date,     setDate]     = useState(task?.date     || '')
+  const [reminderTime, setReminderTime] = useState(task?.reminderTime || '')
   const [category, setCategory] = useState(task?.category || 'Personal')
   const [note,     setNote]     = useState(task?.notes    || '')
   const [subText,  setSubText]  = useState('')
@@ -38,6 +39,25 @@ export default function TaskDetail({
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
+  // This component stays mounted across multiple task-opens (parent renders
+  // it unconditionally, gated only by `isOpen`), so local state must be
+  // re-synced whenever a *different* task is opened — otherwise every field
+  // silently reverts to stale leftover values from the previous edit.
+  useEffect(() => {
+    if (!task) return
+    setTitle(task.title || '')
+    setPriority(task.priority || 'medium')
+    setDate(task.date || '')
+    setReminderTime(task.reminderTime || '')
+    setCategory(task.category || 'Personal')
+    setNote(task.notes || '')
+    setIsRec(task.isRecurring || false)
+    setRecDays(task.recurDays || [])
+    setRecEnd(task.recurEndDate || '')
+    setRecStat(task.recurStatus || 'active')
+    setDirty(false)
+  }, [task?.id])
+
   if (!task) return null
 
   const subs     = task.subTasks || []
@@ -47,7 +67,7 @@ export default function TaskDetail({
   const saveAll = () => {
     tasks.updateTask(task.id, {
       title:    title.trim() || task.title,
-      priority, date, category, notes: note,
+      priority, date, category, notes: note, reminderTime,
       isRecurring: isRec,
       recurDays:   isRec ? recDays : [],
       recurEndDate: isRec ? (recEnd || null) : null,
@@ -135,6 +155,19 @@ export default function TaskDetail({
         <input
           type="date" value={date}
           onChange={e => { setDate(e.target.value); mark() }}
+          className="input-base w-full" style={inputStyle}
+        />
+      </div>
+
+      {/* Remind me at */}
+      <div>
+        <label htmlFor="task-reminder-time" className="text-xs font-medium uppercase tracking-wide block mb-1.5" style={{ color: 'var(--text-muted)' }}>
+          Remind me at
+        </label>
+        <input
+          id="task-reminder-time"
+          type="time" value={reminderTime}
+          onChange={e => { setReminderTime(e.target.value); mark() }}
           className="input-base w-full" style={inputStyle}
         />
       </div>
