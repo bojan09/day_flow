@@ -1,7 +1,8 @@
 // Component: WorkoutForm
 // Purpose: Create or edit a workout session — title, type, muscle groups, duration, exercises + sets
 import { useState } from 'react'
-import { WORKOUT_TYPES, MUSCLE_GROUPS } from '../../hooks/useWorkouts'
+import { MUSCLE_GROUPS } from '../../hooks/useWorkouts'
+import { useCustomWorkoutTypes } from '../../hooks/useCustomWorkoutTypes'
 import { getTodayKey } from '../../utils/dateUtils'
 import WorkoutTemplatePicker from './WorkoutTemplatePicker'
 
@@ -9,6 +10,11 @@ export default function WorkoutForm({ initial, sessions = [], onSubmit, onCancel
   const isEditing = !!initial
   // Only show the "start from template" picker when creating a brand new session.
   const [started, setStarted] = useState(isEditing)
+
+  const workoutTypes = useCustomWorkoutTypes()
+  const [addingType,   setAddingType]   = useState(false)
+  const [newTypeName,  setNewTypeName]  = useState('')
+  const [typeError,    setTypeError]    = useState('')
 
   const [form, setForm] = useState({
     title:        initial?.title        || '',
@@ -176,19 +182,99 @@ export default function WorkoutForm({ initial, sessions = [], onSubmit, onCancel
           Type
         </label>
         <div className="flex flex-wrap gap-1.5">
-          {WORKOUT_TYPES.map(t => (
-            <button
-              key={t} type="button" onClick={() => set('type', t)}
-              className="px-3 py-1.5 rounded-full text-xs font-medium transition-all border"
-              style={form.type === t
-                ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)', color: 'white' }
-                : { borderColor: 'var(--border)', color: 'var(--text-muted)' }
-              }
-            >
-              {t}
-            </button>
+          {workoutTypes.all.map(t => (
+            <div key={t} className="relative group/type">
+              <button
+                type="button" onClick={() => set('type', t)}
+                className="px-3 py-1.5 rounded-full text-xs font-medium transition-all border"
+                style={form.type === t
+                  ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)', color: 'white' }
+                  : { borderColor: 'var(--border)', color: 'var(--text-muted)' }
+                }
+              >
+                {t}
+              </button>
+              {workoutTypes.isCustom(t) && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (form.type === t) set('type', 'Strength')
+                    workoutTypes.removeType(t)
+                  }}
+                  className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] items-center justify-center opacity-0 group-hover/type:opacity-100 transition-opacity hidden group-hover/type:flex"
+                  title="Remove type"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
           ))}
+
+          {!addingType && (
+            <button
+              type="button"
+              onClick={() => setAddingType(true)}
+              className="hover-accent-soft px-3 py-1.5 rounded-full text-xs font-medium transition-all border border-dashed"
+              style={{ borderColor: 'var(--accent-mid)', color: 'var(--accent)' }}
+            >
+              + Custom
+            </button>
+          )}
         </div>
+
+        {addingType && (
+          <div className="flex items-center gap-2 mt-2">
+            <input
+              autoFocus
+              value={newTypeName}
+              onChange={e => { setNewTypeName(e.target.value); setTypeError('') }}
+              placeholder="Type name…"
+              maxLength={24}
+              className="input-base flex-1 text-sm py-1.5"
+              style={{ backgroundColor: 'var(--bg)', borderColor: typeError ? '#f87171' : 'var(--border)', color: 'var(--text)' }}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  const trimmed = newTypeName.trim()
+                  if (!trimmed) return
+                  const ok = workoutTypes.addType(trimmed)
+                  if (ok === false) { setTypeError('That type already exists'); return }
+                  set('type', trimmed)
+                  setNewTypeName(''); setAddingType(false); setTypeError('')
+                }
+                if (e.key === 'Escape') { setAddingType(false); setNewTypeName(''); setTypeError('') }
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => {
+                const trimmed = newTypeName.trim()
+                if (!trimmed) return
+                const ok = workoutTypes.addType(trimmed)
+                if (ok === false) { setTypeError('That type already exists'); return }
+                set('type', trimmed)
+                setNewTypeName(''); setAddingType(false); setTypeError('')
+              }}
+              disabled={!newTypeName.trim()}
+              className="px-3 py-1.5 rounded-xl text-xs font-medium text-white disabled:opacity-40 flex-shrink-0"
+              style={{ backgroundColor: 'var(--accent)' }}
+            >
+              Add
+            </button>
+            <button
+              type="button"
+              onClick={() => { setAddingType(false); setNewTypeName(''); setTypeError('') }}
+              className="px-3 py-1.5 rounded-xl text-xs font-medium flex-shrink-0"
+              style={{ color: 'var(--text-faint)', border: '1px solid var(--border)' }}
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+        {typeError && (
+          <p className="text-xs text-red-500 mt-1">{typeError}</p>
+        )}
       </div>
 
       {/* Muscle groups */}
