@@ -13,11 +13,20 @@ import SmartRoot     from './components/auth/SmartRoot'
 import { AuthProvider }  from './hooks/useAuth'
 import { ToastProvider } from './utils/toast.jsx'
 import ErrorBoundary    from './components/ui/ErrorBoundary'
+import { useAuth } from './hooks/useAuth'
+import { useOfflineQueue, OfflineQueueContext } from './hooks/useOfflineQueue'
+
+function AuthenticatedServices({ children }) {
+  const { user } = useAuth()
+  const offlineQueue = useOfflineQueue(user?.id || 'demo')
+  return <OfflineQueueContext.Provider value={offlineQueue}>{children}</OfflineQueueContext.Provider>
+}
 
 export default function App() {
   return (
     <AuthProvider>
-      <ToastProvider>
+      <AuthenticatedServices>
+        <ToastProvider>
         <Routes>
           {/* Smart root: logged-in → /dashboard, logged-out → /welcome */}
           <Route path="/" element={<SmartRoot />} />
@@ -44,7 +53,8 @@ export default function App() {
           {/* Catch-all fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </ToastProvider>
+        </ToastProvider>
+      </AuthenticatedServices>
     </AuthProvider>
   )
 }

@@ -1,103 +1,121 @@
-// Hook: useOfflineQueue
-// Purpose: Queues Supabase write operations that fail when offline.
-//          Automatically replays the queue when the device comes back online.
-//          The app always writes to localStorage first — this ensures zero data loss.
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { storage } from '../services/storage'
+// Hook: reload-safe, owner-scoped offline write replay.
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { scopedStorage } from '../services/storage'
+import { createOperation, operationKey, replayOperations } from '../services/offlineOperations'
+import { kvService } from '../services/supabaseDataService'
 
 const QUEUE_KEY = 'offline_write_queue'
 
-export function useOfflineQueue() {
-  const [isOnline, setIsOnline]   = useState(() => navigator.onLine)
-  const [queue,    setQueue]      = useState(() => storage.get(QUEUE_KEY, []))
+export function useOfflineQueue(activeOwnerId = 'demo') {
+  const ownerId = activeOwnerId || 'demo'
+  const scope = ownerId === 'demo' ? 'demo' : `user:${ownerId}`
+  const [isOnline, setIsOnline] = useState(() => globalThis.navigator?.onLine ?? true)
+  const [queue, setQueue] = useState(() => scopedStorage.get(scope, QUEUE_KEY, []))
   const [replaying, setReplaying] = useState(false)
-  const replayRef = useRef(null)
+  const [lastError, setLastError] = useState(null)
+  const loadedScopeRef = useRef(scope)
+  const loadedOwnerRef = useRef(ownerId)
+  const customHandlersRef = useRef({})
 
-  // Persist queue to localStorage whenever it changes
-  useEffect(() => { storage.set(QUEUE_KEY, queue) }, [queue])
+  const handlers = useMemo(() => ({
+    'kv:set': operation => {
+      const { userId, key, value } = operation.payload
+      if (userId !== operation.ownerId) throw new Error('Offline KV owner mismatch')
+      return kvService.set(userId, key, value)
+    },
+    ...customHandlersRef.current,
+  }), [ownerId])
 
-  // Listen for online / offline events
   useEffect(() => {
-    const goOnline  = () => setIsOnline(true)
+    if (loadedOwnerRef.current !== ownerId) {
+      customHandlersRef.current = {}
+      loadedOwnerRef.current = ownerId
+    }
+    setQueue(scopedStorage.get(scope, QUEUE_KEY, []))
+    setLastError(null)
+  }, [ownerId, scope])
+
+  useEffect(() => {
+    if (loadedScopeRef.current !== scope) { loadedScopeRef.current = scope; return }
+    scopedStorage.set(scope, QUEUE_KEY, queue)
+  }, [queue, scope])
+
+  useEffect(() => {
+    const goOnline = () => setIsOnline(true)
     const goOffline = () => setIsOnline(false)
-    window.addEventListener('online',  goOnline)
+    window.addEventListener('online', goOnline)
     window.addEventListener('offline', goOffline)
     return () => {
-      window.removeEventListener('online',  goOnline)
+      window.removeEventListener('online', goOnline)
       window.removeEventListener('offline', goOffline)
     }
   }, [])
 
-  // Replay queue when coming back online
-  useEffect(() => {
-    if (!isOnline || queue.length === 0 || replaying) return
-
-    const replay = async () => {
-      setReplaying(true)
-      const remaining = []
-
-      for (const op of queue) {
-        try {
-          // Re-hydrate the operation function from its serialised form
-          const fn = replayRef.current?.[op.key]
-          if (fn) {
-            await fn(op.payload)
-          }
-        } catch {
-          // If it still fails, keep in queue for next retry
-          remaining.push(op)
-        }
-      }
-
-      setQueue(remaining)
+  const replay = useCallback(async () => {
+    if (!isOnline || replaying || queue.length === 0) return
+    setReplaying(true)
+    try {
+      const result = await replayOperations(queue, ownerId, handlers)
+      setQueue(result.remaining)
+      setLastError(result.errors.at(-1) ?? null)
+      return result
+    } finally {
       setReplaying(false)
     }
+  }, [handlers, isOnline, ownerId, queue, replaying])
 
-    // Small delay to let connection stabilise
-    const t = setTimeout(replay, 1200)
-    return () => clearTimeout(t)
-  }, [isOnline, queue.length])
+  useEffect(() => {
+    if (!isOnline || queue.length === 0 || replaying) return
+    const timeout = setTimeout(() => { replay() }, 1200)
+    return () => clearTimeout(timeout)
+  }, [isOnline, queue.length, replay, replaying])
 
-  // Register a replay handler for a specific operation key
-  const register = useCallback((key, fn) => {
-    if (!replayRef.current) replayRef.current = {}
-    replayRef.current[key] = fn
+  const register = useCallback((type, handler) => {
+    customHandlersRef.current[type] = handler
+    return () => { delete customHandlersRef.current[type] }
   }, [])
 
-  // Enqueue a failed write for later replay
-  const enqueue = useCallback((key, payload) => {
-    setQueue(prev => {
-      // Deduplicate by key + id so we don't queue the same record twice
-      const filtered = prev.filter(op => !(op.key === key && op.payload?.id === payload?.id))
-      return [...filtered, { key, payload, queuedAt: Date.now() }]
-    })
-  }, [])
+  const enqueue = useCallback((type, entityId, payload) => {
+    const operation = createOperation({ ownerId, type, entityId, payload })
+    setQueue(previous => [
+      ...previous.filter(item => operationKey(item.type, item.entityId) !== operationKey(type, entityId)),
+      operation,
+    ])
+    return operation
+  }, [ownerId])
 
-  // Execute a Supabase write — falls back to queue on failure
-  const safeWrite = useCallback(async (key, payload, writeFn) => {
-    if (!isOnline) { enqueue(key, payload); return }
+  const safeWrite = useCallback(async (legacyKey, payload, writeFn) => {
+    const entityId = legacyKey.startsWith('kv:') ? legacyKey.slice(3) : legacyKey
+    const type = legacyKey.startsWith('kv:') ? 'kv:set' : legacyKey
+    if (!isOnline) return enqueue(type, entityId, payload)
     try {
       await writeFn(payload)
-    } catch {
-      enqueue(key, payload)
+      return null
+    } catch (error) {
+      setLastError(error instanceof Error ? error : new Error(String(error)))
+      return enqueue(type, entityId, payload)
     }
-  }, [isOnline, enqueue])
+  }, [enqueue, isOnline])
 
-  const clearQueue = () => setQueue([])
+  const clearOwner = useCallback(owner => {
+    if (owner !== ownerId) return
+    setQueue([])
+    scopedStorage.remove(scope, QUEUE_KEY)
+  }, [ownerId, scope])
 
   return {
     isOnline,
     queue,
     queueLength: queue.length,
     replaying,
+    lastError,
     register,
     enqueue,
+    replay,
     safeWrite,
-    clearQueue,
+    clearOwner,
   }
 }
 
-// Singleton pattern — one queue shared across the app via Context
-import { createContext, useContext } from 'react'
 export const OfflineQueueContext = createContext(null)
 export const useOfflineQueueContext = () => useContext(OfflineQueueContext)
