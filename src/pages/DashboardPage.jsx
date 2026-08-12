@@ -145,7 +145,7 @@ export default function DashboardPage() {
     const shareTitle = params.get('title')
     const shareText  = params.get('text')
 
-    if (action === 'add-task')  { setActiveTab('tasks');   setShowQuickCapture(true) }
+    if (action === 'add-task')  { setActiveTab('tasks'); window.dispatchEvent(new Event('dayflow:quickcapture')) }
     if (action === 'log-mood')  { setActiveTab('today') }
     if (action === 'focus')     { setActiveTab('focus') }
     if (action === 'habits')    { setActiveTab('habits') }

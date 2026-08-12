@@ -18,7 +18,6 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(SHELL_CACHE)
       .then(cache => cache.addAll(PRECACHE_URLS))
-      .then(() => self.skipWaiting())
   )
 })
 
@@ -70,7 +69,7 @@ self.addEventListener('fetch', event => {
   // ── Supabase API — network-first, no caching ─────────────────────────────
   if (url.hostname.includes('supabase.co') || url.hostname.includes('anthropic.com')) {
     event.respondWith(
-      fetch(request).catch(() => caches.match(request))
+      fetch(request)
     )
     return
   }
@@ -158,29 +157,6 @@ self.addEventListener('fetch', event => {
   )
 })
 
-// ── Push notifications ─────────────────────────────────────────────────────────
-self.addEventListener('push', event => {
-  const data = event.data?.json() || { title: 'DayFlow', body: 'Time to check in!' }
-  event.waitUntil(
-    self.registration.showNotification(data.title, {
-      body:    data.body,
-      icon:    '/icon-192.png',
-      badge:   '/icon-192.png',
-      vibrate: [200, 100, 200],
-      data:    { url: data.url || '/dashboard' },
-    })
-  )
-})
-
-self.addEventListener('notificationclick', event => {
-  event.notification.close()
-  event.waitUntil(
-    clients.matchAll({ type: 'window' }).then(clientList => {
-      const url = event.notification.data?.url || '/dashboard'
-      for (const client of clientList) {
-        if (client.url.includes(url) && 'focus' in client) return client.focus()
-      }
-      if (clients.openWindow) return clients.openWindow(url)
-    })
-  )
+self.addEventListener('message', event => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting()
 })

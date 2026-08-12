@@ -34,33 +34,33 @@
       "name": "Add Task",
       "short_name": "Task",
       "description": "Quickly add a new task",
-      "url": "/?action=add-task&utm_source=shortcut",
+      "url": "/dashboard?action=add-task",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Log Mood",
       "short_name": "Mood",
       "description": "Log how you're feeling today",
-      "url": "/?action=log-mood&utm_source=shortcut",
+      "url": "/dashboard?action=log-mood",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Start Focus",
       "short_name": "Focus",
       "description": "Start a Pomodoro focus session",
-      "url": "/?action=focus&utm_source=shortcut",
+      "url": "/dashboard?action=focus",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Today's Habits",
       "short_name": "Habits",
       "description": "Check your habits for today",
-      "url": "/?action=habits&utm_source=shortcut",
+      "url": "/dashboard?action=habits",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ],
   "share_target": {
-    "action": "/share-target",
+    "action": "/dashboard?action=share",
     "method": "GET",
     "enctype": "application/x-www-form-urlencoded",
     "params": {
