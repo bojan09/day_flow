@@ -72,8 +72,9 @@ Run the migration files in your Supabase SQL editor in this order:
 3. `supabase/migration-task-reminders.sql` — Legacy reminder columns (safe to skip when using V2 core)
 4. `supabase/migration-recurrence-controls.sql` — Legacy recurrence columns (safe to skip when using V2 core)
 5. `supabase/migrations/202608120001_dayflow_v2_core.sql` — Task reconciliation, Capture Inbox, and OneSignal preference/delivery tables
-6. `supabase/email-templates.sql` — Custom auth email templates (optional)
-7. `supabase/oauth-setup.sql` — Google OAuth configuration (optional)
+6. `supabase/migrations/202608120002_notification_cron.sql` — Vault-backed five-minute OneSignal scheduler
+7. `supabase/email-templates.sql` — Custom auth email templates (optional)
+8. `supabase/oauth-setup.sql` — Google OAuth configuration (optional)
 
 `supabase/push-subscriptions.sql` belongs to the deprecated native VAPID system. Existing deployments retain that table for rollback safety; V2 does not delete production data.
 
@@ -83,10 +84,12 @@ After applying `202608120002_notification_cron.sql`, configure Vault secrets nam
 
 ```bash
 supabase functions deploy process-notifications --no-verify-jwt
-supabase secrets set ONESIGNAL_APP_ID=... ONESIGNAL_REST_API_KEY=... CRON_SECRET=...
+supabase secrets set ONESIGNAL_APP_ID=... ONESIGNAL_REST_API_KEY=... CRON_SECRET=... PUBLIC_APP_URL=https://your-dayflow-domain.example
 ```
 
 `--no-verify-jwt` is used because the function performs its own constant-time `CRON_SECRET` authorization. Keep the REST API key and cron secret server-side; do not prefix either with `VITE_`.
+
+Configure the OneSignal web app with the same production origin. DayFlow loads the v16 SDK only after `VITE_ONESIGNAL_APP_ID` is configured and uses `/push/onesignal/OneSignalSDKWorker.js` with the isolated `/push/onesignal/` scope. See [`docs/dayflow-v2-manual-qa.md`](docs/dayflow-v2-manual-qa.md) for deployment and live-delivery checks.
 
 ### Build for Production
 
