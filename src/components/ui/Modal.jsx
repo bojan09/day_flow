@@ -2,7 +2,8 @@
 // Purpose: Viewport-centered dialog. Panel is max 85vh tall with internal scroll
 //          so buttons are always reachable regardless of content height.
 //          No body style changes — page remains scrollable behind the overlay.
-import { useEffect, useRef } from 'react'
+import { useId, useRef } from 'react'
+import { useDialogA11y } from '../../hooks/useDialogA11y'
 
 const FOCUSABLE = 'input, textarea, select, button:not([aria-label="Close"]), [href], [tabindex]:not([tabindex="-1"])'
 // Full focusable set (includes the Close button) — used for the Tab-cycle focus
@@ -11,46 +12,7 @@ const FOCUSABLE_ALL = 'input, textarea, select, button, [href], [tabindex]:not([
 
 export default function Modal({ isOpen, onClose, title, children }) {
   const panelRef    = useRef(null)
-  const restoreRef  = useRef(null)
-
-  useEffect(() => {
-    if (!isOpen) return
-    const handler = (e) => {
-      if (e.key === 'Escape') { onClose(); return }
-      if (e.key === 'Tab') {
-        const panel = panelRef.current
-        if (!panel) return
-        const focusables = Array.from(panel.querySelectorAll(FOCUSABLE_ALL))
-          .filter(el => !el.disabled && el.tabIndex !== -1 && el.offsetParent !== null)
-        if (focusables.length === 0) return
-        const first = focusables[0]
-        const last  = focusables[focusables.length - 1]
-        const active = document.activeElement
-        if (e.shiftKey) {
-          if (active === first || !panel.contains(active)) {
-            e.preventDefault()
-            last.focus()
-          }
-        } else {
-          if (active === last || !panel.contains(active)) {
-            e.preventDefault()
-            first.focus()
-          }
-        }
-      }
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [isOpen, onClose])
-
-  // Focus management: move focus into the panel on open, restore on close
-  useEffect(() => {
-    if (!isOpen) return
-    restoreRef.current = document.activeElement
-    const target = panelRef.current?.querySelector(FOCUSABLE) || panelRef.current
-    target?.focus?.()
-    return () => restoreRef.current?.focus?.()
-  }, [isOpen])
+  const titleId=useId();useDialogA11y({open:isOpen,onClose,panelRef})
 
   if (!isOpen) return null
 
@@ -80,7 +42,7 @@ export default function Modal({ isOpen, onClose, title, children }) {
           }}
           role="dialog"
           aria-modal="true"
-          aria-labelledby="modal-title"
+          aria-labelledby={titleId}
           ref={panelRef}
           tabIndex={-1}
           onClick={e => e.stopPropagation()}
@@ -91,7 +53,7 @@ export default function Modal({ isOpen, onClose, title, children }) {
             style={{ borderColor: 'var(--border-soft)' }}
           >
             <h3
-              id="modal-title"
+              id={titleId}
               className="font-serif text-lg"
               style={{ color: 'var(--text)' }}
             >

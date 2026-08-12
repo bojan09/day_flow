@@ -121,6 +121,8 @@
   html { scroll-behavior: smooth; }
 
   body {
+    min-height: 100vh;
+    min-height: 100dvh;
     background-color: var(--bg);
     color: var(--text);
     font-family: 'Outfit', system-ui, sans-serif;
@@ -319,6 +321,7 @@
   /* Safe area padding for mobile */
   .pb-safe { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
   .pt-safe { padding-top: max(0px, env(safe-area-inset-top)); }
+  .pb-safe-nav { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
 
   /* Glass morphism */
 
@@ -327,6 +330,11 @@
 
   /* Prevent text selection on interactive elements */
   .no-select { user-select: none; -webkit-user-select: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
 
 @layer components {
