@@ -17,6 +17,7 @@ import SomedayList   from '../summary/SomedayList'
 import RepeatingView from '../repeating/RepeatingView'
 import { getTodayKey } from '../../utils/dateUtils'
 import { addDays, format } from 'date-fns'
+import { taskMatchesFilter } from '../../services/taskFilters'
 
 const FILTERS = ['All', 'Today', 'Overdue', 'Pending', 'Done', 'Someday', 'Templates', 'Repeating']
 
@@ -44,13 +45,7 @@ export default function TasksView({ tasks, templates, someday, projects, categor
     }
   }, [openTaskId, tasks.tasks])
 
-  const filtered = tasks.tasks.filter(t => {
-    if (filter === 'Today')   return t.date === todayKey
-    if (filter === 'Overdue') return tasks.isOverdue(t)
-    if (filter === 'Pending') return !t.completed
-    if (filter === 'Done')    return t.completed
-    return true
-  })
+  const filtered = tasks.tasks.filter(task => taskMatchesFilter(task, filter, todayKey))
   const byPriority = (a, b) => {
     const p = { high: 0, medium: 1, low: 2 }
     return (p[a.priority] ?? 1) - (p[b.priority] ?? 1)
