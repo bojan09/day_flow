@@ -5,12 +5,6 @@ import { usePersistedState } from './usePersistedState'
 
 // Master widget registry — single source of truth for all Today widgets
 export const WIDGET_REGISTRY = [
-  { id: 'mood',         title: "Today's Mood",  emoji: '😊', defaultOpen: true,  alwaysVisible: false },
-  { id: 'tasks-today',  title: "Today's Tasks", emoji: '✅', defaultOpen: true,  alwaysVisible: false },
-  { id: 'habits-today', title: 'Habits Today',  emoji: '🔁', defaultOpen: true,  alwaysVisible: false },
-  { id: 'energy',       title: 'Energy',        emoji: '⚡', defaultOpen: false, alwaysVisible: false },
-  { id: 'focus-task',   title: 'Focus Task',    emoji: '🎯', defaultOpen: false, alwaysVisible: false },
-  { id: 'quick-note',   title: 'Quick Note',    emoji: '📝', defaultOpen: false, alwaysVisible: false },
   { id: 'mini-habits',  title: 'Mini Habits',   emoji: '⚡', defaultOpen: false, alwaysVisible: false },
   { id: 'daily-summary', title: 'Daily Summary', emoji: '📊', defaultOpen: true,  alwaysVisible: false },
 

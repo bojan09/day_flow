@@ -34,6 +34,7 @@ import BentoGrid, { BentoCell } from './BentoGrid'
 import { useAdaptiveDashboard }  from '../../hooks/useAdaptiveDashboard'
 import { useWidgetPreferences, WIDGET_REGISTRY } from '../../hooks/useWidgetPreferences'
 import { useState } from 'react'
+import DailyPriorities from './DailyPriorities'
 
 // Adaptive default orders by time context
 const MORNING_ORDER   = ['mood','tasks-today','habits-today','energy','focus-task','quick-note']
@@ -65,10 +66,10 @@ export default function TodayView({
   tasks, habits, notes, mood, intention,
   score, energy, onTabChange,
   goals, projects, workouts, ideas, timeblocks,
-  dailyPriorityIds = [], onStartFocus,
+  dailyPriorities, onStartFocus,
 }) {
   const adaptive   = useAdaptiveDashboard({ tasks, habits, mood, energy })
-  const { analysis } = useSmartScheduler({ tasks, energy, habits, dailyPriorityIds, projects })
+  const { analysis } = useSmartScheduler({ tasks, energy, habits, dailyPriorityIds: dailyPriorities?.ids ?? [], projects })
   const widgetPrefs = useWidgetPreferences()
   // score now exposes todayScore directly — no re-calculation needed
   const scoreData = score.total !== undefined ? score : score.calculate?.()
@@ -90,25 +91,27 @@ export default function TodayView({
   return (
     <div className="max-w-2xl mx-auto space-y-3 pt-2">
 
-      {/* Week strip */}
-      <WeekStrip />
-
-      {/* Smart nudges */}
-      <DashboardNudges nudges={adaptive.nudges} onTabChange={onTabChange} />
-
-      {/* Priority recommendation */}
-      <PriorityRecommendation analysis={analysis} onTabChange={onTabChange} onStartFocus={onStartFocus} />
-
-      {/* Overdue rescue */}
-      <OverdueRescue tasks={tasks} />
-
-      {/* Greeting */}
+      {/* Non-hideable action hierarchy */}
       <GoodMorningHeader intention={intention} />
+      <PriorityRecommendation analysis={analysis} onTabChange={onTabChange} onStartFocus={onStartFocus} />
+      <ProgressRing tasks={tasks} habits={habits} />
+      <DashboardNudges nudges={adaptive.nudges} onTabChange={onTabChange} />
+      <OverdueRescue tasks={tasks} />
 
       {/* AI morning brief — shown only before noon, auto-generated */}
       {!isEvening && !isAfternoon && (
         <SmartMorningBrief tasks={tasks} habits={habits} mood={mood} goals={goals} />
       )}
+
+      {dailyPriorities && <DailyPriorities priorities={dailyPriorities} allTasks={tasks.tasks} onToggleTask={tasks.toggleTask} onStartFocus={onStartFocus} />}
+      <FocusTask tasks={tasks} />
+      <TodayTaskList tasks={tasks} />
+      <EnergyCheckIn energy={energy} />
+      <MoodTracker mood={mood} />
+      <TodayHabitStrip habits={habits} />
+      <TodayQuickNote notes={notes} />
+
+      <WeekStrip />
 
       {/* Customize button */}
       <div className="flex justify-end px-1">
@@ -163,7 +166,6 @@ export default function TodayView({
       )}
 
       {/* Static bottom widgets — always shown, never rearranged */}
-      <ProgressRing tasks={tasks} habits={habits} />
       <DailyScore scoreData={scoreData} />
       <EndOfDayReview tasks={tasks} />
 
