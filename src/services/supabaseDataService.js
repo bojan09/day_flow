@@ -7,6 +7,7 @@ import {
   goalMapper, projectMapper, bookmarkMapper,
 } from './mappers'
 import { remoteFailure, remoteSuccess } from './syncResult'
+import { notificationPreferencesFromDb, notificationPreferencesToDb } from './notificationPreferences'
 
 const unconfigured = () => remoteFailure(new Error('Supabase is not configured'))
 const throwIfError = (error, operation) => {
@@ -34,6 +35,28 @@ export const kvService = {
       { onConflict: 'user_id,key' }
     )
     throwIfError(error, 'kvService.set')
+  },
+}
+
+export const notificationPreferencesService = {
+  async get(userId) {
+    if (!isSupabaseConfigured()) return unconfigured()
+    const { data, error } = await supabase
+      .from('notification_preferences')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle()
+    if (error) return remoteFailure(error)
+    return remoteSuccess(data ? notificationPreferencesFromDb(data) : null)
+  },
+
+  async set(userId, preferences) {
+    if (!isSupabaseConfigured()) return
+    const { error } = await supabase.from('notification_preferences').upsert(
+      notificationPreferencesToDb(userId, preferences),
+      { onConflict: 'user_id' },
+    )
+    throwIfError(error, 'notificationPreferencesService.set')
   },
 }
 

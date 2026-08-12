@@ -73,6 +73,9 @@ create table if not exists public.notification_deliveries (
   source_type text,
   source_id text,
   bucket text not null,
+  title text not null default 'DayFlow',
+  body text not null default 'You have a timely update waiting.',
+  url text not null default '/day',
   onesignal_message_id text,
   idempotency_key uuid not null default gen_random_uuid(),
   status text not null default 'pending' check (status in ('pending', 'sent', 'failed', 'skipped')),
@@ -83,6 +86,10 @@ create table if not exists public.notification_deliveries (
   updated_at timestamptz not null default now(),
   unique (user_id, logical_key)
 );
+
+alter table public.notification_deliveries add column if not exists title text not null default 'DayFlow';
+alter table public.notification_deliveries add column if not exists body text not null default 'You have a timely update waiting.';
+alter table public.notification_deliveries add column if not exists url text not null default '/day';
 
 create index if not exists notification_deliveries_recent
   on public.notification_deliveries (user_id, created_at desc);
