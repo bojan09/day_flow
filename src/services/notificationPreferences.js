@@ -16,6 +16,19 @@ const FIELD_MAP = {
   timezone: 'timezone',
 }
 
+export function isValidNotificationTime(value) {
+  return /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value)
+}
+
+export function isValidTimezone(value) {
+  try {
+    new Intl.DateTimeFormat('en', { timeZone: value }).format()
+    return true
+  } catch {
+    return false
+  }
+}
+
 export function notificationPreferencesToDb(userId, preferences) {
   const row = { user_id: userId }
   for (const [clientKey, dbKey] of Object.entries(FIELD_MAP)) {

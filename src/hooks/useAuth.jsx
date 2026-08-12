@@ -6,6 +6,7 @@ import { useState, useEffect, createContext, useContext } from 'react'
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient'
 import { unsubscribeAll } from '../services/realtimeService'
 import { oneSignalClient } from '../services/oneSignalClient'
+import { notificationPreferencesService } from '../services/supabaseDataService'
 
 const AuthContext = createContext(null)
 
@@ -46,7 +47,10 @@ export function AuthProvider({ children }) {
   }, [])
 
   useEffect(() => {
-    if (user?.id) oneSignalClient.identify(user.id).catch(error => console.warn('[DayFlow] OneSignal identity failed:', error.message))
+    if (user?.id) {
+      oneSignalClient.identify(user.id).catch(error => console.warn('[DayFlow] OneSignal identity failed:', error.message))
+      notificationPreferencesService.touchOpened(user.id).catch(error => console.warn('[DayFlow] Activity timestamp failed:', error.message))
+    }
   }, [user?.id])
 
   // ── Auth methods ────────────────────────────────────────────────────────────

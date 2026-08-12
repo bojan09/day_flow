@@ -58,6 +58,15 @@ export const notificationPreferencesService = {
     )
     throwIfError(error, 'notificationPreferencesService.set')
   },
+
+  async touchOpened(userId) {
+    if (!isSupabaseConfigured()) return
+    const { error } = await supabase.from('notification_preferences').upsert(
+      { user_id: userId, last_opened_at: new Date().toISOString() },
+      { onConflict: 'user_id' },
+    )
+    throwIfError(error, 'notificationPreferencesService.touchOpened')
+  },
 }
 
 // ── Tasks ───────────────────────────────────────────────────────────────────

@@ -1,6 +1,11 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { createNotificationHandler } from './handler.js'
-import { buildNotificationCandidates, toDeliveryRow } from './policy.js'
+import {
+  buildContextualCandidates,
+  buildNotificationCandidates,
+  dailySendAllowed,
+  toDeliveryRow,
+} from './policy.js'
 
 const env = {
   CRON_SECRET: Deno.env.get('CRON_SECRET') ?? '',
@@ -13,30 +18,54 @@ const db = createClient(
   Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
 )
 
-async function materializeDueTaskReminders() {
+const CONTEXT_KEYS = ['routines', 'routine_log', 'focus_session', 'daily_priorities']
+const CATEGORY_PRIORITY = ['upcoming_task', 'focus_reminder', 'morning_planning', 'evening_review', 'overdue_summary', 'habit_reminder', 'routine_reminder', 'inactivity_nudge']
+
+async function materializeNotificationCandidates() {
   const now = new Date()
   const { data: preferences, error: preferencesError } = await db
     .from('notification_preferences')
     .select('*')
     .eq('enabled', true)
-    .eq('task_reminders', true)
     .limit(500)
   if (preferencesError) throw preferencesError
 
   for (const preference of preferences ?? []) {
-    const { data: tasks, error: tasksError } = await db
-      .from('tasks')
-      .select('id,title,reminder_at,reminder_sent,completed')
-      .eq('user_id', preference.user_id)
-      .eq('completed', false)
-      .eq('reminder_sent', false)
-      .not('reminder_at', 'is', null)
-      .lte('reminder_at', now.toISOString())
-      .limit(100)
-    if (tasksError) throw tasksError
+    const sinceDay = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
+    const sinceHour = new Date(now.getTime() - 60 * 60 * 1000).toISOString()
+    const [tasksResult, habitsResult, habitLogResult, contextResult, deliveryResult] = await Promise.all([
+      db.from('tasks').select('id,title,date,due_time,reminder_at,reminder_sent,completed')
+        .eq('user_id', preference.user_id).eq('completed', false).limit(500),
+      db.from('habits').select('id,name,frequency').eq('user_id', preference.user_id).limit(100),
+      db.from('habit_log').select('habit_id,date_key,done').eq('user_id', preference.user_id).gte('date_key', sinceDay.slice(0, 10)),
+      db.from('user_data').select('key,value').eq('user_id', preference.user_id).in('key', CONTEXT_KEYS),
+      db.from('notification_deliveries').select('sent_at').eq('user_id', preference.user_id).eq('status', 'sent').gte('sent_at', sinceDay),
+    ])
+    const firstError = [tasksResult, habitsResult, habitLogResult, contextResult, deliveryResult].find(result => result.error)?.error
+    if (firstError) throw firstError
 
-    const rows = buildNotificationCandidates({ preferences: preference, tasks, now })
-      .map(candidate => toDeliveryRow(preference.user_id, candidate))
+    const context = Object.fromEntries((contextResult.data ?? []).map(row => [row.key, row.value]))
+    const explicit = preference.task_reminders
+      ? buildNotificationCandidates({ preferences: preference, tasks: tasksResult.data ?? [], now })
+      : []
+    const contextual = buildContextualCandidates({
+      preferences: preference,
+      tasks: tasksResult.data ?? [],
+      habits: habitsResult.data ?? [],
+      habitLog: habitLogResult.data ?? [],
+      routines: context.routines ?? [],
+      routineLog: context.routine_log ?? {},
+      focusSession: context.focus_session ?? null,
+      dailyPriorities: context.daily_priorities ?? {},
+      now,
+    }).sort((a, b) => CATEGORY_PRIORITY.indexOf(a.category) - CATEGORY_PRIORITY.indexOf(b.category))
+
+    const sent = deliveryResult.data ?? []
+    const allowedContext = dailySendAllowed({
+      sentToday: sent.length,
+      sentLastHour: sent.filter(row => row.sent_at >= sinceHour).length,
+    }) ? contextual.slice(0, 1) : []
+    const rows = [...explicit, ...allowedContext].map(candidate => toDeliveryRow(preference.user_id, candidate))
     if (rows.length) {
       const { error } = await db
         .from('notification_deliveries')
@@ -48,11 +77,11 @@ async function materializeDueTaskReminders() {
 
 const repository = {
   async candidates() {
-    await materializeDueTaskReminders()
+    await materializeNotificationCandidates()
     const { data, error } = await db
       .from('notification_deliveries')
       .select('id,user_id,category,source_type,source_id,idempotency_key,title,body,url')
-      .eq('status', 'pending')
+      .in('status', ['pending', 'failed'])
       .limit(100)
     if (error) throw error
     return (data ?? []).map(row => ({
@@ -73,7 +102,7 @@ const repository = {
       sent_at: sentAt,
     }).eq('id', candidate.id)
     if (error) throw error
-    if (candidate.source_type === 'task' && candidate.source_id) {
+    if (candidate.category === 'task_reminder' && candidate.source_type === 'task' && candidate.source_id) {
       const { error: taskError } = await db.from('tasks')
         .update({ reminder_sent: true })
         .eq('id', candidate.source_id)
