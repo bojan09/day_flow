@@ -77,6 +77,17 @@ Run the migration files in your Supabase SQL editor in this order:
 
 `supabase/push-subscriptions.sql` belongs to the deprecated native VAPID system. Existing deployments retain that table for rollback safety; V2 does not delete production data.
 
+### OneSignal delivery
+
+After applying `202608120002_notification_cron.sql`, configure Vault secrets named `project_url` and `cron_secret`, then deploy the scheduler:
+
+```bash
+supabase functions deploy process-notifications --no-verify-jwt
+supabase secrets set ONESIGNAL_APP_ID=... ONESIGNAL_REST_API_KEY=... CRON_SECRET=...
+```
+
+`--no-verify-jwt` is used because the function performs its own constant-time `CRON_SECRET` authorization. Keep the REST API key and cron secret server-side; do not prefix either with `VITE_`.
+
 ### Build for Production
 
 ```bash

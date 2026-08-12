@@ -61,6 +61,10 @@ export default [
       'no-unused-vars': 'off',
     },
   },
+  {
+    files: ['supabase/functions/**/*.js'],
+    languageOptions: { globals: { ...globals.browser, ...globals.es2022 } },
+  },
   ...tseslint.configs.recommended.map(config => ({
     ...config,
     files: ['supabase/functions/**/*.ts'],

@@ -1,0 +1,4 @@
+import assert from 'node:assert/strict';import test from 'node:test';import{isQuietTime,dailySendAllowed,buildOneSignalPayload}from'./policy.js'
+test('supports overnight quiet hours',()=>{assert.equal(isQuietTime('23:00','22:00','07:00'),true);assert.equal(isQuietTime('12:00','22:00','07:00'),false)})
+test('caps ordinary sends but exempts explicit reminders',()=>{assert.equal(dailySendAllowed({sentToday:3,sentLastHour:0,explicit:false}),false);assert.equal(dailySendAllowed({sentToday:3,sentLastHour:1,explicit:true}),true)})
+test('builds external alias OneSignal payload',()=>{const p=buildOneSignalPayload({userId:'u',title:'Hi',body:'Body',url:'/day',idempotencyKey:'00000000-0000-4000-8000-000000000000'});assert.equal(p.include_aliases.external_id[0],'u');assert.equal(p.target_channel,'push');assert.equal(p.idempotency_key,'00000000-0000-4000-8000-000000000000')})
