@@ -65,7 +65,7 @@ function WidgetContent({ id, tasks, habits, notes, mood, energy,
 export default function TodayView({
   tasks, habits, notes, mood, intention,
   score, energy, onTabChange,
-  goals, projects, workouts, ideas, timeblocks,
+  goals, projects, workouts, ideas, timeblocks, routines,
   dailyPriorities, onStartFocus,
 }) {
   const adaptive   = useAdaptiveDashboard({ tasks, habits, mood, energy })
@@ -96,7 +96,7 @@ export default function TodayView({
       <PriorityRecommendation analysis={analysis} onTabChange={onTabChange} onStartFocus={onStartFocus} />
       <ProgressRing tasks={tasks} habits={habits} />
       <DashboardNudges nudges={adaptive.nudges} onTabChange={onTabChange} />
-      <OverdueRescue tasks={tasks} />
+      <OverdueRescue tasks={tasks} habits={habits} routines={routines} onStartFocus={onStartFocus} onOpen={onTabChange} />
 
       {/* AI morning brief — shown only before noon, auto-generated */}
       {!isEvening && !isAfternoon && (

@@ -252,7 +252,7 @@ export default function DashboardPage() {
       <ViewErrorBoundary key={activeTab}>
 
         {/* ── Plan ─────────────────────────────────────────────────────────── */}
-        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} score={score} energy={energy} onTabChange={handleTabChange} goals={goals} projects={projects} workouts={workouts} ideas={ideas} timeblocks={timeblocks} dailyPriorities={dailyPriorities} onStartFocus={startFocus} />}
+        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} score={score} energy={energy} onTabChange={handleTabChange} goals={goals} projects={projects} workouts={workouts} ideas={ideas} timeblocks={timeblocks} routines={routines} dailyPriorities={dailyPriorities} onStartFocus={startFocus} />}
         {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={handleTabChange} energy={energy} habits={habits} ideas={ideas} openTaskId={openTaskId} workouts={workouts} />}
         {activeTab === 'calendar'   && <CalendarView tasks={tasks} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} />}
         {activeTab === 'timeblock'  && <TimeBlockView tasks={tasks} />}
