@@ -49,6 +49,11 @@ create table if not exists public.tasks (
   completed_at   timestamptz,
   is_focus       boolean default false,
   estimate_mins  int,
+  due_time       text default '',
+  custom_mins    int,
+  reminder_time  text default '',
+  reminder_at    timestamptz,
+  reminder_sent  boolean default false,
   is_recurring   boolean default false,
   recur_days     text[],
   recurring_from text,
@@ -218,3 +223,68 @@ alter table public.user_data enable row level security;
 create policy "Users own their data"
   on public.user_data for all using (auth.uid() = user_id);
 create index if not exists user_data_lookup on public.user_data(user_id, key);
+
+-- DayFlow V2 tables (existing projects use the matching timestamped migration).
+create table if not exists public.capture_inbox (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  text text not null,
+  inferred_type text not null default 'inbox',
+  fields jsonb not null default '{}',
+  status text not null default 'open',
+  converted_type text,
+  converted_id text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table public.capture_inbox enable row level security;
+create policy "Users own capture inbox" on public.capture_inbox for all
+  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+create table if not exists public.notification_preferences (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  enabled boolean not null default false,
+  task_reminders boolean not null default true,
+  morning_planning boolean not null default true,
+  upcoming_tasks boolean not null default true,
+  overdue_summary boolean not null default true,
+  habit_reminders boolean not null default true,
+  routine_reminders boolean not null default true,
+  focus_reminders boolean not null default true,
+  evening_review boolean not null default true,
+  inactivity_nudges boolean not null default false,
+  morning_time time not null default '08:00',
+  evening_time time not null default '20:00',
+  quiet_start time not null default '22:00',
+  quiet_end time not null default '07:00',
+  timezone text not null default 'UTC',
+  last_opened_at timestamptz,
+  last_planning_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table public.notification_preferences enable row level security;
+create policy "Users own notification preferences" on public.notification_preferences for all
+  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+create table if not exists public.notification_deliveries (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  logical_key text not null,
+  category text not null,
+  source_type text,
+  source_id text,
+  bucket text not null,
+  onesignal_message_id text,
+  idempotency_key uuid not null default uuid_generate_v4(),
+  status text not null default 'pending',
+  last_error text,
+  attempted_at timestamptz,
+  sent_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (user_id, logical_key)
+);
+alter table public.notification_deliveries enable row level security;
+create policy "Users own notification deliveries" on public.notification_deliveries for all
+  using (auth.uid() = user_id) with check (auth.uid() = user_id);

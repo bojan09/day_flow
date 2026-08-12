@@ -23,12 +23,12 @@ A professional daily planner and productivity application. Built with React, Vit
 
 | Layer | Technology |
 |---|---|
-| Framework | React 18 + Vite 5 |
+| Framework | React 18 + Vite 8 |
 | Styling | Tailwind CSS 3 + CSS variables |
-| Routing | React Router 6 |
+| Routing | React Router 7 |
 | Backend / Auth | Supabase |
 | Dates | date-fns 3 |
-| Animations | GSAP 3 + Tailwind keyframes |
+| Animations | Tailwind keyframes |
 | AI | Groq (Llama) |
 | Deployment | Vercel |
 
@@ -69,11 +69,13 @@ Run the migration files in your Supabase SQL editor in this order:
 
 1. `supabase/schema.sql` — Main tables and RLS policies
 2. `supabase/storage.sql` — Storage bucket for avatar uploads
-3. `supabase/push-subscriptions.sql` — Push notification subscriptions
-4. `supabase/email-templates.sql` — Custom auth email templates (optional)
-5. `supabase/oauth-setup.sql` — Google OAuth configuration (optional)
+3. `supabase/migration-task-reminders.sql` — Legacy reminder columns (safe to skip when using V2 core)
+4. `supabase/migration-recurrence-controls.sql` — Legacy recurrence columns (safe to skip when using V2 core)
+5. `supabase/migrations/202608120001_dayflow_v2_core.sql` — Task reconciliation, Capture Inbox, and OneSignal preference/delivery tables
+6. `supabase/email-templates.sql` — Custom auth email templates (optional)
+7. `supabase/oauth-setup.sql` — Google OAuth configuration (optional)
 
-For push notifications, set the `VITE_VAPID_PUBLIC_KEY` environment variable.
+`supabase/push-subscriptions.sql` belongs to the deprecated native VAPID system. Existing deployments retain that table for rollback safety; V2 does not delete production data.
 
 ### Build for Production
 
