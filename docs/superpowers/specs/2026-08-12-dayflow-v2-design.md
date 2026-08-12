@@ -1,7 +1,7 @@
 # DayFlow V2 Design
 
-**Date:** 2026-08-12  
-**Branch:** `dayflow_v2`  
+**Date:** 2026-08-12
+**Branch:** `dayflow_v2`
 **Status:** Approved for implementation planning
 
 ## Purpose
