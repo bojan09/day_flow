@@ -5,6 +5,7 @@ import { useMemo } from 'react'
 import { format, addDays, subDays, isWeekend } from 'date-fns'
 import { getTodayKey, getDateKey } from '../utils/dateUtils'
 import { callClaude } from '../services/aiService'
+import { getNextAction } from '../services/nextAction'
 
 const SCHEDULE_SYSTEM_PROMPT = `You suggest which day (YYYY-MM-DD, within the next 7 days) an overdue or
 unscheduled task should be rescheduled to, given the user's upcoming task load per day and optional energy
@@ -33,7 +34,7 @@ export async function getAIScheduleSuggestions(tasksToSchedule, next7Days, today
   }
 }
 
-export function useSmartScheduler({ tasks, energy, habits }) {
+export function useSmartScheduler({ tasks, energy, habits, dailyPriorityIds = [], projects = [] }) {
   const today = getTodayKey()
 
   const analysis = useMemo(() => {
@@ -98,22 +99,11 @@ export function useSmartScheduler({ tasks, energy, habits }) {
       low:    activeTasks.filter(t => t.priority === 'low').length,
     }
 
-    // ── What to work on NOW (priority recommendation) ─────────────────────
-    const hour = new Date().getHours()
-    const todayTasks = tasks.getTodayTasks().filter(t => !t.completed)
-    const highPriority = todayTasks.filter(t => t.priority === 'high')
-    const focusTask    = tasks.getFocusTask()
-
-    let topRecommendation = null
-    if (focusTask && !focusTask.completed) {
-      topRecommendation = { task: focusTask, reason: 'Your pinned focus task' }
-    } else if (highPriority.length > 0) {
-      topRecommendation = { task: highPriority[0], reason: 'Highest priority today' }
-    } else if (overdue.length > 0) {
-      topRecommendation = { task: overdue[0], reason: `Overdue since ${overdue[0].date}` }
-    } else if (todayTasks.length > 0) {
-      topRecommendation = { task: todayTasks[0], reason: 'Next on your list' }
-    }
+    const topRecommendation = getNextAction(tasks.tasks, {
+      now: new Date(),
+      dailyPriorityIds,
+      projects: projects.projects ?? projects,
+    })
 
     return {
       overdue,
@@ -127,7 +117,7 @@ export function useSmartScheduler({ tasks, energy, habits }) {
       topRecommendation,
       activeTasks: activeTasks.length,
     }
-  }, [tasks.tasks, energy?.level, today])
+  }, [tasks.tasks, energy?.level, today, dailyPriorityIds, projects])
 
   // ── Build context string for AI ───────────────────────────────────────────
   const buildAIContext = () => {

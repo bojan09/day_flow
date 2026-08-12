@@ -65,9 +65,10 @@ export default function TodayView({
   tasks, habits, notes, mood, intention,
   score, energy, onTabChange,
   goals, projects, workouts, ideas, timeblocks,
+  dailyPriorityIds = [], onStartFocus,
 }) {
   const adaptive   = useAdaptiveDashboard({ tasks, habits, mood, energy })
-  const { analysis } = useSmartScheduler({ tasks, energy, habits })
+  const { analysis } = useSmartScheduler({ tasks, energy, habits, dailyPriorityIds, projects })
   const widgetPrefs = useWidgetPreferences()
   // score now exposes todayScore directly — no re-calculation needed
   const scoreData = score.total !== undefined ? score : score.calculate?.()
@@ -96,7 +97,7 @@ export default function TodayView({
       <DashboardNudges nudges={adaptive.nudges} onTabChange={onTabChange} />
 
       {/* Priority recommendation */}
-      <PriorityRecommendation analysis={analysis} onTabChange={onTabChange} />
+      <PriorityRecommendation analysis={analysis} onTabChange={onTabChange} onStartFocus={onStartFocus} />
 
       {/* Overdue rescue */}
       <OverdueRescue tasks={tasks} />
