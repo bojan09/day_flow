@@ -2,7 +2,8 @@
 // Purpose: Task CRUD — localStorage fallback with optional Supabase sync + real-time.
 //          Fixes: delete race condition, || synced overwrite bug, realtime dedup guard.
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { storage }        from '../services/storage'
+import { scopedStorage }  from '../services/storage'
+import { storageScope }   from '../services/scopedStorage'
 import { tasksService }   from '../services/supabaseDataService'
 import { subscribeToTable } from '../services/realtimeService'
 import { useAuth }        from './useAuth'
@@ -17,9 +18,12 @@ export function useTasks() {
   const { user }  = useAuth()
   const userId    = user?.id
   const useDB     = isSupabaseConfigured() && !!userId
+  const scope     = storageScope(userId, isSupabaseConfigured())
 
-  const [tasks, setTasks]   = useState(() => storage.get(KEY, []))
+  const [tasks, setTasks]   = useState(() => scopedStorage.get(scope, KEY, []))
   const [synced, setSynced] = useState(false)
+  const [syncError, setSyncError] = useState(null)
+  const loadedScopeRef = useRef(scope)
 
   // Track IDs we've locally deleted — prevents realtime from restoring them
   // before the Supabase DELETE has committed
@@ -27,34 +31,49 @@ export function useTasks() {
 
   // ── Load from Supabase on mount / user change ──────────────────────────────
   useEffect(() => {
-    if (!useDB) { setSynced(true); return }
-    tasksService.getAll(userId).then(rows => {
-      // FIX: never overwrite with empty — only update if Supabase returned data
-      if (rows.length > 0) {
-        // Filter out any pending local deletes that haven't committed yet
-        const filtered = rows.filter(r => !pendingDeletesRef.current.has(r.id))
+    let active = true
+    setSynced(false)
+    setSyncError(null)
+    const fallback = scope === 'demo' ? scopedStorage.readLegacy(KEY, []) : []
+    const cached = scopedStorage.get(scope, KEY, fallback)
+    setTasks(cached)
+    if (!useDB) { setSynced(true); return () => { active = false } }
+
+    tasksService.getAll(userId).then(result => {
+      if (!active) return
+      if (result.ok) {
+        const filtered = result.value.filter(r => !pendingDeletesRef.current.has(r.id))
         setTasks(filtered)
-        storage.set(KEY, filtered)
+        scopedStorage.set(scope, KEY, filtered)
+      } else {
+        setSyncError(result.error)
       }
       setSynced(true)
     })
-  }, [userId])
+    return () => { active = false }
+  }, [scope, useDB, userId])
 
   // ── Real-time subscription ─────────────────────────────────────────────────
   useEffect(() => {
     if (!useDB) return
     return subscribeToTable('tasks', userId, () => {
-      tasksService.getAll(userId).then(rows => {
-        // FIX: filter out pending deletes before applying realtime update
-        const filtered = rows.filter(r => !pendingDeletesRef.current.has(r.id))
+      tasksService.getAll(userId).then(result => {
+        if (!result.ok) { setSyncError(result.error); return }
+        const filtered = result.value.filter(r => !pendingDeletesRef.current.has(r.id))
         setTasks(filtered)
-        storage.set(KEY, filtered)
+        scopedStorage.set(scope, KEY, filtered)
       })
     })
-  }, [userId])
+  }, [scope, useDB, userId])
 
   // ── Persist to localStorage when offline ──────────────────────────────────
-  useEffect(() => { if (!useDB) storage.set(KEY, tasks) }, [tasks])
+  useEffect(() => {
+    if (loadedScopeRef.current !== scope) {
+      loadedScopeRef.current = scope
+      return
+    }
+    scopedStorage.set(scope, KEY, tasks)
+  }, [scope, tasks])
 
   const persist = useCallback(async (task) => {
     if (useDB) await tasksService.upsert(userId, task)
@@ -169,7 +188,7 @@ export function useTasks() {
   const isDueToday = (task) => task.date === getTodayKey() && !task.completed
 
   return {
-    tasks, synced, addTask, restoreTask, updateTask, deleteTask, toggleTask, setFocus,
+    tasks, synced, syncError, addTask, restoreTask, updateTask, deleteTask, toggleTask, setFocus,
     getTodayTasks, getTasksByDate, getFocusTask,
     getTotalEstimateMins, isOverdue, isDueToday,
   }

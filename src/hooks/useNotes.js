@@ -1,7 +1,8 @@
 // Hook: useNotes
 // Purpose: Notes CRUD with tags, word count, Supabase sync, and real-time
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { storage } from '../services/storage'
+import { scopedStorage } from '../services/storage'
+import { storageScope } from '../services/scopedStorage'
 import { notesService } from '../services/supabaseDataService'
 import { subscribeToTable } from '../services/realtimeService'
 import { useAuth } from './useAuth'
@@ -14,30 +15,53 @@ export function useNotes() {
   const { user }  = useAuth()
   const userId    = user?.id
   const useDB            = isSupabaseConfigured() && !!userId
+  const scope            = storageScope(userId, isSupabaseConfigured())
   const pendingDeletesRef = useRef(new Set())
 
-  const [notes, setNotes]   = useState(() => storage.get(KEY, []))
+  const [notes, setNotes]   = useState(() => scopedStorage.get(scope, KEY, []))
   const [synced, setSynced] = useState(false)
+  const [syncError, setSyncError] = useState(null)
+  const loadedScopeRef = useRef(scope)
 
   useEffect(() => {
-    if (!useDB) { setSynced(true); return }
-    notesService.getAll(userId).then(rows => {
-      if (rows.length > 0) { setNotes(rows); storage.set(KEY, rows) }
+    let active = true
+    setSynced(false)
+    setSyncError(null)
+    const fallback = scope === 'demo' ? scopedStorage.readLegacy(KEY, []) : []
+    const cached = scopedStorage.get(scope, KEY, fallback)
+    setNotes(cached)
+    if (!useDB) { setSynced(true); return () => { active = false } }
+    notesService.getAll(userId).then(result => {
+      if (!active) return
+      if (result.ok) {
+        const rows = result.value.filter(n => !pendingDeletesRef.current.has(n.id))
+        setNotes(rows)
+        scopedStorage.set(scope, KEY, rows)
+      } else setSyncError(result.error)
       setSynced(true)
     })
-  }, [userId])
+    return () => { active = false }
+  }, [scope, useDB, userId])
 
   useEffect(() => {
     if (!useDB) return
     return subscribeToTable('notes', userId, () => {
-      notesService.getAll(userId).then(rawRows => {
-        const rows = rawRows.filter(n => !pendingDeletesRef.current.has(n.id))
-        if (rows.length > 0) { setNotes(rows); storage.set(KEY, rows) }
+      notesService.getAll(userId).then(result => {
+        if (!result.ok) { setSyncError(result.error); return }
+        const rows = result.value.filter(n => !pendingDeletesRef.current.has(n.id))
+        setNotes(rows)
+        scopedStorage.set(scope, KEY, rows)
       })
     })
-  }, [userId])
+  }, [scope, useDB, userId])
 
-  useEffect(() => { if (!useDB) storage.set(KEY, notes) }, [notes])
+  useEffect(() => {
+    if (loadedScopeRef.current !== scope) {
+      loadedScopeRef.current = scope
+      return
+    }
+    scopedStorage.set(scope, KEY, notes)
+  }, [notes, scope])
 
   const persist = useCallback(async (note) => {
     if (useDB) await notesService.upsert(userId, note)
@@ -90,5 +114,5 @@ export function useNotes() {
     return new Date(b.updatedAt) - new Date(a.updatedAt)
   })
 
-  return { notes: sorted, synced, addNote, restoreNote, updateNote, deleteNote, togglePin, getWordCount, getReadTime }
+  return { notes: sorted, synced, syncError, addNote, restoreNote, updateNote, deleteNote, togglePin, getWordCount, getReadTime }
 }

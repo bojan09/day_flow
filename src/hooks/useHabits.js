@@ -1,7 +1,8 @@
 // Hook: useHabits
 // Purpose: Habit tracking with frequency, streaks, Supabase sync, and real-time
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { storage } from '../services/storage'
+import { scopedStorage } from '../services/storage'
+import { storageScope } from '../services/scopedStorage'
 import { habitsService } from '../services/supabaseDataService'
 import { subscribeToTables } from '../services/realtimeService'
 import { useAuth } from './useAuth'
@@ -13,30 +14,46 @@ export function useHabits() {
   const { user }  = useAuth()
   const userId    = user?.id
   const useDB            = isSupabaseConfigured() && !!userId
+  const scope            = storageScope(userId, isSupabaseConfigured())
   const pendingDeletesRef = useRef(new Set())
 
-  const [habits, setHabits] = useState(() => storage.get('habits', []))
-  const [log,    setLog]    = useState(() => storage.get('habit_log', {}))
+  const [habits, setHabits] = useState(() => scopedStorage.get(scope, 'habits', []))
+  const [log,    setLog]    = useState(() => scopedStorage.get(scope, 'habit_log', {}))
   const [synced, setSynced] = useState(false)
+  const [syncError, setSyncError] = useState(null)
+  const loadedScopeRef = useRef(scope)
 
   const loadFromDB = useCallback(() => {
     if (!useDB) return
-    habitsService.getAll(userId).then(({ habits: rawRows, log: dbLog }) => {
+    habitsService.getAll(userId).then(result => {
+      if (!result.ok) { setSyncError(result.error); setSynced(true); return }
+      const { habits: rawRows, log: dbLog } = result.value
       const rows = rawRows.filter(h => !pendingDeletesRef.current.has(h.id))
       setHabits(rows); setLog(dbLog)
-      storage.set('habits', rows); storage.set('habit_log', dbLog)
+      scopedStorage.set(scope, 'habits', rows); scopedStorage.set(scope, 'habit_log', dbLog)
       setSynced(true)
     })
-  }, [useDB, userId])
+  }, [scope, useDB, userId])
 
-  useEffect(() => { if (useDB) loadFromDB(); else setSynced(true) }, [userId])
+  useEffect(() => {
+    setSynced(false); setSyncError(null)
+    const habitsFallback = scope === 'demo' ? scopedStorage.readLegacy('habits', []) : []
+    const logFallback = scope === 'demo' ? scopedStorage.readLegacy('habit_log', {}) : {}
+    setHabits(scopedStorage.get(scope, 'habits', habitsFallback))
+    setLog(scopedStorage.get(scope, 'habit_log', logFallback))
+    if (useDB) loadFromDB(); else setSynced(true)
+  }, [loadFromDB, scope, useDB])
 
   useEffect(() => {
     if (!useDB) return
     return subscribeToTables(['habits', 'habit_log'], userId, loadFromDB)
-  }, [userId])
+  }, [loadFromDB, useDB, userId])
 
-  useEffect(() => { if (!useDB) { storage.set('habits', habits); storage.set('habit_log', log) } }, [habits, log])
+  useEffect(() => {
+    if (loadedScopeRef.current !== scope) { loadedScopeRef.current = scope; return }
+    scopedStorage.set(scope, 'habits', habits)
+    scopedStorage.set(scope, 'habit_log', log)
+  }, [habits, log, scope])
 
   const addHabit = async (habit) => {
     const h = { id: `${Date.now()}-${Math.random().toString(36).slice(2,9)}`, name: habit.name.trim(), icon: habit.icon || '⭐', frequency: habit.frequency || 'daily', createdAt: new Date().toISOString(), ...(useDB ? { user_id: userId } : {}) }
@@ -105,5 +122,5 @@ export function useHabits() {
     return Math.round((habits.filter(h => isHabitDone(h.id)).length / habits.length) * 100)
   }
 
-  return { habits, log, synced, addHabit, restoreHabit, updateHabit, deleteHabit, toggleHabitDay, isHabitDone, getStreak, getWeeklyCount, getMaxStreak, getTodayCompletion }
+  return { habits, log, synced, syncError, addHabit, restoreHabit, updateHabit, deleteHabit, toggleHabitDay, isHabitDone, getStreak, getWeeklyCount, getMaxStreak, getTodayCompletion }
 }

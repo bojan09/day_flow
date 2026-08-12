@@ -1,7 +1,8 @@
 // Hook: useProjects
 // Purpose: Project containers with Supabase sync + real-time
-import { useState, useEffect, useCallback } from 'react'
-import { storage } from '../services/storage'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { scopedStorage } from '../services/storage'
+import { storageScope } from '../services/scopedStorage'
 import { projectsService } from '../services/supabaseDataService'
 import { subscribeToTable } from '../services/realtimeService'
 import { useAuth } from './useAuth'
@@ -15,23 +16,42 @@ export function useProjects() {
   const { user }  = useAuth()
   const userId    = user?.id
   const useDB            = isSupabaseConfigured() && !!userId
+  const scope            = storageScope(userId, isSupabaseConfigured())
   const [synced, setSynced] = useState(false)
+  const [syncError, setSyncError] = useState(null)
+  const loadedScopeRef = useRef(scope)
 
-  const [projects, setProjects] = useState(() => storage.get(KEY, []))
+  const [projects, setProjects] = useState(() => scopedStorage.get(scope, KEY, []))
 
   useEffect(() => {
-    if (!useDB) return
-    projectsService.getAll(userId).then(rows => { if (rows.length > 0) { setProjects(rows); storage.set(KEY, rows) }; setSynced(true) })
-  }, [userId])
+    let active = true
+    setSynced(false); setSyncError(null)
+    const fallback = scope === 'demo' ? scopedStorage.readLegacy(KEY, []) : []
+    setProjects(scopedStorage.get(scope, KEY, fallback))
+    if (!useDB) { setSynced(true); return () => { active = false } }
+    projectsService.getAll(userId).then(result => {
+      if (!active) return
+      if (result.ok) { setProjects(result.value); scopedStorage.set(scope, KEY, result.value) }
+      else setSyncError(result.error)
+      setSynced(true)
+    })
+    return () => { active = false }
+  }, [scope, useDB, userId])
 
   useEffect(() => {
     if (!useDB) return
     return subscribeToTable('projects', userId, () =>
-      projectsService.getAll(userId).then(rows => { setProjects(rows); storage.set(KEY, rows) })
+      projectsService.getAll(userId).then(result => {
+        if (result.ok) { setProjects(result.value); scopedStorage.set(scope, KEY, result.value) }
+        else setSyncError(result.error)
+      })
     )
-  }, [userId])
+  }, [scope, useDB, userId])
 
-  useEffect(() => { if (!useDB) storage.set(KEY, projects) }, [projects])
+  useEffect(() => {
+    if (loadedScopeRef.current !== scope) { loadedScopeRef.current = scope; return }
+    scopedStorage.set(scope, KEY, projects)
+  }, [projects, scope])
 
   const persist = useCallback(async (p) => { if (useDB) await projectsService.upsert(userId, p) }, [useDB, userId])
 
@@ -51,5 +71,5 @@ export function useProjects() {
   const getProgress   = (projectId, allTasks) => { const t = allTasks.filter(x => x.projectId === projectId); return t.length ? Math.round((t.filter(x => x.completed).length / t.length) * 100) : 0 }
   const getTaskCount  = (projectId, allTasks) => allTasks.filter(t => t.projectId === projectId).length
 
-  return { projects, synced, addProject, updateProject, deleteProject, setStatus, getProgress, getTaskCount }
+  return { projects, synced, syncError, addProject, updateProject, deleteProject, setStatus, getProgress, getTaskCount }
 }

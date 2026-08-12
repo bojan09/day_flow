@@ -1,69 +1,59 @@
-// Hook: usePersistedState
-// Purpose: Drop-in useState that syncs to Supabase KV table.
-//          Writes go through the offline queue so data is never lost when offline.
-//          Falls back to localStorage when Supabase is not configured.
-import { useState, useEffect, useRef } from 'react'
-import { storage } from '../services/storage'
+// Hook: owner-scoped local persistence with optional Supabase KV sync.
+import { useEffect, useRef, useState } from 'react'
+import { scopedStorage } from '../services/storage'
+import { storageScope } from '../services/scopedStorage'
 import { kvService } from '../services/supabaseDataService'
 import { useAuth } from './useAuth'
 import { isSupabaseConfigured } from '../services/supabaseClient'
 import { useOfflineQueueContext } from './useOfflineQueue'
 
 export function usePersistedState(key, defaultValue) {
-  const { user }   = useAuth()
-  const userId     = user?.id
-  const useDB      = isSupabaseConfigured() && !!userId
-  const loadedRef  = useRef(false)
-  const offline    = useOfflineQueueContext()
+  const { user } = useAuth()
+  const userId = user?.id
+  const configured = isSupabaseConfigured()
+  const useDB = configured && !!userId
+  const scope = storageScope(userId, configured)
+  const offline = useOfflineQueueContext()
+  const defaultRef = useRef(defaultValue)
+  const [value, setValueRaw] = useState(() => scopedStorage.get(scope, key, defaultRef.current))
 
-  // Read from localStorage immediately — no loading flash
-  const [value, setValueRaw] = useState(() => storage.get(key, defaultValue))
-
-  // Load remote value once on mount / user change
   useEffect(() => {
-    if (!useDB) return
-    loadedRef.current = false
-    kvService.get(userId, key).then(remote => {
-      // FIX: only overwrite local state if remote has actual data
-      // Prevents empty Supabase response from wiping good localStorage data
-      const isEmpty = remote === null || remote === undefined ||
-        (Array.isArray(remote) && remote.length === 0) ||
-        (typeof remote === 'object' && !Array.isArray(remote) && Object.keys(remote).length === 0)
+    let active = true
+    const fallback = scope === 'demo' ? scopedStorage.readLegacy(key, defaultRef.current) : defaultRef.current
+    setValueRaw(scopedStorage.get(scope, key, fallback))
+    if (!useDB) return () => { active = false }
 
-      if (!isEmpty) {
+    kvService.get(userId, key).then(result => {
+      if (!active) return
+      if (result.ok) {
+        const remote = result.value ?? defaultRef.current
         setValueRaw(remote)
-        storage.set(key, remote)
+        scopedStorage.set(scope, key, remote)
+      } else {
+        console.warn(`[DayFlow] usePersistedState(${key}): load failed, keeping same-user cache`)
       }
-      loadedRef.current = true
-    }).catch(err => {
-      // Network error — keep existing local data, don't overwrite
-      console.warn(`[DayFlow] usePersistedState(${key}): load failed, keeping local data`)
-      loadedRef.current = true
     })
-  }, [userId, key])
+    return () => { active = false }
+  }, [key, scope, useDB, userId])
 
-  const setValue = (updater) => {
-    setValueRaw(prev => {
-      const next = typeof updater === 'function' ? updater(prev) : updater
+  const setValue = updater => {
+    setValueRaw(previous => {
+      const next = typeof updater === 'function' ? updater(previous) : updater
+      scopedStorage.set(scope, key, next)
 
-      // Always write to localStorage first — zero data loss
-      storage.set(key, next)
-
-      // Write to Supabase — via offline queue if available, direct otherwise
       if (useDB) {
         if (offline?.safeWrite) {
           offline.safeWrite(
             `kv:${key}`,
             { userId, key, value: next },
-            ({ userId, key, value }) => kvService.set(userId, key, value)
-          ).catch(err => console.error(`[DayFlow] usePersistedState(${key}):`, err?.message))
+            payload => kvService.set(payload.userId, payload.key, payload.value),
+          ).catch(error => console.error(`[DayFlow] usePersistedState(${key}):`, error?.message))
         } else {
-          kvService.set(userId, key, next).catch(err =>
-            console.error(`[DayFlow] usePersistedState(${key}):`, err?.message)
+          kvService.set(userId, key, next).catch(error =>
+            console.error(`[DayFlow] usePersistedState(${key}):`, error?.message),
           )
         }
       }
-
       return next
     })
   }

@@ -1,7 +1,8 @@
 // Hook: useIdeas
 // Purpose: Idea tracker with status, ratings, goal links, Supabase sync + real-time
-import { useState, useEffect, useCallback } from 'react'
-import { storage } from '../services/storage'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { scopedStorage } from '../services/storage'
+import { storageScope } from '../services/scopedStorage'
 import { ideasService } from '../services/supabaseDataService'
 import { subscribeToTable } from '../services/realtimeService'
 import { useAuth } from './useAuth'
@@ -15,23 +16,42 @@ export function useIdeas() {
   const { user }  = useAuth()
   const userId    = user?.id
   const useDB            = isSupabaseConfigured() && !!userId
+  const scope            = storageScope(userId, isSupabaseConfigured())
   const [synced, setSynced] = useState(false)
+  const [syncError, setSyncError] = useState(null)
+  const loadedScopeRef = useRef(scope)
 
-  const [ideas, setIdeas] = useState(() => storage.get(KEY, []))
+  const [ideas, setIdeas] = useState(() => scopedStorage.get(scope, KEY, []))
 
   useEffect(() => {
-    if (!useDB) return
-    ideasService.getAll(userId).then(rows => { if (rows.length > 0) { setIdeas(rows); storage.set(KEY, rows) }; setSynced(true) })
-  }, [userId])
+    let active = true
+    setSynced(false); setSyncError(null)
+    const fallback = scope === 'demo' ? scopedStorage.readLegacy(KEY, []) : []
+    setIdeas(scopedStorage.get(scope, KEY, fallback))
+    if (!useDB) { setSynced(true); return () => { active = false } }
+    ideasService.getAll(userId).then(result => {
+      if (!active) return
+      if (result.ok) { setIdeas(result.value); scopedStorage.set(scope, KEY, result.value) }
+      else setSyncError(result.error)
+      setSynced(true)
+    })
+    return () => { active = false }
+  }, [scope, useDB, userId])
 
   useEffect(() => {
     if (!useDB) return
     return subscribeToTable('ideas', userId, () =>
-      ideasService.getAll(userId).then(rows => { setIdeas(rows); storage.set(KEY, rows) })
+      ideasService.getAll(userId).then(result => {
+        if (result.ok) { setIdeas(result.value); scopedStorage.set(scope, KEY, result.value) }
+        else setSyncError(result.error)
+      })
     )
-  }, [userId])
+  }, [scope, useDB, userId])
 
-  useEffect(() => { if (!useDB) storage.set(KEY, ideas) }, [ideas])
+  useEffect(() => {
+    if (loadedScopeRef.current !== scope) { loadedScopeRef.current = scope; return }
+    scopedStorage.set(scope, KEY, ideas)
+  }, [ideas, scope])
 
   const persist = useCallback(async (idea) => { if (useDB) await ideasService.upsert(userId, idea) }, [useDB, userId])
 
@@ -65,5 +85,5 @@ export function useIdeas() {
     return old.length > 0 ? old[Math.floor(Math.random() * old.length)] : null
   }
 
-  return { ideas, synced, addIdea, restoreIdea, updateIdea, deleteIdea, setStatus, setStars, linkGoal, getRandomOldIdea }
+  return { ideas, synced, syncError, addIdea, restoreIdea, updateIdea, deleteIdea, setStatus, setStars, linkGoal, getRandomOldIdea }
 }

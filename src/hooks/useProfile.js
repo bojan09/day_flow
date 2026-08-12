@@ -10,8 +10,8 @@ export function useProfile(userId) {
 
   useEffect(() => {
     if (!userId || !isSupabaseConfigured()) { setLoading(false); return }
-    profileService.get(userId).then(data => {
-      setProfile(data)
+    profileService.get(userId).then(result => {
+      if (result.ok) setProfile(result.value)
       setLoading(false)
     })
   }, [userId])
