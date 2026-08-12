@@ -36,7 +36,7 @@ A professional daily planner and productivity application. Built with React, Vit
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20.19+ (or 22.12+)
 - A Supabase project (or run in demo/localStorage mode without one)
 
 ### Local Setup
