@@ -61,8 +61,6 @@ export default function TasksView({ tasks, templates, someday, projects, categor
   const upcomingTasks = filtered.filter(t => !t.completed && t.date > todayKey).sort(byPriority)
   const doneTasks     = filtered.filter(t => t.completed).sort(byPriority)
 
-  if (!tasks.synced) return <ViewSkeleton type="tasks" />
-
   const overdueCount = tasks.tasks.filter(t => tasks.isOverdue(t)).length
 
   const handleDuplicateDay = () => {
@@ -72,6 +70,8 @@ export default function TasksView({ tasks, templates, someday, projects, categor
   }
 
   const handleDelete = useCallback((t) => { tasks.deleteTask(t.id); toast.undo('Task deleted', () => tasks.restoreTask(t)) }, [tasks, toast])
+
+  if (!tasks.synced) return <ViewSkeleton type="tasks" />
 
   return (
     <div className="max-w-2xl mx-auto space-y-4 pt-2">

@@ -68,7 +68,6 @@ export default {
         'toast-out':    'toastOut 0.2s ease forwards',
         'float':        'float 3s ease-in-out infinite',
         'pulse-ring':   'pulseRing 1.5s ease-out infinite',
-        'fade-down':    'fadeDown 0.2s ease-out forwards',
         'spring-in':    'springIn 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards',
         'ripple':       'ripple 0.5s ease-out forwards',
         'xp-float':     'xpFloat 0.9s ease-out forwards',

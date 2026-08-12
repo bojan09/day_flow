@@ -134,7 +134,7 @@ Keep the total response under 60 words. Be direct and energising. No fluff.`, co
             {brief.split('\n').map((line, i) => {
               if (!line.trim()) return null
               // Style the emoji-prefixed lines slightly differently
-              const isPoint = /^[🎯⚡💪]/.test(line)
+              const isPoint = /^[🎯⚡💪]/u.test(line)
               return (
                 <p
                   key={i}

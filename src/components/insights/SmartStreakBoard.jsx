@@ -32,8 +32,9 @@ function ConsistencyRing({ pct, label }) {
 }
 
 export default function SmartStreakBoard({ habits }) {
-  if (!habits?.habits) return null
   const data = useMemo(() => {
+    if (!habits?.habits) return null
+
     const last28 = Array.from({ length: 28 }, (_, i) => {
       const d = subDays(new Date(), 27 - i)
       return {
@@ -76,6 +77,8 @@ export default function SmartStreakBoard({ habits }) {
 
     return { last28, consistency, activeDays, habitStreaks, recoveryStreak, maxStreak }
   }, [habits])
+
+  if (!data) return null
 
   return (
     <div

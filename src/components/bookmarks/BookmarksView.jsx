@@ -8,7 +8,7 @@ import Modal from '../ui/Modal'
 import EmptyState from '../ui/EmptyState'
 import { BOOKMARK_TAGS } from '../../hooks/useBookmarks'
 
-function BookmarkCard({ b, bookmarks }) {
+function BookmarkCard({ b, bookmarks, toast }) {
   const domain = (() => { try { return new URL(b.url).hostname.replace('www.', '') } catch { return b.url } })()
 
   return (
@@ -105,7 +105,7 @@ export default function BookmarksView({ bookmarks }) {
           action="+ Save Link" onAction={() => setModal(true)} />
       ) : (
         <div className="space-y-3">
-          {visible.map(b => <BookmarkCard key={b.id} b={b} bookmarks={bookmarks} />)}
+          {visible.map(b => <BookmarkCard key={b.id} b={b} bookmarks={bookmarks} toast={toast} />)}
         </div>
       )}
 
