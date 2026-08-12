@@ -4,11 +4,10 @@
 //          capture, and ALL_MODULES (existing nav config) for navigation.
 import { useState, useEffect, useRef } from 'react'
 import { ALL_MODULES } from '../../hooks/useNavConfig'
-import { classifyCapture } from '../../services/captureClassifier'
+import { parseCapture } from '../../services/captureParser'
 
 export default function CommandPalette({ isOpen, onClose, onNavigate, onCapture }) {
   const [query, setQuery]     = useState('')
-  const [capturing, setCapturing] = useState(false)
   const inputRef = useRef(null)
 
   useEffect(() => {
@@ -24,12 +23,10 @@ export default function CommandPalette({ isOpen, onClose, onNavigate, onCapture 
     m.label.toLowerCase().includes(query.toLowerCase())
   )
 
-  const handleCapture = async () => {
+  const handleCapture = () => {
     if (!query.trim()) return
-    setCapturing(true)
-    const result = await classifyCapture(query.trim())
+    const result = parseCapture(query.trim())
     onCapture(result)
-    setCapturing(false)
     onClose()
   }
 
@@ -60,10 +57,10 @@ export default function CommandPalette({ isOpen, onClose, onNavigate, onCapture 
             </button>
           ))}
           {matches.length === 0 && query.trim() && (
-            <button onClick={handleCapture} disabled={capturing}
-              className="w-full text-left px-5 py-3 text-sm disabled:opacity-50"
+            <button onClick={handleCapture}
+              className="w-full text-left px-5 py-3 text-sm"
               style={{ color: 'var(--accent)' }}>
-              {capturing ? 'Capturing…' : `✨ Capture "${query.trim()}"`}
+              {`✨ Capture "${query.trim()}"`}
             </button>
           )}
         </div>

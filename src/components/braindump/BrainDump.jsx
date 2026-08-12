@@ -1,8 +1,7 @@
 // Component: BrainDump
 // Purpose: Full-screen free-write that auto-parses lines into tasks, ideas, and notes
 import { useState } from 'react'
-import { parseNLTask } from '../../services/nlpParser'
-import { getTodayKey } from '../../utils/dateUtils'
+import { parseCapture } from '../../services/captureParser'
 
 function classifyLine(line) {
   const l = line.toLowerCase().trim()
@@ -29,7 +28,7 @@ export default function BrainDump({ tasks, ideas, notes }) {
     const lines = text.split('\n').filter(l => l.trim())
     const items = lines.map(line => ({
       line,
-      type: classifyLine(line) || 'note',
+      type: parseCapture(line, classifyLine(line) || null).type,
       selected: true,
     }))
     setParsed(items)
@@ -42,8 +41,7 @@ export default function BrainDump({ tasks, ideas, notes }) {
   const handleSave = () => {
     parsed.filter(p => p.selected).forEach(({ line, type }) => {
       if (type === 'task') {
-        const t = parseNLTask(line)
-        tasks.addTask(t || { title: line, date: getTodayKey(), priority: 'medium', category: 'Personal' })
+        tasks.addTask(parseCapture(line, 'task').fields)
       } else if (type === 'idea') {
         ideas.addIdea({ title: line, category: 'Other' })
       } else {

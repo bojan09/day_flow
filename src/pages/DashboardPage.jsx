@@ -48,6 +48,7 @@ import { useMoodTheme       } from '../hooks/useMoodTheme'
 import { useOnboarding     } from '../hooks/useOnboarding'
 import { useTimeblocks    } from '../hooks/useTimeblocks'
 import { useDailyPriorities } from '../hooks/useDailyPriorities'
+import { useCaptureInbox } from '../hooks/useCaptureInbox'
 import { usePersistedState } from '../hooks/usePersistedState'
 import OnboardingFlow       from '../components/onboarding/OnboardingFlow'
 import FeatureTooltip       from '../components/ui/FeatureTooltip'
@@ -187,6 +188,7 @@ export default function DashboardPage() {
   const onboarding  = useOnboarding()
   const timeblocks  = useTimeblocks()
   const score = useDailyScore({ tasks, habits, mood })
+  const captureInbox = useCaptureInbox({ tasks, notes, ideas })
 
   // Recurring engine — synchronous localStorage guard (never async).
   // Key = userId + today's date → unique per user, auto-expires at midnight.
@@ -263,7 +265,7 @@ export default function DashboardPage() {
         {activeTab === 'workouts'   && <WorkoutsView workouts={workouts} />}
 
         {/* ── Think ────────────────────────────────────────────────────────── */}
-        {activeTab === 'capture'    && <CaptureView notes={notes} ideas={ideas} bookmarks={bookmarks} tasks={tasks} goals={goals} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} initialType={captureType} />}
+        {activeTab === 'capture'    && <CaptureView notes={notes} ideas={ideas} bookmarks={bookmarks} tasks={tasks} goals={goals} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} initialType={captureType} inbox={captureInbox} />}
 
         {/* ── Reflect ──────────────────────────────────────────────────────── */}
         {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} energy={energy} goals={goals} moodTheme={moodTheme} workouts={workouts} ideas={ideas} bookmarks={bookmarks} />}
@@ -274,7 +276,7 @@ export default function DashboardPage() {
       </DashboardLayout>
       </Suspense>
 
-      <QuickCapture tasks={tasks} ideas={ideas} notes={notes} habits={habits} onTabChange={handleTabChange} />
+      <QuickCapture tasks={tasks} ideas={ideas} notes={notes} inbox={captureInbox} />
 
       {/* Weekly Review overlay — Sunday only, once per day, lazy-loaded safely */}
       {showWeeklyOverlay && (

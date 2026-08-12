@@ -8,8 +8,10 @@ import NotesView     from '../notes/NotesView'
 import IdeasView     from '../ideas/IdeasView'
 import BrainDump     from '../braindump/BrainDump'
 import BookmarksView from '../bookmarks/BookmarksView'
+import CaptureInbox from './CaptureInbox'
 
 const TYPES = [
+  { id: 'inbox', label: 'Inbox', emoji: '📥' },
   { id: 'notes',     label: 'Notes',      emoji: '📝' },
   { id: 'ideas',     label: 'Ideas',      emoji: '💡' },
   { id: 'braindump', label: 'Brain Dump', emoji: '🧠' },
@@ -18,7 +20,7 @@ const TYPES = [
 
 export default function CaptureView({
   notes, ideas, bookmarks, tasks, goals, categories, onAddCategory, onRemoveCategory,
-  initialType = 'notes',
+  initialType = 'notes', inbox,
 }) {
   const [type, setType] = useState(initialType)
 
@@ -38,6 +40,7 @@ export default function CaptureView({
       </div>
 
       {type === 'notes'     && <NotesView notes={notes} />}
+      {type === 'inbox'     && <CaptureInbox inbox={inbox} />}
       {type === 'ideas'     && <IdeasView ideas={ideas} goals={goals} categories={categories} onAddCategory={onAddCategory} onRemoveCategory={onRemoveCategory} />}
       {type === 'braindump' && <BrainDump tasks={tasks} ideas={ideas} notes={notes} />}
       {type === 'bookmarks' && <BookmarksView bookmarks={bookmarks} />}

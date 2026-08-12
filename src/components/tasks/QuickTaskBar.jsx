@@ -3,9 +3,7 @@
 //          Uses NLP parser for natural language input — "call dentist tomorrow high priority".
 //          Keyboard shortcut: typing anywhere on the Tasks tab focuses this bar.
 import { useState, useRef, useEffect } from 'react'
-import { parseNLTask } from '../../services/nlpParser'
-import { classifyCapture } from '../../services/captureClassifier'
-import { getTodayKey } from '../../utils/dateUtils'
+import { parseCapture } from '../../services/captureParser'
 
 const EXAMPLES = [
   'Call dentist tomorrow high priority',
@@ -19,35 +17,19 @@ export default function QuickTaskBar({ tasks, onAdded }) {
   const [hint,    setHint]    = useState(null)
   const [success, setSuccess] = useState(false)
   const [focused, setFocused] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
   const inputRef = useRef(null)
   const placeholder = EXAMPLES[Math.floor(Date.now() / 30000) % EXAMPLES.length]
 
   // Live-parse as user types to show what will be created
   useEffect(() => {
     if (!value.trim()) { setHint(null); return }
-    const parsed = parseNLTask(value)
-    if (parsed) setHint(parsed)
-    else setHint({ title: value, date: getTodayKey(), priority: 'medium' })
+    setHint(parseCapture(value, 'task').fields)
   }, [value])
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     if (!value.trim()) return
-    const text = value.trim()
-    setSubmitting(true)
-    let fields
-    try {
-      const result = await classifyCapture(text)
-      fields = result.fields && result.fields.title ? result.fields : null
-    } catch {
-      fields = null
-    }
-    setSubmitting(false)
-    if (!fields) {
-      const parsed = parseNLTask(text)
-      fields = parsed || { title: text, date: getTodayKey(), priority: 'medium', category: 'Personal' }
-    }
+    const fields = parseCapture(value.trim(), 'task').fields
     tasks.addTask(fields)
     setValue('')
     setHint(null)
@@ -94,11 +76,11 @@ export default function QuickTaskBar({ tasks, onAdded }) {
 
           <button
             type="submit"
-            disabled={!value.trim() || submitting}
+            disabled={!value.trim()}
             className="px-4 py-1.5 rounded-full text-sm font-semibold text-white disabled:opacity-30 transition-all active:scale-95 flex-shrink-0"
             style={{ backgroundColor: 'var(--accent)' }}
           >
-            {submitting ? '…' : 'Add'}
+            Add
           </button>
         </div>
 
