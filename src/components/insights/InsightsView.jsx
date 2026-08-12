@@ -21,6 +21,7 @@ import AIDailyFeedback       from '../summary/AIDailyFeedback'
 import VoiceJournal          from '../voice/VoiceJournal'
 import ThemePicker           from './ThemePicker'
 import ExportPanel           from '../export/ExportPanel'
+import NotificationSettings  from '../notifications/NotificationSettings'
 
 const TABS = [
   { id: 'overview',  label: 'Overview',  emoji: '📊' },
@@ -109,6 +110,7 @@ export default function InsightsView({
       {tab === 'settings' && (
         <div className="space-y-4">
           <ThemePicker theme={theme} onSetTheme={onSetTheme} />
+          <NotificationSettings />
 
           {moodTheme && (
             <div

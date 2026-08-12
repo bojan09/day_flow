@@ -1,0 +1,3 @@
+import { usePersistedState } from './usePersistedState'
+export const NOTIFICATION_DEFAULTS={enabled:false,taskReminders:true,morningPlanning:true,upcomingTasks:true,overdueSummary:true,habitReminders:false,routineReminders:true,focusReminders:false,eveningReview:true,inactivityNudges:false,morningTime:'08:00',eveningTime:'20:00',quietStart:'22:00',quietEnd:'07:00',timezone:Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC'}
+export function useNotificationPreferences(){const [preferences,setPreferences]=usePersistedState('notification_preferences',NOTIFICATION_DEFAULTS);return{preferences:{...NOTIFICATION_DEFAULTS,...preferences},update:updates=>setPreferences(previous=>({...previous,...updates}))}}

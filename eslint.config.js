@@ -49,7 +49,7 @@ export default [
     },
   },
   {
-    files: ['public/sw.js'],
+    files: ['public/sw.js', 'public/push/**/*.js'],
     languageOptions: {
       globals: {
         ...globals.serviceworker,

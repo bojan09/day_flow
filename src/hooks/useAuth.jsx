@@ -5,6 +5,7 @@
 import { useState, useEffect, createContext, useContext } from 'react'
 import { supabase, isSupabaseConfigured } from '../services/supabaseClient'
 import { unsubscribeAll } from '../services/realtimeService'
+import { oneSignalClient } from '../services/oneSignalClient'
 
 const AuthContext = createContext(null)
 
@@ -44,6 +45,10 @@ export function AuthProvider({ children }) {
     return () => subscription.unsubscribe()
   }, [])
 
+  useEffect(() => {
+    if (user?.id) oneSignalClient.identify(user.id).catch(error => console.warn('[DayFlow] OneSignal identity failed:', error.message))
+  }, [user?.id])
+
   // ── Auth methods ────────────────────────────────────────────────────────────
 
   const signUp = async (email, password, name = '') => {
@@ -80,6 +85,7 @@ export function AuthProvider({ children }) {
   // Components should call this and NOT navigate themselves — navigation
   // is centralised here so it's consistent everywhere sign-out is triggered.
   const signOut = async () => {
+    await Promise.race([oneSignalClient.logout(), new Promise(resolve => setTimeout(resolve, 1500))]).catch(() => {})
     unsubscribeAll()
     if (supabase) await supabase.auth.signOut()
     // Hard redirect so all React state is reset cleanly
