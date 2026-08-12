@@ -10,12 +10,13 @@ const KEY = 'pomodoro_history'
 export function usePomodoroHistory() {
   const [sessions, setSessions] = usePersistedState(KEY, [])
 
-  const logSession = (durationMins = 25, taskTitle = '') => {
+  const logSession = (durationMins = 25, taskTitle = '', taskId = null) => {
     setSessions(prev => [...prev, {
       id:           `${Date.now()}-${Math.random().toString(36).slice(2,9)}`,
       date:         getTodayKey(),
       durationMins,
       taskTitle,
+      taskId,
       completedAt:  new Date().toISOString(),
     }])
   }

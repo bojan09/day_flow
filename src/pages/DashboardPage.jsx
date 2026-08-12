@@ -104,6 +104,7 @@ export default function DashboardPage() {
   // re-render so TasksView's mount effect still sees a non-null value.
   const [searchParams, setSearchParams] = useSearchParams()
   const [openTaskId, setOpenTaskId] = useState(() => searchParams.get('openTask'))
+  const [focusTaskId, setFocusTaskId] = useState(() => searchParams.get('focusTask'))
 
   useEffect(() => {
     const id = searchParams.get('openTask')
@@ -217,7 +218,16 @@ export default function DashboardPage() {
     const next = new URL(window.location.href)
     next.searchParams.set('focusTask', taskId)
     window.history.replaceState(null, '', `${next.pathname}${next.search}${next.hash}`)
+    setFocusTaskId(String(taskId))
     setActiveTab('focus')
+  }, [setActiveTab])
+
+  const finishFocus = useCallback(() => {
+    const next = new URL(window.location.href)
+    next.searchParams.delete('focusTask')
+    window.history.replaceState(null, '', `${next.pathname}${next.search}${next.hash}`)
+    setFocusTaskId(null)
+    setActiveTab('today')
   }, [setActiveTab])
 
   return (
@@ -257,7 +267,7 @@ export default function DashboardPage() {
 
         {/* ── Reflect ──────────────────────────────────────────────────────── */}
         {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} energy={energy} goals={goals} moodTheme={moodTheme} workouts={workouts} ideas={ideas} bookmarks={bookmarks} />}
-        {activeTab === 'focus'      && <FocusMode tasks={tasks} pomodoroHistory={pomodoroHistory} />}
+        {activeTab === 'focus'      && <FocusMode tasks={tasks} pomodoroHistory={pomodoroHistory} selectedTaskId={focusTaskId} onComplete={finishFocus} />}
         {activeTab === 'search'     && <SearchView tasks={tasks} notes={notes} habits={habits} goals={goals} ideas={ideas} bookmarks={bookmarks} />}
 
       </ViewErrorBoundary>
