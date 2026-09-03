@@ -130,7 +130,7 @@ export default function TasksView({ tasks, templates, someday, projects, categor
         </div>
       )}
 
-      <Modal isOpen={modalOpen} onClose={() => setModal(false)} title="New Task">
+      <Modal isOpen={modalOpen} onClose={() => setModal(false)} title="New Task" fullScreenOnMobile>
         {recurTask && (
           <RecurrencePanel task={recurTask} onUpdate={tasks.updateTask} onClose={() => setRecurTask(null)} />
         )}

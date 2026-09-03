@@ -332,6 +332,32 @@
     max-height: min(85dvh, calc(100dvh - env(safe-area-inset-bottom) - env(safe-area-inset-top) - 2rem));
   }
 
+  /* Full-screen-on-mobile modal variant — complex forms (task/habit/workout/
+     routine/goal editors) take over the entire viewport on phones (no gaps,
+     no rounded corners, no backdrop showing through), reverting to the
+     normal capped centered dialog at the sm breakpoint and up. Safe-area
+     insets are padded internally so content/buttons never sit under a
+     notch or the home-indicator gesture bar. */
+  .modal-panel-full {
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  @media (min-width: 640px) {
+    .modal-panel-full {
+      height: auto;
+      padding-top: 0;
+      padding-bottom: 0;
+      max-height: 85vh;
+      max-height: 85dvh;
+      max-height: min(85vh, calc(100vh - env(safe-area-inset-bottom) - env(safe-area-inset-top) - 2rem));
+      max-height: min(85dvh, calc(100dvh - env(safe-area-inset-bottom) - env(safe-area-inset-top) - 2rem));
+    }
+  }
+
   /* Glass morphism */
 
   /* Text balance */

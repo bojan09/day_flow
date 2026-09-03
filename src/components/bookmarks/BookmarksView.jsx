@@ -109,7 +109,7 @@ export default function BookmarksView({ bookmarks }) {
         </div>
       )}
 
-      <Modal isOpen={modal} onClose={() => setModal(false)} title="Save Bookmark">
+      <Modal isOpen={modal} onClose={() => setModal(false)} title="Save Bookmark" fullScreenOnMobile>
         <form onSubmit={handleAdd} className="space-y-4">
           <div>
             <label className="text-xs font-medium [color:var(--text-muted)] uppercase tracking-wide block mb-1.5">URL</label>

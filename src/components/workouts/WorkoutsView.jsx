@@ -202,6 +202,7 @@ export default function WorkoutsView({ workouts }) {
         isOpen={!!modal}
         onClose={close}
         title={modal === 'edit' ? 'Edit workout' : 'Log workout'}
+        fullScreenOnMobile
       >
         <WorkoutForm
           initial={modal === 'edit' ? editing : null}

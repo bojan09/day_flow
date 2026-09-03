@@ -6,7 +6,7 @@ import { ALL_MODULES } from '../../hooks/useNavConfig'
 
 export default function NavCustomizer({ isOpen, onClose, navItems, setSlot, resetToDefault }) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Customise Navigation">
+    <Modal isOpen={isOpen} onClose={onClose} title="Customise Navigation" fullScreenOnMobile>
       <div className="space-y-4">
         <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
           Tap any slot to change which module it shows.

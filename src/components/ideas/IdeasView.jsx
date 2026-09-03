@@ -296,6 +296,7 @@ export default function IdeasView({ ideas, goals, categories, onAddCategory, onR
         isOpen={!!modal}
         onClose={close}
         title={modal === 'edit' ? 'Edit Idea' : 'Capture an Idea'}
+        fullScreenOnMobile
       >
         <IdeaForm
           initial={modal === 'edit' ? editing : null}

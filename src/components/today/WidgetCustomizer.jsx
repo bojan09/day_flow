@@ -47,7 +47,7 @@ export default function WidgetCustomizer({ isOpen, onClose, widgetPrefs, adaptiv
   ]
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Customize Today">
+    <Modal isOpen={isOpen} onClose={onClose} title="Customize Today" fullScreenOnMobile>
       <div className="space-y-4">
 
         {/* Instructions */}

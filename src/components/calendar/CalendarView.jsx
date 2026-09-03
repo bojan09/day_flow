@@ -122,7 +122,7 @@ export default function CalendarView({ tasks, categories, onAddCategory, onRemov
       </div>
       </div>
 
-      <Modal isOpen={addModal} onClose={() => setAddModal(false)} title="New Task">
+      <Modal isOpen={addModal} onClose={() => setAddModal(false)} title="New Task" fullScreenOnMobile>
         <TaskForm
           onSubmit={t => { tasks.addTask({ ...t, date: getDateKey(effectiveDay) }); setAddModal(false) }}
           categories={categories || ['Work','Personal','Health','Learning','Finance','Other']}

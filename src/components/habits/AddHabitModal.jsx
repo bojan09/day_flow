@@ -74,7 +74,7 @@ export default function AddHabitModal({ isOpen, onClose, onAdd, existingHabits =
   )
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="New Habit">
+    <Modal isOpen={isOpen} onClose={onClose} title="New Habit" fullScreenOnMobile>
       <AddHabitWizard
         basicsStep={basicsFields}
         advancedStep={advancedFields}

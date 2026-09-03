@@ -322,7 +322,7 @@ export default function TaskDetail({
   )
 
   return (
-    <Modal isOpen={isOpen} onClose={() => { if (dirty) saveAll(); onClose() }} title="Edit Task">
+    <Modal isOpen={isOpen} onClose={() => { if (dirty) saveAll(); onClose() }} title="Edit Task" fullScreenOnMobile>
       <div className="space-y-4">
         {isDesktop ? (
           <TaskModalDesktop

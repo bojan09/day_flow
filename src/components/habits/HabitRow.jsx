@@ -31,7 +31,7 @@ export function EditHabitModal({ habit, onSave, onClose }) {
   }
 
   return (
-    <Modal isOpen onClose={onClose} title="Edit Habit">
+    <Modal isOpen onClose={onClose} title="Edit Habit" fullScreenOnMobile>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input label="Habit name" value={name} onChange={e => setName(e.target.value)} autoFocus />
 

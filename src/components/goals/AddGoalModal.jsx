@@ -37,7 +37,7 @@ export default function AddGoalModal({ isOpen, onClose, onAdd }) {
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="New Goal">
+    <Modal isOpen={isOpen} onClose={onClose} title="New Goal" fullScreenOnMobile>
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input label="Goal title" placeholder="What do you want to achieve?"
           value={form.title} onChange={e => set('title', e.target.value)} autoFocus />

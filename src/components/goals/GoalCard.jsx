@@ -31,7 +31,7 @@ function EditGoalModal({ goal, goals, onClose }) {
   const inputStyle = { backgroundColor: 'var(--bg)', borderColor: 'var(--border)', color: 'var(--text)' }
 
   return (
-    <Modal isOpen onClose={onClose} title="Edit Goal">
+    <Modal isOpen onClose={onClose} title="Edit Goal" fullScreenOnMobile>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="text-xs font-medium uppercase tracking-wide block mb-1.5" style={{ color: 'var(--text-muted)' }}>Title *</label>

@@ -133,6 +133,7 @@ export default function RoutinesView({ routines }) {
         isOpen={!!modal}
         onClose={close}
         title={modal === 'edit' ? `Edit: ${editing?.name}` : 'New Routine'}
+        fullScreenOnMobile
       >
         <RoutineEditor
           initial={modal === 'edit' ? editing : null}

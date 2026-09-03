@@ -4,14 +4,21 @@
 //          internal scroll so buttons are always reachable regardless of
 //          content height, mobile browser chrome, or notch/home-indicator insets.
 //          No body style changes — page remains scrollable behind the overlay.
+//          Portaled to document.body: PageTransition.jsx sets an inline
+//          `transform` on the route wrapper for its page-enter animation, and
+//          ANY transform on an ancestor creates a new containing block for
+//          `position: fixed` descendants — without the portal, this modal's
+//          "fixed inset-0" would resolve against that wrapper's box instead
+//          of the real viewport, breaking full-viewport sizing/centering.
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
 const FOCUSABLE = 'input, textarea, select, button:not([aria-label="Close"]), [href], [tabindex]:not([tabindex="-1"])'
 // Full focusable set (includes the Close button) — used for the Tab-cycle focus
 // trap, where the close button must remain a normal stop in the tab order.
 const FOCUSABLE_ALL = 'input, textarea, select, button, [href], [tabindex]:not([tabindex="-1"])'
 
-export default function Modal({ isOpen, onClose, title, children }) {
+export default function Modal({ isOpen, onClose, title, children, fullScreenOnMobile = false }) {
   const panelRef    = useRef(null)
   const restoreRef  = useRef(null)
 
@@ -56,7 +63,7 @@ export default function Modal({ isOpen, onClose, title, children }) {
 
   if (!isOpen) return null
 
-  return (
+  return createPortal(
     <>
       {/* Backdrop */}
       <div
@@ -68,13 +75,16 @@ export default function Modal({ isOpen, onClose, title, children }) {
 
       {/* Centering wrapper — fixed, does NOT scroll itself */}
       <div
-        className="fixed inset-0 flex items-center justify-center p-4"
+        className={`fixed inset-0 flex items-center justify-center ${fullScreenOnMobile ? 'p-0 sm:p-4' : 'p-4'}`}
         style={{ zIndex: 'var(--z-modal)', pointerEvents: 'none' }}
       >
-        {/* Panel — capped height (dvh/safe-area aware, see .modal-panel),
-            header pinned, body scrolls so buttons stay reachable */}
+        {/* Panel — capped height (dvh/safe-area aware, see .modal-panel /
+            .modal-panel-full), header pinned, body scrolls so buttons stay
+            reachable. fullScreenOnMobile takes over the entire viewport on
+            phones (no gaps/rounded corners), reverting to a normal capped
+            centered dialog at sm and up. */}
         <div
-          className="modal-panel w-full sm:max-w-lg rounded-2xl flex flex-col animate-scale-in"
+          className={`${fullScreenOnMobile ? 'modal-panel-full rounded-none sm:rounded-2xl sm:max-w-lg' : 'modal-panel rounded-2xl sm:max-w-lg'} w-full flex flex-col animate-scale-in`}
           style={{
             backgroundColor: 'var(--surface)',
             boxShadow:       '0 8px 40px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.08)',
@@ -118,6 +128,7 @@ export default function Modal({ isOpen, onClose, title, children }) {
           </div>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   )
 }

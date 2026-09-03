@@ -139,7 +139,7 @@ export default function ProjectsView({ projects, tasks }) {
         </>
       )}
 
-      <Modal isOpen={!!modal} onClose={() => { setModal(false); setEditing(null) }} title={modal === 'edit' ? 'Edit Project' : 'New Project'}>
+      <Modal isOpen={!!modal} onClose={() => { setModal(false); setEditing(null) }} title={modal === 'edit' ? 'Edit Project' : 'New Project'} fullScreenOnMobile>
         <form onSubmit={handleAdd} className="space-y-4">
           <Input label="Project name" placeholder="e.g. Launch personal website"
             value={form.name} onChange={e => set('name', e.target.value)} autoFocus />

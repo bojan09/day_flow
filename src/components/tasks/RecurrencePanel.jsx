@@ -21,7 +21,7 @@ export default function RecurrencePanel({ task, onUpdate, onClose }) {
   }
 
   return (
-    <Modal isOpen onClose={onClose} title="Manage recurrence">
+    <Modal isOpen onClose={onClose} title="Manage recurrence" fullScreenOnMobile>
       <div className="space-y-5">
         {/* Status */}
         <div className="flex items-center justify-between">
