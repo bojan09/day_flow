@@ -57,6 +57,9 @@ const TaskRow = memo(function TaskRow({ t, idx, urgency, tasksApi, projects, onT
       </button>
       <div className="flex-1 min-w-0">
         <p className={`text-sm leading-snug line-clamp-2 ${t.completed ? 'line-through [color:var(--text-faint)]' : '[color:var(--text)]'}`}>{t.title}</p>
+        {t.notes && (
+          <p className="text-xs truncate mt-0.5" style={{ color: 'var(--text-faint)' }}>{t.notes}</p>
+        )}
         <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
           <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${CAT_COLORS[t.category] ?? '[background-color:var(--bg-secondary)] text-stone-600'}`}>
             {t.category}

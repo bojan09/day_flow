@@ -25,16 +25,37 @@ export function useTasks() {
   // before the Supabase DELETE has committed
   const pendingDeletesRef = useRef(new Set())
 
+  // Track in-flight local writes (add/update/toggle/setFocus) keyed by task id.
+  // BUG FIX: the realtime listener fires on the client's OWN writes too (Supabase
+  // echoes them back), and used to unconditionally overwrite `tasks` with a fresh
+  // getAll() fetch — if that fetch raced ahead of the write actually committing,
+  // it silently reverted the optimistic update (e.g. toggling a task complete,
+  // then navigating/refreshing before the echo settled, showed it incomplete
+  // again). Any row with a pending local write is now preserved as-is instead of
+  // being clobbered by a remote read that may still be stale.
+  const pendingWritesRef = useRef(new Map())
+
+  // Merge freshly-fetched rows with any pending local writes / deletes so a
+  // remote read can never regress a write that's still in flight.
+  const reconcile = (rows) => {
+    const filtered = rows.filter(r => !pendingDeletesRef.current.has(r.id))
+    if (pendingWritesRef.current.size === 0) return filtered
+    const byId = new Map(filtered.map(r => [r.id, r]))
+    for (const [id, localTask] of pendingWritesRef.current) {
+      byId.set(id, localTask)
+    }
+    return [...byId.values()]
+  }
+
   // ── Load from Supabase on mount / user change ──────────────────────────────
   useEffect(() => {
     if (!useDB) { setSynced(true); return }
     tasksService.getAll(userId).then(rows => {
       // FIX: never overwrite with empty — only update if Supabase returned data
       if (rows.length > 0) {
-        // Filter out any pending local deletes that haven't committed yet
-        const filtered = rows.filter(r => !pendingDeletesRef.current.has(r.id))
-        setTasks(filtered)
-        storage.set(KEY, filtered)
+        const merged = reconcile(rows)
+        setTasks(merged)
+        storage.set(KEY, merged)
       }
       setSynced(true)
     })
@@ -45,10 +66,9 @@ export function useTasks() {
     if (!useDB) return
     return subscribeToTable('tasks', userId, () => {
       tasksService.getAll(userId).then(rows => {
-        // FIX: filter out pending deletes before applying realtime update
-        const filtered = rows.filter(r => !pendingDeletesRef.current.has(r.id))
-        setTasks(filtered)
-        storage.set(KEY, filtered)
+        const merged = reconcile(rows)
+        setTasks(merged)
+        storage.set(KEY, merged)
       })
     })
   }, [userId])
@@ -57,7 +77,20 @@ export function useTasks() {
   useEffect(() => { if (!useDB) storage.set(KEY, tasks) }, [tasks])
 
   const persist = useCallback(async (task) => {
-    if (useDB) await tasksService.upsert(userId, task)
+    if (!useDB) return
+    pendingWritesRef.current.set(task.id, task)
+    try {
+      await tasksService.upsert(userId, task)
+      // Only clear the guard once the DB confirms the write — from this point
+      // a remote fetch is guaranteed to reflect it, so it's safe to trust again.
+      pendingWritesRef.current.delete(task.id)
+    } catch (err) {
+      // Clear the guard on failure too — the write never landed, so there's
+      // nothing left to protect from being overwritten. The caller's own
+      // onFail rollback (see toggleTask) is what reconciles the UI here.
+      pendingWritesRef.current.delete(task.id)
+      throw err
+    }
   }, [useDB, userId])
 
   const remove = useCallback(async (id) => {

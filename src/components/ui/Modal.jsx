@@ -1,6 +1,8 @@
 // Component: Modal
-// Purpose: Viewport-centered dialog. Panel is max 85vh tall with internal scroll
-//          so buttons are always reachable regardless of content height.
+// Purpose: Viewport-centered dialog. Panel height is capped (85dvh where
+//          supported, safe-area aware — see .modal-panel in index.css) with
+//          internal scroll so buttons are always reachable regardless of
+//          content height, mobile browser chrome, or notch/home-indicator insets.
 //          No body style changes — page remains scrollable behind the overlay.
 import { useEffect, useRef } from 'react'
 
@@ -59,7 +61,7 @@ export default function Modal({ isOpen, onClose, title, children }) {
       {/* Backdrop */}
       <div
         className="fixed inset-0 animate-fade-in"
-        style={{ backgroundColor: 'var(--overlay)', zIndex: 9998 }}
+        style={{ backgroundColor: 'var(--overlay)', zIndex: 'var(--z-modal)' }}
         onClick={onClose}
         aria-hidden="true"
       />
@@ -67,15 +69,15 @@ export default function Modal({ isOpen, onClose, title, children }) {
       {/* Centering wrapper — fixed, does NOT scroll itself */}
       <div
         className="fixed inset-0 flex items-center justify-center p-4"
-        style={{ zIndex: 9999, pointerEvents: 'none' }}
+        style={{ zIndex: 'var(--z-modal)', pointerEvents: 'none' }}
       >
-        {/* Panel — max 85vh, header pinned, body scrolls */}
+        {/* Panel — capped height (dvh/safe-area aware, see .modal-panel),
+            header pinned, body scrolls so buttons stay reachable */}
         <div
-          className="w-full sm:max-w-lg rounded-2xl flex flex-col animate-scale-in"
+          className="modal-panel w-full sm:max-w-lg rounded-2xl flex flex-col animate-scale-in"
           style={{
             backgroundColor: 'var(--surface)',
             boxShadow:       '0 8px 40px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.08)',
-            maxHeight:       '85vh',       // never taller than viewport
             pointerEvents:   'auto',
           }}
           role="dialog"

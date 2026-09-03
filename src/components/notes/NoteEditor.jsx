@@ -4,12 +4,14 @@ import { useState, useEffect, useRef } from 'react'
 import { format } from 'date-fns'
 import { NOTE_TAGS } from '../../hooks/useNotes'
 import NoteAttachments from './NoteAttachments'
+import { exportEntryAsText, exportEntryAsMarkdown } from '../../services/exportService'
 
 export default function NoteEditor({ note, onUpdate, onBack, getWordCount, getReadTime }) {
   const [title,   setTitle]   = useState(note.title)
   const [content, setContent] = useState(note.content)
   const [tags,    setTags]    = useState(note.tags || [])
   const [saved,   setSaved]   = useState(true)
+  const [exportOpen, setExportOpen] = useState(false)
 
   useEffect(() => {
     setTitle(note.title); setContent(note.content)
@@ -56,6 +58,41 @@ export default function NoteEditor({ note, onUpdate, onBack, getWordCount, getRe
               Save
             </button>
           )}
+          <div className="relative">
+            <button
+              onClick={() => setExportOpen(o => !o)}
+              className="hover-surface w-6 h-6 rounded-full flex items-center justify-center text-sm transition-colors"
+              style={{ color: 'var(--text-faint)' }}
+              title="Export note"
+              aria-label="Export note"
+            >
+              ⋯
+            </button>
+            {exportOpen && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setExportOpen(false)} />
+                <div
+                  className="absolute right-0 top-full mt-1 z-20 rounded-xl border py-1 text-xs whitespace-nowrap"
+                  style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--shadow-card)' }}
+                >
+                  <button
+                    onClick={() => { exportEntryAsText({ title, content, tags, updatedAt: note.updatedAt, createdAt: note.createdAt }); setExportOpen(false) }}
+                    className="hover-surface block w-full text-left px-3 py-1.5 transition-colors"
+                    style={{ color: 'var(--text-muted)' }}
+                  >
+                    ↓ Export as .txt
+                  </button>
+                  <button
+                    onClick={() => { exportEntryAsMarkdown({ title, content, tags, updatedAt: note.updatedAt, createdAt: note.createdAt }); setExportOpen(false) }}
+                    className="hover-surface block w-full text-left px-3 py-1.5 transition-colors"
+                    style={{ color: 'var(--text-muted)' }}
+                  >
+                    ↓ Export as .md
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 

@@ -8,8 +8,6 @@ import TabSkeleton        from '../components/ui/TabSkeleton'
 import ViewErrorBoundary  from '../components/ui/ViewErrorBoundary'
 import TodayView          from '../components/today/TodayView'
 import TasksView          from '../components/tasks/TasksView'
-import HabitsView         from '../components/habits/HabitsView'
-const GoalsView = lazy(() => import('../components/goals/GoalsView'))
 import FocusMode          from '../components/focus/FocusMode'
 const SearchView = lazy(() => import('../components/search/SearchView'))
 const InsightsView = lazy(() => import('../components/insights/InsightsView'))
@@ -17,7 +15,7 @@ const WorkoutsView = lazy(() => import('../components/workouts/WorkoutsView'))
 const TimeBlockView = lazy(() => import('../components/timeblock/TimeBlockView'))
 const CalendarView = lazy(() => import('../components/calendar/CalendarView'))
 const CaptureView = lazy(() => import('../components/capture/CaptureView'))
-const RoutinesView = lazy(() => import('../components/routines/RoutinesView'))
+const DailyRhythmView = lazy(() => import('../components/rhythm/DailyRhythmView'))
 const ProjectsView = lazy(() => import('../components/projects/ProjectsView'))
 const WeeklyReview = lazy(() => import('../components/weekly/WeeklyReview'))
 import KeyboardShortcuts  from '../components/keyboard/KeyboardShortcuts'
@@ -63,14 +61,29 @@ const weeklyReviewDismissKey = () => `df_wr_dismissed_${getTodayKey()}`
 // buttons still land on the right sub-tab within CaptureView.
 const LEGACY_CAPTURE_TABS = ['notes', 'ideas', 'braindump', 'bookmarks']
 
+// Legacy standalone 'goals' tab — folded into TasksView's "Long-term" filter
+// chip. Kept as a translation so old bookmarked hashes, keyboard shortcuts,
+// and widget "jump to goals" buttons still land in the right place.
+const LEGACY_GOALS_TAB = 'goals'
+
+// Legacy standalone 'habits' and 'routines' tabs — folded into the single
+// 'rhythm' ("Daily Rhythm") tab, which shows both sections at once. Kept as
+// a translation so old bookmarked hashes, keyboard shortcuts, and widget
+// "jump to X" buttons still land on the new destination. No sub-filter state
+// is needed here (unlike the Goals fold) since both sections are always
+// visible together.
+const LEGACY_RHYTHM_TABS = ['habits', 'routines']
+
 export default function DashboardPage() {
   // Tab state persisted in URL hash so refresh preserves current tab
   const [activeTab, setActiveTabRaw] = useState(() => {
     const hash = window.location.hash.slice(1)
     if (LEGACY_CAPTURE_TABS.includes(hash)) return 'capture'
-    const valid = ['today','tasks','habits','focus','calendar','timeblock','projects',
-      'capture','workouts','routines',
-      'goals','insights','search','weeklyreview']
+    if (hash === LEGACY_GOALS_TAB) return 'tasks'
+    if (LEGACY_RHYTHM_TABS.includes(hash)) return 'rhythm'
+    const valid = ['today','tasks','rhythm','focus','calendar','timeblock','projects',
+      'capture','workouts',
+      'insights','search','weeklyreview']
     return valid.includes(hash) ? hash : 'today'
   })
 
@@ -82,11 +95,30 @@ export default function DashboardPage() {
     return LEGACY_CAPTURE_TABS.includes(hash) ? hash : 'notes'
   })
 
+  // Which filter chip TasksView should open on — defaults to 'Today', but
+  // legacy "goals" callers (keyboard shortcuts, Today widgets) route through
+  // here via setActiveTab so they land on the "Long-term" chip inside Tasks.
+  const [tasksInitialFilter, setTasksInitialFilter] = useState(() => {
+    const hash = window.location.hash.slice(1)
+    return hash === LEGACY_GOALS_TAB ? 'Long-term' : 'Today'
+  })
+
   const setActiveTab = useCallback((tab) => {
     if (LEGACY_CAPTURE_TABS.includes(tab)) {
       setCaptureType(tab)
       setActiveTabRaw('capture')
       window.history.replaceState(null, '', '#capture')
+      return
+    }
+    if (tab === LEGACY_GOALS_TAB) {
+      setTasksInitialFilter('Long-term')
+      setActiveTabRaw('tasks')
+      window.history.replaceState(null, '', '#tasks')
+      return
+    }
+    if (LEGACY_RHYTHM_TABS.includes(tab)) {
+      setActiveTabRaw('rhythm')
+      window.history.replaceState(null, '', '#rhythm')
       return
     }
     setActiveTabRaw(tab)
@@ -145,7 +177,7 @@ export default function DashboardPage() {
     if (action === 'add-task')  { setActiveTab('tasks');   setShowQuickCapture(true) }
     if (action === 'log-mood')  { setActiveTab('today') }
     if (action === 'focus')     { setActiveTab('focus') }
-    if (action === 'habits')    { setActiveTab('habits') }
+    if (action === 'habits')    { setActiveTab('rhythm') }
 
     // Share target — auto-create bookmark from shared URL
     if (shareUrl || shareTitle) {
@@ -231,16 +263,14 @@ export default function DashboardPage() {
       <ViewErrorBoundary key={activeTab}>
 
         {/* ── Plan ─────────────────────────────────────────────────────────── */}
-        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} notes={notes} mood={mood} intention={intention} score={score} energy={energy} onTabChange={handleTabChange} goals={goals} projects={projects} workouts={workouts} ideas={ideas} timeblocks={timeblocks} />}
-        {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={handleTabChange} energy={energy} habits={habits} ideas={ideas} openTaskId={openTaskId} workouts={workouts} />}
+        {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} routines={routines} notes={notes} mood={mood} intention={intention} score={score} energy={energy} onTabChange={handleTabChange} goals={goals} projects={projects} workouts={workouts} ideas={ideas} timeblocks={timeblocks} />}
+        {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={handleTabChange} energy={energy} habits={habits} ideas={ideas} openTaskId={openTaskId} workouts={workouts} goals={goals} initialFilter={tasksInitialFilter} />}
         {activeTab === 'calendar'   && <CalendarView tasks={tasks} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} />}
         {activeTab === 'timeblock'  && <TimeBlockView tasks={tasks} />}
         {activeTab === 'projects'   && <ProjectsView projects={projects} tasks={tasks} />}
 
         {/* ── Build ────────────────────────────────────────────────────────── */}
-        {activeTab === 'habits'     && <HabitsView habits={habits} habitRules={habitRules} />}
-        {activeTab === 'routines'   && <RoutinesView routines={routines} />}
-        {activeTab === 'goals'      && <GoalsView goals={goals} />}
+        {activeTab === 'rhythm'     && <DailyRhythmView habits={habits} habitRules={habitRules} routines={routines} />}
         {activeTab === 'workouts'   && <WorkoutsView workouts={workouts} />}
 
         {/* ── Think ────────────────────────────────────────────────────────── */}

@@ -99,7 +99,7 @@ export default function SmartStreakBoard({ habits }) {
           </p>
           <p className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>Recovery streak</p>
           {data.recoveryStreak > 0 && (
-            <p className="text-[10px] text-center" style={{ color: '#92400E' }}>Back on track! 💪</p>
+            <p className="text-[10px] text-center" style={{ color: 'var(--accent)' }}>Back on track! 💪</p>
           )}
         </div>
       </div>

@@ -1,51 +1,70 @@
 // Component: SideNav
-// Purpose: Desktop sidebar — sectioned nav, expanded theme switcher, user menu.
-//          Logo always goes to /dashboard.
+// Purpose: Desktop sidebar — Primary + collapsible More nav, expanded theme
+//          switcher, user menu. Logo always goes to /dashboard.
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import UserMenu    from '../auth/UserMenu'
 import ThemeToggle from '../ui/ThemeToggle'
 import Logo        from '../ui/Logo'
 
-const SECTIONS = [
-  { label: 'Plan', tabs: [
-    { id: 'today',     label: 'Today',     emoji: '☀️' },
-    { id: 'tasks',     label: 'Tasks',     emoji: '✅' },
-    { id: 'calendar',  label: 'Calendar',  emoji: '📅' },
-    { id: 'timeblock', label: 'Schedule',  emoji: '⏰' },
-    { id: 'projects',  label: 'Projects',  emoji: '🗂️' },
-  ]},
-  { label: 'Build', tabs: [
-    { id: 'habits',     label: 'Habits',     emoji: '🔁' },
-    { id: 'routines',   label: 'Routines',   emoji: '🌅' },
-    { id: 'goals',      label: 'Goals',      emoji: '🏆' },
-    { id: 'workouts',   label: 'Workouts',   emoji: '🏋️' },
-  ]},
-  { label: 'Think', tabs: [
-    { id: 'capture', label: 'Capture', emoji: '📥' },
-  ]},
-  { label: 'Reflect', tabs: [
-    { id: 'insights', label: 'Insights', emoji: '📊' },
-    { id: 'focus',    label: 'Focus',    emoji: '⏱️' },
-    { id: 'search',   label: 'Search',   emoji: '🔍' },
-  ]},
+// Primary — always visible, the tabs used every day.
+const PRIMARY_TABS = [
+  { id: 'today',     label: 'Today',        emoji: '☀️' },
+  { id: 'tasks',     label: 'DailyGoals',   emoji: '✅' },
+  { id: 'rhythm',    label: 'Daily Rhythm', emoji: '🔁' },
+  { id: 'workouts',  label: 'Workouts',     emoji: '🏋️' },
+  { id: 'insights',  label: 'Insights',     emoji: '📊' },
+  { id: 'capture',   label: 'Capture',      emoji: '📥' },
 ]
 
+// More — secondary tabs, tucked behind a collapsed-by-default toggle.
+const MORE_TABS = [
+  { id: 'focus',     label: 'Focus',     emoji: '⏱️' },
+  { id: 'calendar',  label: 'Calendar',  emoji: '📅' },
+  { id: 'timeblock', label: 'Schedule',  emoji: '⏰' },
+  { id: 'projects',  label: 'Projects',  emoji: '🗂️' },
+  { id: 'search',    label: 'Search',    emoji: '🔍' },
+]
 
 // Preload lazy chunks when user hovers a nav item
 const PRELOAD_MAP = {
   capture:    () => import('../capture/CaptureView'),
-  goals:      () => import('../goals/GoalsView'),
   insights:   () => import('../insights/InsightsView'),
   workouts:   () => import('../workouts/WorkoutsView'),
   calendar:   () => import('../calendar/CalendarView'),
-  routines:   () => import('../routines/RoutinesView'),
+  rhythm:     () => import('../rhythm/DailyRhythmView'),
   projects:   () => import('../projects/ProjectsView'),
   search:     () => import('../search/SearchView'),
 }
 const preload = (id) => PRELOAD_MAP[id]?.()
 
+function NavButton({ t, active, onClick, small }) {
+  return (
+    <button
+      key={t.id}
+      onClick={onClick}
+      onMouseEnter={() => preload(t.id)}
+      className={`${active ? '' : 'hover-surface hover-text'} flex items-center gap-2.5 px-2.5 py-2 rounded-xl font-medium transition-all text-left ${small ? 'text-[13px]' : 'text-sm'}`}
+      style={active
+        ? {
+            background:  'linear-gradient(90deg, var(--accent) 0%, var(--accent-mid) 100%)',
+            color:       'white',
+            boxShadow:   '0 2px 8px rgba(59,107,75,0.25)',
+          }
+        : { color: small ? 'var(--text-faint)' : 'var(--text-muted)' }
+      }
+    >
+      <span className="text-sm w-4 text-center">{t.emoji}</span>
+      {t.label}
+    </button>
+  )
+}
+
 export default function SideNav({ activeTab, onTabChange, theme, onSetTheme }) {
   const navigate = useNavigate()
+  // "More" starts collapsed unless the active tab already lives there, so a
+  // deep-link or refresh into e.g. Calendar doesn't hide the current tab.
+  const [moreOpen, setMoreOpen] = useState(() => MORE_TABS.some(t => t.id === activeTab))
 
   return (
     <nav
@@ -61,38 +80,29 @@ export default function SideNav({ activeTab, onTabChange, theme, onSetTheme }) {
         <Logo size={26} />
       </button>
 
-      {/* Nav sections */}
-      <div className="flex flex-col gap-5 flex-1">
-        {SECTIONS.map(section => (
-          <div key={section.label}>
-            <p
-              className="text-[10px] font-semibold uppercase tracking-widest px-2 mb-1.5"
-              style={{ color: 'var(--text-faint)' }}
-            >
-              {section.label}
-            </p>
-            <div className="flex flex-col gap-0.5">
-              {section.tabs.map(t => (
-                <button
-                  key={t.id}
-                  onClick={() => onTabChange(t.id)}
-                  className={`${activeTab === t.id ? '' : 'hover-surface hover-text'} flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-sm font-medium transition-all text-left`}
-                  style={activeTab === t.id
-                    ? {
-                        background:  'linear-gradient(90deg, var(--accent) 0%, var(--accent-mid) 100%)',
-                        color:       'white',
-                        boxShadow:   '0 2px 8px rgba(59,107,75,0.25)',
-                      }
-                    : { color: 'var(--text-muted)' }
-                  }
-                >
-                  <span className="text-sm w-4 text-center">{t.emoji}</span>
-                  {t.label}
-                </button>
-              ))}
-            </div>
-          </div>
+      {/* Nav */}
+      <div className="flex flex-col gap-0.5 flex-1">
+        {PRIMARY_TABS.map(t => (
+          <NavButton key={t.id} t={t} active={activeTab === t.id} onClick={() => onTabChange(t.id)} />
         ))}
+
+        {/* More — collapsed by default, de-emphasized when open */}
+        <button
+          onClick={() => setMoreOpen(o => !o)}
+          className="hover-surface hover-text flex items-center gap-2.5 px-2.5 py-2 mt-2 rounded-xl text-sm font-medium transition-all text-left"
+          style={{ color: 'var(--text-faint)' }}
+          aria-expanded={moreOpen}
+        >
+          <span className="text-sm w-4 text-center">{moreOpen ? '▾' : '▸'}</span>
+          More
+        </button>
+        {moreOpen && (
+          <div className="flex flex-col gap-0.5 pl-1">
+            {MORE_TABS.map(t => (
+              <NavButton key={t.id} t={t} active={activeTab === t.id} onClick={() => onTabChange(t.id)} small />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Theme switcher — expanded pill (desktop has room) */}

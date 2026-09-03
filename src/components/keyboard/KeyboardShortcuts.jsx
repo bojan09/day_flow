@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react'
 
 const SHORTCUTS = [
-  { key: 'T', desc: 'Today'      }, { key: 'K', desc: 'Tasks'    },
+  { key: 'T', desc: 'Today'      }, { key: 'K', desc: 'DailyGoals' },
   { key: 'C', desc: 'Calendar'   }, { key: 'N', desc: 'Notes'    },
   { key: 'H', desc: 'Habits'     }, { key: 'G', desc: 'Goals'    },
   { key: 'W', desc: 'Workouts'   }, { key: 'I', desc: 'Ideas'    },

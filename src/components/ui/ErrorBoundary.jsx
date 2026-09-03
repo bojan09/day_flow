@@ -37,7 +37,7 @@ export default class ErrorBoundary extends Component {
           alignItems:      'center',
           justifyContent:  'center',
           padding:         '24px',
-          backgroundColor: '#FAFAF8',
+          backgroundColor: 'var(--bg)',
           fontFamily:      'Outfit, -apple-system, sans-serif',
         }}
       >
@@ -45,21 +45,21 @@ export default class ErrorBoundary extends Component {
           style={{
             maxWidth:        '400px',
             width:           '100%',
-            backgroundColor: '#FFFFFF',
-            border:          '1px solid #E8E5DF',
+            backgroundColor: 'var(--surface)',
+            border:          '1px solid var(--border)',
             borderRadius:    '24px',
             padding:         '40px 32px',
             textAlign:       'center',
-            boxShadow:       '0 4px 24px rgba(0,0,0,0.06)',
+            boxShadow:       'var(--shadow-modal)',
           }}
         >
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
 
-          <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#1C1C1A', marginBottom: '8px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text)', marginBottom: '8px' }}>
             Something went wrong
           </h2>
 
-          <p style={{ fontSize: '14px', color: '#7A7774', lineHeight: 1.6, marginBottom: '24px' }}>
+          <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '24px' }}>
             DayFlow hit an unexpected error. Your data is safe — this is a display issue only.
           </p>
 
@@ -85,7 +85,7 @@ export default class ErrorBoundary extends Component {
               style={{
                 flex:            1,
                 padding:         '12px',
-                backgroundColor: '#3B6B4B',
+                backgroundColor: 'var(--accent)',
                 color:           'white',
                 border:          'none',
                 borderRadius:    '100px',
@@ -102,8 +102,8 @@ export default class ErrorBoundary extends Component {
                 flex:            1,
                 padding:         '12px',
                 backgroundColor: 'transparent',
-                color:           '#7A7774',
-                border:          '1px solid #E8E5DF',
+                color:           'var(--text-muted)',
+                border:          '1px solid var(--border)',
                 borderRadius:    '100px',
                 fontSize:        '14px',
                 cursor:          'pointer',

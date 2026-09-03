@@ -2,7 +2,7 @@
 // Purpose: Mobile slide-up navigation sheet — full nav parity with desktop sidebar.
 //          Opens via "More" button. Swipe down or tap backdrop to close.
 //          Phases 4.0.3, 4.0.4, 4.0.5, 4.0.6.
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAuth }    from '../../hooks/useAuth'
 import { useProfile } from '../../hooks/useProfile'
 import ThemeToggle    from '../ui/ThemeToggle'
@@ -11,28 +11,24 @@ import { isSupabaseConfigured } from '../../services/supabaseClient'
 // Same focusable-element query Modal.jsx uses for its initial-focus target.
 const FOCUSABLE = 'input, textarea, select, button, [href], [tabindex]:not([tabindex="-1"])'
 
-const SECTIONS = [
-  { label: 'Plan', tabs: [
-    { id: 'today',     label: 'Today',     emoji: '☀️' },
-    { id: 'tasks',     label: 'Tasks',     emoji: '✅' },
-    { id: 'calendar',  label: 'Calendar',  emoji: '📅' },
-    { id: 'timeblock', label: 'Schedule',  emoji: '⏰' },
-    { id: 'projects',  label: 'Projects',  emoji: '🗂️' },
-  ]},
-  { label: 'Build', tabs: [
-    { id: 'habits',     label: 'Habits',     emoji: '🔁' },
-    { id: 'routines',   label: 'Routines',   emoji: '🌅' },
-    { id: 'goals',      label: 'Goals',      emoji: '🏆' },
-    { id: 'workouts',   label: 'Workouts',   emoji: '🏋️' },
-  ]},
-  { label: 'Think', tabs: [
-    { id: 'capture', label: 'Capture', emoji: '📥' },
-  ]},
-  { label: 'Reflect', tabs: [
-    { id: 'insights',     label: 'Insights',     emoji: '📊' },
-    { id: 'search',       label: 'Search',        emoji: '🔍' },
-  ]},
-]
+// Primary — always visible, the tabs used every day.
+const PRIMARY_SECTION = { label: 'Primary', tabs: [
+  { id: 'today',     label: 'Today',        emoji: '☀️' },
+  { id: 'tasks',     label: 'DailyGoals',   emoji: '✅' },
+  { id: 'rhythm',    label: 'Daily Rhythm', emoji: '🔁' },
+  { id: 'workouts',  label: 'Workouts',     emoji: '🏋️' },
+  { id: 'insights',  label: 'Insights',     emoji: '📊' },
+  { id: 'capture',   label: 'Capture',      emoji: '📥' },
+]}
+
+// More — secondary tabs, tucked behind a collapsed-by-default toggle.
+const MORE_SECTION = { label: 'More', tabs: [
+  { id: 'focus',     label: 'Focus',     emoji: '⏱️' },
+  { id: 'calendar',  label: 'Calendar',  emoji: '📅' },
+  { id: 'timeblock', label: 'Schedule',  emoji: '⏰' },
+  { id: 'projects',  label: 'Projects',  emoji: '🗂️' },
+  { id: 'search',    label: 'Search',    emoji: '🔍' },
+]}
 
 // ── User profile strip ────────────────────────────────────────────────────────
 function DrawerProfile({ onSignOut }) {
@@ -97,6 +93,9 @@ export default function MobileDrawer({
   const restoreRef   = useRef(null)
   const dragStartY   = useRef(null)
   const dragCurrentY = useRef(0)
+  // "More" starts collapsed unless the active tab already lives there, so a
+  // deep-link or refresh into e.g. Calendar doesn't hide the current tab.
+  const [moreOpen, setMoreOpen] = useState(() => MORE_SECTION.tabs.some(t => t.id === activeTab))
 
   // Lock body scroll when open
   useEffect(() => {
@@ -201,35 +200,60 @@ export default function MobileDrawer({
 
         {/* Scrollable nav */}
         <div className="overflow-y-auto flex-1 px-4 py-3">
-          {SECTIONS.map(section => (
-            <div key={section.label} className="mb-5">
-              <p
-                className="text-[10px] font-semibold uppercase tracking-widest px-2 mb-2"
-                style={{ color: 'var(--text-faint)' }}
-              >
-                {section.label}
-              </p>
-              <div className="grid grid-cols-2 gap-1.5">
-                {section.tabs.map(t => {
-                  const active = activeTab === t.id
-                  return (
-                    <button
-                      key={t.id}
-                      onClick={() => handleTabSelect(t.id)}
-                      className="flex items-center gap-2.5 px-3 py-3 rounded-2xl text-sm font-medium transition-all active:scale-95 text-left"
-                      style={active
-                        ? { backgroundColor: 'var(--accent)', color: 'white' }
-                        : { backgroundColor: 'var(--bg-secondary)', color: 'var(--text-muted)' }
-                      }
-                    >
-                      <span className="text-base">{t.emoji}</span>
-                      <span className="text-sm font-medium truncate">{t.label}</span>
-                    </button>
-                  )
-                })}
-              </div>
+          {/* Primary — always visible */}
+          <div className="mb-5">
+            <div className="grid grid-cols-2 gap-1.5">
+              {PRIMARY_SECTION.tabs.map(t => {
+                const active = activeTab === t.id
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => handleTabSelect(t.id)}
+                    className="flex items-center gap-2.5 px-3 py-3 rounded-2xl text-sm font-medium transition-all active:scale-95 text-left"
+                    style={active
+                      ? { backgroundColor: 'var(--accent)', color: 'white' }
+                      : { backgroundColor: 'var(--bg-secondary)', color: 'var(--text-muted)' }
+                    }
+                  >
+                    <span className="text-base">{t.emoji}</span>
+                    <span className="text-sm font-medium truncate">{t.label}</span>
+                  </button>
+                )
+              })}
             </div>
-          ))}
+          </div>
+
+          {/* More — collapsed by default, de-emphasized when open */}
+          <button
+            onClick={() => setMoreOpen(o => !o)}
+            className="flex items-center gap-1.5 px-2 py-1.5 mb-2 text-[10px] font-semibold uppercase tracking-widest"
+            style={{ color: 'var(--text-faint)' }}
+            aria-expanded={moreOpen}
+          >
+            <span>{moreOpen ? '▾' : '▸'}</span>
+            More
+          </button>
+          {moreOpen && (
+            <div className="grid grid-cols-2 gap-1.5">
+              {MORE_SECTION.tabs.map(t => {
+                const active = activeTab === t.id
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => handleTabSelect(t.id)}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-2xl text-xs font-medium transition-all active:scale-95 text-left"
+                    style={active
+                      ? { backgroundColor: 'var(--accent)', color: 'white' }
+                      : { backgroundColor: 'var(--bg-secondary)', color: 'var(--text-faint)' }
+                    }
+                  >
+                    <span className="text-sm">{t.emoji}</span>
+                    <span className="text-xs font-medium truncate">{t.label}</span>
+                  </button>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         {/* Appearance + safe-area footer */}

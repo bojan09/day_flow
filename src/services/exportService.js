@@ -32,6 +32,20 @@ function buildCSV(headers, rows) {
 
 const stamp = () => format(new Date(), 'yyyy-MM-dd')
 
+// ── Generic text-file download (for ad-hoc single-item exports) ────────────────
+export function downloadTextFile(filename, content, mime = 'text/plain') {
+  download(content, filename, mime)
+}
+
+function slugify(title) {
+  const slug = (title || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+    .slice(0, 60)
+  return slug || 'untitled'
+}
+
 // ── Individual CSV exports ────────────────────────────────────────────────────
 export function exportTasksAsCSV(tasks = []) {
   const headers = ['Title', 'Priority', 'Category', 'Date', 'Due Time', 'Completed',
@@ -135,6 +149,29 @@ export function exportFullBackup({
     `dayflow-backup-${stamp()}.json`,
     'application/json'
   )
+}
+
+// ── Single-entry export (current note/idea/etc. being edited) ──────────────────
+// Builds a small readable header (title + date [+ tags]) followed by the body.
+function buildEntryHeader(entry, { tagsLabel = 'Tags' } = {}) {
+  const title   = entry.title?.trim() || 'Untitled'
+  const dateVal = entry.updatedAt || entry.createdAt
+  const dateStr = dateVal ? format(new Date(dateVal), 'MMMM d, yyyy · h:mm a') : ''
+  const tags    = entry.tags?.length ? `${tagsLabel}: ${entry.tags.join(', ')}\n` : ''
+  return { title, dateStr, tags }
+}
+
+export function exportEntryAsText(entry, { tagsLabel } = {}) {
+  const { title, dateStr, tags } = buildEntryHeader(entry, { tagsLabel })
+  const header = `${title}\n${dateStr}\n${tags}${'─'.repeat(40)}\n\n`
+  downloadTextFile(`${slugify(title)}-${stamp()}.txt`, header + (entry.content || ''))
+}
+
+export function exportEntryAsMarkdown(entry, { tagsLabel } = {}) {
+  const { title, dateStr, tags } = buildEntryHeader(entry, { tagsLabel })
+  const tagLine = tags ? `\n${entry.tags.map(t => `\`#${t}\``).join(' ')}` : ''
+  const md = `# ${title}\n\n_${dateStr}_${tagLine}\n\n${entry.content || ''}\n`
+  downloadTextFile(`${slugify(title)}-${stamp()}.md`, md, 'text/markdown')
 }
 
 // ── Import + validate backup ─────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 // Hook: useIdeas
 // Purpose: Idea tracker with status, ratings, goal links, Supabase sync + real-time
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { storage } from '../services/storage'
 import { ideasService } from '../services/supabaseDataService'
 import { subscribeToTable } from '../services/realtimeService'
@@ -19,21 +19,43 @@ export function useIdeas() {
 
   const [ideas, setIdeas] = useState(() => storage.get(KEY, []))
 
+  // Track in-flight local writes (add/update/status/stars/link) keyed by idea
+  // id, so a realtime-triggered refetch racing ahead of its own write's commit
+  // can't silently revert the optimistic update.
+  const pendingWritesRef = useRef(new Map())
+
+  const reconcile = (rows) => {
+    if (pendingWritesRef.current.size === 0) return rows
+    const byId = new Map(rows.map(r => [r.id, r]))
+    for (const [id, localIdea] of pendingWritesRef.current) byId.set(id, localIdea)
+    return [...byId.values()]
+  }
+
   useEffect(() => {
     if (!useDB) return
-    ideasService.getAll(userId).then(rows => { if (rows.length > 0) { setIdeas(rows); storage.set(KEY, rows) }; setSynced(true) })
+    ideasService.getAll(userId).then(rows => { if (rows.length > 0) { const merged = reconcile(rows); setIdeas(merged); storage.set(KEY, merged) }; setSynced(true) })
   }, [userId])
 
   useEffect(() => {
     if (!useDB) return
     return subscribeToTable('ideas', userId, () =>
-      ideasService.getAll(userId).then(rows => { setIdeas(rows); storage.set(KEY, rows) })
+      ideasService.getAll(userId).then(rows => { const merged = reconcile(rows); setIdeas(merged); storage.set(KEY, merged) })
     )
   }, [userId])
 
   useEffect(() => { if (!useDB) storage.set(KEY, ideas) }, [ideas])
 
-  const persist = useCallback(async (idea) => { if (useDB) await ideasService.upsert(userId, idea) }, [useDB, userId])
+  const persist = useCallback(async (idea) => {
+    if (!useDB) return
+    pendingWritesRef.current.set(idea.id, idea)
+    try {
+      await ideasService.upsert(userId, idea)
+      pendingWritesRef.current.delete(idea.id)
+    } catch (err) {
+      pendingWritesRef.current.delete(idea.id)
+      throw err
+    }
+  }, [useDB, userId])
 
   const addIdea = (data) => {
     const idea = {

@@ -8,13 +8,12 @@ import { isSupabaseConfigured } from '../../services/supabaseClient'
 import ThemeToggle      from '../ui/ThemeToggle'
 
 const TITLES = {
-  today:      'Today',      tasks:      'Tasks',
-  capture:    'Capture',    habits:     'Habits',
-  goals:      'Goals',      focus:      'Focus',
+  today:      'Today',      tasks:      'DailyGoals',
+  capture:    'Capture',    rhythm:     'Daily Rhythm',
+  focus:      'Focus',
   search:     'Search',     insights:   'Insights',
   workouts:   'Workouts',
   timeblock:  'Schedule',   calendar:   'Calendar',
-  routines:   'Routines',
   projects:   'Projects',
 }
 

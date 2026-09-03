@@ -1,57 +1,55 @@
-# Memory — DayFlow v5 session
+# Memory — DayFlow full rebrand + features session
 
-Last updated: 2026-07-02
+Last updated: 2026-07-13
 
 ## What was built
-- Removed reintroduced `src/hooks/useAuth.js` (shadowed useAuth.jsx — breaks password reset; recurring hazard, never recreate)
-- Habits: fixed "daily" label overlapping first circle — grid now `minmax(76px,1fr) repeat(7, minmax(1.75rem,2rem))` gap 0.375rem in HabitRow + HabitsView header; freq label truncates; header day letters `w-7 mx-auto`
-- Mobile + button moved into BottomNav (center slot, dispatches `dayflow:quickcapture` event); QuickCapture FAB now desktop-only, listens for that event
-- Mic removed: VoiceCommandBar unmounted from DashboardPage (component file kept, unused)
-- Tasks: new `🔁 Repeating` filter — lists recurring templates, inline days summary, 🔁 badge opens RecurrencePanel (pause/resume, edit days, end date, stop)
-- Ideas: restoreIdea + delete undo toast + aria-label (consistency with other views)
+
+**Phase A/B (bug audit):** Deleted a stale `src/hooks/useAuth.js` that had regrown and was shadowing the canonical `useAuth.jsx` (Vite resolves `.js` before `.jsx` on extensionless imports — broke password reset silently). Fixed duplicate `aria-label` in `TopBar.jsx`.
+
+**Phase C (visual rebrand, specs in `docs/superpowers/specs/2026-07-12-dayflow-rebrand-design.md`):** New logo (`src/components/ui/Logo.jsx`, icon+wordmark, arc/flow motif), refined accent colors per theme in `src/index.css`, added `--radius-3xl`. Removed gamification entirely (`useXP.js`, `XPBadge.jsx`, `useAchievements.js`, `AchievementsView.jsx` deleted). Today view → bento grid (`BentoGrid.jsx`). Tasks → grouped-by-time-bucket (`TaskSection.jsx`) + two-column desktop/tabbed-mobile modal (`TaskModalDesktop/Mobile.jsx`). Habits → cards with streak-strip (`HabitCard.jsx`) + two-step wizard (`AddHabitWizard.jsx`). Workouts → weekly fitness rings (`WeeklyRings.jsx`) + template-picker modal. Routines → full-screen "run mode" (`RoutineRunMode.jsx`) + numbered step-builder (`StepBuilderCard.jsx`). Calendar → day-detail side panel (`DayDetailPanel.jsx`). Phase C2 propagated new tokens (soft-elevation card style) to all 12 remaining views (Goals/Insights/Notes/Focus/Balance/Bookmarks/BrainDump/Ideas/Projects/Weekly/Search/Onboarding) — restyle only, no layout changes.
+
+**AI expansion (spec `2026-07-12-dayflow-ai-expansion-design.md`):** Migrated `/api/ai.js` from Anthropic to Groq (free tier, `llama-3.3-70b-versatile`) — same `{system,message}→{text}` contract. Added `src/services/captureClassifier.js` (AI intent classification: task/habit/routine/event, falls back to local `parseNLTask` on any failure) wired into `QuickCapture.jsx`/`QuickTaskBar.jsx`. Added AI scheduling suggestions (`getAIScheduleSuggestions` in `useSmartScheduler.js`) and AI-drafted routines/goals (`routinePlanService.js`).
+
+**Accessibility (Phase D):** Fixed `Input.jsx` label/id association app-wide (`useId()`). Darkened dark-theme `--accent` `#6BBF83`→`#2E7D4F` (was failing WCAG AA, now ~5:1). Added keyboard support to `TaskSection.jsx` rows, converted the recurring-task toggle to a real checkbox, added `Modal.jsx` focus trap, `MobileDrawer.jsx` Escape/focus parity.
+
+**Performance (Phase E):** Fixed `captureClassifier.js`'s dynamic import of `aiService.js` (was already statically imported elsewhere — dead-weight indirection, caused a recurring build warning). Added `React.memo`/`useCallback`/`useMemo` to `HabitCard`, `TaskSection`'s row, `WorkoutsView.jsx`'s derived data.
+
+**Task reminders (spec `2026-07-13-task-reminders-design.md`):** Tasks get a `reminderTime` field (time picker in `TaskDetail.jsx`'s metadata rail) → client computes absolute `reminderAt` via `src/utils/reminders.js`'s `computeReminderAt(date, time)`. Recurring tasks inherit `reminderTime` per-occurrence via `recurringEngine.js`. New `supabase/functions/check-reminders/index.ts` (cron every 1 min, not yet deployed) finds due/unsent reminders and reuses the existing `send-push` function; tapping the notification deep-links via `?openTask=<id>` handled in `DashboardPage.jsx`/`TasksView.jsx`. Deleted the old tab-open-only `notificationService.js` (superseded).
+
+**IA cleanup (spec `2026-07-13-ia-cleanup-design.md`):** Deleted Gratitude, Affirmations, Monthly Letter, Water Tracker, Balance, Challenges, and dead `VoiceCommandBar.jsx` (kept `VoiceJournal.jsx` — it's live). Rebalanced `useDailyScore.js` weights (tasks 44/habits 37/mood 19 = 100, was 35/30/15/gratitude10/water10). Consolidated Notes/Ideas/BrainDump/Bookmarks into one `CaptureView.jsx` with a type-filter (legacy tab-id calls transparently translated in `DashboardPage.jsx`'s `setActiveTab`). Folded Someday/Templates/Repeating into `TasksView.jsx` as filter chips. Added `Cmd/Ctrl+K` command palette (`src/components/palette/CommandPalette.jsx`) — navigate/capture, reuses `classifyCapture`. Nav went from ~20 destinations to 11.
+
+**Custom workout types:** New `src/hooks/useCustomWorkoutTypes.js` (mirrors `useCustomCategories.js` exactly), wired into `WorkoutForm.jsx`'s Type picker with inline "+ Custom" add/remove, persisted via `usePersistedState('custom_workout_types', [])`.
 
 ## Decisions made
-- Repeat management = filter inside TasksView, not separate page
-- Voice features deprecated from UI (files remain)
+
+- No git commits made anywhere this entire session — user manages all commits/pushes manually. Everything is uncommitted working-tree edits on top of the original clone.
+- Cloud/Supabase-only for reminders (no localStorage-mode fallback) — user confirmed acceptable.
+- Command palette's `Cmd+K` is guarded against firing while a text input is focused (conservative default) — user has NOT yet decided whether to switch to Notion/Slack-style (fires even while typing). One-line change either way (`DashboardLayout.jsx`'s keydown guard).
+- Kept `VoiceJournal.jsx` (still-used) despite memory previously claiming all voice features were deprecated — that claim was stale; only genuinely-dead `VoiceCommandBar.jsx` was removed.
+
+## Problems solved
+
+- **Real bug found via live browser testing (pre-existing, confirmed via `git show HEAD` to predate this whole session):** `TaskDetail.jsx` never resynced its local state (`priority`/`date`/`category`/`notes`/`reminderTime`) when a different task was opened — component stays mounted across task-opens, `useState` only initializes once. Editing any task after the first silently reverted its date/priority to stale defaults on save. Fixed with a `useEffect` keyed on `task?.id` that resyncs all fields. Verified live: date/priority now correctly persist through edits.
+- Local demo-mode testing requires moving aside BOTH `.env` AND `.env.local` (both had real Supabase keys) — `isSupabaseConfigured()` checks either. Both were restored exactly after testing.
+- `stopPropagation()` between two independent `window`-level `addEventListener` keydown listeners does nothing (Modal.jsx's Escape handler vs CommandPalette's) — fixed by moving CommandPalette's Escape handling onto a React `onKeyDown` on its own DOM root instead of a window listener, so it actually intercepts the bubble phase before it reaches window.
 
 ## Current state
-- Build clean (0 errors/warnings). Repo main = this state minus session edits; ZIP `DayFlow_v5.zip` delivered is source of truth
-- Supabase migration `supabase/migration-recurrence-controls.sql` must be run by user (recur_status, recur_end_date)
+
+- Build clean (`npm run build` succeeds, 0 errors). 14/14 unit tests pass (`node --test api/ai.test.js src/utils/reminders.test.js src/services/captureClassifier.test.js`).
+- Live-tested in browser (demo mode): nav, task creation/NLP parsing/grouping, theme switching (Light/Dark/Forest), Habits view, TaskDetail editing all confirmed working. Command palette NOT live-tested (browser tooling hit rate limits mid-session) — code-reviewed only.
+- Nothing committed or pushed. `.claude/launch.json` added (vite dev server config for browser preview tooling).
+- Two manual deploy steps outstanding, only the user can do these (no CLI session available here):
+  1. Run `supabase/migration-task-reminders.sql` in Supabase SQL editor
+  2. Deploy `supabase/functions/check-reminders/index.ts` + schedule via Supabase Dashboard Cron Jobs (every 1 min)
+- `GROQ_API_KEY` is already set in `.env` — AI features need `vercel dev` (not plain `vite dev`) to actually reach `/api/ai`.
 
 ## Next session starts with
-- Confirm user pushed DayFlow_v5.zip contents to GitHub (prevents regressions like useAuth.js returning)
 
-## Open questions / next priorities (impact order)
-1. Push-to-repo discipline — regressions keep reappearing from stale local copies
-2. Delete unused voice/ + FeatureTooltip leftovers if voice stays removed
-3. Convert 87 onMouseOver inline-hover handlers to CSS classes
-4. Per-view code-split audit after voice removal
-5. E2E smoke tests (Playwright) for auth + task CRUD
+- Nothing queued. If resuming: confirm the two Supabase manual steps above got done, then do a live test of a real reminder firing end-to-end (needs a real device with push permission granted via `PushSetupPanel.jsx`).
+- Command palette (`Cmd+K`) still needs live browser verification — was only code-reviewed.
 
+## Open questions
 
-## Session 2026-07-02 (later) — inline hover → CSS classes
-- Added hover utility classes to index.css: hover-surface, hover-accent-soft, hover-accent-mid, hover-danger, hover-text, hover-text-muted, hover-text-accent, hover-lift
-- Converted 83 inline onMouseOver/onMouseOut handler pairs across 52 files to these classes; 3 complex border-multi hovers dropped (base state unchanged)
-- SideNav active-item hover guarded: className conditional so active gradient not overridden
-- Only remaining inline hover = src/components/voice/VoiceCommandBar.jsx (unused, pending deletion)
-- Build clean. Next priorities unchanged: (1) push to GitHub, (2) delete voice/, (4) Playwright tests, (5) bundle re-audit
-
-## Session 2026-07-02 (Repeating Items page)
-- New top-level tab "Repeating" (🔁) in SideNav Build section + nav config + DashboardPage lazy route
-- Architecture: adapter pattern for scalability
-  - src/services/repeating/{types,taskAdapter,workoutAdapter}.js normalize each source to shared RepeatingItem shape
-  - src/hooks/useRepeatingItems.js aggregates + sorts (active first, soonest next)
-  - src/components/repeating/{RepeatingView,RepeatingItemRow}.jsx — filters (type/frequency/status) + search, pause/resume, edit (tasks reuse RecurrencePanel), stop
-  - To add a new recurring type later: write one adapter + spread into useRepeatingItems. No page changes.
-- Workouts: added recurStatus (active/paused) to addSession default + engine gate (recurringWorkoutsEngine skips paused). No DB migration — workouts use usePersistedState KV blob.
-- Task edit modal (TaskDetail) ALREADY had labeled title input (autoFocus, top). WorkoutForm already has title + recurrence control. Item #3 was already satisfied — no change.
-- Two recurrence models remain divergent by design (tasks: recurDays[]+recurStatus+recurEndDate; workouts: recurrence string+recurStatus). Adapters bridge them. Full unification (Option B) deferred — not justified.
-- Build clean.
-
-## Session 2026-07-07 (bug fixes + LH a11y)
-- Completed-task persistence: code path was correct end-to-end. Root cause = live Supabase missing recur_status/recur_end_date columns → every task upsert 400s silently → completion reverts. FIX: run supabase/migration-recurrence-controls.sql. Hardened tasksService.upsert to THROW on error (was swallowed) so this can't hide again.
-- Lighthouse habits page a11y (was 0.73): added aria-label+aria-pressed to 31 day-toggle circles; bumped --text-faint to AA all themes (light #726C63, dark #949089, forest #4E6E4E); tap-target on SyncIndicator + BottomNav customize pill; aria-label on 2 habit-chain selects; habits header flex-wrap.
-- Build clean.
-## Known issues / pending
-- USER MUST run supabase/migration-recurrence-controls.sql on live DB (blocks task writes)
-- Verify Lighthouse re-run after deploy
+- Cmd+K input-focus guard: keep conservative (current) or switch to Notion/Slack-style always-fires? User hasn't decided.
+- `views-core` bundle chunk is the largest (didn't restructure lazy-load boundaries this session — flagged, not fixed).
+- Deferred from IA cleanup brainstorm, not started: global undo stack, offline-conflict-resolution audit, working export/import round-trip.

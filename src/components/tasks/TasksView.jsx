@@ -15,15 +15,16 @@ import EmptyState    from '../ui/EmptyState'
 import TaskTemplates from '../templates/TaskTemplates'
 import SomedayList   from '../summary/SomedayList'
 import RepeatingView from '../repeating/RepeatingView'
+import GoalsView     from '../goals/GoalsView'
 import { getTodayKey } from '../../utils/dateUtils'
 import { addDays, format } from 'date-fns'
 
-const FILTERS = ['All', 'Today', 'Overdue', 'Pending', 'Done', 'Someday', 'Templates', 'Repeating']
+const FILTERS = ['All', 'Today', 'Overdue', 'Pending', 'Done', 'Someday', 'Templates', 'Repeating', 'Long-term']
 
-export default function TasksView({ tasks, templates, someday, projects, categories, onAddCategory, onRemoveCategory, onTabChange, energy, habits, ideas, openTaskId, workouts }) {
+export default function TasksView({ tasks, templates, someday, projects, categories, onAddCategory, onRemoveCategory, onTabChange, energy, habits, ideas, openTaskId, workouts, goals, initialFilter }) {
   const { toast } = useToast()
   const [recurTask, setRecurTask] = useState(null)
-  const [filter,     setFilter]  = useState('Today')
+  const [filter,     setFilter]  = useState(initialFilter || 'Today')
   const [modalOpen,  setModal]   = useState(false)
   const [detailTask,   setDetail]      = useState(null)
   const todayKey = getTodayKey()
@@ -116,6 +117,8 @@ export default function TasksView({ tasks, templates, someday, projects, categor
         templates && <TaskTemplates templates={templates} tasks={tasks} />
       ) : filter === 'Repeating' ? (
         <RepeatingView tasks={tasks} workouts={workouts} />
+      ) : filter === 'Long-term' ? (
+        <GoalsView goals={goals} />
       ) : filtered.length === 0 ? (
         <EmptyState type="tasks" title="Nothing here" subtitle="Add a task using the input above." action="+ New Task" onAction={() => setModal(true)} />
       ) : (

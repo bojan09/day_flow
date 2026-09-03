@@ -1,6 +1,6 @@
 // Hook: useGoals
 // Purpose: Goal tracking with milestones, Supabase sync, and real-time
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { storage } from '../services/storage'
 import { goalsService } from '../services/supabaseDataService'
 import { subscribeToTable } from '../services/realtimeService'
@@ -19,21 +19,43 @@ export function useGoals() {
 
   const [goals, setGoals] = useState(() => storage.get(KEY, []))
 
+  // Track in-flight local writes (add/update/toggle/milestones) keyed by goal
+  // id, so a realtime-triggered refetch racing ahead of its own write's commit
+  // can't silently revert the optimistic update.
+  const pendingWritesRef = useRef(new Map())
+
+  const reconcile = (rows) => {
+    if (pendingWritesRef.current.size === 0) return rows
+    const byId = new Map(rows.map(r => [r.id, r]))
+    for (const [id, localGoal] of pendingWritesRef.current) byId.set(id, localGoal)
+    return [...byId.values()]
+  }
+
   useEffect(() => {
     if (!useDB) return
-    goalsService.getAll(userId).then(rows => { if (rows.length > 0) { setGoals(rows); storage.set(KEY, rows) }; setSynced(true) })
+    goalsService.getAll(userId).then(rows => { if (rows.length > 0) { const merged = reconcile(rows); setGoals(merged); storage.set(KEY, merged) }; setSynced(true) })
   }, [userId])
 
   useEffect(() => {
     if (!useDB) return
     return subscribeToTable('goals', userId, () =>
-      goalsService.getAll(userId).then(rows => { setGoals(rows); storage.set(KEY, rows) })
+      goalsService.getAll(userId).then(rows => { const merged = reconcile(rows); setGoals(merged); storage.set(KEY, merged) })
     )
   }, [userId])
 
   useEffect(() => { if (!useDB) storage.set(KEY, goals) }, [goals])
 
-  const persist = useCallback(async (goal) => { if (useDB) await goalsService.upsert(userId, goal) }, [useDB, userId])
+  const persist = useCallback(async (goal) => {
+    if (!useDB) return
+    pendingWritesRef.current.set(goal.id, goal)
+    try {
+      await goalsService.upsert(userId, goal)
+      pendingWritesRef.current.delete(goal.id)
+    } catch (err) {
+      pendingWritesRef.current.delete(goal.id)
+      throw err
+    }
+  }, [useDB, userId])
 
   const addGoal = (data) => {
     const g = {

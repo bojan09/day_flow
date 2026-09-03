@@ -7,7 +7,7 @@ import EnergyCheckIn      from './EnergyCheckIn'
 import FocusTask          from './FocusTask'
 import ProgressRing       from './ProgressRing'
 import TodayTaskList      from './TodayTaskList'
-import TodayHabitStrip    from './TodayHabitStrip'
+import DailyRhythmStrip   from './DailyRhythmStrip'
 import TodayQuickNote     from './TodayQuickNote'
 import WeekStrip          from './WeekStrip'
 import MoodTracker        from '../insights/MoodTracker'
@@ -36,17 +36,17 @@ import { useWidgetPreferences, WIDGET_REGISTRY } from '../../hooks/useWidgetPref
 import { useState } from 'react'
 
 // Adaptive default orders by time context
-const MORNING_ORDER   = ['mood','tasks-today','habits-today','energy','focus-task','quick-note']
-const AFTERNOON_ORDER = ['focus-task','tasks-today','habits-today','mood','energy','quick-note']
-const EVENING_ORDER   = ['mood','habits-today','tasks-today','energy','focus-task','quick-note']
+const MORNING_ORDER   = ['mood','tasks-today','rhythm-today','energy','focus-task','quick-note']
+const AFTERNOON_ORDER = ['focus-task','tasks-today','rhythm-today','mood','energy','quick-note']
+const EVENING_ORDER   = ['mood','rhythm-today','tasks-today','energy','focus-task','quick-note']
 
 // Map widget id → the component to render
-function WidgetContent({ id, tasks, habits, notes, mood, energy,
+function WidgetContent({ id, tasks, habits, routines, notes, mood, energy,
   goals, projects, workouts, ideas, timeblocks, onTabChange }) {
   switch (id) {
     case 'mood':               return <MoodTracker mood={mood} />
     case 'tasks-today':        return <TodayTaskList tasks={tasks} />
-    case 'habits-today':       return <TodayHabitStrip habits={habits} />
+    case 'rhythm-today':       return <DailyRhythmStrip habits={habits} routines={routines} onTabChange={onTabChange} />
     case 'energy':             return <EnergyCheckIn energy={energy} />
     case 'focus-task':         return <FocusTask tasks={tasks} />
     case 'quick-note':         return <TodayQuickNote notes={notes} />
@@ -62,7 +62,7 @@ function WidgetContent({ id, tasks, habits, notes, mood, energy,
 }
 
 export default function TodayView({
-  tasks, habits, notes, mood, intention,
+  tasks, habits, routines, notes, mood, intention,
   score, energy, onTabChange,
   goals, projects, workouts, ideas, timeblocks,
 }) {
@@ -84,7 +84,7 @@ export default function TodayView({
   // Get registry entry for a widget
   const getMeta = (id) => WIDGET_REGISTRY.find(w => w.id === id) ?? { id, title: id, emoji: '📦', defaultOpen: false }
 
-  const widgetProps = { tasks, habits, notes, mood, energy, goals, projects, workouts, ideas, timeblocks, onTabChange }
+  const widgetProps = { tasks, habits, routines, notes, mood, energy, goals, projects, workouts, ideas, timeblocks, onTabChange }
 
   return (
     <div className="max-w-2xl mx-auto space-y-3 pt-2">

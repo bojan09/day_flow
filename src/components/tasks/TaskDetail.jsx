@@ -93,7 +93,7 @@ export default function TaskDetail({
 
   const inputStyle = { backgroundColor: 'var(--bg)', borderColor: 'var(--border)', color: 'var(--text)' }
 
-  // Main content — title + notes.
+  // Main content — title + description.
   const mainFields = (
     <>
       {/* Title */}
@@ -108,14 +108,15 @@ export default function TaskDetail({
         />
       </div>
 
-      {/* Notes */}
+      {/* Description */}
       <div>
-        <label className="text-xs font-medium uppercase tracking-wide block mb-1.5" style={{ color: 'var(--text-muted)' }}>
-          Notes
+        <label htmlFor="task-description" className="text-xs font-medium uppercase tracking-wide block mb-1.5" style={{ color: 'var(--text-muted)' }}>
+          Description
         </label>
         <textarea
+          id="task-description"
           value={note} onChange={e => { setNote(e.target.value); mark() }}
-          placeholder="Add notes…" rows={3}
+          placeholder="Add a description…" rows={3}
           className="input-base w-full resize-none" style={inputStyle}
         />
       </div>

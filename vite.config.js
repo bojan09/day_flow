@@ -9,12 +9,12 @@ const VIEW_CHUNKS = {
   'views-core': [
     '/components/today/TodayView',
     '/components/tasks/TasksView',
+    '/components/goals/GoalsView',
     '/components/habits/HabitsView',
     '/components/focus/FocusMode',
   ],
   'views-secondary': [
     '/components/notes/NotesView',
-    '/components/goals/GoalsView',
     '/components/calendar/CalendarView',
     '/components/workouts/WorkoutsView',
     '/components/insights/InsightsView',

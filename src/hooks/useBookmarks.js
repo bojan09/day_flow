@@ -1,6 +1,6 @@
 // Hook: useBookmarks
 // Purpose: Reading list with Supabase sync + real-time
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { storage } from '../services/storage'
 import { bookmarksService } from '../services/supabaseDataService'
 import { subscribeToTable } from '../services/realtimeService'
@@ -18,21 +18,43 @@ export function useBookmarks() {
 
   const [bookmarks, setBookmarks] = useState(() => storage.get(KEY, []))
 
+  // Track in-flight local writes (add/update/toggle) keyed by bookmark id, so a
+  // realtime-triggered refetch that races ahead of its own write's commit can't
+  // silently revert the optimistic update.
+  const pendingWritesRef = useRef(new Map())
+
+  const reconcile = (rows) => {
+    if (pendingWritesRef.current.size === 0) return rows
+    const byId = new Map(rows.map(r => [r.id, r]))
+    for (const [id, localBookmark] of pendingWritesRef.current) byId.set(id, localBookmark)
+    return [...byId.values()]
+  }
+
   useEffect(() => {
     if (!useDB) return
-    bookmarksService.getAll(userId).then(rows => { if (rows.length > 0) { setBookmarks(rows); storage.set(KEY, rows) }; setSynced(true) })
+    bookmarksService.getAll(userId).then(rows => { if (rows.length > 0) { const merged = reconcile(rows); setBookmarks(merged); storage.set(KEY, merged) }; setSynced(true) })
   }, [userId])
 
   useEffect(() => {
     if (!useDB) return
     return subscribeToTable('bookmarks', userId, () =>
-      bookmarksService.getAll(userId).then(rows => { setBookmarks(rows); storage.set(KEY, rows) })
+      bookmarksService.getAll(userId).then(rows => { const merged = reconcile(rows); setBookmarks(merged); storage.set(KEY, merged) })
     )
   }, [userId])
 
   useEffect(() => { if (!useDB) storage.set(KEY, bookmarks) }, [bookmarks])
 
-  const persist = useCallback(async (b) => { if (useDB) await bookmarksService.upsert(userId, b) }, [useDB, userId])
+  const persist = useCallback(async (b) => {
+    if (!useDB) return
+    pendingWritesRef.current.set(b.id, b)
+    try {
+      await bookmarksService.upsert(userId, b)
+      pendingWritesRef.current.delete(b.id)
+    } catch (err) {
+      pendingWritesRef.current.delete(b.id)
+      throw err
+    }
+  }, [useDB, userId])
 
   const addBookmark = (data) => {
     const b = {

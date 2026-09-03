@@ -320,6 +320,18 @@
   .pb-safe { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
   .pt-safe { padding-top: max(0px, env(safe-area-inset-top)); }
 
+  /* Modal panel height cap — 85vh first (universal fallback), then 85dvh
+     where supported so mobile browser chrome (address bar show/hide) can't
+     push the panel taller than the actually-visible viewport. Also caps
+     against the safe-area-inset-bottom so the panel never runs under a
+     home-indicator / gesture bar on notched phones. */
+  .modal-panel {
+    max-height: 85vh;
+    max-height: 85dvh;
+    max-height: min(85vh, calc(100vh - env(safe-area-inset-bottom) - env(safe-area-inset-top) - 2rem));
+    max-height: min(85dvh, calc(100dvh - env(safe-area-inset-bottom) - env(safe-area-inset-top) - 2rem));
+  }
+
   /* Glass morphism */
 
   /* Text balance */

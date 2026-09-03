@@ -16,13 +16,26 @@ export function useNotes() {
   const useDB            = isSupabaseConfigured() && !!userId
   const pendingDeletesRef = useRef(new Set())
 
+  // Track in-flight local writes (add/update/pin) keyed by note id, so a
+  // realtime-triggered refetch racing ahead of its own write's commit can't
+  // silently revert the optimistic update.
+  const pendingWritesRef = useRef(new Map())
+
   const [notes, setNotes]   = useState(() => storage.get(KEY, []))
   const [synced, setSynced] = useState(false)
+
+  const reconcile = (rawRows) => {
+    const filtered = rawRows.filter(n => !pendingDeletesRef.current.has(n.id))
+    if (pendingWritesRef.current.size === 0) return filtered
+    const byId = new Map(filtered.map(n => [n.id, n]))
+    for (const [id, localNote] of pendingWritesRef.current) byId.set(id, localNote)
+    return [...byId.values()]
+  }
 
   useEffect(() => {
     if (!useDB) { setSynced(true); return }
     notesService.getAll(userId).then(rows => {
-      if (rows.length > 0) { setNotes(rows); storage.set(KEY, rows) }
+      if (rows.length > 0) { const merged = reconcile(rows); setNotes(merged); storage.set(KEY, merged) }
       setSynced(true)
     })
   }, [userId])
@@ -31,7 +44,7 @@ export function useNotes() {
     if (!useDB) return
     return subscribeToTable('notes', userId, () => {
       notesService.getAll(userId).then(rawRows => {
-        const rows = rawRows.filter(n => !pendingDeletesRef.current.has(n.id))
+        const rows = reconcile(rawRows)
         if (rows.length > 0) { setNotes(rows); storage.set(KEY, rows) }
       })
     })
@@ -40,7 +53,15 @@ export function useNotes() {
   useEffect(() => { if (!useDB) storage.set(KEY, notes) }, [notes])
 
   const persist = useCallback(async (note) => {
-    if (useDB) await notesService.upsert(userId, note)
+    if (!useDB) return
+    pendingWritesRef.current.set(note.id, note)
+    try {
+      await notesService.upsert(userId, note)
+      pendingWritesRef.current.delete(note.id)
+    } catch (err) {
+      pendingWritesRef.current.delete(note.id)
+      throw err
+    }
   }, [useDB, userId])
 
   const addNote = (partial = {}) => {

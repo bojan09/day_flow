@@ -1,6 +1,6 @@
 // Hook: useProjects
 // Purpose: Project containers with Supabase sync + real-time
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { storage } from '../services/storage'
 import { projectsService } from '../services/supabaseDataService'
 import { subscribeToTable } from '../services/realtimeService'
@@ -19,21 +19,43 @@ export function useProjects() {
 
   const [projects, setProjects] = useState(() => storage.get(KEY, []))
 
+  // Track in-flight local writes (add/update/status) keyed by project id, so a
+  // realtime-triggered refetch racing ahead of its own write's commit can't
+  // silently revert the optimistic update.
+  const pendingWritesRef = useRef(new Map())
+
+  const reconcile = (rows) => {
+    if (pendingWritesRef.current.size === 0) return rows
+    const byId = new Map(rows.map(r => [r.id, r]))
+    for (const [id, localProject] of pendingWritesRef.current) byId.set(id, localProject)
+    return [...byId.values()]
+  }
+
   useEffect(() => {
     if (!useDB) return
-    projectsService.getAll(userId).then(rows => { if (rows.length > 0) { setProjects(rows); storage.set(KEY, rows) }; setSynced(true) })
+    projectsService.getAll(userId).then(rows => { if (rows.length > 0) { const merged = reconcile(rows); setProjects(merged); storage.set(KEY, merged) }; setSynced(true) })
   }, [userId])
 
   useEffect(() => {
     if (!useDB) return
     return subscribeToTable('projects', userId, () =>
-      projectsService.getAll(userId).then(rows => { setProjects(rows); storage.set(KEY, rows) })
+      projectsService.getAll(userId).then(rows => { const merged = reconcile(rows); setProjects(merged); storage.set(KEY, merged) })
     )
   }, [userId])
 
   useEffect(() => { if (!useDB) storage.set(KEY, projects) }, [projects])
 
-  const persist = useCallback(async (p) => { if (useDB) await projectsService.upsert(userId, p) }, [useDB, userId])
+  const persist = useCallback(async (p) => {
+    if (!useDB) return
+    pendingWritesRef.current.set(p.id, p)
+    try {
+      await projectsService.upsert(userId, p)
+      pendingWritesRef.current.delete(p.id)
+    } catch (err) {
+      pendingWritesRef.current.delete(p.id)
+      throw err
+    }
+  }, [useDB, userId])
 
   const addProject = (data) => {
     const p = {
