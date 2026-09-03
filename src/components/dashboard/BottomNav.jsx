@@ -17,7 +17,7 @@ export default function BottomNav({ activeTab, onTabChange, onOpenDrawer }) {
         className="md:hidden fixed bottom-0 left-0 right-0 z-[var(--z-nav)] border-t pb-safe"
         style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
       >
-        <div className="flex items-stretch justify-around">
+        <div className="grid" style={{ gridTemplateColumns: `repeat(${navItems.length + 1}, 1fr)` }}>
           {navItems.map((moduleId, i) => {
             const mod    = getModule(moduleId)
             const active = activeTab === moduleId
@@ -25,7 +25,7 @@ export default function BottomNav({ activeTab, onTabChange, onOpenDrawer }) {
               <button
                 key={i}
                 onClick={() => onTabChange(moduleId)}
-                className="flex flex-col items-center justify-center gap-0.5 flex-1 py-2 min-h-[56px] relative transition-all active:scale-95"
+                className="flex flex-col items-center justify-center gap-0.5 min-w-0 py-2 min-h-[56px] relative transition-all active:scale-95"
                 style={{ color: active ? 'var(--accent)' : 'var(--text-faint)' }}
                 aria-label={mod.label}
                 aria-current={active ? 'page' : undefined}
@@ -42,7 +42,7 @@ export default function BottomNav({ activeTab, onTabChange, onOpenDrawer }) {
                 >
                   {mod.emoji}
                 </span>
-                <span className="text-[10px] font-medium tracking-tight"
+                <span className="text-[10px] font-medium tracking-tight w-full text-center truncate px-0.5"
                   style={{ fontWeight: active ? 600 : 400 }}>
                   {mod.label}
                 </span>
@@ -53,7 +53,7 @@ export default function BottomNav({ activeTab, onTabChange, onOpenDrawer }) {
           {/* More button */}
           <button
             onClick={onOpenDrawer}
-            className="flex flex-col items-center justify-center gap-0.5 flex-1 py-2 min-h-[56px] relative transition-all active:scale-95"
+            className="flex flex-col items-center justify-center gap-0.5 min-w-0 py-2 min-h-[56px] relative transition-all active:scale-95"
             style={{ color: isMoreActive ? 'var(--accent)' : 'var(--text-faint)' }}
             aria-label="More navigation options"
           >
@@ -70,7 +70,7 @@ export default function BottomNav({ activeTab, onTabChange, onOpenDrawer }) {
                   style={{ backgroundColor: isMoreActive ? 'var(--accent)' : 'var(--text-faint)' }} />
               ))}
             </span>
-            <span className="text-[10px] tracking-tight" style={{ fontWeight: isMoreActive ? 600 : 400 }}>
+            <span className="text-[10px] tracking-tight w-full text-center truncate px-0.5" style={{ fontWeight: isMoreActive ? 600 : 400 }}>
               More
             </span>
           </button>

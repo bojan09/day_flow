@@ -14,7 +14,7 @@ const FOCUSABLE = 'input, textarea, select, button, [href], [tabindex]:not([tabi
 // Primary — always visible, the tabs used every day.
 const PRIMARY_SECTION = { label: 'Primary', tabs: [
   { id: 'today',     label: 'Today',        emoji: '☀️' },
-  { id: 'tasks',     label: 'DailyGoals',   emoji: '✅' },
+  { id: 'tasks',     label: 'DailyGoals',   emoji: '🎯' },
   { id: 'rhythm',    label: 'Daily Rhythm', emoji: '🔁' },
   { id: 'workouts',  label: 'Workouts',     emoji: '🏋️' },
   { id: 'insights',  label: 'Insights',     emoji: '📊' },

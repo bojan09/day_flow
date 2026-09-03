@@ -5,7 +5,7 @@ import { usePersistedState } from './usePersistedState'
 
 export const ALL_MODULES = [
   { id: 'today',      label: 'Today',        emoji: '☀️' },
-  { id: 'tasks',      label: 'DailyGoals',   emoji: '✅' },
+  { id: 'tasks',      label: 'DailyGoals',   emoji: '🎯' },
   { id: 'rhythm',     label: 'Daily Rhythm', emoji: '🔁' },
   { id: 'focus',      label: 'Focus',        emoji: '⏱️' },
   { id: 'workouts',   label: 'Workouts',     emoji: '🏋️' },

@@ -10,7 +10,7 @@ import Logo        from '../ui/Logo'
 // Primary — always visible, the tabs used every day.
 const PRIMARY_TABS = [
   { id: 'today',     label: 'Today',        emoji: '☀️' },
-  { id: 'tasks',     label: 'DailyGoals',   emoji: '✅' },
+  { id: 'tasks',     label: 'DailyGoals',   emoji: '🎯' },
   { id: 'rhythm',    label: 'Daily Rhythm', emoji: '🔁' },
   { id: 'workouts',  label: 'Workouts',     emoji: '🏋️' },
   { id: 'insights',  label: 'Insights',     emoji: '📊' },
