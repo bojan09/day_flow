@@ -50,7 +50,7 @@ export function useIdeas() {
     pendingWritesRef.current.set(idea.id, idea)
     try {
       await ideasService.upsert(userId, idea)
-      pendingWritesRef.current.delete(idea.id)
+      setTimeout(() => pendingWritesRef.current.delete(idea.id), 3000)
     } catch (err) {
       pendingWritesRef.current.delete(idea.id)
       throw err

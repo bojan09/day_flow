@@ -49,7 +49,7 @@ export function useBookmarks() {
     pendingWritesRef.current.set(b.id, b)
     try {
       await bookmarksService.upsert(userId, b)
-      pendingWritesRef.current.delete(b.id)
+      setTimeout(() => pendingWritesRef.current.delete(b.id), 3000)
     } catch (err) {
       pendingWritesRef.current.delete(b.id)
       throw err

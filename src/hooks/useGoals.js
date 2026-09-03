@@ -50,7 +50,7 @@ export function useGoals() {
     pendingWritesRef.current.set(goal.id, goal)
     try {
       await goalsService.upsert(userId, goal)
-      pendingWritesRef.current.delete(goal.id)
+      setTimeout(() => pendingWritesRef.current.delete(goal.id), 3000)
     } catch (err) {
       pendingWritesRef.current.delete(goal.id)
       throw err

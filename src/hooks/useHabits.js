@@ -67,7 +67,7 @@ export function useHabits() {
     pendingWritesRef.current.set(h.id, h)
     try {
       await habitsService.upsertHabit(userId, h)
-      pendingWritesRef.current.delete(h.id)
+      setTimeout(() => pendingWritesRef.current.delete(h.id), 3000)
     } catch (err) {
       pendingWritesRef.current.delete(h.id)
       throw err
@@ -111,7 +111,7 @@ export function useHabits() {
     pendingLogRef.current.set(key, done)
     try {
       await habitsService.toggleLog(userId, habitId, date, done)
-      pendingLogRef.current.delete(key)
+      setTimeout(() => pendingLogRef.current.delete(key), 3000)
     } catch (err) {
       pendingLogRef.current.delete(key)
       throw err

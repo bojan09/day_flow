@@ -81,13 +81,22 @@ export function useTasks() {
     pendingWritesRef.current.set(task.id, task)
     try {
       await tasksService.upsert(userId, task)
-      // Only clear the guard once the DB confirms the write — from this point
-      // a remote fetch is guaranteed to reflect it, so it's safe to trust again.
-      pendingWritesRef.current.delete(task.id)
+      // BUG FIX: clearing the guard immediately here is NOT safe — a getAll()
+      // that was already in-flight when this write started (e.g. the initial
+      // mount load, or a realtime refetch from an unrelated prior event)
+      // reflects DB state as of when IT queried, not as of when it resolves.
+      // If that older fetch resolves shortly after this write commits, it can
+      // still overwrite the just-written value with pre-write data even
+      // though the guard was "correctly" cleared the instant the write
+      // succeeded. Keep the guard for a few seconds after success (same
+      // grace-period pattern already used for pendingDeletesRef below) so any
+      // already-in-flight fetch gets reconciled against the true local value
+      // instead of winning the race.
+      setTimeout(() => pendingWritesRef.current.delete(task.id), 3000)
     } catch (err) {
-      // Clear the guard on failure too — the write never landed, so there's
-      // nothing left to protect from being overwritten. The caller's own
-      // onFail rollback (see toggleTask) is what reconciles the UI here.
+      // Clear the guard on failure — the write never landed, so there's
+      // nothing to protect; the caller's own onFail rollback (see toggleTask)
+      // is what reconciles the UI here, and a fresh fetch should be trusted.
       pendingWritesRef.current.delete(task.id)
       throw err
     }

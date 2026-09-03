@@ -50,7 +50,7 @@ export function useProjects() {
     pendingWritesRef.current.set(p.id, p)
     try {
       await projectsService.upsert(userId, p)
-      pendingWritesRef.current.delete(p.id)
+      setTimeout(() => pendingWritesRef.current.delete(p.id), 3000)
     } catch (err) {
       pendingWritesRef.current.delete(p.id)
       throw err

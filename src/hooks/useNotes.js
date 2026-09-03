@@ -57,7 +57,7 @@ export function useNotes() {
     pendingWritesRef.current.set(note.id, note)
     try {
       await notesService.upsert(userId, note)
-      pendingWritesRef.current.delete(note.id)
+      setTimeout(() => pendingWritesRef.current.delete(note.id), 3000)
     } catch (err) {
       pendingWritesRef.current.delete(note.id)
       throw err
