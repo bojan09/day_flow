@@ -1,61 +1,16 @@
 // Hook: useGoals
-// Purpose: Goal tracking with milestones, Supabase sync, and real-time
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { storage } from '../services/storage'
+// Purpose: Goal tracking with milestones.
+//          Sync/realtime/guards live in useSyncedCollection.
 import { goalsService } from '../services/supabaseDataService'
-import { subscribeToTable } from '../services/realtimeService'
-import { useAuth } from './useAuth'
-import { isSupabaseConfigured } from '../services/supabaseClient'
+import { useSyncedCollection } from './useSyncedCollection'
 
-const KEY = 'goals'
 export const GOAL_TYPES      = ['Yearly', 'Quarterly', 'Monthly']
 export const GOAL_CATEGORIES = ['Career', 'Health', 'Learning', 'Finance', 'Personal', 'Relationships']
 
 export function useGoals() {
-  const { user }  = useAuth()
-  const userId    = user?.id
-  const useDB            = isSupabaseConfigured() && !!userId
-  const [synced, setSynced] = useState(false)
-
-  const [goals, setGoals] = useState(() => storage.get(KEY, []))
-
-  // Track in-flight local writes (add/update/toggle/milestones) keyed by goal
-  // id, so a realtime-triggered refetch racing ahead of its own write's commit
-  // can't silently revert the optimistic update.
-  const pendingWritesRef = useRef(new Map())
-
-  const reconcile = (rows) => {
-    if (pendingWritesRef.current.size === 0) return rows
-    const byId = new Map(rows.map(r => [r.id, r]))
-    for (const [id, localGoal] of pendingWritesRef.current) byId.set(id, localGoal)
-    return [...byId.values()]
-  }
-
-  useEffect(() => {
-    if (!useDB) return
-    goalsService.getAll(userId).then(rows => { if (rows.length > 0) { const merged = reconcile(rows); setGoals(merged); storage.set(KEY, merged) }; setSynced(true) })
-  }, [userId])
-
-  useEffect(() => {
-    if (!useDB) return
-    return subscribeToTable('goals', userId, () =>
-      goalsService.getAll(userId).then(rows => { const merged = reconcile(rows); setGoals(merged); storage.set(KEY, merged) })
-    )
-  }, [userId])
-
-  useEffect(() => { if (!useDB) storage.set(KEY, goals) }, [goals])
-
-  const persist = useCallback(async (goal) => {
-    if (!useDB) return
-    pendingWritesRef.current.set(goal.id, goal)
-    try {
-      await goalsService.upsert(userId, goal)
-      setTimeout(() => pendingWritesRef.current.delete(goal.id), 3000)
-    } catch (err) {
-      pendingWritesRef.current.delete(goal.id)
-      throw err
-    }
-  }, [useDB, userId])
+  const {
+    items: goals, setItems: setGoals, synced, useDB, userId, persist, remove, unmarkDeleted,
+  } = useSyncedCollection({ storageKey: 'goals', table: 'goals', service: goalsService })
 
   const addGoal = (data) => {
     const g = {
@@ -69,9 +24,9 @@ export function useGoals() {
 
   const updateGoal  = (id, updates) => setGoals(prev => prev.map(g => { if (g.id !== id) return g; const u = { ...g, ...updates }; persist(u); return u }))
   // Restore a previously deleted goal with its original id/milestones (undo)
-  const restoreGoal = (g) => { setGoals(prev => [g, ...prev]); persist(g) }
+  const restoreGoal = (g) => { unmarkDeleted(g.id); setGoals(prev => [g, ...prev]); persist(g) }
 
-  const deleteGoal  = (id)          => { setGoals(prev => prev.filter(g => g.id !== id)); if (useDB) goalsService.delete(userId, id) }
+  const deleteGoal  = (id)          => { setGoals(prev => prev.filter(g => g.id !== id)); remove(id) }
   const toggleGoal  = (id)          => updateGoal(id, { completed: !goals.find(g => g.id === id)?.completed })
 
   const addMilestone = (goalId, text) => updateGoal(goalId, {

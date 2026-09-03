@@ -1,68 +1,15 @@
 // Hook: useNotes
-// Purpose: Notes CRUD with tags, word count, Supabase sync, and real-time
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { storage } from '../services/storage'
+// Purpose: Notes CRUD with tags and word count.
+//          Sync/realtime/guards live in useSyncedCollection.
 import { notesService } from '../services/supabaseDataService'
-import { subscribeToTable } from '../services/realtimeService'
-import { useAuth } from './useAuth'
-import { isSupabaseConfigured } from '../services/supabaseClient'
+import { useSyncedCollection } from './useSyncedCollection'
 
 export const NOTE_TAGS = ['journal', 'idea', 'work', 'reflection', 'personal', 'learning']
-const KEY = 'notes'
 
 export function useNotes() {
-  const { user }  = useAuth()
-  const userId    = user?.id
-  const useDB            = isSupabaseConfigured() && !!userId
-  const pendingDeletesRef = useRef(new Set())
-
-  // Track in-flight local writes (add/update/pin) keyed by note id, so a
-  // realtime-triggered refetch racing ahead of its own write's commit can't
-  // silently revert the optimistic update.
-  const pendingWritesRef = useRef(new Map())
-
-  const [notes, setNotes]   = useState(() => storage.get(KEY, []))
-  const [synced, setSynced] = useState(false)
-
-  const reconcile = (rawRows) => {
-    const filtered = rawRows.filter(n => !pendingDeletesRef.current.has(n.id))
-    if (pendingWritesRef.current.size === 0) return filtered
-    const byId = new Map(filtered.map(n => [n.id, n]))
-    for (const [id, localNote] of pendingWritesRef.current) byId.set(id, localNote)
-    return [...byId.values()]
-  }
-
-  useEffect(() => {
-    if (!useDB) { setSynced(true); return }
-    notesService.getAll(userId).then(rows => {
-      if (rows.length > 0) { const merged = reconcile(rows); setNotes(merged); storage.set(KEY, merged) }
-      setSynced(true)
-    })
-  }, [userId])
-
-  useEffect(() => {
-    if (!useDB) return
-    return subscribeToTable('notes', userId, () => {
-      notesService.getAll(userId).then(rawRows => {
-        const rows = reconcile(rawRows)
-        if (rows.length > 0) { setNotes(rows); storage.set(KEY, rows) }
-      })
-    })
-  }, [userId])
-
-  useEffect(() => { if (!useDB) storage.set(KEY, notes) }, [notes])
-
-  const persist = useCallback(async (note) => {
-    if (!useDB) return
-    pendingWritesRef.current.set(note.id, note)
-    try {
-      await notesService.upsert(userId, note)
-      setTimeout(() => pendingWritesRef.current.delete(note.id), 3000)
-    } catch (err) {
-      pendingWritesRef.current.delete(note.id)
-      throw err
-    }
-  }, [useDB, userId])
+  const {
+    items: notes, setItems: setNotes, synced, useDB, userId, persist, remove, unmarkDeleted,
+  } = useSyncedCollection({ storageKey: 'notes', table: 'notes', service: notesService })
 
   const addNote = (partial = {}) => {
     const note = {
@@ -87,18 +34,14 @@ export function useNotes() {
 
   // Restore a previously deleted note with its original id/content (undo)
   const restoreNote = (n) => {
-    pendingDeletesRef.current.delete(n.id)
+    unmarkDeleted(n.id)
     setNotes(prev => [n, ...prev])
     persist(n)
   }
 
   const deleteNote = (id) => {
-    pendingDeletesRef.current.add(id)
     setNotes(prev => prev.filter(n => n.id !== id))
-    if (useDB) {
-      notesService.delete(userId, id)
-      setTimeout(() => pendingDeletesRef.current.delete(id), 3000)
-    }
+    remove(id)
   }
 
   const togglePin = (id) => updateNote(id, { pinned: !notes.find(n => n.id === id)?.pinned })

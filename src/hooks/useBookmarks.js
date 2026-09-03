@@ -1,60 +1,14 @@
 // Hook: useBookmarks
-// Purpose: Reading list with Supabase sync + real-time
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { storage } from '../services/storage'
+// Purpose: Reading list. Sync/realtime/guards live in useSyncedCollection.
 import { bookmarksService } from '../services/supabaseDataService'
-import { subscribeToTable } from '../services/realtimeService'
-import { useAuth } from './useAuth'
-import { isSupabaseConfigured } from '../services/supabaseClient'
+import { useSyncedCollection } from './useSyncedCollection'
 
-const KEY = 'bookmarks'
 export const BOOKMARK_TAGS = ['article', 'video', 'tool', 'inspiration', 'reference', 'course']
 
 export function useBookmarks() {
-  const { user }  = useAuth()
-  const userId    = user?.id
-  const useDB            = isSupabaseConfigured() && !!userId
-  const [synced, setSynced] = useState(false)
-
-  const [bookmarks, setBookmarks] = useState(() => storage.get(KEY, []))
-
-  // Track in-flight local writes (add/update/toggle) keyed by bookmark id, so a
-  // realtime-triggered refetch that races ahead of its own write's commit can't
-  // silently revert the optimistic update.
-  const pendingWritesRef = useRef(new Map())
-
-  const reconcile = (rows) => {
-    if (pendingWritesRef.current.size === 0) return rows
-    const byId = new Map(rows.map(r => [r.id, r]))
-    for (const [id, localBookmark] of pendingWritesRef.current) byId.set(id, localBookmark)
-    return [...byId.values()]
-  }
-
-  useEffect(() => {
-    if (!useDB) return
-    bookmarksService.getAll(userId).then(rows => { if (rows.length > 0) { const merged = reconcile(rows); setBookmarks(merged); storage.set(KEY, merged) }; setSynced(true) })
-  }, [userId])
-
-  useEffect(() => {
-    if (!useDB) return
-    return subscribeToTable('bookmarks', userId, () =>
-      bookmarksService.getAll(userId).then(rows => { const merged = reconcile(rows); setBookmarks(merged); storage.set(KEY, merged) })
-    )
-  }, [userId])
-
-  useEffect(() => { if (!useDB) storage.set(KEY, bookmarks) }, [bookmarks])
-
-  const persist = useCallback(async (b) => {
-    if (!useDB) return
-    pendingWritesRef.current.set(b.id, b)
-    try {
-      await bookmarksService.upsert(userId, b)
-      setTimeout(() => pendingWritesRef.current.delete(b.id), 3000)
-    } catch (err) {
-      pendingWritesRef.current.delete(b.id)
-      throw err
-    }
-  }, [useDB, userId])
+  const {
+    items: bookmarks, setItems: setBookmarks, synced, useDB, userId, persist, remove, unmarkDeleted,
+  } = useSyncedCollection({ storageKey: 'bookmarks', table: 'bookmarks', service: bookmarksService })
 
   const addBookmark = (data) => {
     const b = {
@@ -67,9 +21,9 @@ export function useBookmarks() {
 
   const updateBookmark = (id, updates) => setBookmarks(prev => prev.map(b => { if (b.id !== id) return b; const u = { ...b, ...updates }; persist(u); return u }))
   // Restore a previously deleted bookmark with its original id (undo)
-  const restoreBookmark = (b) => { setBookmarks(prev => [b, ...prev]); persist(b) }
+  const restoreBookmark = (b) => { unmarkDeleted(b.id); setBookmarks(prev => [b, ...prev]); persist(b) }
 
-  const deleteBookmark = (id)           => { setBookmarks(prev => prev.filter(b => b.id !== id)); if (useDB) bookmarksService.delete(userId, id) }
+  const deleteBookmark = (id)           => { setBookmarks(prev => prev.filter(b => b.id !== id)); remove(id) }
   const toggleRead     = (id)           => updateBookmark(id, { read: !bookmarks.find(b => b.id === id)?.read })
   const unread                          = bookmarks.filter(b => !b.read)
 

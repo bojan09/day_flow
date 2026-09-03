@@ -1,61 +1,16 @@
 // Hook: useIdeas
-// Purpose: Idea tracker with status, ratings, goal links, Supabase sync + real-time
-import { useState, useEffect, useCallback, useRef } from 'react'
-import { storage } from '../services/storage'
+// Purpose: Idea tracker with status, ratings, goal links.
+//          Sync/realtime/guards live in useSyncedCollection.
 import { ideasService } from '../services/supabaseDataService'
-import { subscribeToTable } from '../services/realtimeService'
-import { useAuth } from './useAuth'
-import { isSupabaseConfigured } from '../services/supabaseClient'
+import { useSyncedCollection } from './useSyncedCollection'
 
-const KEY = 'ideas'
 export const IDEA_STATUSES   = ['Raw', 'Developing', 'Action', 'Archived']
 export const IDEA_CATEGORIES = ['Business', 'Creative', 'Personal', 'Technical', 'Learning', 'Other']
 
 export function useIdeas() {
-  const { user }  = useAuth()
-  const userId    = user?.id
-  const useDB            = isSupabaseConfigured() && !!userId
-  const [synced, setSynced] = useState(false)
-
-  const [ideas, setIdeas] = useState(() => storage.get(KEY, []))
-
-  // Track in-flight local writes (add/update/status/stars/link) keyed by idea
-  // id, so a realtime-triggered refetch racing ahead of its own write's commit
-  // can't silently revert the optimistic update.
-  const pendingWritesRef = useRef(new Map())
-
-  const reconcile = (rows) => {
-    if (pendingWritesRef.current.size === 0) return rows
-    const byId = new Map(rows.map(r => [r.id, r]))
-    for (const [id, localIdea] of pendingWritesRef.current) byId.set(id, localIdea)
-    return [...byId.values()]
-  }
-
-  useEffect(() => {
-    if (!useDB) return
-    ideasService.getAll(userId).then(rows => { if (rows.length > 0) { const merged = reconcile(rows); setIdeas(merged); storage.set(KEY, merged) }; setSynced(true) })
-  }, [userId])
-
-  useEffect(() => {
-    if (!useDB) return
-    return subscribeToTable('ideas', userId, () =>
-      ideasService.getAll(userId).then(rows => { const merged = reconcile(rows); setIdeas(merged); storage.set(KEY, merged) })
-    )
-  }, [userId])
-
-  useEffect(() => { if (!useDB) storage.set(KEY, ideas) }, [ideas])
-
-  const persist = useCallback(async (idea) => {
-    if (!useDB) return
-    pendingWritesRef.current.set(idea.id, idea)
-    try {
-      await ideasService.upsert(userId, idea)
-      setTimeout(() => pendingWritesRef.current.delete(idea.id), 3000)
-    } catch (err) {
-      pendingWritesRef.current.delete(idea.id)
-      throw err
-    }
-  }, [useDB, userId])
+  const {
+    items: ideas, setItems: setIdeas, synced, useDB, userId, persist, remove, unmarkDeleted,
+  } = useSyncedCollection({ storageKey: 'ideas', table: 'ideas', service: ideasService })
 
   const addIdea = (data) => {
     const idea = {
@@ -74,9 +29,9 @@ export function useIdeas() {
   }))
 
   // Restore a previously deleted idea with its original id (undo)
-  const restoreIdea = (i) => { setIdeas(prev => [i, ...prev]); persist(i) }
+  const restoreIdea = (i) => { unmarkDeleted(i.id); setIdeas(prev => [i, ...prev]); persist(i) }
 
-  const deleteIdea = (id) => { setIdeas(prev => prev.filter(i => i.id !== id)); if (useDB) ideasService.delete(userId, id) }
+  const deleteIdea = (id) => { setIdeas(prev => prev.filter(i => i.id !== id)); remove(id) }
   const setStatus  = (id, status) => updateIdea(id, { status })
   const setStars   = (id, stars)  => updateIdea(id, { stars })
   const linkGoal   = (id, goalId) => updateIdea(id, { linkedGoalId: goalId })
