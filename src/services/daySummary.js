@@ -16,7 +16,7 @@
  * @param {object}   args.reflection  today's reflection entry (optional)
  * @param {string}   args.dateKey
  */
-export function buildDaySummary({ tasks, habits, routines, focusSessions, reflection, dateKey }) {
+export function buildDaySummary({ tasks, habits, routines, focusSessions, fastingRecords, reflection, dateKey }) {
   const dayTasks  = (tasks?.tasks || []).filter(t => t.date === dateKey)
   const completed = dayTasks.filter(t => t.completed).length
 
@@ -33,10 +33,17 @@ export function buildDaySummary({ tasks, habits, routines, focusSessions, reflec
     priorityDone = t ? !!t.completed : null
   }
 
+  // Fasting appears in the evening summary when it happened, and is simply
+  // absent otherwise — the spec lists it as one context line, not a fixture.
+  const fastToday = Array.isArray(fastingRecords)
+    ? fastingRecords.find(r => r.dateKey === dateKey)
+    : null
+
   return {
     tasks:    { completed, total: dayTasks.length },
     habits:   { completed: habitsDone, total: habitList.length },
     routines: { total: routineList.length },
+    fastingMs: fastToday?.actualMs || 0,
     focusSessions: Array.isArray(focusSessions) ? focusSessions.length : 0,
     focusMinutes:  Array.isArray(focusSessions)
       ? focusSessions.reduce((sum, s) => sum + (s.mins || s.minutes || 0), 0)
@@ -63,6 +70,10 @@ export function summaryLines(summary) {
   }
   if (summary.habits.total > 0) {
     lines.push({ label: 'Habits', value: `${summary.habits.completed} / ${summary.habits.total}` })
+  }
+  if (summary.fastingMs > 0) {
+    const mins = Math.floor(summary.fastingMs / 60000)
+    lines.push({ label: 'Fasting', value: `${Math.floor(mins / 60)}h ${String(mins % 60).padStart(2, '0')}m` })
   }
   if (summary.priority) {
     lines.push({

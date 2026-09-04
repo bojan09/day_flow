@@ -7,9 +7,9 @@ export default function PriorityRecommendation({ analysis, onTabChange }) {
 
   const { task, reason } = topRecommendation
   const PRIORITY_COLORS = {
-    high:   { bg: '#FEF2F2', border: '#FECACA', text: '#991B1B', dot: '#EF4444' },
-    medium: { bg: '#FFFBEB', border: '#FDE68A', text: '#92400E', dot: '#F59E0B' },
-    low:    { bg: '#F0FDF4', border: '#BBF7D0', text: '#166534', dot: '#22C55E' },
+    high:   { bg: 'var(--tone-red-bg)', border: 'var(--tone-red-border)', text: 'var(--tone-red-text)', dot: '#EF4444' },
+    medium: { bg: 'var(--tone-amber-bg)', border: 'var(--tone-amber-border)', text: 'var(--tone-amber-text)', dot: '#F59E0B' },
+    low:    { bg: 'var(--tone-emerald-bg)', border: 'var(--tone-emerald-border)', text: 'var(--tone-emerald-text)', dot: '#22C55E' },
   }
   const colors = PRIORITY_COLORS[task.priority] || PRIORITY_COLORS.medium
 
@@ -25,7 +25,7 @@ export default function PriorityRecommendation({ analysis, onTabChange }) {
         {overdue.length > 0 && (
           <span
             className="text-[10px] px-2 py-0.5 rounded-full font-medium"
-            style={{ backgroundColor: '#FEF2F2', color: '#991B1B' }}
+            style={{ backgroundColor: 'var(--tone-red-bg)', color: 'var(--tone-red-text)' }}
           >
             {overdue.length} overdue
           </span>

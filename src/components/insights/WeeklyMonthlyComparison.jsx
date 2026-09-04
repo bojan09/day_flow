@@ -23,7 +23,7 @@ function Delta({ value, unit = '%' }) {
 function CompareCard({ label, current, previous, unit = '', higherIsBetter = true }) {
   const delta   = current !== null && previous !== null ? current - previous : null
   const isGood  = delta === null ? null : (higherIsBetter ? delta >= 0 : delta <= 0)
-  const bgColor = isGood === null ? 'var(--surface)' : isGood ? '#F0FDF4' : '#FEF2F2'
+  const bgColor = isGood === null ? 'var(--surface)' : isGood ? 'var(--tone-emerald-bg)' : 'var(--tone-red-bg)'
   const valColor = isGood === null ? 'var(--text)' : isGood ? '#065F46' : '#991B1B'
 
   return (

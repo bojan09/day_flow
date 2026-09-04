@@ -10,6 +10,7 @@ import { getTodayKey } from '../../utils/dateUtils'
 import { selectReference } from '../../services/stoicThemeSelection'
 import { buildDaySummary, summaryLines, hasEnoughContextForAI } from '../../services/daySummary'
 import { usePomodoroHistory } from '../../hooks/usePomodoroHistory'
+import { useFasting } from '../../hooks/useFasting'
 import { callClaude } from '../../services/aiService'
 
 const FEELINGS = ['Calm', 'Good', 'Easy', 'Focused', 'Challenging', 'Scattered', 'Stressful', 'Difficult']
@@ -67,9 +68,10 @@ function Chips({ options, value, onChange, idKey = 'id', labelKey = 'label' }) {
 export default function EveningReview({ reflections, tasks, habits, routines, onClose, dateKey = getTodayKey() }) {
   const { entry, save, completeEvening } = reflections
   const pomodoro = usePomodoroHistory()
+  const fasting  = useFasting()
 
   const focusSessions = pomodoro?.getTodaySessions?.() ?? []
-  const summary = buildDaySummary({ tasks, habits, routines, focusSessions, reflection: entry, dateKey })
+  const summary = buildDaySummary({ tasks, habits, routines, focusSessions, fastingRecords: fasting.records, reflection: entry, dateKey })
   const lines   = summaryLines(summary)
 
   // Evening reference may take a different theme from the morning — the day's
@@ -104,6 +106,7 @@ export default function EveningReview({ reflections, tasks, habits, routines, on
       summary.tasks.total ? `Tasks: ${summary.tasks.completed} of ${summary.tasks.total} completed` : null,
       summary.focusSessions ? `Focus sessions: ${summary.focusSessions} (${summary.focusMinutes} minutes)` : null,
       summary.habits.total ? `Habits: ${summary.habits.completed} of ${summary.habits.total}` : null,
+      summary.fastingMs ? `Fasted: ${Math.round(summary.fastingMs / 3600000 * 10) / 10} hours` : null,
       draft.livedIntention ? `Lived according to intention: ${draft.livedIntention.replace('_', ' ')}` : null,
       draft.wentWell ? `What went well: ${draft.wentWell}` : null,
       draft.didntGoPlanned ? `What didn't go as planned: ${draft.didntGoPlanned}` : null,

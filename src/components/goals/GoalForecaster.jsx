@@ -181,7 +181,7 @@ export default function GoalForecaster({ goals }) {
                   {forecast.status?.type === 'behind' && (
                     <div
                       className="mt-3 p-3 rounded-xl border text-xs"
-                      style={{ backgroundColor: '#FEF3C7', borderColor: '#FDE68A', color: '#92400E' }}
+                      style={{ backgroundColor: 'var(--tone-amber-bg)', borderColor: 'var(--tone-amber-border)', color: 'var(--tone-amber-text)' }}
                     >
                       💡 To hit your target: complete {Math.ceil(forecast.total / Math.max(differenceInDays(parseISO(goal.targetDate), new Date()), 1) * 7)} milestones/week
                     </div>

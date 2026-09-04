@@ -100,3 +100,15 @@ test('AI can speak on writing alone when there is no tracked day data', () => {
     true,
   )
 })
+
+test('fasting appears only on days it happened', () => {
+  const withFast = buildDaySummary({
+    dateKey: DAY,
+    fastingRecords: [{ dateKey: DAY, actualMs: 16 * 3600000 + 4 * 60000 }],
+  })
+  const lines = summaryLines(withFast)
+  assert.equal(lines.find(l => l.label === 'Fasting')?.value, '16h 04m')
+
+  const withoutFast = buildDaySummary({ dateKey: DAY, fastingRecords: [{ dateKey: '2026-09-03', actualMs: 1 }] })
+  assert.equal(summaryLines(withoutFast).some(l => l.label === 'Fasting'), false)
+})

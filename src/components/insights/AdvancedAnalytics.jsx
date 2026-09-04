@@ -12,7 +12,7 @@ function StatCard({ label, value, sub, color = 'var(--accent)', warn = false }) 
     <div
       className="rounded-2xl p-4 text-center"
       style={{
-        backgroundColor: warn ? '#FEF3C7' : 'var(--surface)',
+        backgroundColor: warn ? 'var(--tone-amber-bg)' : 'var(--surface)',
         boxShadow:       'var(--shadow-card)',
       }}
     >

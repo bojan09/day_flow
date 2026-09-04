@@ -8,9 +8,9 @@ import TaskModalMobile  from './TaskModalMobile'
 
 const PRIORITIES = ['low', 'medium', 'high']
 const PRIORITY_STYLES = {
-  high:   { bg: '#FEF2F2', border: '#FECACA', text: '#991B1B' },
-  medium: { bg: '#FFFBEB', border: '#FDE68A', text: '#92400E' },
-  low:    { bg: '#F0FDF4', border: '#BBF7D0', text: '#166534' },
+  high:   { bg: 'var(--tone-red-bg)', border: 'var(--tone-red-border)', text: 'var(--tone-red-text)' },
+  medium: { bg: 'var(--tone-amber-bg)', border: 'var(--tone-amber-border)', text: 'var(--tone-amber-text)' },
+  low:    { bg: 'var(--tone-emerald-bg)', border: 'var(--tone-emerald-border)', text: 'var(--tone-emerald-text)' },
 }
 
 export default function TaskDetail({
