@@ -7,8 +7,13 @@
 //          always visible at once — stacked, clearly labeled sections.
 import HabitsView   from '../habits/HabitsView'
 import RoutinesView from '../routines/RoutinesView'
+import { useHabitRules } from '../../hooks/useHabitRules'
 
-export default function DailyRhythmView({ habits, habitRules, routines }) {
+// habitRules is owned here rather than at the DashboardPage root — this is its
+// only consumer, so hoisting it loaded rules on every session regardless of
+// whether this tab was ever opened.
+export default function DailyRhythmView({ habits, routines }) {
+  const habitRules = useHabitRules()
   return (
     <div className="pt-2 space-y-8">
       <section>

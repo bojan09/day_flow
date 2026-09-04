@@ -30,12 +30,8 @@ import { isSupabaseConfigured } from '../services/supabaseClient'
 import { useTheme           } from '../hooks/useTheme'
 import { useIntention       } from '../hooks/useIntention'
 import { useGoals           } from '../hooks/useGoals'
-import { useSomeday         } from '../hooks/useSomeday'
-import { useTemplates       } from '../hooks/useTemplates'
 import { useEnergy          } from '../hooks/useEnergy'
 import { useDailyScore      } from '../hooks/useDailyScore'
-import { usePomodoroHistory } from '../hooks/usePomodoroHistory'
-import { useHabitRules      } from '../hooks/useHabitRules'
 import { useIdeas           } from '../hooks/useIdeas'
 import { useRoutines        } from '../hooks/useRoutines'
 import { useProjects        } from '../hooks/useProjects'
@@ -199,11 +195,7 @@ export default function DashboardPage() {
   const mood            = useMood()
   const intention       = useIntention()
   const goals           = useGoals()
-  const someday         = useSomeday()
-  const templates       = useTemplates()
   const energy          = useEnergy()
-  const pomodoroHistory = usePomodoroHistory()
-  const habitRules      = useHabitRules()
   const ideas           = useIdeas()
   const routines        = useRoutines()
   const projects        = useProjects()
@@ -264,13 +256,13 @@ export default function DashboardPage() {
 
         {/* ── Plan ─────────────────────────────────────────────────────────── */}
         {activeTab === 'today'      && <TodayView tasks={tasks} habits={habits} routines={routines} notes={notes} mood={mood} intention={intention} score={score} energy={energy} onTabChange={handleTabChange} goals={goals} projects={projects} workouts={workouts} ideas={ideas} timeblocks={timeblocks} />}
-        {activeTab === 'tasks'      && <TasksView tasks={tasks} templates={templates} someday={someday} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={handleTabChange} energy={energy} habits={habits} ideas={ideas} openTaskId={openTaskId} workouts={workouts} goals={goals} initialFilter={tasksInitialFilter} />}
+        {activeTab === 'tasks'      && <TasksView tasks={tasks} projects={projects.projects} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} onTabChange={handleTabChange} energy={energy} habits={habits} ideas={ideas} openTaskId={openTaskId} workouts={workouts} goals={goals} initialFilter={tasksInitialFilter} />}
         {activeTab === 'calendar'   && <CalendarView tasks={tasks} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} />}
         {activeTab === 'timeblock'  && <TimeBlockView tasks={tasks} />}
         {activeTab === 'projects'   && <ProjectsView projects={projects} tasks={tasks} />}
 
         {/* ── Build ────────────────────────────────────────────────────────── */}
-        {activeTab === 'rhythm'     && <DailyRhythmView habits={habits} habitRules={habitRules} routines={routines} />}
+        {activeTab === 'rhythm'     && <DailyRhythmView habits={habits} routines={routines} />}
         {activeTab === 'workouts'   && <WorkoutsView workouts={workouts} />}
 
         {/* ── Think ────────────────────────────────────────────────────────── */}
@@ -278,7 +270,7 @@ export default function DashboardPage() {
 
         {/* ── Reflect ──────────────────────────────────────────────────────── */}
         {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} energy={energy} goals={goals} moodTheme={moodTheme} workouts={workouts} ideas={ideas} bookmarks={bookmarks} />}
-        {activeTab === 'focus'      && <FocusMode tasks={tasks} pomodoroHistory={pomodoroHistory} />}
+        {activeTab === 'focus'      && <FocusMode tasks={tasks} />}
         {activeTab === 'search'     && <SearchView tasks={tasks} notes={notes} habits={habits} goals={goals} ideas={ideas} bookmarks={bookmarks} />}
 
       </ViewErrorBoundary>

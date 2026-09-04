@@ -2,6 +2,7 @@
 // Purpose: Pomodoro timer with session logging, history report, and task picker
 import { useState, useEffect, useRef } from 'react'
 import PomodoroReport from '../pomodoro/PomodoroReport'
+import { usePomodoroHistory } from '../../hooks/usePomodoroHistory'
 
 const MODES = [
   { id: 'focus', label: 'Focus',       mins: 25, color: '[color:var(--accent)]'  },
@@ -20,7 +21,11 @@ function notifyLocal(title, body) {
   setTimeout(() => n.close(), 6000)
 }
 
-export default function FocusMode({ tasks, pomodoroHistory }) {
+// pomodoroHistory is owned here rather than at the DashboardPage root: this is
+// its only consumer, so hoisting it made every session load/subscribe for it
+// even when the Focus tab was never opened.
+export default function FocusMode({ tasks }) {
+  const pomodoroHistory = usePomodoroHistory()
   const [mode,    setMode]    = useState('focus')
   const [secs,    setSecs]    = useState(25 * 60)
   const [running, setRunning] = useState(false)
