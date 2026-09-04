@@ -35,7 +35,7 @@ export function usePersistedState(key, defaultValue) {
         storage.set(key, remote)
       }
       loadedRef.current = true
-    }).catch(err => {
+    }).catch(() => {
       // Network error — keep existing local data, don't overwrite
       console.warn(`[DayFlow] usePersistedState(${key}): load failed, keeping local data`)
       loadedRef.current = true

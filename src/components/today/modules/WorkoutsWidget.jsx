@@ -7,7 +7,6 @@ function WorkoutsWidget({ workouts, onTabChange }) {
   const today      = getTodayKey()
   const todaySess  = (workouts?.sessions || []).filter(s => s.date === today)
   const weekCount  = workouts?.getTotalThisWeek?.() ?? 0
-  const done       = todaySess.filter(s => s.completed).length
 
   return (
     <div className="px-4 pb-3 space-y-2">

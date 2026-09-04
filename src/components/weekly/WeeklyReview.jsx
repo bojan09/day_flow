@@ -8,7 +8,6 @@ import { subDays, format }   from 'date-fns'
 import { MOODS }             from '../../hooks/useMood'
 import { getDateKey }        from '../../utils/dateUtils'
 
-const isSunday = () => new Date().getDay() === 0
 
 function buildWeekContext({ tasks, habits, mood, notes }) {
   const last7     = Array.from({ length: 7 }, (_, i) => getDateKey(subDays(new Date(), i)))

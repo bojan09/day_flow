@@ -7,7 +7,7 @@ import { callClaude } from '../../services/aiService'
 import { format } from 'date-fns'
 import { getTodayKey } from '../../utils/dateUtils'
 
-function buildMorningContext({ tasks, habits, mood, goals }) {
+function buildMorningContext({ tasks, habits, goals }) {
   const today      = getTodayKey()
   const todayTasks = tasks.getTodayTasks()
   const highPri    = todayTasks.filter(t => t.priority === 'high')
@@ -36,7 +36,6 @@ ACTIVE GOALS: ${activeGoals.map(g => g.title).join(', ') || 'none'}
 
 export default function SmartMorningBrief({ tasks, habits, mood, goals }) {
   const hour    = new Date().getHours()
-  const today   = getTodayKey()
   const [brief,     setBrief]     = useState(null)
   const [loading,   setLoading]   = useState(false)
   const [error,     setError]     = useState(null)

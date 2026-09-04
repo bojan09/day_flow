@@ -37,7 +37,7 @@ export default function AnalyticsPanel({ tasks }) {
   [])
 
   // All calculations memoised on tasks.tasks reference
-  const { weekTasks, completed, total, rate, categories, daily, maxDone } = useMemo(() => {
+  const { completed, total, rate, categories, daily, maxDone } = useMemo(() => {
     const weekTasks  = tasks.tasks.filter(t => last7Keys.includes(t.date))
     const completed  = weekTasks.filter(t => t.completed).length
     const total      = weekTasks.length

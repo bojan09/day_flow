@@ -3,18 +3,6 @@
 //          All writes go through toDB(), all reads come through fromDB().
 //          This avoids changing either the schema or the hook field names.
 
-// ── Generic converters ──────────────────────────────────────────────────────
-const toSnake = str => str.replace(/[A-Z]/g, l => `_${l.toLowerCase()}`)
-const toCamel = str => str.replace(/_([a-z])/g, (_, l) => l.toUpperCase())
-
-function convertKeys(obj, keyFn) {
-  if (!obj || typeof obj !== 'object') return obj
-  if (Array.isArray(obj)) return obj.map(item => convertKeys(item, keyFn))
-  return Object.fromEntries(
-    Object.entries(obj).map(([k, v]) => [keyFn(k), v])
-  )
-}
-
 // ── Task mappers ────────────────────────────────────────────────────────────
 export const taskMapper = {
   toDB: (task) => ({

@@ -154,7 +154,7 @@ export default function WidgetCustomizer({ isOpen, onClose, widgetPrefs, adaptiv
           Show full feature previews on Today
         </p>
         <div className="space-y-1.5">
-          {allIds.filter(id => WIDGET_REGISTRY.find(w => w.id === id)?.isModule).map((id, i) => {
+          {allIds.filter(id => WIDGET_REGISTRY.find(w => w.id === id)?.isModule).map((id) => {
             const meta   = getMeta(id)
             const hidden = widgetPrefs.isHidden(id)
             return (

@@ -120,7 +120,8 @@ export default function DashboardPage() {
     window.history.replaceState(null, '', `#${tab}`)
   }, [])
 
-  const [showQuickCapture, setShowQuickCapture] = useState(false)
+  // Bumped to force QuickCapture open (PWA "Add task" shortcut).
+  const [quickCaptureSignal, setQuickCaptureSignal] = useState(0)
 
   // Deep-link: open a specific task's detail modal from a notification tap
   // (e.g. ?openTask=<id>). We capture the id into local state — rather than
@@ -169,7 +170,7 @@ export default function DashboardPage() {
     const shareTitle = params.get('title')
     const shareText  = params.get('text')
 
-    if (action === 'add-task')  { setActiveTab('tasks');   setShowQuickCapture(true) }
+    if (action === 'add-task')  { setActiveTab('tasks');   setQuickCaptureSignal(n => n + 1) }
     if (action === 'log-mood')  { setActiveTab('today') }
     if (action === 'focus')     { setActiveTab('focus') }
     if (action === 'habits')    { setActiveTab('rhythm') }
@@ -277,7 +278,7 @@ export default function DashboardPage() {
       </DashboardLayout>
       </Suspense>
 
-      <QuickCapture tasks={tasks} ideas={ideas} notes={notes} habits={habits} onTabChange={handleTabChange} />
+      <QuickCapture tasks={tasks} ideas={ideas} notes={notes} habits={habits} openSignal={quickCaptureSignal} />
 
       {/* Weekly Review overlay — Sunday only, once per day, lazy-loaded safely */}
       {showWeeklyOverlay && (

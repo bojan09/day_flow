@@ -28,11 +28,17 @@ function detect(val) {
   return 'task'
 }
 
-export default function QuickCapture({ tasks, ideas, notes, habits }) {
+// `openSignal` lets a parent force the sheet open — the PWA "Add task" app
+// shortcut (/?action=add-task) does this. Previously DashboardPage tracked
+// that in state QuickCapture never received, so the shortcut navigated to
+// Tasks and then silently did nothing.
+export default function QuickCapture({ tasks, ideas, notes, habits, openSignal = 0 }) {
   const [open,  setOpen]  = useState(false)
   const [input, setInput] = useState('')
   const [done,  setDone]  = useState(null)
   const [submitting, setSubmitting] = useState(false)
+
+  useEffect(() => { if (openSignal > 0) setOpen(true) }, [openSignal])
 
   // Keyboard shortcut — press + anywhere
   useEffect(() => {

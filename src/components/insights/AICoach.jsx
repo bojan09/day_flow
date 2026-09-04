@@ -87,7 +87,7 @@ Keep the total response under 120 words. Be direct and personal, not generic.`,
 
 // ── Auto Journal ──────────────────────────────────────────────────────────────
 
-function AutoJournal({ tasks, habits, mood, notes }) {
+function AutoJournal({ tasks, habits, mood }) {
   const [output,  setOutput]  = useState('')
   const [loading, setLoading] = useState(false)
   const [error,   setError]   = useState(null)

@@ -312,7 +312,7 @@ function BehaviouralInsights({ tasks }) {
 
 // ── Main export ───────────────────────────────────────────────────────────────
 
-export default function AdvancedAnalytics({ tasks, mood, energy, habits }) {
+export default function AdvancedAnalytics({ tasks, mood, energy }) {
   const last30 = Array.from({ length: 30 }, (_, i) => getDateKey(subDays(new Date(), i)))
   const tasksDone30   = tasks.tasks.filter(t => last30.includes(t.date) && t.completed).length
   const avgPerDay     = (tasksDone30 / 30).toFixed(1)

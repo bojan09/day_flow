@@ -18,7 +18,7 @@ const BREAKDOWN_LABELS = {
 }
 
 function DailyScore({ scoreData }) {
-  const { total, grade, message, breakdown, meta } = scoreData
+  const { total, grade, message, breakdown } = scoreData
   const colors    = GRADE_COLORS[grade] || GRADE_COLORS['F']
   const nothingYet = total === 0
 

@@ -30,7 +30,6 @@ const DOW_LABELS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
 
 export default function ProductivityHeatmap({ tasks, habits }) {
   const [view,    setView]    = useState('Combined')
-  const [tooltip, setTooltip] = useState(null)
 
   const { cells, weeks, maxCount } = useMemo(() => {
     const days = Array.from({ length: 365 }, (_, i) => {
@@ -172,8 +171,6 @@ export default function ProductivityHeatmap({ tasks, habits }) {
                         ringColor:       'var(--accent)',
                       }}
                       title={`${format(day.d, 'MMM d, yyyy')}: ${count} ${view === 'Tasks' ? 'task' : view === 'Habits' ? 'habit' : 'activit'}${count !== 1 ? (view === 'Combined' ? 'ies' : 's') : (view === 'Combined' ? 'y' : '')}`}
-                      onMouseEnter={() => setTooltip({ ...day, count, x: wi, y: di })}
-                      onMouseLeave={() => setTooltip(null)}
                     />
                   )
                 })}

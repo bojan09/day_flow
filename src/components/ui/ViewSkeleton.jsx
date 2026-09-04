@@ -100,7 +100,7 @@ const SKELETONS = {
   ),
 }
 
-function ViewSkeleton({ type = 'default', count }) {
+function ViewSkeleton({ type = 'default' }) {
   const Skeleton = SKELETONS[type] || SKELETONS.default
   return (
     <div className="max-w-2xl mx-auto pt-2 space-y-3">

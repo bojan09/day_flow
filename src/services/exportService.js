@@ -58,7 +58,7 @@ export function exportTasksAsCSV(tasks = []) {
   download(buildCSV(headers, rows), `dayflow-tasks-${stamp()}.csv`)
 }
 
-export function exportHabitsAsCSV(habits = [], log = {}) {
+export function exportHabitsAsCSV(habits = []) {
   const headers = ['Habit', 'Icon', 'Frequency', 'Created At']
   const rows = habits.map(h => [h.name, h.icon || '', h.frequency || 'daily', h.createdAt || ''])
   download(buildCSV(headers, rows), `dayflow-habits-${stamp()}.csv`)

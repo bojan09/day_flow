@@ -33,7 +33,7 @@ export async function getAIScheduleSuggestions(tasksToSchedule, next7Days, today
   }
 }
 
-export function useSmartScheduler({ tasks, energy, habits }) {
+export function useSmartScheduler({ tasks, energy }) {
   const today = getTodayKey()
 
   const analysis = useMemo(() => {
@@ -99,7 +99,6 @@ export function useSmartScheduler({ tasks, energy, habits }) {
     }
 
     // ── What to work on NOW (priority recommendation) ─────────────────────
-    const hour = new Date().getHours()
     const todayTasks = tasks.getTodayTasks().filter(t => !t.completed)
     const highPriority = todayTasks.filter(t => t.priority === 'high')
     const focusTask    = tasks.getFocusTask()

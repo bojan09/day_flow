@@ -22,8 +22,6 @@ export default function WeeklyPersonalBest({ tasks, habits }) {
   const weeks = Array.from({ length: 12 }, (_, i) => getWeekStats(i * 7))
   const best  = weeks.reduce((b, w) => (w.done + w.habitPct / 10 > b.done + b.habitPct / 10 ? w : b), weeks[0])
 
-  const taskPct  = best.done > 0 ? Math.round((thisWeek.done / best.done) * 100) : 100
-  const habitComp = best.habitPct > 0 ? Math.round((thisWeek.habitPct / best.habitPct) * 100) : 100
 
   const rows = [
     { label: 'Tasks done',  current: thisWeek.done,      best: best.done,      suffix: '' },

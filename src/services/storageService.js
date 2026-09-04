@@ -19,7 +19,7 @@ export async function uploadFile(bucket, userId, file, customPath = null) {
   const ext      = file.name?.split('.').pop() || 'bin'
   const filename = customPath || `${userId}/${Date.now()}.${ext}`
 
-  const { data, error } = await supabase.storage
+  const { error } = await supabase.storage
     .from(bucket)
     .upload(filename, file, { upsert: true, contentType: file.type })
 

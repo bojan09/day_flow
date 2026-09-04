@@ -27,7 +27,7 @@ export default function MoodChart({ mood }) {
   const chartH = 80
   const pts    = days30
     .filter(d => d.entry)
-    .map((d, _, arr) => {
+    .map((d) => {
       const idx = days30.indexOf(d)
       const x   = (idx / 29) * chartW
       const y   = chartH - ((d.entry.score - 1) / 4) * (chartH - 8) - 4

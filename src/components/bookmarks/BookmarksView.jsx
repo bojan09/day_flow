@@ -48,7 +48,6 @@ function BookmarkCard({ b, bookmarks }) {
 }
 
 export default function BookmarksView({ bookmarks }) {
-  const { toast } = useToast()
   const [modal,   setModal]   = useState(false)
   const [filter,  setFilter]  = useState('all')
   const [tagFilter, setTag]   = useState(null)

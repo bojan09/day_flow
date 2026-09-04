@@ -22,7 +22,6 @@ const TYPE_ICON = { task: '✅', idea: '💡', note: '📝' }
 export default function BrainDump({ tasks, ideas, notes }) {
   const [text,     setText]     = useState('')
   const [parsed,   setParsed]   = useState([])
-  const [saved,    setSaved]    = useState(false)
   const [step,     setStep]     = useState('write') // 'write' | 'review' | 'done'
 
   const handleParse = () => {

@@ -14,7 +14,7 @@ export default function NavCustomizer({ isOpen, onClose, navItems, setSlot, rese
 
         {/* 4 slots */}
         {navItems.map((moduleId, slotIdx) => {
-          const current = ALL_MODULES.find(m => m.id === moduleId)
+
           return (
             <div key={slotIdx}>
               <p className="text-[10px] font-semibold uppercase tracking-wider mb-2"
