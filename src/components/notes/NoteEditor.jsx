@@ -29,6 +29,26 @@ export default function NoteEditor({ note, onUpdate, onBack, getWordCount, getRe
     return () => clearTimeout(saveTimerRef.current)
   }, [title, content, tags])
 
+  // Mirror the live editor state so the flush below can read it from a cleanup
+  // without re-running on every keystroke.
+  const latestRef = useRef(null)
+  useEffect(() => { latestRef.current = { id: note.id, title, content, tags, saved } })
+
+  // Flush unsaved edits when leaving this note (switching notes, or closing the
+  // editor). Without this, typing and then navigating away inside the 1s
+  // debounce window silently discarded the edit: the cleanup above cancels the
+  // pending timer, and switching notes resets `saved` to true, so the write
+  // never happened.
+  useEffect(() => {
+    const leavingId = note.id
+    return () => {
+      const l = latestRef.current
+      if (l && !l.saved && l.id === leavingId) {
+        onUpdate(leavingId, { title: l.title, content: l.content, tags: l.tags })
+      }
+    }
+  }, [note.id, onUpdate])
+
   const toggleTag = (tag) => {
     const next = tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag]
     setTags(next); setSaved(false)
