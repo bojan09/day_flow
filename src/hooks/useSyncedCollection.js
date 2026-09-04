@@ -9,6 +9,8 @@ import { storage }               from '../services/storage'
 import { subscribeToTable }      from '../services/realtimeService'
 import { useAuth }               from './useAuth'
 import { isSupabaseConfigured }  from '../services/supabaseClient'
+import { withRetry }             from '../utils/withRetry'
+import { useToast }              from '../utils/toast'
 
 // How long a write/delete guard is held after the operation commits. A
 // getAll() that was already in flight when the write started reflects DB state
@@ -18,6 +20,7 @@ const GUARD_MS = 3000
 
 export function useSyncedCollection({ storageKey, table, service }) {
   const { user } = useAuth()
+  const { toast } = useToast()
   const userId   = user?.id
   const useDB    = isSupabaseConfigured() && !!userId
 
@@ -80,29 +83,42 @@ export function useSyncedCollection({ storageKey, table, service }) {
   // ── localStorage-only persistence (demo mode) ─────────────────────────────
   useEffect(() => { if (!useDB) storage.set(storageKey, items) }, [items, useDB, storageKey])
 
-  const persist = useCallback(async (item) => {
+  // Retries with backoff, and on final failure tells the user rather than
+  // leaving an optimistic update sitting there looking saved. `onFail` lets a
+  // caller roll its own state back (see useTasks.toggleTask).
+  const persist = useCallback(async (item, { onFail } = {}) => {
     if (!useDB) return
     pendingWritesRef.current.set(item.id, item)
-    try {
-      await service.upsert(userId, item)
-      setTimeout(() => pendingWritesRef.current.delete(item.id), GUARD_MS)
-    } catch (err) {
-      // Write never landed — nothing to protect, and a fresh fetch should win.
-      pendingWritesRef.current.delete(item.id)
-      throw err
-    }
-  }, [useDB, userId, service])
+    let failed = false
+    await withRetry(() => service.upsert(userId, item), {
+      errorMessage: 'Save failed — check your connection',
+      onFail: (message, err) => {
+        failed = true
+        // Write never landed: drop the guard so a fresh fetch wins.
+        pendingWritesRef.current.delete(item.id)
+        toast.error(message)
+        onFail?.(message, err)
+      },
+    })
+    if (!failed) setTimeout(() => pendingWritesRef.current.delete(item.id), GUARD_MS)
+  }, [useDB, userId, service, toast])
 
-  const remove = useCallback(async (id) => {
+  const remove = useCallback(async (id, { onFail } = {}) => {
     if (!useDB) return
     // Guard BEFORE the await so realtime can't restore the row mid-delete.
     pendingDeletesRef.current.add(id)
-    try {
-      await service.delete(userId, id)
-    } finally {
-      setTimeout(() => pendingDeletesRef.current.delete(id), GUARD_MS)
-    }
-  }, [useDB, userId, service])
+    await withRetry(() => service.delete(userId, id), {
+      errorMessage: 'Delete failed — check your connection',
+      onFail: (message, err) => {
+        // Stop suppressing the row: it still exists server-side, so let the
+        // next fetch bring it back rather than hiding it from the user.
+        pendingDeletesRef.current.delete(id)
+        toast.error(message)
+        onFail?.(message, err)
+      },
+    })
+    setTimeout(() => pendingDeletesRef.current.delete(id), GUARD_MS)
+  }, [useDB, userId, service, toast])
 
   // Undo support: drop the delete guard so a restored record isn't filtered out.
   const unmarkDeleted = useCallback((id) => { pendingDeletesRef.current.delete(id) }, [])

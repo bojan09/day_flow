@@ -4,7 +4,6 @@
 //          (reminder recomputation, focus task, completion toggle + rollback).
 import { tasksService }   from '../services/supabaseDataService'
 import { useSyncedCollection } from './useSyncedCollection'
-import { withRetry }      from '../utils/withRetry'
 import { getTodayKey }    from '../utils/dateUtils'
 import { computeReminderAt } from '../utils/reminders'
 
@@ -84,7 +83,9 @@ export function useTasks() {
       return updated
     }))
     if (targetTask) {
-      withRetry(() => persist(targetTask), {
+      // persist() already retries and toasts; this only undoes the optimistic
+      // flip so the checkbox doesn't keep claiming a save that never landed.
+      persist(targetTask, {
         onFail: () => {
           setTasks(prev => prev.map(t =>
             t.id === id ? { ...t, completed: !t.completed, completedAt: t.completed ? null : t.completedAt } : t
