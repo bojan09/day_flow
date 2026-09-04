@@ -19,6 +19,7 @@ const DailyRhythmView = lazy(() => import('../components/rhythm/DailyRhythmView'
 const ProjectsView = lazy(() => import('../components/projects/ProjectsView'))
 const WeeklyReview = lazy(() => import('../components/weekly/WeeklyReview'))
 const ReflectionView = lazy(() => import('../components/reflection/ReflectionView'))
+const FastingView = lazy(() => import('../components/fasting/FastingView'))
 import KeyboardShortcuts  from '../components/keyboard/KeyboardShortcuts'
 import QuickCapture       from '../components/quickcapture/QuickCapture'
 
@@ -77,7 +78,7 @@ export default function DashboardPage() {
     if (hash === LEGACY_GOALS_TAB) return 'tasks'
     if (LEGACY_RHYTHM_TABS.includes(hash)) return 'rhythm'
     const valid = ['today','tasks','rhythm','focus','calendar','timeblock','projects','reflect',
-      'capture','workouts',
+      'capture','workouts','fasting',
       'insights','search','weeklyreview']
     return valid.includes(hash) ? hash : 'today'
   })
@@ -285,6 +286,7 @@ export default function DashboardPage() {
         {activeTab === 'focus'      && <FocusMode tasks={tasks} />}
         {activeTab === 'search'     && <SearchView tasks={tasks} notes={notes} habits={habits} goals={goals} ideas={ideas} />}
         {activeTab === 'reflect'    && <ReflectionView tasks={tasks} habits={habits} routines={routines} onTabChange={handleTabChange} />}
+        {activeTab === 'fasting'    && <FastingView />}
 
       </ViewErrorBoundary>
       </DashboardLayout>

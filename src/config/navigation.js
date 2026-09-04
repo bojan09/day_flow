@@ -10,7 +10,7 @@
 // content surfaces (habits, moods, routines) still use it deliberately.
 import {
   Sun, Target, Repeat, Dumbbell, ChartColumn, Inbox,
-  Timer, Calendar, CalendarClock, FolderKanban, Search, Sunrise,
+  Timer, Calendar, CalendarClock, FolderKanban, Search, Sunrise, Utensils,
 } from 'lucide-react'
 
 export const NAV_TABS = {
@@ -26,6 +26,7 @@ export const NAV_TABS = {
   projects:  { id: 'projects',  label: 'Projects',     emoji: '🗂️', Icon: FolderKanban },
   search:    { id: 'search',    label: 'Search',       emoji: '🔍', Icon: Search },
   reflect:   { id: 'reflect',   label: 'Reflection',   emoji: '🌅', Icon: Sunrise },
+  fasting:   { id: 'fasting',   label: 'Fasting',      emoji: '🍽️', Icon: Utensils },
 }
 
 const pick = (...ids) => ids.map(id => NAV_TABS[id])
@@ -37,9 +38,9 @@ export const PRIMARY_TABS = pick('today', 'tasks', 'rhythm', 'workouts', 'insigh
 // Reflection lives here rather than in the primary row: the spec asks for a
 // subtle review area plus a contextual entry, not another permanent tab
 // competing for space in the main navigation.
-export const MORE_TABS = pick('reflect', 'focus', 'calendar', 'timeblock', 'projects', 'search')
+export const MORE_TABS = pick('reflect', 'fasting', 'focus', 'calendar', 'timeblock', 'projects', 'search')
 
 // Everything the mobile bottom nav can be customised to show.
 export const ALL_MODULES = pick(
-  'today', 'tasks', 'rhythm', 'focus', 'workouts', 'capture', 'calendar', 'insights', 'projects',
+  'today', 'tasks', 'rhythm', 'focus', 'workouts', 'capture', 'calendar', 'insights', 'projects', 'fasting',
 )
