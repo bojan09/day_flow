@@ -35,7 +35,12 @@ export function useDailyScore({ tasks, habits, mood }) {
       },
       meta: { tasksScheduled: dayTasks.length, tasksDone: done },
     }
-  }, [tasks?.tasks, habits?.log, mood?.moods, today])
+    // Keyed on the underlying data rather than the hook objects, which are new
+    // on every render and would defeat the memo entirely. habits.habits is in
+    // here because getTodayCompletion() reads it — without it, adding a habit
+    // left the score stale until the log happened to change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tasks?.tasks, habits?.habits, habits?.log, mood?.moods, today])
 
   // calculate() kept for backward compat with components that call it
   const calculate = (dateKey = today) => {

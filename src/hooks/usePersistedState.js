@@ -40,6 +40,7 @@ export function usePersistedState(key, defaultValue) {
       console.warn(`[DayFlow] usePersistedState(${key}): load failed, keeping local data`)
       loadedRef.current = true
     })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, key])
 
   const setValue = (updater) => {

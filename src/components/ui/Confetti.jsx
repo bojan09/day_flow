@@ -18,6 +18,9 @@ export default function Confetti({ trigger }) {
       color: COLORS[i % COLORS.length],
       size:  randomBetween(6, 12),
       rot:   randomBetween(-180, 180),
+      // Decided here rather than during render, so a re-render mid-animation
+      // can't reshape particles that are already falling.
+      round: Math.random() > 0.5,
     }))
     setParticles(list)
     const t = setTimeout(() => setParticles([]), 2200)
@@ -38,7 +41,7 @@ export default function Confetti({ trigger }) {
             width:  p.size,
             height: p.size,
             background: p.color,
-            borderRadius: Math.random() > 0.5 ? '50%' : '2px',
+            borderRadius: p.round ? '50%' : '2px',
             transform: `rotate(${p.rot}deg)`,
           }}
         />

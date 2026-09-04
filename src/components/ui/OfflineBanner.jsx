@@ -27,6 +27,9 @@ export default function OfflineBanner({ isOnline, queueLength, replaying }) {
         return () => clearTimeout(t)
       }
     }
+  // Driven by the online/offline transition only; depending on the banner
+  // state it sets would immediately retrigger it.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOnline, queueLength, replaying])
 
   // Also show when online but queue > 0 (pending writes from previous session)

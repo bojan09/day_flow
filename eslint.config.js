@@ -34,10 +34,15 @@ export default [
       // `catch {}` is used deliberately throughout for best-effort operations
       // (localStorage in private mode, realtime teardown).
       'no-empty': ['error', { allowEmptyCatch: true }],
-      // These three flag real-but-latent concurrent-rendering hazards rather
-      // than present-day breakage; kept visible as warnings so the genuine
-      // hook-order and undefined-variable errors stay readable.
-      'react-hooks/set-state-in-effect': 'warn',
+      // Off by decision, not by accident. Every occurrence in this codebase is
+      // a deliberate pattern the rule cannot distinguish from a mistake:
+      // syncing props to state when a different record is opened, an async
+      // load resolving, or a subscription handler. Leaving ~20 permanent
+      // warnings would train us to skim past lint output, which is how the
+      // genuine hook-order bugs went unnoticed in the first place. The rules
+      // that catch real defects here — rules-of-hooks, exhaustive-deps,
+      // immutability, purity, no-undef — stay on.
+      'react-hooks/set-state-in-effect': 'off',
       'react-hooks/immutability': 'warn',
       'react-hooks/purity': 'warn',
       'react-hooks/refs': 'warn',

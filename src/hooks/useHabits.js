@@ -53,13 +53,20 @@ export function useHabits() {
     })
   }, [useDB, userId])
 
+  // Reloads only when the signed-in user changes. loadFromDB is rebuilt each
+  // render, so depending on it would refetch in a loop.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { if (useDB) loadFromDB(); else setSynced(true) }, [userId])
 
   useEffect(() => {
     if (!useDB) return
     return subscribeToTables(['habits', 'habit_log'], userId, loadFromDB)
+  // Re-subscribes only on user change — depending on loadFromDB would tear
+  // down and rebuild the realtime channel on every render.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId])
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { if (!useDB) { storage.set('habits', habits); storage.set('habit_log', log) } }, [habits, log])
 
   const persistHabit = async (h) => {

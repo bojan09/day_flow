@@ -41,13 +41,6 @@ export default function SmartMorningBrief({ tasks, habits, mood, goals }) {
   const [error,     setError]     = useState(null)
   const [dismissed, setDismissed] = useState(false)
 
-  // Auto-generate once on mount if morning and no cached brief
-  useEffect(() => {
-    if (hour >= 12 || hour < 5) return
-    if (brief || loading || dismissed) return
-    generate()
-  }, [])
-
   const generate = async () => {
     setLoading(true); setError(null)
     try {
@@ -72,6 +65,16 @@ Keep the total response under 60 words. Be direct and energising. No fluff.`, co
       setLoading(false)
     }
   }
+
+  // Auto-generate once on mount if it's morning and nothing is cached.
+  // Deliberately mount-only: re-running when brief/loading/dismissed change
+  // would re-fire the AI call the moment its own result lands.
+  useEffect(() => {
+    if (hour >= 12 || hour < 5) return
+    if (brief || loading || dismissed) return
+    generate()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const dismiss = () => {
     setDismissed(true)

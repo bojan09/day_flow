@@ -39,6 +39,9 @@ export default function CaptureView({
     shareHandledRef.current = true
     bookmarks.addBookmark(share)
     setType('bookmarks')
+    // Mount-only: consumes the stashed share exactly once. Depending on
+    // bookmarks would re-run it every time the list changes.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

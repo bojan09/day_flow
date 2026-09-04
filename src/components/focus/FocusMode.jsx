@@ -1,6 +1,6 @@
 // Component: FocusMode
 // Purpose: Pomodoro timer with session logging, history report, and task picker
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import PomodoroReport from '../pomodoro/PomodoroReport'
 import { usePomodoroHistory } from '../../hooks/usePomodoroHistory'
 
@@ -53,14 +53,7 @@ export default function FocusMode({ tasks }) {
     return () => clearInterval(interval.current)
   }, [running])
 
-  useEffect(() => {
-    if (!running || secs > 0) return
-    clearInterval(interval.current)
-    setRunning(false)
-    handleComplete()
-  }, [secs, running])
-
-  const handleComplete = () => {
+  const handleComplete = useCallback(() => {
     if (mode === 'focus') {
       const focused = tasks.getTodayTasks().find(t => t.id === taskId)
       pomodoroHistory.logSession(current.mins, focused?.title || '')
@@ -68,7 +61,21 @@ export default function FocusMode({ tasks }) {
     } else {
       notifyLocal('⏱ Break over!', 'Ready for another session?')
     }
-  }
+  }, [mode, tasks, taskId, pomodoroHistory, current.mins])
+
+  // One-shot guard: handleComplete's identity can change between renders, so
+  // without this the completion effect could fire twice for a single session
+  // before setRunning(false) takes effect — logging the same pomodoro twice.
+  const completedRef = useRef(false)
+  useEffect(() => { if (secs > 0) completedRef.current = false }, [secs])
+
+  useEffect(() => {
+    if (!running || secs > 0 || completedRef.current) return
+    completedRef.current = true
+    clearInterval(interval.current)
+    setRunning(false)
+    handleComplete()
+  }, [secs, running, handleComplete])
 
   const switchMode = (m) => {
     clearInterval(interval.current); setRunning(false)

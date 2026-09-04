@@ -126,6 +126,8 @@ export function useSmartScheduler({ tasks, energy }) {
       topRecommendation,
       activeTasks: activeTasks.length,
     }
+  // Keyed on the underlying data rather than the hook objects.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tasks.tasks, energy?.level, today])
 
   // ── Build context string for AI ───────────────────────────────────────────

@@ -2,7 +2,7 @@
 // Purpose: Zero-friction task entry bar at the top of TasksView.
 //          Uses NLP parser for natural language input — "call dentist tomorrow high priority".
 //          Keyboard shortcut: typing anywhere on the Tasks tab focuses this bar.
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { parseNLTask } from '../../services/nlpParser'
 import { classifyCapture } from '../../services/captureClassifier'
 import { getTodayKey } from '../../utils/dateUtils'
@@ -21,7 +21,11 @@ export default function QuickTaskBar({ tasks, onAdded }) {
   const [focused, setFocused] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const inputRef = useRef(null)
-  const placeholder = EXAMPLES[Math.floor(Date.now() / 30000) % EXAMPLES.length]
+  // Picked once per mount and stable thereafter. Reading the clock is
+  // technically impure, but computing it in an effect instead would paint a
+  // placeholder and then visibly swap it.
+  // eslint-disable-next-line react-hooks/purity
+  const placeholder = useMemo(() => EXAMPLES[Math.floor(Date.now() / 30000) % EXAMPLES.length], [])
 
   // Live-parse as user types to show what will be created
   useEffect(() => {

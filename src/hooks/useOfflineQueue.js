@@ -56,6 +56,9 @@ export function useOfflineQueue() {
     // Small delay to let connection stabilise
     const t = setTimeout(replay, 1200)
     return () => clearTimeout(t)
+  // Keyed on queue length rather than the array so replaying (which mutates
+  // the queue) does not immediately retrigger itself.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOnline, queue.length])
 
   // Register a replay handler for a specific operation key

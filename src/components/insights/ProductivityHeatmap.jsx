@@ -56,6 +56,9 @@ export default function ProductivityHeatmap({ tasks, habits }) {
     }
 
     return { cells: days, weeks, maxCount }
+  // Keyed on the underlying data, not the habits hook object, which is a new
+  // reference every render and would defeat the memo.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tasks.tasks, habits.habits, habits.log, view])
 
   // Month labels — find first day of each month in the cells

@@ -23,7 +23,12 @@ export default function HabitPairingSuggestion({ habits, newHabitIcon }) {
 
   if (!matchedHabit) return null
 
-  const msg = PAIRING_MESSAGES[Math.floor(Math.random() * PAIRING_MESSAGES.length)]
+  // Keyed off the matched habit rather than Math.random() during render, which
+  // picked a different message on every re-render and made the tip flicker.
+  const msgIndex = matchedHabit.id
+    ? [...String(matchedHabit.id)].reduce((n, c) => n + c.charCodeAt(0), 0) % PAIRING_MESSAGES.length
+    : 0
+  const msg = PAIRING_MESSAGES[msgIndex]
     .replace('{a}', matchedHabit.name)
     .replace('{b}', 'your new habit')
 

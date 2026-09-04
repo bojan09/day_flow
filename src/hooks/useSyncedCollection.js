@@ -59,7 +59,7 @@ export function useSyncedCollection({ storageKey, table, service }) {
       setSynced(true)
     })
     return () => { cancelled = true }
-  }, [userId, useDB])
+  }, [userId, useDB, service, applyRows])
 
   // ── Realtime ───────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -67,7 +67,7 @@ export function useSyncedCollection({ storageKey, table, service }) {
     return subscribeToTable(table, userId, () => {
       service.getAll(userId).then(applyRows)
     })
-  }, [userId, useDB])
+  }, [userId, useDB, service, table, applyRows])
 
   // ── localStorage-only persistence (demo mode) ─────────────────────────────
   useEffect(() => { if (!useDB) storage.set(storageKey, items) }, [items, useDB, storageKey])

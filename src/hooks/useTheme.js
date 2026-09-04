@@ -40,6 +40,9 @@ export function useTheme() {
   // Apply theme on mount (silent — no transition class on initial load)
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
+  // Mount-only on purpose: applies the stored theme without the transition
+  // class. Live theme changes are handled separately.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const setTheme = (t) => {

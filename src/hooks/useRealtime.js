@@ -10,7 +10,9 @@ const WATCHED_TABLES = ['tasks', 'notes', 'habits', 'habit_log', 'goals', 'ideas
 export function useRealtime(refetchMap = {}) {
   const { user }  = useAuth()
   const mapRef    = useRef(refetchMap)
-  mapRef.current  = refetchMap
+  // Assigned in an effect, not during render — mutating a ref while rendering
+  // is a side effect React is allowed to run twice or discard.
+  useEffect(() => { mapRef.current = refetchMap })
 
   const handleUpdate = useCallback((table, payload) => {
     try { mapRef.current[table]?.(payload) } catch {}

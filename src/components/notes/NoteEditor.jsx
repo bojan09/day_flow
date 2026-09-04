@@ -16,6 +16,9 @@ export default function NoteEditor({ note, onUpdate, onBack, getWordCount, getRe
   useEffect(() => {
     setTitle(note.title); setContent(note.content)
     setTags(note.tags || []); setSaved(true)
+  // Resyncs only when a different note is opened — depending on the note
+  // fields would overwrite what the user is typing on every keystroke.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [note.id])
 
   // Debounced autosave — writes to Supabase 1s after user stops typing
@@ -27,6 +30,9 @@ export default function NoteEditor({ note, onUpdate, onBack, getWordCount, getRe
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     saveTimerRef.current = setTimeout(() => save(), 1000)
     return () => clearTimeout(saveTimerRef.current)
+  // Restarts the debounce on edits only. save/saved are deliberately out:
+  // including them would reset the timer as soon as a save completes.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, content, tags])
 
   // Mirror the live editor state so the flush below can read it from a cleanup

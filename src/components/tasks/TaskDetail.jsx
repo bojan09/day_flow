@@ -56,6 +56,10 @@ export default function TaskDetail({
     setRecEnd(task.recurEndDate || '')
     setRecStat(task.recurStatus || 'active')
     setDirty(false)
+  // Resyncs only when a different task is opened. This component stays
+  // mounted across opens, so depending on the whole task object would
+  // discard in-progress edits whenever the list refreshed.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task?.id])
 
   if (!task) return null

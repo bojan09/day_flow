@@ -90,6 +90,8 @@ export function useAdaptiveDashboard({ tasks, habits, mood, energy }) {
     }
 
     return list.sort((a, b) => a.priority - b.priority).slice(0, 3)
+  // Keyed on the counts that actually affect the layout, not whole arrays.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [context, todayMood, overdue, taskPct, totalToday, habitPct, streakHealth, today])
 
   // ── Widget priority order based on context ─────────────────────────────────

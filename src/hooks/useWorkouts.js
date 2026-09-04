@@ -147,6 +147,9 @@ export function useWorkouts() {
     }
     const t = setTimeout(() => setSynced(true), 500)
     return () => clearTimeout(t)
+  // Keyed on length: this is a one-off dedupe pass, and depending on the
+  // sessions array itself would re-run it on every edit.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessions.length])
 
   return {

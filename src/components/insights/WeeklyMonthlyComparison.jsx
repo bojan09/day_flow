@@ -114,6 +114,9 @@ export default function WeeklyMonthlyComparison({ tasks, habits, mood }) {
         avgMood:   { current: avgMood(thisMonthDays),   previous: avgMood(lastMonthDays)   },
       },
     }
+  // Keyed on the underlying data rather than the hook objects, which are new
+  // on every render.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tasks.tasks, habits.habits, habits.log, mood.moods])
 
   return (

@@ -144,6 +144,9 @@ export default function DashboardPage() {
         return next
       }, { replace: true })
     }
+  // Runs on searchParams changes only; setActiveTab/setSearchParams are
+  // stable and including them adds nothing.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
   // Weekly Review overlay — only auto-shows on Sundays, once per day
@@ -188,6 +191,8 @@ export default function DashboardPage() {
         window.history.replaceState({}, '', '/')
       }
     }
+  // Mount-only: reads PWA shortcut/share params from the launch URL.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // ── Data hooks ──────────────────────────────────────────────────────────────
@@ -229,11 +234,17 @@ export default function DashboardPage() {
     } catch { return }
     spawnRecurringTasks(tasks.tasks, tasks.addTask)
     spawnRecurringWorkouts(workouts.sessions, workouts.addSession)
+  // Fires once both sources report synced. Depending on the task and
+  // workout arrays would re-run the spawner every time it added something.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, tasks.synced, workouts.synced])
 
   const handleWriteNote = useCallback((prompt) => {
     notes.addNote({ title: 'Reflection', content: `Prompt: ${prompt}\n\n`, tags: ['reflection'] })
     setActiveTab('notes')
+  // notes.addNote is stable enough here; depending on the whole notes
+  // object would rebuild this callback on every note change.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notes.addNote, setActiveTab])
 
   return (
