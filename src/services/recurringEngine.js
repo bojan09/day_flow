@@ -1,7 +1,7 @@
 // Service: recurringEngine
 // Purpose: Checks recurring tasks and auto-creates today's instances if not yet generated
 import { getTodayKey } from '../utils/dateUtils'
-import { format } from 'date-fns'
+
 
 const DAY_MAP = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 0 }
 

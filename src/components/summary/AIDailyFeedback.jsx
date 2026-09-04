@@ -63,7 +63,7 @@ Never say "it seems" or "based on the data". Just speak directly.`, context)
       
       setOutput(text)
       setGenerated(true)
-    } catch (err) {
+    } catch {
       setError('Could not reach AI. Check your connection.')
     } finally {
       setLoading(false)

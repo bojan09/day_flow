@@ -77,7 +77,7 @@ Rules:
 - Keep each suggestion under 30 words total
 - If all habits are above 60%, say "All habits are performing well — keep going!"`, `HABIT DATA (last 28 days):\n${context.summary}`)
       setOutput(text)
-    } catch (err) {
+    } catch {
       setError('Could not reach AI. Check your connection.')
     } finally {
       setLoading(false)

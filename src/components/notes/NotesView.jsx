@@ -6,7 +6,7 @@ import { useState } from 'react'
 import NotesList  from './NotesList'
 import NoteEditor from './NoteEditor'
 import { NOTE_TAGS } from '../../hooks/useNotes'
-import { format, subDays } from 'date-fns'
+import { subDays } from 'date-fns'
 
 const DATE_FILTERS = [
   { id: 'all',    label: 'All time'  },

@@ -1,6 +1,6 @@
 // Hook: useHabitRules
 // Purpose: "If habit A done → auto-complete habit B" rule engine
-import { useEffect } from 'react'
+
 import { usePersistedState } from './usePersistedState'
 import { getTodayKey } from '../utils/dateUtils'
 

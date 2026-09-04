@@ -1,6 +1,6 @@
 // Hook: usePomodoroHistory
 // Purpose: Log completed focus sessions and compute weekly productivity report
-import { useEffect } from 'react'
+
 import { usePersistedState } from './usePersistedState'
 import { getTodayKey, getDateKey } from '../utils/dateUtils'
 import { subDays, format } from 'date-fns'

@@ -1,6 +1,6 @@
 // Hook: useEnergy
 // Purpose: Store daily peak energy window and derive smart task scheduling suggestions
-import { useEffect } from 'react'
+
 import { usePersistedState } from './usePersistedState'
 import { getTodayKey } from '../utils/dateUtils'
 

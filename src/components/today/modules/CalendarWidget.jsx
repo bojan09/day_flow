@@ -2,7 +2,7 @@
 // Purpose: Mini Today dashboard card — shows upcoming timeblock entries for today.
 import { memo } from 'react'
 import { getTodayKey } from '../../../utils/dateUtils'
-import { format } from 'date-fns'
+
 
 function CalendarWidget({ timeblocks, onTabChange }) {
   const today    = getTodayKey()

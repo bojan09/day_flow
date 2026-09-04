@@ -6,8 +6,7 @@
 import { useState, useMemo } from 'react'
 import { callClaude } from '../../services/aiService'
 import { useDebounce }       from '../../hooks/useDebounce'
-import { subDays, format }   from 'date-fns'
-import { getDateKey }        from '../../utils/dateUtils'
+
 
 // ── Highlight matching text ────────────────────────────────────────────────────
 function highlight(text = '', query = '') {
@@ -133,7 +132,7 @@ Return at most 15 results. Return [] if nothing matches. No explanation, just th
       // text already resolved by callClaude
       const indices = JSON.parse(text.replace(/```json|```/g, '').trim())
       setAiResult(indices.map(i => corpus[i]).filter(Boolean))
-    } catch (err) {
+    } catch {
       setError('AI search failed. Try keyword mode or check your connection.')
     } finally {
       setLoading(false)

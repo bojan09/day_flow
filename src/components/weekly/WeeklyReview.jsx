@@ -75,7 +75,7 @@ Top habit: ${ctx.topHabit ? `${ctx.topHabit.name} (${ctx.topHabit.pct}%)` : 'non
 Struggled with: ${ctx.lowHabit ? `${ctx.lowHabit.name} (${ctx.lowHabit.pct}%)` : 'none'}
 Notes written: ${ctx.weekNotes}`)
       setAiDraft(text)
-    } catch (err) {
+    } catch {
       setError('Could not generate draft. Check your connection.')
     } finally {
       setLoading(false)

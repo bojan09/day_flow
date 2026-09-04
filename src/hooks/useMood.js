@@ -1,6 +1,6 @@
 // Hook: useMood
 // Purpose: Track daily mood entries (emoji + note) with history access
-import { useEffect } from 'react'
+
 import { usePersistedState } from './usePersistedState'
 import { getTodayKey } from '../utils/dateUtils'
 

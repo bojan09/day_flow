@@ -2,7 +2,7 @@
 // Purpose: Shows per-category task completion trends over 4 weeks.
 //          Helps identify which areas of life are getting attention vs. neglected.
 import { useMemo } from 'react'
-import { subDays, format } from 'date-fns'
+import { subDays } from 'date-fns'
 import { getDateKey } from '../../utils/dateUtils'
 
 const CAT_COLORS = {

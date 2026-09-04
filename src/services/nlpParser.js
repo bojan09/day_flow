@@ -1,7 +1,7 @@
 // Service: nlpParser
 // Purpose: Parse natural language task input into structured task fields
 // Example: "call dentist tomorrow at 2pm high priority work" -> { title, date, priority, category }
-import { addDays, format, nextMonday, nextDay } from 'date-fns'
+import { addDays, format, nextDay } from 'date-fns'
 
 const PRIORITY_WORDS = { high: 'high', urgent: 'high', important: 'high', medium: 'medium', normal: 'medium', low: 'low', someday: 'low' }
 const CATEGORY_WORDS = { work: 'Work', personal: 'Personal', health: 'Health', learning: 'Learning', finance: 'Finance' }

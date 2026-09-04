@@ -1,6 +1,6 @@
 // Hook: useSomeday
 // Purpose: "Someday" backlog — ideas and tasks not yet scheduled
-import { useEffect } from 'react'
+
 import { usePersistedState } from './usePersistedState'
 import { getTodayKey } from '../utils/dateUtils'
 

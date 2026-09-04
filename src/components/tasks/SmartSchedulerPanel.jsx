@@ -53,7 +53,7 @@ Rules:
 - Keep it under 120 words total
 - Don't mention "based on data" — speak directly like a coach`, context)
       setOutput(text)
-    } catch (err) {
+    } catch {
       setError('Could not reach AI. Check your connection.')
     } finally {
       setLoading(false)

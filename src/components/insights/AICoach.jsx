@@ -65,7 +65,7 @@ Keep the total response under 120 words. Be direct and personal, not generic.`,
         context
       )
       setOutput(text)
-    } catch (err) {
+    } catch {
       setError('Could not reach AI. Check your connection and try again.')
     } finally {
       setLoading(false)
@@ -116,7 +116,7 @@ Include a brief reflection on what was accomplished and a positive forward-looki
         context
       )
       setOutput(text)
-    } catch (err) {
+    } catch {
       setError('Could not reach AI. Check your connection.')
     } finally {
       setLoading(false)
@@ -162,7 +162,7 @@ Format as plain text with clear sections. Keep under 200 words. Be specific, not
         context
       )
       setOutput(text)
-    } catch (err) {
+    } catch {
       setError('Could not reach AI. Check your connection.')
     } finally {
       setLoading(false)

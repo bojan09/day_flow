@@ -67,7 +67,7 @@ Keep the total response under 60 words. Be direct and energising. No fluff.`, co
       
       setBrief(text)
       // Brief is in-memory only — regenerates each session
-    } catch (err) {
+    } catch {
       setError('Could not generate brief.')
     } finally {
       setLoading(false)

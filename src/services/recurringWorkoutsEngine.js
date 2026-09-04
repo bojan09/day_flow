@@ -3,7 +3,7 @@
 //          Duplicate check: by BOTH recurringFrom ID AND title+date fallback
 //          so old sessions without recurringFrom are still caught.
 import { getTodayKey } from '../utils/dateUtils'
-import { format }       from 'date-fns'
+
 
 export function spawnRecurringWorkouts(allSessions, addSession) {
   const today       = getTodayKey()
