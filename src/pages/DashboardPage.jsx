@@ -35,7 +35,6 @@ import { useDailyScore      } from '../hooks/useDailyScore'
 import { useIdeas           } from '../hooks/useIdeas'
 import { useRoutines        } from '../hooks/useRoutines'
 import { useProjects        } from '../hooks/useProjects'
-import { useBookmarks       } from '../hooks/useBookmarks'
 import { useWorkouts        } from '../hooks/useWorkouts'
 import { useCustomCategories } from '../hooks/useCustomCategories'
 import { useMoodTheme       } from '../hooks/useMoodTheme'
@@ -43,6 +42,7 @@ import { useOnboarding     } from '../hooks/useOnboarding'
 import { useTimeblocks    } from '../hooks/useTimeblocks'
 import OnboardingFlow       from '../components/onboarding/OnboardingFlow'
 import FeatureTooltip       from '../components/ui/FeatureTooltip'
+import { stashPendingShare }      from '../services/pendingShare'
 import { spawnRecurringTasks }    from '../services/recurringEngine'
 import { spawnRecurringWorkouts } from '../services/recurringWorkoutsEngine'
 import { getTodayKey }            from '../utils/dateUtils'
@@ -174,12 +174,14 @@ export default function DashboardPage() {
     if (action === 'focus')     { setActiveTab('focus') }
     if (action === 'habits')    { setActiveTab('rhythm') }
 
-    // Share target — auto-create bookmark from shared URL
+    // Share target — stash the shared link and let CaptureView, which owns the
+    // bookmarks hook, create it on arrival. Writing it here would mean loading
+    // and subscribing to bookmarks on every session just for this one path.
     if (shareUrl || shareTitle) {
       const title = shareTitle || shareText || shareUrl || 'Shared link'
       const url   = shareUrl   || ''
       if (url || title) {
-        bookmarks.addBookmark({ title: title.slice(0, 80), url, tags: ['shared'] })
+        stashPendingShare({ title: title.slice(0, 80), url, tags: ['shared'] })
         setActiveTab('bookmarks')
         // Clean URL params
         window.history.replaceState({}, '', '/')
@@ -198,7 +200,6 @@ export default function DashboardPage() {
   const ideas           = useIdeas()
   const routines        = useRoutines()
   const projects        = useProjects()
-  const bookmarks       = useBookmarks()
   const workouts        = useWorkouts()
   const catData         = useCustomCategories()
   const { theme, setTheme } = useTheme()
@@ -265,12 +266,12 @@ export default function DashboardPage() {
         {activeTab === 'workouts'   && <WorkoutsView workouts={workouts} />}
 
         {/* ── Think ────────────────────────────────────────────────────────── */}
-        {activeTab === 'capture'    && <CaptureView notes={notes} ideas={ideas} bookmarks={bookmarks} tasks={tasks} goals={goals} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} initialType={captureType} />}
+        {activeTab === 'capture'    && <CaptureView notes={notes} ideas={ideas} tasks={tasks} goals={goals} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} initialType={captureType} />}
 
         {/* ── Reflect ──────────────────────────────────────────────────────── */}
-        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} energy={energy} goals={goals} moodTheme={moodTheme} workouts={workouts} ideas={ideas} bookmarks={bookmarks} />}
+        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} energy={energy} goals={goals} moodTheme={moodTheme} workouts={workouts} ideas={ideas} />}
         {activeTab === 'focus'      && <FocusMode tasks={tasks} />}
-        {activeTab === 'search'     && <SearchView tasks={tasks} notes={notes} habits={habits} goals={goals} ideas={ideas} bookmarks={bookmarks} />}
+        {activeTab === 'search'     && <SearchView tasks={tasks} notes={notes} habits={habits} goals={goals} ideas={ideas} />}
 
       </ViewErrorBoundary>
       </DashboardLayout>

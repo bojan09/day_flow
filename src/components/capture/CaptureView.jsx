@@ -3,11 +3,13 @@
 //          (Notes/Ideas/Brain Dump/Bookmarks). Each type keeps its own data
 //          hook/CRUD — this is a routing/shell consolidation only, not a
 //          data-model merge.
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import NotesView     from '../notes/NotesView'
 import IdeasView     from '../ideas/IdeasView'
 import BrainDump     from '../braindump/BrainDump'
 import BookmarksView from '../bookmarks/BookmarksView'
+import { useBookmarks } from '../../hooks/useBookmarks'
+import { consumePendingShare } from '../../services/pendingShare'
 
 const TYPES = [
   { id: 'notes',     label: 'Notes',      emoji: '📝' },
@@ -16,11 +18,28 @@ const TYPES = [
   { id: 'bookmarks', label: 'Bookmarks',  emoji: '🔖' },
 ]
 
+// bookmarks is owned here rather than at the DashboardPage root: this view and
+// two other lazy-loaded ones are its only consumers, so hoisting it made every
+// session fetch and subscribe to the bookmarks table up front.
 export default function CaptureView({
-  notes, ideas, bookmarks, tasks, goals, categories, onAddCategory, onRemoveCategory,
+  notes, ideas, tasks, goals, categories, onAddCategory, onRemoveCategory,
   initialType = 'notes',
 }) {
   const [type, setType] = useState(initialType)
+  const bookmarks = useBookmarks()
+
+  // A PWA share-target link is stashed at start-up and created here, where the
+  // bookmarks hook actually lives. Ref-guarded so React's double-invoked mount
+  // effect in development can't add it twice.
+  const shareHandledRef = useRef(false)
+  useEffect(() => {
+    if (shareHandledRef.current) return
+    const share = consumePendingShare()
+    if (!share) return
+    shareHandledRef.current = true
+    bookmarks.addBookmark(share)
+    setType('bookmarks')
+  }, [])
 
   return (
     <div className="pt-2">

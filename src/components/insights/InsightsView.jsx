@@ -3,6 +3,7 @@
 //          Overview / Trends / Habits / Settings
 //          Each tab focuses on a different dimension of insight.
 import { useState } from 'react'
+import { useBookmarks }      from '../../hooks/useBookmarks'
 import MoodTracker           from './MoodTracker'
 import MoodChart             from './MoodChart'
 import AnalyticsPanel        from './AnalyticsPanel'
@@ -33,9 +34,11 @@ export default function InsightsView({
   mood, habits, tasks, notes, goals,
   theme, onSetTheme, onWriteNote,
   intentions, energy,
-  moodTheme, workouts, ideas, bookmarks,
+  moodTheme, workouts, ideas,
 }) {
   const [tab, setTab] = useState('overview')
+  // Owned here rather than at the DashboardPage root — see CaptureView.
+  const bookmarks = useBookmarks()
 
   return (
     <div className="max-w-2xl mx-auto pt-2 space-y-4">

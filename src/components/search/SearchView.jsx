@@ -6,6 +6,7 @@
 import { useState, useMemo } from 'react'
 import { callClaude } from '../../services/aiService'
 import { useDebounce }       from '../../hooks/useDebounce'
+import { useBookmarks }      from '../../hooks/useBookmarks'
 
 
 // ── Highlight matching text ────────────────────────────────────────────────────
@@ -96,7 +97,9 @@ function ResultCard({ item, query }) {
 }
 
 // ── Main component ──────────────────────────────────────────────────────────────
-export default function SearchView({ tasks, notes, habits, goals, ideas, bookmarks }) {
+export default function SearchView({ tasks, notes, habits, goals, ideas }) {
+  // Owned here rather than at the DashboardPage root — see CaptureView.
+  const bookmarks = useBookmarks()
   const [query,    setQuery]    = useState('')
   const [mode,     setMode]     = useState('keyword') // 'keyword' | 'ai'
   const [aiResult, setAiResult] = useState([])
