@@ -201,7 +201,7 @@ export default function MobileDrawer({
                       : { backgroundColor: 'var(--bg-secondary)', color: 'var(--text-muted)' }
                     }
                   >
-                    <span className="text-base">{t.emoji}</span>
+                    <t.Icon size={17} strokeWidth={2} className="flex-shrink-0" aria-hidden="true" />
                     <span className="text-sm font-medium truncate">{t.label}</span>
                   </button>
                 )
@@ -233,7 +233,7 @@ export default function MobileDrawer({
                       : { backgroundColor: 'var(--bg-secondary)', color: 'var(--text-faint)' }
                     }
                   >
-                    <span className="text-sm">{t.emoji}</span>
+                    <t.Icon size={15} strokeWidth={2} className="flex-shrink-0" aria-hidden="true" />
                     <span className="text-xs font-medium truncate">{t.label}</span>
                   </button>
                 )

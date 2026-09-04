@@ -3,19 +3,28 @@
 // customisable BottomNav all read from here — they previously each carried
 // their own hand-maintained copy of this list, so changing one tab's label or
 // icon meant editing three files and quietly getting it wrong in one of them.
+//
+// Nav chrome renders `Icon` (Lucide) rather than `emoji`: emoji render at
+// different weights and baselines per OS, which showed most in the nav where
+// the icons sit in a row and any mismatch is obvious. `emoji` is kept because
+// content surfaces (habits, moods, routines) still use it deliberately.
+import {
+  Sun, Target, Repeat, Dumbbell, ChartColumn, Inbox,
+  Timer, Calendar, CalendarClock, FolderKanban, Search,
+} from 'lucide-react'
 
 export const NAV_TABS = {
-  today:     { id: 'today',     label: 'Today',        emoji: '☀️' },
-  tasks:     { id: 'tasks',     label: 'DailyGoals',   emoji: '🎯' },
-  rhythm:    { id: 'rhythm',    label: 'Daily Rhythm', emoji: '🔁' },
-  workouts:  { id: 'workouts',  label: 'Workouts',     emoji: '🏋️' },
-  insights:  { id: 'insights',  label: 'Insights',     emoji: '📊' },
-  capture:   { id: 'capture',   label: 'Capture',      emoji: '📥' },
-  focus:     { id: 'focus',     label: 'Focus',        emoji: '⏱️' },
-  calendar:  { id: 'calendar',  label: 'Calendar',     emoji: '📅' },
-  timeblock: { id: 'timeblock', label: 'Schedule',     emoji: '⏰' },
-  projects:  { id: 'projects',  label: 'Projects',     emoji: '🗂️' },
-  search:    { id: 'search',    label: 'Search',       emoji: '🔍' },
+  today:     { id: 'today',     label: 'Today',        emoji: '☀️',  Icon: Sun },
+  tasks:     { id: 'tasks',     label: 'DailyGoals',   emoji: '🎯', Icon: Target },
+  rhythm:    { id: 'rhythm',    label: 'Daily Rhythm', emoji: '🔁', Icon: Repeat },
+  workouts:  { id: 'workouts',  label: 'Workouts',     emoji: '🏋️', Icon: Dumbbell },
+  insights:  { id: 'insights',  label: 'Insights',     emoji: '📊', Icon: ChartColumn },
+  capture:   { id: 'capture',   label: 'Capture',      emoji: '📥', Icon: Inbox },
+  focus:     { id: 'focus',     label: 'Focus',        emoji: '⏱️', Icon: Timer },
+  calendar:  { id: 'calendar',  label: 'Calendar',     emoji: '📅', Icon: Calendar },
+  timeblock: { id: 'timeblock', label: 'Schedule',     emoji: '⏰', Icon: CalendarClock },
+  projects:  { id: 'projects',  label: 'Projects',     emoji: '🗂️', Icon: FolderKanban },
+  search:    { id: 'search',    label: 'Search',       emoji: '🔍', Icon: Search },
 }
 
 const pick = (...ids) => ids.map(id => NAV_TABS[id])

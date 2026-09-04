@@ -32,7 +32,7 @@ export default function NavCustomizer({ isOpen, onClose, navItems, setSlot, rese
                       : { backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)', color: 'var(--text-muted)' }
                     }
                   >
-                    <span className="text-lg">{mod.emoji}</span>
+                    <mod.Icon size={18} strokeWidth={2} aria-hidden="true" />
                     <span className="text-[9px] font-medium">{mod.label}</span>
                   </button>
                 ))}

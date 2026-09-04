@@ -37,7 +37,7 @@ function NavButton({ t, active, onClick, small }) {
         : { color: small ? 'var(--text-faint)' : 'var(--text-muted)' }
       }
     >
-      <span className="text-sm w-4 text-center">{t.emoji}</span>
+      <t.Icon size={16} strokeWidth={2} className="w-4 flex-shrink-0" aria-hidden="true" />
       {t.label}
     </button>
   )

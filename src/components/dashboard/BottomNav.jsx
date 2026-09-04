@@ -37,10 +37,10 @@ export default function BottomNav({ activeTab, onTabChange, onOpenDrawer }) {
                   />
                 )}
                 <span
-                  className="text-xl leading-none transition-transform duration-150"
+                  className="leading-none transition-transform duration-150"
                   style={{ transform: active ? 'scale(1.15)' : 'scale(1)' }}
                 >
-                  {mod.emoji}
+                  <mod.Icon size={21} strokeWidth={active ? 2.4 : 2} aria-hidden="true" />
                 </span>
                 <span className="text-[10px] font-medium tracking-tight w-full text-center truncate px-0.5"
                   style={{ fontWeight: active ? 600 : 400 }}>
