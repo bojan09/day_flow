@@ -9,6 +9,7 @@ import EmptyState from '../ui/EmptyState'
 import { BOOKMARK_TAGS } from '../../hooks/useBookmarks'
 
 function BookmarkCard({ b, bookmarks }) {
+  const { toast } = useToast()
   const domain = (() => { try { return new URL(b.url).hostname.replace('www.', '') } catch { return b.url } })()
 
   return (

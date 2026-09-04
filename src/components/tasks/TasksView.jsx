@@ -69,6 +69,12 @@ export default function TasksView({ tasks, projects, categories, onAddCategory, 
   const upcomingTasks = filtered.filter(t => !t.completed && t.date > todayKey).sort(byPriority)
   const doneTasks     = filtered.filter(t => t.completed).sort(byPriority)
 
+  // Declared before the synced early-return below: sitting after it changed
+  // the hook count between the skeleton render and the loaded render, which
+  // threw "Rendered more hooks than during the previous render" every time
+  // tasks finished syncing.
+  const handleDelete = useCallback((t) => { tasks.deleteTask(t.id); toast.undo('Task deleted', () => tasks.restoreTask(t)) }, [tasks, toast])
+
   if (!tasks.synced) return <ViewSkeleton type="tasks" />
 
   const overdueCount = tasks.tasks.filter(t => tasks.isOverdue(t)).length
@@ -78,8 +84,6 @@ export default function TasksView({ tasks, projects, categories, onAddCategory, 
     tasks.getTodayTasks().filter(t => !t.completed && !t.isRecurring)
       .forEach(t => tasks.addTask({ ...t, date: tomorrow }))
   }
-
-  const handleDelete = useCallback((t) => { tasks.deleteTask(t.id); toast.undo('Task deleted', () => tasks.restoreTask(t)) }, [tasks, toast])
 
   return (
     <div className="max-w-2xl mx-auto space-y-4 pt-2">
