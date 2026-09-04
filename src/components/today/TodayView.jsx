@@ -11,6 +11,7 @@ import DailyRhythmStrip   from './DailyRhythmStrip'
 import TodayQuickNote     from './TodayQuickNote'
 import WeekStrip          from './WeekStrip'
 import ReflectionPrompt  from '../reflection/ReflectionPrompt'
+import TodayPrinciple    from '../reflection/TodayPrinciple'
 import MoodTracker        from '../insights/MoodTracker'
 import EndOfDayReview     from '../summary/EndOfDayReview'
 import DailyScore         from '../score/DailyScore'
@@ -96,6 +97,9 @@ export default function TodayView({
       {/* Contextual entry into the daily reflection — renders only in the
           morning/evening windows, and only while that half is unfinished */}
       <ReflectionPrompt onTabChange={onTabChange} />
+
+      {/* The morning principle stays present through the day (spec 11) */}
+      <TodayPrinciple notes={notes} />
 
       {/* Smart nudges */}
       <DashboardNudges nudges={adaptive.nudges} onTabChange={onTabChange} />

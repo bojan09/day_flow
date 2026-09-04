@@ -248,7 +248,17 @@ export default function MorningReview({ reflections, tasks, onClose, dateKey = g
     // Save progress as we go, so a closed tab doesn't lose the morning.
     save(draft)
     if (isLast) {
-      completeMorning(draft)
+      // Snapshot the reference that was actually shown. The principle stays
+      // visible through the day (and the record is historical), so it must not
+      // be recomputed later from changed context.
+      completeMorning({
+        ...draft,
+        stoicRef: {
+          id: reference.id, quote: reference.quote, author: reference.author,
+          work: reference.work, section: reference.section ?? null,
+          translation: reference.translation, meaning: reference.meaning ?? '',
+        },
+      })
       // Deliberately does NOT call onClose here. usePersistedState performs its
       // storage write inside the state updater, so unmounting in the same tick
       // drops the write and the morning never records as done. Completing flips
