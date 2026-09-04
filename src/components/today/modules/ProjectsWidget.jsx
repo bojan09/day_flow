@@ -11,7 +11,7 @@ function ProjectsWidget({ projects, tasks, onTabChange }) {
     <div className="px-4 py-3 text-center">
       <p className="text-sm italic" style={{ color: 'var(--text-faint)' }}>No active projects</p>
       <button type="button" onClick={() => onTabChange?.('projects')}
-        className="mt-2 text-xs font-semibold" style={{ color: 'var(--accent)' }}>
+        className="mt-2 text-xs font-semibold" style={{ color: 'var(--accent-text)' }}>
         + New project
       </button>
     </div>
@@ -47,7 +47,7 @@ function ProjectsWidget({ projects, tasks, onTabChange }) {
         )
       })}
       <button type="button" onClick={() => onTabChange?.('projects')}
-        className="text-xs font-medium" style={{ color: 'var(--accent)' }}>
+        className="text-xs font-medium" style={{ color: 'var(--accent-text)' }}>
         View all projects →
       </button>
     </div>

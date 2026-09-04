@@ -47,16 +47,16 @@ export default function MigrationBanner({ userId }) {
       style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)' }}
     >
       {done ? (
-        <p className="text-sm font-medium" style={{ color: 'var(--accent)' }}>
+        <p className="text-sm font-medium" style={{ color: 'var(--accent-text)' }}>
           ✓ Your local data has been synced to your account!
         </p>
       ) : (
         <>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold" style={{ color: 'var(--accent)' }}>
+            <p className="text-sm font-semibold" style={{ color: 'var(--accent-text)' }}>
               Welcome! We found local data
             </p>
-            <p className="text-xs mt-0.5" style={{ color: 'var(--accent)' }}>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--accent-text)' }}>
               Import your existing tasks, notes, and habits so they sync across all devices.
             </p>
           </div>
@@ -72,7 +72,7 @@ export default function MigrationBanner({ userId }) {
             <button
               onClick={dismiss}
               className="text-xs px-2 transition-colors"
-              style={{ color: 'var(--accent)' }}
+              style={{ color: 'var(--accent-text)' }}
             >
               Dismiss
             </button>

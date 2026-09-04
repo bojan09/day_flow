@@ -13,7 +13,7 @@ function Delta({ value, unit = '%' }) {
   return (
     <span
       className="text-[11px] font-semibold flex items-center gap-0.5"
-      style={{ color: positive ? '#10B981' : '#EF4444' }}
+      style={{ color: positive ? 'var(--tone-emerald-text)' : 'var(--tone-red-text)' }}
     >
       {positive ? '↑' : '↓'} {Math.abs(value)}{unit}
     </span>

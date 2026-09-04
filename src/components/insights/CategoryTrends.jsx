@@ -106,7 +106,7 @@ export default function CategoryTrends({ tasks }) {
                   <div key={i} className="text-center">
                     <span
                       className="text-[11px] font-semibold"
-                      style={{ color: w.pct === null ? 'var(--text-faint)' : w.pct >= 80 ? '#10B981' : w.pct >= 50 ? color : '#EF4444' }}
+                      style={{ color: w.pct === null ? 'var(--text-faint)' : w.pct >= 80 ? 'var(--tone-emerald-text)' : w.pct >= 50 ? color : 'var(--tone-red-text)' }}
                     >
                       {w.pct === null ? '—' : `${w.pct}%`}
                     </span>

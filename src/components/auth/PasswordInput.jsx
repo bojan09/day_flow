@@ -43,7 +43,7 @@ export default function PasswordInput({
             type="button"
             onClick={onForgot}
             className="text-[11px] font-medium transition-colors"
-            style={{ color: 'var(--accent)' }}
+            style={{ color: 'var(--accent-text)' }}
           >
             Forgot password?
           </button>

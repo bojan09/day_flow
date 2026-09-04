@@ -19,7 +19,7 @@ export default function TodayQuickNote({ notes }) {
           <button
             onClick={() => addNote({ title: 'Quick note', content: '' })}
             className="text-xs font-medium transition-colors"
-            style={{ color: 'var(--accent)' }}
+            style={{ color: 'var(--accent-text)' }}
           >+ New note</button>
         </div>
       ) : (

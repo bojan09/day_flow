@@ -28,7 +28,7 @@ export default function CollapsibleWidget({
           <span className="text-sm">{emoji}</span>
           <span
             className="text-xs font-semibold uppercase tracking-widest"
-            style={{ color: isPinned ? 'var(--accent)' : 'var(--text-faint)' }}
+            style={{ color: isPinned ? 'var(--accent-text)' : 'var(--text-faint)' }}
           >
             {title}
             {isPinned && <span className="ml-1.5 text-[9px]">📌</span>}
@@ -63,7 +63,7 @@ export default function CollapsibleWidget({
                   <button
                     onClick={() => { onTogglePin(id); setShowMenu(false) }}
                     className="hover-surface w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-left transition-colors"
-                    style={{ color: isPinned ? 'var(--accent)' : 'var(--text-muted)' }}
+                    style={{ color: isPinned ? 'var(--accent-text)' : 'var(--text-muted)' }}
                   >
                     <span>{isPinned ? '📌' : '📍'}</span>
                     {isPinned ? 'Unpin from top' : 'Pin to top'}

@@ -76,7 +76,7 @@ function DailySummaryCard({ tasks, habits, mood, water }) {
   })
 
   const GRADE = taskPct >= 90 ? 'A' : taskPct >= 75 ? 'B' : taskPct >= 60 ? 'C' : taskPct >= 40 ? 'D' : 'F'
-  const GRADE_COLOR = { A: '#3B6B4B', B: '#3B82F6', C: '#F59E0B', D: '#F97316', F: '#EF4444' }
+  const GRADE_TONE = { A: 'sage', B: 'blue', C: 'amber', D: 'orange', F: 'red' }
 
   return (
     <div
@@ -100,13 +100,13 @@ function DailySummaryCard({ tasks, habits, mood, water }) {
         <div
           className="w-14 h-14 rounded-2xl flex items-center justify-center border-2"
           style={{
-            backgroundColor: GRADE_COLOR[GRADE] + '18',
-            borderColor:     GRADE_COLOR[GRADE] + '40',
+            backgroundColor: `var(--tone-${GRADE_TONE[GRADE]}-bg)`,
+            borderColor:     `var(--tone-${GRADE_TONE[GRADE]}-border)`,
           }}
         >
           <span
             className="font-serif text-2xl font-bold"
-            style={{ color: GRADE_COLOR[GRADE] }}
+            style={{ color: `var(--tone-${GRADE_TONE[GRADE]}-text)` }}
           >
             {tasksDone === 0 && habitsTotal === 0 ? '–' : GRADE}
           </span>
@@ -189,7 +189,7 @@ function DailySummaryCard({ tasks, habits, mood, water }) {
                 <span
                   className="text-[9px]"
                   style={{
-                    color:      d.isToday ? 'var(--accent)' : 'var(--text-faint)',
+                    color: d.isToday ? 'var(--accent-text)' : 'var(--text-faint)',
                     fontWeight: d.isToday ? 700 : 400,
                   }}
                 >

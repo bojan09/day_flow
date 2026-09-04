@@ -9,7 +9,7 @@ function ConsistencyRing({ pct, label }) {
   const R    = 32
   const circ = 2 * Math.PI * R
   const dash = (pct / 100) * circ
-  const color = pct >= 80 ? '#3B6B4B' : pct >= 50 ? '#F59E0B' : '#EF4444'
+  const color = pct >= 80 ? 'var(--accent-text)' : pct >= 50 ? 'var(--tone-amber-text)' : 'var(--tone-red-text)'
 
   return (
     <div className="flex flex-col items-center gap-1.5">
@@ -94,7 +94,7 @@ export default function SmartStreakBoard({ habits }) {
       <div className="flex justify-around mb-5">
         <ConsistencyRing pct={data.consistency} label="28-day consistency" />
         <div className="flex flex-col items-center gap-1.5 justify-center">
-          <p className="font-serif text-3xl" style={{ color: 'var(--accent)' }}>{data.maxStreak}</p>
+          <p className="font-serif text-3xl" style={{ color: 'var(--accent-text)' }}>{data.maxStreak}</p>
           <p className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>Best streak</p>
         </div>
         <div className="flex flex-col items-center gap-1.5 justify-center">
@@ -103,7 +103,7 @@ export default function SmartStreakBoard({ habits }) {
           </p>
           <p className="text-xs text-center" style={{ color: 'var(--text-muted)' }}>Recovery streak</p>
           {data.recoveryStreak > 0 && (
-            <p className="text-[10px] text-center" style={{ color: 'var(--accent)' }}>Back on track! 💪</p>
+            <p className="text-[10px] text-center" style={{ color: 'var(--accent-text)' }}>Back on track! 💪</p>
           )}
         </div>
       </div>
@@ -142,7 +142,7 @@ export default function SmartStreakBoard({ habits }) {
             <div key={h.id} className="flex items-center gap-2.5">
               <span className="text-base w-5 flex-shrink-0 text-center">{h.icon}</span>
               <span className="text-xs flex-1 truncate" style={{ color: 'var(--text)' }}>{h.name}</span>
-              <span className="text-xs font-semibold" style={{ color: 'var(--accent)' }}>
+              <span className="text-xs font-semibold" style={{ color: 'var(--accent-text)' }}>
                 🔥 {h.streak}
               </span>
               <span className="text-[10px] w-8 text-right" style={{ color: 'var(--text-faint)' }}>

@@ -3,12 +3,12 @@ import { memo } from 'react'
 // Purpose: Day's report card — score, grade, category breakdown.
 //          Shows an encouraging empty state when nothing has been logged yet.
 const GRADE_COLORS = {
-  'A+': { bg: '#EEF4ED', border: '#A7C9A0', text: '#2A4E36' },
-  'A':  { bg: '#EEF4ED', border: '#A7C9A0', text: '#2A4E36' },
-  'B':  { bg: '#EFF6FF', border: '#BFDBFE', text: '#1D4ED8' },
-  'C':  { bg: '#FFFBEB', border: '#FDE68A', text: '#92400E' },
-  'D':  { bg: '#FFF7ED', border: '#FED7AA', text: '#9A3412' },
-  'F':  { bg: '#FEF2F2', border: '#FECACA', text: '#991B1B' },
+  'A+': { bg: 'var(--tone-sage-bg)', border: 'var(--tone-sage-border)', text: 'var(--tone-sage-text)' },
+  'A':  { bg: 'var(--tone-sage-bg)', border: 'var(--tone-sage-border)', text: 'var(--tone-sage-text)' },
+  'B':  { bg: 'var(--tone-blue-bg)', border: 'var(--tone-blue-border)', text: 'var(--tone-blue-text)' },
+  'C':  { bg: 'var(--tone-amber-bg)', border: 'var(--tone-amber-border)', text: 'var(--tone-amber-text)' },
+  'D':  { bg: 'var(--tone-orange-bg)', border: 'var(--tone-orange-border)', text: 'var(--tone-orange-text)' },
+  'F':  { bg: 'var(--tone-red-bg)', border: 'var(--tone-red-border)', text: 'var(--tone-red-text)' },
 }
 
 const BREAKDOWN_LABELS = {

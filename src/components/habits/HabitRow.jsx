@@ -88,7 +88,7 @@ function HabitRow({ habit, weekDays, isHabitDone, toggleHabitDay, streak, weekly
             <div className="flex items-center gap-1.5 mt-0.5">
               <span className="text-[10px] capitalize flex-shrink-0" style={{ color: 'var(--text-muted)' }}>{freqLabel}</span>
               {streak > 0 && (
-                <span className="text-[10px] font-semibold flex-shrink-0" style={{ color: 'var(--accent)' }}>🔥{streak}</span>
+                <span className="text-[10px] font-semibold flex-shrink-0" style={{ color: 'var(--accent-text)' }}>🔥{streak}</span>
               )}
             </div>
           </div>

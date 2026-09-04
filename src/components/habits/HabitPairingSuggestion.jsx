@@ -35,7 +35,7 @@ export default function HabitPairingSuggestion({ habits, newHabitIcon }) {
   return (
     <div className="flex items-start gap-2.5 p-3 [background-color:var(--accent-light)] border [border-color:var(--border)] rounded-xl">
       <span className="text-base mt-0.5">💡</span>
-      <p className="text-xs [color:var(--accent)] leading-relaxed">{msg}</p>
+      <p className="text-xs [color:var(--accent-text)] leading-relaxed">{msg}</p>
     </div>
   )
 }

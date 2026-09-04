@@ -22,7 +22,7 @@ export default function WelcomeCTA() {
       />
 
       <div className="relative max-w-2xl mx-auto">
-        <p className="text-xs font-medium uppercase tracking-widest [color:var(--accent)] mb-4">
+        <p className="text-xs font-medium uppercase tracking-widest [color:var(--accent-text)] mb-4">
           Free forever
         </p>
         <h2
@@ -30,7 +30,7 @@ export default function WelcomeCTA() {
           style={{ color: 'var(--text)' }}
         >
           Ready to take back<br />
-          <em className="not-italic [color:var(--accent)]">your days?</em>
+          <em className="not-italic [color:var(--accent-text)]">your days?</em>
         </h2>
         <p className="mb-10 text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
           No credit card. No lock-in. Your data stays private.

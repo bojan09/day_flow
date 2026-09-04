@@ -21,7 +21,7 @@ export default function UserMenu({ onOpenSettings }) {
       >
         <div
           className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0"
-          style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent)' }}
+          style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent-text)' }}
         >
           D
         </div>

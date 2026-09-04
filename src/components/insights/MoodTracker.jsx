@@ -50,7 +50,7 @@ export default function MoodTracker({ mood }) {
               <span className="text-2xl leading-none">{m.emoji}</span>
               <span
                 className="text-[10px] font-medium"
-                style={{ color: active ? 'var(--accent)' : 'var(--text-faint)' }}
+                style={{ color: active ? 'var(--accent-text)' : 'var(--text-faint)' }}
               >{m.label}</span>
             </button>
           )
@@ -70,7 +70,7 @@ export default function MoodTracker({ mood }) {
           <button
             onClick={() => setSaved(false)}
             className="text-xs"
-            style={{ color: 'var(--accent)' }}
+            style={{ color: 'var(--accent-text)' }}
           >Edit</button>
         </div>
       )}

@@ -62,7 +62,7 @@ export default function CommandPalette({ isOpen, onClose, onNavigate, onCapture 
           {matches.length === 0 && query.trim() && (
             <button onClick={handleCapture} disabled={capturing}
               className="w-full text-left px-5 py-3 text-sm disabled:opacity-50"
-              style={{ color: 'var(--accent)' }}>
+              style={{ color: 'var(--accent-text)' }}>
               {capturing ? 'Capturing…' : `✨ Capture "${query.trim()}"`}
             </button>
           )}

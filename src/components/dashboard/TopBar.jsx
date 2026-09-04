@@ -31,7 +31,7 @@ export default function TopBar({ activeTab, onTabChange, theme, onSetTheme }) {
         className="md:hidden font-serif text-xl leading-none flex-shrink-0"
         style={{ color: 'var(--text)' }}
       >
-        Day<em className="not-italic [color:var(--accent)]">Flow</em>
+        Day<em className="not-italic [color:var(--accent-text)]">Flow</em>
       </button>
 
       {/* Title + date */}

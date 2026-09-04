@@ -23,7 +23,7 @@ export default function RepeatingItemRow({ item, onTogglePause, onEdit, onStop }
           {paused && <Badge label="paused" color="default" />}
         </div>
         <div className="flex items-center gap-2 mt-1 flex-wrap text-[11px]" style={{ color: 'var(--text-muted)' }}>
-          <span className="font-medium" style={{ color: 'var(--accent)' }}>{item.frequency}</span>
+          <span className="font-medium" style={{ color: 'var(--accent-text)' }}>{item.frequency}</span>
           <span>· {item.scheduleLabel}</span>
           {item.nextOccurrence && <span>· next {item.nextOccurrence}</span>}
           {item.endDate && <span>· ends {item.endDate}</span>}

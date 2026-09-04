@@ -34,7 +34,7 @@ export default function TaskTemplates({ templates, tasks }) {
           <p className="text-xs font-medium uppercase tracking-wider [color:var(--text-faint)]">📋 Task Templates</p>
           {todayTasks.length > 0 && (
             <button onClick={() => setModal(true)}
-              className="text-xs [color:var(--accent)] hover:[color:var(--accent)] font-medium transition-colors">
+              className="text-xs [color:var(--accent-text)] hover:[color:var(--accent-text)] font-medium transition-colors">
               Save today's tasks →
             </button>
           )}
@@ -67,7 +67,7 @@ export default function TaskTemplates({ templates, tasks }) {
                 ) : (
                   <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button onClick={() => setApplyId(tmpl.id)}
-                      className="text-[10px] px-2.5 py-1 rounded-full [background-color:var(--accent-light)] [color:var(--accent)] border [border-color:var(--accent-mid)] hover:[background-color:var(--accent-light)] transition-colors">
+                      className="text-[10px] px-2.5 py-1 rounded-full [background-color:var(--accent-light)] [color:var(--accent-text)] border [border-color:var(--accent-mid)] hover:[background-color:var(--accent-light)] transition-colors">
                       Apply
                     </button>
                     <button onClick={() => templates.deleteTemplate(tmpl.id)} aria-label="Delete template"

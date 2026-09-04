@@ -24,14 +24,14 @@ function IdeasWidget({ ideas, onTabChange }) {
               {i.title}
             </span>
             <span className="text-[10px] px-1.5 py-0.5 rounded-full flex-shrink-0"
-              style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent)' }}>
+              style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent-text)' }}>
               {i.category || 'Idea'}
             </span>
           </button>
         ))
       )}
       <button type="button" onClick={() => onTabChange?.('ideas')}
-        className="text-xs font-medium pt-1" style={{ color: 'var(--accent)' }}>
+        className="text-xs font-medium pt-1" style={{ color: 'var(--accent-text)' }}>
         View all ideas →
       </button>
     </div>

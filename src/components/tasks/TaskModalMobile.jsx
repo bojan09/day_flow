@@ -12,7 +12,7 @@ export default function TaskModalMobile({ detailsContent, subtasksContent }) {
             className="px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors"
             style={{
               borderColor: tab === id ? 'var(--accent)' : 'transparent',
-              color: tab === id ? 'var(--accent)' : 'var(--text-muted)',
+              color: tab === id ? 'var(--accent-text)' : 'var(--text-muted)',
             }}>
             {label}
           </button>

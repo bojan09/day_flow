@@ -35,7 +35,7 @@ function NotesWidget({ notes, onTabChange }) {
         ))
       )}
       <button type="button" onClick={() => onTabChange?.('notes')}
-        className="text-xs font-medium pt-1" style={{ color: 'var(--accent)' }}>
+        className="text-xs font-medium pt-1" style={{ color: 'var(--accent-text)' }}>
         View all notes →
       </button>
     </div>

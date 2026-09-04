@@ -12,7 +12,7 @@ const ESTIMATES  = [null, 15, 30, 45, 60, 90, 120]
 const PRIORITY_STYLES = {
   high:   'bg-red-50 border-red-300 text-red-600',
   medium: 'bg-amber-50 border-amber-300 text-amber-600',
-  low:    '[background-color:var(--accent-light)] [border-color:var(--accent-mid)] [color:var(--accent)]',
+  low:    '[background-color:var(--accent-light)] [border-color:var(--accent-mid)] [color:var(--accent-text)]',
 }
 
 export default function TaskForm({

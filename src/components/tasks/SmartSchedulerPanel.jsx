@@ -191,7 +191,7 @@ Rules:
                   const bold = line.match(/^\*\*(.+?):\*\*(.*)/)
                   if (bold) return (
                     <p key={i} className="mb-2 last:mb-0">
-                      <strong style={{ color: 'var(--accent)' }}>{bold[1]}:</strong>
+                      <strong style={{ color: 'var(--accent-text)' }}>{bold[1]}:</strong>
                       {bold[2]}
                     </p>
                   )
@@ -239,7 +239,7 @@ Rules:
                       style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg)' }}
                     >
                       <p className="text-sm font-medium" style={{ color: 'var(--text)' }}>
-                        {target?.title || 'Task'} → <span style={{ color: 'var(--accent)' }}>{s.suggestedDate}</span>
+                        {target?.title || 'Task'} → <span style={{ color: 'var(--accent-text)' }}>{s.suggestedDate}</span>
                       </p>
                       {s.reason && (
                         <p className="text-xs mt-0.5" style={{ color: 'var(--text-faint)' }}>{s.reason}</p>

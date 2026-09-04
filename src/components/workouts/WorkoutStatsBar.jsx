@@ -6,7 +6,7 @@ export default function WorkoutStatsBar({ workouts }) {
   const pbs      = workouts.getPersonalBests().length
 
   const stats = [
-    { label: 'This week',      value: thisWeek, sub: 'sessions', color: 'var(--accent)'  },
+    { label: 'This week',      value: thisWeek, sub: 'sessions', color: 'var(--accent-text)'  },
     { label: 'All time',       value: total,    sub: 'logged',   color: 'var(--text)'    },
     { label: 'Personal bests', value: pbs,      sub: 'tracked',  color: '#C4622D'        },
   ]

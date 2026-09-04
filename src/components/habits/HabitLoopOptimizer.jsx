@@ -127,7 +127,7 @@ Rules:
         )}
 
         {context.problemHabits.length === 0 && !output && (
-          <p className="text-xs mt-2 font-medium" style={{ color: '#10B981' }}>
+          <p className="text-xs mt-2 font-medium" style={{ color: 'var(--tone-emerald-text)' }}>
             ✓ All habits above 60% — performing well!
           </p>
         )}
@@ -172,7 +172,7 @@ Rules:
                   const bold = line.match(/^\*\*(.+?):\*\*(.*)/)
                   if (bold) return (
                     <p key={i} className="mb-2">
-                      <strong style={{ color: 'var(--accent)' }}>{bold[1]}:</strong>{bold[2]}
+                      <strong style={{ color: 'var(--accent-text)' }}>{bold[1]}:</strong>{bold[2]}
                     </p>
                   )
                   const why = line.match(/^Why: (.+)/)

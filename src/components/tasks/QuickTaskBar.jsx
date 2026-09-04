@@ -61,7 +61,7 @@ export default function QuickTaskBar({ tasks, onAdded }) {
     inputRef.current?.focus()
   }
 
-  const PRIORITY_COLORS = { high: '#ef4444', medium: '#f59e0b', low: '#22c55e' }
+  const PRIORITY_TONE = { high: 'red', medium: 'amber', low: 'emerald' }
 
   return (
     <div
@@ -127,8 +127,8 @@ export default function QuickTaskBar({ tasks, onAdded }) {
               <span
                 className="text-[10px] px-2 py-0.5 rounded-full font-medium capitalize"
                 style={{
-                  backgroundColor: PRIORITY_COLORS[hint.priority] + '18',
-                  color:           PRIORITY_COLORS[hint.priority],
+                  backgroundColor: `var(--tone-${PRIORITY_TONE[hint.priority] || 'amber'}-bg)`,
+                  color:           `var(--tone-${PRIORITY_TONE[hint.priority] || 'amber'}-text)`,
                 }}
               >
                 {hint.priority}
@@ -137,7 +137,7 @@ export default function QuickTaskBar({ tasks, onAdded }) {
             {hint.category && (
               <span
                 className="text-[10px] px-2 py-0.5 rounded-full font-medium"
-                style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent)' }}
+                style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent-text)' }}
               >
                 {hint.category}
               </span>

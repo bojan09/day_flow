@@ -216,7 +216,7 @@ export default function WorkoutForm({ initial, sessions = [], onSubmit, onCancel
               type="button"
               onClick={() => setAddingType(true)}
               className="hover-accent-soft px-3 py-1.5 rounded-full text-xs font-medium transition-all border border-dashed"
-              style={{ borderColor: 'var(--accent-mid)', color: 'var(--accent)' }}
+              style={{ borderColor: 'var(--accent-mid)', color: 'var(--accent-text)' }}
             >
               + Custom
             </button>
@@ -289,7 +289,7 @@ export default function WorkoutForm({ initial, sessions = [], onSubmit, onCancel
               key={mg} type="button" onClick={() => toggleMuscle(mg)}
               className="px-3 py-1.5 rounded-full text-xs font-medium transition-all border"
               style={form.muscleGroups.includes(mg)
-                ? { backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent)', color: 'var(--accent)' }
+                ? { backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent)', color: 'var(--accent-text)' }
                 : { borderColor: 'var(--border)', color: 'var(--text-muted)' }
               }
             >
@@ -365,7 +365,7 @@ export default function WorkoutForm({ initial, sessions = [], onSubmit, onCancel
             <button
               type="button" onClick={() => addSet(ex.id)}
               className="text-xs font-medium mt-1"
-              style={{ color: 'var(--accent)' }}
+              style={{ color: 'var(--accent-text)' }}
             >
               + Add set
             </button>

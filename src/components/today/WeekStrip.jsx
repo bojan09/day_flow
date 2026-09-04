@@ -41,7 +41,7 @@ function WeekStrip() {
         <button
           onClick={() => { setWeekOffset(0); setSelected(new Date()) }}
           className="text-xs font-medium transition-colors"
-          style={{ color: weekOffset === 0 ? 'var(--accent)' : 'var(--text-faint)' }}
+          style={{ color: weekOffset === 0 ? 'var(--accent-text)' : 'var(--text-faint)' }}
         >
           {weekOffset === 0 ? 'This week' : format(baseDate, 'MMM d')}
         </button>
@@ -71,7 +71,7 @@ function WeekStrip() {
               style={active
                 ? { backgroundColor: 'var(--accent)', color: 'white' }
                 : todayDay
-                ? { backgroundColor: 'var(--accent-light)', color: 'var(--accent)', border: '1px solid var(--accent-mid)' }
+                ? { backgroundColor: 'var(--accent-light)', color: 'var(--accent-text)', border: '1px solid var(--accent-mid)' }
                 : { backgroundColor: 'transparent', color: 'var(--text-muted)' }
               }
             >

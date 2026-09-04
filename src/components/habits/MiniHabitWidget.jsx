@@ -25,7 +25,7 @@ export default function MiniHabitWidget({ habits }) {
               style={{ width: `${pct}%`, backgroundColor: 'var(--accent)' }}
             />
           </div>
-          <span className="text-xs font-semibold" style={{ color: pct === 100 ? 'var(--accent)' : 'var(--text-faint)' }}>
+          <span className="text-xs font-semibold" style={{ color: pct === 100 ? 'var(--accent-text)' : 'var(--text-faint)' }}>
             {pct}%
           </span>
         </div>
@@ -58,7 +58,7 @@ export default function MiniHabitWidget({ habits }) {
               </div>
               <span
                 className="text-[9px] font-medium text-center leading-tight max-w-[52px] truncate"
-                style={{ color: done ? 'var(--accent)' : 'var(--text-faint)' }}
+                style={{ color: done ? 'var(--accent-text)' : 'var(--text-faint)' }}
               >
                 {h.name}
               </span>
@@ -69,7 +69,7 @@ export default function MiniHabitWidget({ habits }) {
 
       {/* All done celebration */}
       {pct === 100 && (
-        <p className="text-xs font-medium text-center mt-3" style={{ color: 'var(--accent)' }}>
+        <p className="text-xs font-medium text-center mt-3" style={{ color: 'var(--accent-text)' }}>
           🎉 All habits done today!
         </p>
       )}

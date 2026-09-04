@@ -18,7 +18,7 @@ export default function EnergyCheckIn({ energy }) {
           <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
             Peak energy: <span className="font-semibold" style={{ color: 'var(--text)' }}>{win?.label} ({win?.hours})</span>
           </p>
-          {suggestion && <p className="text-xs italic mt-0.5" style={{ color: 'var(--accent)' }}>{suggestion}</p>}
+          {suggestion && <p className="text-xs italic mt-0.5" style={{ color: 'var(--accent-text)' }}>{suggestion}</p>}
         </div>
         <button
           onClick={() => energy.setTodayEnergy(null)}

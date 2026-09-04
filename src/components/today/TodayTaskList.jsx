@@ -100,7 +100,7 @@ function TodayTaskList({ tasks }) {
           type="submit"
           disabled={!newTitle.trim()}
           className="text-sm font-semibold transition-colors disabled:opacity-30 min-w-[44px] min-h-[44px]"
-          style={{ color: 'var(--accent)' }}
+          style={{ color: 'var(--accent-text)' }}
         >Add</button>
       </form>
     </div>

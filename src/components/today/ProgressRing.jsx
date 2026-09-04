@@ -75,7 +75,7 @@ function ProgressRing({ tasks, habits }) {
             label: 'Tasks',
             val:   `${taskDone} / ${taskTotal}`,
             pct:   taskTotal > 0 ? (taskDone / taskTotal) * 100 : 0,
-            color: 'var(--accent)',
+            color: 'var(--accent-text)',
           },
           {
             label: 'Habits',

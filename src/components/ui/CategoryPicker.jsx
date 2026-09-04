@@ -6,14 +6,14 @@ import { DEFAULT_CATEGORIES } from '../../hooks/useCustomCategories'
 
 // Colour map for defaults — custom categories fall back to a neutral style
 const DEFAULT_COLORS = {
-  Work:     { bg: '#EFF6FF', border: '#BFDBFE', text: '#1D4ED8' },
-  Personal: { bg: '#EEF4ED', border: '#A7C9A0', text: '#2A4E36' },
-  Health:   { bg: '#F0FDF4', border: '#BBF7D0', text: '#166534' },
-  Learning: { bg: '#F5F3FF', border: '#DDD6FE', text: '#5B21B6' },
-  Finance:  { bg: '#FFFBEB', border: '#FDE68A', text: '#92400E' },
+  Work:     { bg: 'var(--tone-blue-bg)', border: 'var(--tone-blue-border)', text: 'var(--tone-blue-text)' },
+  Personal: { bg: 'var(--tone-sage-bg)', border: 'var(--tone-sage-border)', text: 'var(--tone-sage-text)' },
+  Health:   { bg: 'var(--tone-emerald-bg)', border: 'var(--tone-emerald-border)', text: 'var(--tone-emerald-text)' },
+  Learning: { bg: 'var(--tone-violet-bg)', border: 'var(--tone-violet-border)', text: 'var(--tone-violet-text)' },
+  Finance:  { bg: 'var(--tone-amber-bg)', border: 'var(--tone-amber-border)', text: 'var(--tone-amber-text)' },
   Other:    { bg: 'var(--bg-secondary)', border: 'var(--border)', text: 'var(--text-muted)' },
 }
-const CUSTOM_COLOR = { bg: '#FFF0F6', border: '#FBCFE8', text: '#9D174D' }
+const CUSTOM_COLOR = { bg: 'var(--tone-pink-bg)', border: 'var(--tone-pink-border)', text: 'var(--tone-pink-text)' }
 
 function getCategoryStyle(cat, isSelected) {
   const base = DEFAULT_COLORS[cat] || CUSTOM_COLOR
@@ -95,7 +95,7 @@ export default function CategoryPicker({ value, onChange, categories, onAddCateg
             type="button"
             onClick={() => setAdding(true)}
             className="hover-accent-soft px-3 py-1.5 rounded-full text-xs font-medium transition-all border border-dashed"
-            style={{ borderColor: 'var(--accent-mid)', color: 'var(--accent)' }}
+            style={{ borderColor: 'var(--accent-mid)', color: 'var(--accent-text)' }}
           >
             + Custom
           </button>

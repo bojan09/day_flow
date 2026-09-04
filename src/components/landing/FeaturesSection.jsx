@@ -5,7 +5,7 @@ import { FEATURES } from '../../utils/constants'
 export default function FeaturesSection() {
   return (
     <section id="features" className="py-24 px-5 max-w-5xl mx-auto">
-      <p className="text-xs font-medium uppercase tracking-widest text-center mb-3 [color:var(--accent)]">Features</p>
+      <p className="text-xs font-medium uppercase tracking-widest text-center mb-3 [color:var(--accent-text)]">Features</p>
       <h2 className="font-serif text-4xl sm:text-5xl text-center leading-tight tracking-tight mb-4 text-balance"
         style={{ color: 'var(--text)' }}>
         Everything you need.<br />Nothing you don't.

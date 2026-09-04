@@ -23,7 +23,7 @@ export default function NLPTaskInput({ onAdd }) {
     setPreview(null)
   }
 
-  const PRIORITY_COLORS = { high: 'text-red-500', medium: 'text-amber-500', low: '[color:var(--accent)]' }
+  const PRIORITY_COLORS = { high: 'text-red-500', medium: 'text-amber-500', low: '[color:var(--accent-text)]' }
 
   return (
     <div className="space-y-2">

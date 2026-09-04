@@ -78,7 +78,7 @@ export default function CalendarView({ tasks, categories, onAddCategory, onRemov
                   active   ? '[background-color:var(--accent-light)] border [border-color:var(--accent-mid)]' :
                              'hover:[background-color:var(--bg-secondary)]'
                 }`}>
-                <span className={`text-sm font-medium ${selected ? 'text-white' : active ? '[color:var(--accent)]' : '[color:var(--text)]'}`}>
+                <span className={`text-sm font-medium ${selected ? 'text-white' : active ? '[color:var(--accent-text)]' : '[color:var(--text)]'}`}>
                   {format(day, 'd')}
                 </span>
                 {/* Category dots */}

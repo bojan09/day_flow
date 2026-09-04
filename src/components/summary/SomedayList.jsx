@@ -28,7 +28,7 @@ export default function SomedayList({ someday, tasks }) {
           placeholder="Capture an idea for later..."
           className="flex-1 text-sm bg-transparent outline-none [color:var(--text)] [placeholder-color:var(--text-faint)]" />
         <button type="submit" disabled={!input.trim()}
-          className="text-xs [color:var(--accent)] font-medium disabled:opacity-30 hover:[color:var(--accent)] transition-colors">
+          className="text-xs [color:var(--accent-text)] font-medium disabled:opacity-30 hover:[color:var(--accent-text)] transition-colors">
           Add
         </button>
       </form>
@@ -51,7 +51,7 @@ export default function SomedayList({ someday, tasks }) {
             <button
               onClick={() => handleSchedule(item.id)}
               title="Schedule this task"
-              className="text-[10px] px-2 py-1 rounded-full [background-color:var(--accent-light)] [color:var(--accent)] border [border-color:var(--accent-mid)] hover:[background-color:var(--accent-light)] transition-colors flex-shrink-0 opacity-0 group-hover:opacity-100"
+              className="text-[10px] px-2 py-1 rounded-full [background-color:var(--accent-light)] [color:var(--accent-text)] border [border-color:var(--accent-mid)] hover:[background-color:var(--accent-light)] transition-colors flex-shrink-0 opacity-0 group-hover:opacity-100"
             >
               Schedule →
             </button>
@@ -67,7 +67,7 @@ export default function SomedayList({ someday, tasks }) {
           placeholder="Add another idea..."
           className="flex-1 text-sm bg-transparent outline-none [color:var(--text)] [placeholder-color:var(--text-faint)]" />
         <button type="submit" disabled={!input.trim()}
-          className="text-xs [color:var(--accent)] font-medium disabled:opacity-30 hover:[color:var(--accent)] transition-colors">
+          className="text-xs [color:var(--accent-text)] font-medium disabled:opacity-30 hover:[color:var(--accent-text)] transition-colors">
           Add
         </button>
       </form>

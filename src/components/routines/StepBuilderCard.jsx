@@ -6,7 +6,7 @@ export default function StepBuilderCard({ step, index, total, onChange, onMoveUp
   return (
     <div className="rounded-xl p-3" style={{ backgroundColor: 'var(--accent-light)' }}>
       <div className="flex items-center gap-2">
-        <span className="text-xs font-semibold flex-shrink-0" style={{ color: 'var(--accent)' }}>{index + 1}.</span>
+        <span className="text-xs font-semibold flex-shrink-0" style={{ color: 'var(--accent-text)' }}>{index + 1}.</span>
         <input
           value={step.text}
           onChange={e => onChange({ ...step, text: e.target.value })}

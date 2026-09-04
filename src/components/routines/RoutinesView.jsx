@@ -89,14 +89,14 @@ export default function RoutinesView({ routines }) {
                 style={{
                   backgroundColor: pct === 100 ? 'var(--accent-light)' : 'var(--surface)',
                   borderColor:     pct === 100 ? 'var(--accent-mid)'   : 'var(--border)',
-                  color:           pct === 100 ? 'var(--accent)'       : 'var(--text-muted)',
+                  color: pct === 100 ? 'var(--accent-text)'       : 'var(--text-muted)',
                 }}
               >
                 <span>{r.emoji}</span>
                 <span>{r.name}</span>
                 {pct === 100 && <span>✓</span>}
                 {pct > 0 && pct < 100 && (
-                  <span style={{ color: 'var(--accent)' }}>{pct}%</span>
+                  <span style={{ color: 'var(--accent-text)' }}>{pct}%</span>
                 )}
               </div>
             )

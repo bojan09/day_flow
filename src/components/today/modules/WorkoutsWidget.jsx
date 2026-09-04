@@ -29,7 +29,7 @@ function WorkoutsWidget({ workouts, onTabChange }) {
       {todaySess.length === 0 ? (
         <button type="button" onClick={() => onTabChange?.('workouts')}
           className="w-full py-2.5 rounded-xl border text-xs font-semibold transition-all"
-          style={{ borderColor: 'var(--accent-mid)', color: 'var(--accent)', backgroundColor: 'var(--accent-light)' }}>
+          style={{ borderColor: 'var(--accent-mid)', color: 'var(--accent-text)', backgroundColor: 'var(--accent-light)' }}>
           🏋️ Log today's workout
         </button>
       ) : (
@@ -43,7 +43,7 @@ function WorkoutsWidget({ workouts, onTabChange }) {
             </div>
           ))}
           <button type="button" onClick={() => onTabChange?.('workouts')}
-            className="text-xs font-medium" style={{ color: 'var(--accent)' }}>
+            className="text-xs font-medium" style={{ color: 'var(--accent-text)' }}>
             View workouts →
           </button>
         </div>

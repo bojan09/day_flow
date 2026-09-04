@@ -111,7 +111,7 @@ export default function VoiceJournal({ notes }) {
       ) : saved ? (
         <div className="text-center py-4">
           <p className="text-2xl mb-2">✓</p>
-          <p className="text-sm font-medium" style={{ color: 'var(--accent)' }}>Saved to notes!</p>
+          <p className="text-sm font-medium" style={{ color: 'var(--accent-text)' }}>Saved to notes!</p>
         </div>
       ) : (
         <div className="space-y-4">

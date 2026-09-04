@@ -30,7 +30,7 @@ function HabitCard({ habit, doneToday, last7, onToggleToday, streak, frequencyLa
               <span className="text-[10px] capitalize flex-shrink-0" style={{ color: 'var(--text-muted)' }}>{frequencyLabel}</span>
             )}
             {streak > 0 && (
-              <span className="text-[10px] font-semibold flex-shrink-0" style={{ color: 'var(--accent)' }}>🔥{streak}</span>
+              <span className="text-[10px] font-semibold flex-shrink-0" style={{ color: 'var(--accent-text)' }}>🔥{streak}</span>
             )}
           </div>
         </div>

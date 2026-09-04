@@ -5,7 +5,7 @@ import PomodoroReport from '../pomodoro/PomodoroReport'
 import { usePomodoroHistory } from '../../hooks/usePomodoroHistory'
 
 const MODES = [
-  { id: 'focus', label: 'Focus',       mins: 25, color: '[color:var(--accent)]'  },
+  { id: 'focus', label: 'Focus',       mins: 25, color: '[color:var(--accent-text)]'  },
   { id: 'short', label: 'Short Break', mins: 5,  color: 'text-blue-500'   },
   { id: 'long',  label: 'Long Break',  mins: 15, color: 'text-violet-500' },
 ]

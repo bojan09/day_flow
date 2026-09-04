@@ -167,7 +167,7 @@ export default function AuthPage() {
             className="font-serif text-3xl hover:opacity-80 transition-opacity"
             style={{ color: 'var(--text)' }}
           >
-            Day<em className="not-italic [color:var(--accent)]">Flow</em>
+            Day<em className="not-italic [color:var(--accent-text)]">Flow</em>
           </button>
           <p className="text-sm mt-1.5" style={{ color: 'var(--text-faint)' }}>{subtitle}</p>
         </div>
@@ -221,7 +221,7 @@ export default function AuthPage() {
           {isUpdatePassword && (
             <div
               className="mb-5 px-4 py-3 rounded-xl border"
-              style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', color: 'var(--accent)' }}
+              style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', color: 'var(--accent-text)' }}
             >
               <p className="text-sm font-medium">🔑 Choose your new password</p>
             </div>
@@ -295,7 +295,7 @@ export default function AuthPage() {
             {success && (
               <div
                 className="flex items-start gap-2.5 px-4 py-3 rounded-xl border animate-fade-in"
-                style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', color: 'var(--accent)' }}
+                style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', color: 'var(--accent-text)' }}
               >
                 <span className="text-sm flex-shrink-0 mt-0.5">✓</span>
                 <div className="flex-1">
@@ -307,7 +307,7 @@ export default function AuthPage() {
                       onClick={handleResendVerification}
                       disabled={loading}
                       className="text-xs font-semibold mt-2 underline underline-offset-2 transition-opacity disabled:opacity-50"
-                      style={{ color: 'var(--accent)' }}
+                      style={{ color: 'var(--accent-text)' }}
                     >
                       Resend verification email
                     </button>
@@ -364,7 +364,7 @@ export default function AuthPage() {
                   type="button"
                   onClick={() => switchMode(mode === MODES.signup ? MODES.signin : MODES.signup)}
                   className="font-medium transition-colors"
-                  style={{ color: 'var(--accent)' }}
+                  style={{ color: 'var(--accent-text)' }}
                 >
                   {mode === MODES.signup ? 'Sign in' : 'Create a free account'}
                 </button>

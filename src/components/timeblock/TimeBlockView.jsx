@@ -185,7 +185,7 @@ export default function TimeBlockView({ tasks }) {
                         <button
                           onClick={() => editCustomEntry(hour)}
                           className="opacity-0 group-hover/entry:opacity-100 text-[10px] transition-opacity"
-                          style={{ color: 'var(--accent)' }}
+                          style={{ color: 'var(--accent-text)' }}
                         >✏️</button>
                         <button
                           onClick={() => removeCustomEntry(hour)}
@@ -209,7 +209,7 @@ export default function TimeBlockView({ tasks }) {
                           }}
                           onBlur={() => saveEditedEntry(hour)}
                         />
-                        <button onClick={() => saveEditedEntry(hour)} className="text-[10px] font-semibold" style={{ color: 'var(--accent)' }}>Save</button>
+                        <button onClick={() => saveEditedEntry(hour)} className="text-[10px] font-semibold" style={{ color: 'var(--accent-text)' }}>Save</button>
                       </div>
                     )}
 
@@ -237,7 +237,7 @@ export default function TimeBlockView({ tasks }) {
                             if (e.key === 'Escape') { setAddingTo(null); setEntryText('') }
                           }}
                         />
-                        <button onClick={() => addCustomEntry(hour)} className="text-[10px] font-semibold" style={{ color: 'var(--accent)' }}>Add</button>
+                        <button onClick={() => addCustomEntry(hour)} className="text-[10px] font-semibold" style={{ color: 'var(--accent-text)' }}>Add</button>
                         <button aria-label="Cancel" onClick={() => { setAddingTo(null); setEntryText('') }} className="tap-target text-[10px]" style={{ color: 'var(--text-faint)' }}>✕</button>
                       </div>
                     )}

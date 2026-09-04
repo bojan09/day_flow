@@ -13,8 +13,8 @@
     --border:         #E8E5E0;
     --border-soft:    #F0EDE8;
     --text:           #1A1A1A;
-    --text-muted:     #737373;
-    --text-faint:     #726C63;
+    --text-muted:     #6B6B6B;
+    --text-faint:     #6B655C;
     --accent:         #2F5C3E;
     --accent-light:   #EAF2E8;
     --accent-mid:     #9BC093;
@@ -22,6 +22,29 @@
     --shadow-card:    0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.04);
     --shadow-hover:   0 4px 16px rgba(0,0,0,0.08);
     --shadow-modal:   0 20px 60px rgba(0,0,0,0.18);
+
+    /* Semantic tones — category pills, grade badges, status chips.
+       These were hardcoded hex literals duplicated across seven components,
+       which meant every one of them stayed light-mode-only: in dark mode they
+       rendered as bright blocks, and where the text colour was inherited
+       rather than set, near-white on near-white. Defined per theme so the
+       components can stop caring. */
+    --tone-sage-bg:      #EEF4ED;  --tone-sage-border:   #A7C9A0;  --tone-sage-text:   #2A4E36;
+    --tone-blue-bg:      #EFF6FF;  --tone-blue-border:   #BFDBFE;  --tone-blue-text:   #1D4ED8;
+    --tone-amber-bg:     #FFFBEB;  --tone-amber-border:  #FDE68A;  --tone-amber-text:  #92400E;
+    --tone-orange-bg:    #FFF7ED;  --tone-orange-border: #FED7AA;  --tone-orange-text: #9A3412;
+    --tone-red-bg:       #FEF2F2;  --tone-red-border:    #FECACA;  --tone-red-text:    #991B1B;
+    --tone-violet-bg:    #F5F3FF;  --tone-violet-border: #DDD6FE;  --tone-violet-text: #5B21B6;
+    --tone-pink-bg:      #FFF0F6;  --tone-pink-border:   #FBCFE8;  --tone-pink-text:   #9D174D;
+    --tone-emerald-bg:   #F0FDF4;  --tone-emerald-border:#BBF7D0;  --tone-emerald-text:#166534;
+    --tone-sky-bg:       #E0F2FE;  --tone-sky-border:    #BAE6FD;  --tone-sky-text:    #0C4A6E;
+    --tone-yellow-bg:    #FEF9C3;  --tone-yellow-border: #FDE68A;  --tone-yellow-text: #713F12;
+
+    /* Accent used as TEXT anywhere — nav labels, links, the logo, and chips on
+       --accent-light. Kept separate from --accent because that one has to stay
+       dark enough to carry white button text, which makes it too dark to read
+       as text on a dark surface (3.3:1). */
+    --accent-text:       #2F5C3E;
   }
 
   /* ── Dark theme — warm charcoal, not cold grey ── */
@@ -42,6 +65,23 @@
     --shadow-card:    0 1px 4px rgba(0,0,0,0.25), 0 1px 2px rgba(0,0,0,0.15);
     --shadow-hover:   0 4px 20px rgba(0,0,0,0.45);
     --shadow-modal:   0 24px 64px rgba(0,0,0,0.6), 0 4px 16px rgba(0,0,0,0.3);
+
+    /* Dark tones: deep tinted surface, light readable text — all pairings
+       clear WCAG AA (4.5:1) for body text. */
+    --tone-sage-bg:      #17301F;  --tone-sage-border:   #2C5A3C;  --tone-sage-text:   #8FCBA3;
+    --tone-blue-bg:      #16233A;  --tone-blue-border:   #1E3A5F;  --tone-blue-text:   #9DC6FB;
+    --tone-amber-bg:     #2A2113;  --tone-amber-border:  #4A3A1A;  --tone-amber-text:  #F2C75C;
+    --tone-orange-bg:    #2E1D12;  --tone-orange-border: #4F3018;  --tone-orange-text: #F5B27A;
+    --tone-red-bg:       #2A1616;  --tone-red-border:    #4A2020;  --tone-red-text:    #F1A0A0;
+    --tone-violet-bg:    #211A33;  --tone-violet-border: #3B2E5A;  --tone-violet-text: #C3B4F5;
+    --tone-pink-bg:      #2C1622;  --tone-pink-border:   #4A2438;  --tone-pink-text:   #F2A2C6;
+    --tone-emerald-bg:   #12291D;  --tone-emerald-border:#1F4433;  --tone-emerald-text:#7FDCAE;
+    --tone-sky-bg:       #12232E;  --tone-sky-border:    #1C3A4E;  --tone-sky-text:    #86CFF0;
+    --tone-yellow-bg:    #292411;  --tone-yellow-border: #463D18;  --tone-yellow-text: #EBD275;
+
+    /* Lighter than --accent: reads on both the dark surfaces (7.8:1) and
+       --accent-light (6.7:1), where --accent itself managed only 3.3:1. */
+    --accent-text:       #7FC08F;
   }
 
   /* ── Forest theme ── */
@@ -62,6 +102,21 @@
     --shadow-card:    0 1px 3px rgba(42,74,54,0.06);
     --shadow-hover:   0 4px 16px rgba(42,74,54,0.12);
     --shadow-modal:   0 20px 60px rgba(26,42,26,0.2);
+
+    /* Forest is a light theme, so it reuses the light tones; only the sage one
+       is warmed slightly to sit against the greener surfaces. */
+    --tone-sage-bg:      #DFEEDD;  --tone-sage-border:   #9BC093;  --tone-sage-text:   #23482F;
+    --tone-blue-bg:      #E7F1FB;  --tone-blue-border:   #BFDBFE;  --tone-blue-text:   #1D4ED8;
+    --tone-amber-bg:     #FBF6E3;  --tone-amber-border:  #FDE68A;  --tone-amber-text:  #92400E;
+    --tone-orange-bg:    #FAF1E6;  --tone-orange-border: #FED7AA;  --tone-orange-text: #9A3412;
+    --tone-red-bg:       #FAEBEB;  --tone-red-border:    #FECACA;  --tone-red-text:    #991B1B;
+    --tone-violet-bg:    #EFEDFA;  --tone-violet-border: #DDD6FE;  --tone-violet-text: #5B21B6;
+    --tone-pink-bg:      #FAE9F0;  --tone-pink-border:   #FBCFE8;  --tone-pink-text:   #9D174D;
+    --tone-emerald-bg:   #E4F7EA;  --tone-emerald-border:#BBF7D0;  --tone-emerald-text:#166534;
+    --tone-sky-bg:       #DCEDF8;  --tone-sky-border:    #BAE6FD;  --tone-sky-text:    #0C4A6E;
+    --tone-yellow-bg:    #F8F3C8;  --tone-yellow-border: #FDE68A;  --tone-yellow-text: #713F12;
+
+    --accent-text:       #234A30;
   }
 
   /* ── Design tokens — geometry (theme-independent) ── */

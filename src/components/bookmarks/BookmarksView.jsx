@@ -21,7 +21,7 @@ function BookmarkCard({ b, bookmarks }) {
         </div>
         <div className="flex-1 min-w-0">
           <a href={b.url} target="_blank" rel="noopener noreferrer"
-            className="text-sm font-medium [color:var(--text)] hover:[color:var(--accent)] transition-colors line-clamp-1">
+            className="text-sm font-medium [color:var(--text)] hover:[color:var(--accent-text)] transition-colors line-clamp-1">
             {b.title}
           </a>
           <p className="text-[11px] [color:var(--text-faint)] mt-0.5">{domain}</p>
@@ -37,7 +37,7 @@ function BookmarkCard({ b, bookmarks }) {
         <div className="flex flex-col gap-1.5 flex-shrink-0">
           <button onClick={() => bookmarks.toggleRead(b.id)}
             className={`text-[10px] px-2 py-1 rounded-full border font-medium transition-all ${
-              b.read ? '[background-color:var(--bg-secondary)] text-stone-500 [border-color:var(--border)]' : '[background-color:var(--accent-light)] [color:var(--accent)] [border-color:var(--accent-mid)] hover:[background-color:var(--accent-light)]'
+              b.read ? '[background-color:var(--bg-secondary)] text-stone-500 [border-color:var(--border)]' : '[background-color:var(--accent-light)] [color:var(--accent-text)] [border-color:var(--accent-mid)] hover:[background-color:var(--accent-light)]'
             }`}>{b.read ? 'Read ✓' : 'Unread'}</button>
           <button aria-label="Delete bookmark" onClick={() => { bookmarks.deleteBookmark(b.id); toast.undo('Bookmark deleted', () => bookmarks.restoreBookmark(b)) }}
             className="tap-target [color:var(--text-faint)] hover:text-red-400 text-xs p-0.5 transition-colors text-center">✕</button>

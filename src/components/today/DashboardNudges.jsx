@@ -4,10 +4,10 @@
 import { useState } from 'react'
 
 const TYPE_STYLES = {
-  success: { bg: 'var(--accent-light)', border: 'var(--accent-mid)',  text: 'var(--accent)',      icon: '✓'  },
-  warning: { bg: '#FEF3C7',             border: '#FDE68A',            text: '#92400E',             icon: '⚠'  },
+  success: { bg: 'var(--accent-light)', border: 'var(--accent-mid)',  text: 'var(--accent-text)',      icon: '✓'  },
+  warning: { bg: 'var(--tone-amber-bg)',             border: 'var(--tone-amber-border)',            text: 'var(--tone-amber-text)',             icon: '⚠'  },
   nudge:   { bg: 'var(--bg-secondary)', border: 'var(--border)',      text: 'var(--text-muted)',   icon: '💡' },
-  mood:    { bg: '#EFF6FF',             border: '#BFDBFE',            text: '#1D4ED8',             icon: '😊' },
+  mood:    { bg: 'var(--tone-blue-bg)',             border: 'var(--tone-blue-border)',            text: 'var(--tone-blue-text)',             icon: '😊' },
 }
 
 export default function DashboardNudges({ nudges, onTabChange }) {

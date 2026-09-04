@@ -98,14 +98,14 @@ Keep the total response under 60 words. Be direct and energising. No fluff.`, co
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <span className="text-lg">☀️</span>
-            <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--accent)' }}>
+            <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: 'var(--accent-text)' }}>
               Morning Brief
             </p>
           </div>
           <button
             onClick={dismiss}
             className="hover-accent-mid text-xs transition-colors w-6 h-6 flex items-center justify-center rounded-full"
-            style={{ color: 'var(--accent)' }}
+            style={{ color: 'var(--accent-text)' }}
             aria-label="Dismiss"
           >✕</button>
         </div>
@@ -114,14 +114,14 @@ Keep the total response under 60 words. Be direct and energising. No fluff.`, co
           <div className="flex items-center gap-2 py-2">
             <span className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin"
               style={{ borderColor: 'var(--accent)' }} />
-            <span className="text-xs" style={{ color: 'var(--accent)' }}>Preparing your brief…</span>
+            <span className="text-xs" style={{ color: 'var(--accent-text)' }}>Preparing your brief…</span>
           </div>
         )}
 
         {error && (
           <div className="flex items-center justify-between">
-            <p className="text-xs" style={{ color: 'var(--accent)' }}>Couldn't load brief</p>
-            <button onClick={generate} className="text-xs font-medium" style={{ color: 'var(--accent)' }}>
+            <p className="text-xs" style={{ color: 'var(--accent-text)' }}>Couldn't load brief</p>
+            <button onClick={generate} className="text-xs font-medium" style={{ color: 'var(--accent-text)' }}>
               Retry
             </button>
           </div>
@@ -129,7 +129,7 @@ Keep the total response under 60 words. Be direct and energising. No fluff.`, co
 
         {brief && !loading && (
           <div className="text-sm leading-relaxed" style={{
-            color:      'var(--accent)',
+            color: 'var(--accent-text)',
             fontFamily: '"Cormorant Garamond", Georgia, serif',
             fontSize:   '0.95rem',
           }}>

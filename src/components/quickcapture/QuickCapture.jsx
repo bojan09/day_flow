@@ -14,10 +14,10 @@ const PREFIXES = [
 ]
 
 const TYPE_META = {
-  task:  { label: 'Task',  color: '#3B82F6', bg: '#EFF6FF' },
-  idea:  { label: 'Idea',  color: '#F59E0B', bg: '#FFFBEB' },
-  note:  { label: 'Note',  color: '#3B6B4B', bg: '#EEF4ED' },
-  habit: { label: 'Habit', color: '#7C3AED', bg: '#F5F3FF' },
+  task:  { label: 'Task',  color: 'var(--tone-blue-text)',   bg: 'var(--tone-blue-bg)' },
+  idea:  { label: 'Idea',  color: 'var(--tone-amber-text)',  bg: 'var(--tone-amber-bg)' },
+  note:  { label: 'Note',  color: 'var(--tone-sage-text)',   bg: 'var(--tone-sage-bg)' },
+  habit: { label: 'Habit', color: 'var(--tone-violet-text)', bg: 'var(--tone-violet-bg)' },
 }
 
 function detect(val) {

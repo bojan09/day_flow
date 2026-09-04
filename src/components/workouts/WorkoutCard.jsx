@@ -3,15 +3,15 @@
 import { useState, useEffect, memo } from 'react'
 
 const TYPE_COLORS = {
-  Strength:   { bg: '#EEF4ED', text: '#2A4E36' },
-  Cardio:     { bg: '#EFF6FF', text: '#1D4ED8' },
-  HIIT:       { bg: '#FEF3C7', text: '#92400E' },
-  Yoga:       { bg: '#F3E8FF', text: '#6B21A8' },
-  Stretching: { bg: '#ECFDF5', text: '#065F46' },
-  Running:    { bg: '#FEF9C3', text: '#713F12' },
-  Cycling:    { bg: '#E0F2FE', text: '#0C4A6E' },
-  Swimming:   { bg: '#F0FDF4', text: '#166534' },
-  Sport:      { bg: '#FFF7ED', text: '#9A3412' },
+  Strength:   { bg: 'var(--tone-sage-bg)', text: 'var(--tone-sage-text)' },
+  Cardio:     { bg: 'var(--tone-blue-bg)', text: 'var(--tone-blue-text)' },
+  HIIT:       { bg: 'var(--tone-amber-bg)', text: 'var(--tone-amber-text)' },
+  Yoga:       { bg: 'var(--tone-violet-bg)', text: 'var(--tone-violet-text)' },
+  Stretching: { bg: 'var(--tone-emerald-bg)', text: 'var(--tone-emerald-text)' },
+  Running:    { bg: 'var(--tone-yellow-bg)', text: 'var(--tone-yellow-text)' },
+  Cycling:    { bg: 'var(--tone-sky-bg)', text: 'var(--tone-sky-text)' },
+  Swimming:   { bg: 'var(--tone-emerald-bg)', text: 'var(--tone-emerald-text)' },
+  Sport:      { bg: 'var(--tone-orange-bg)', text: 'var(--tone-orange-text)' },
   Other:      { bg: 'var(--bg-secondary)', text: 'var(--text-muted)' },
 }
 
@@ -138,7 +138,7 @@ const WorkoutCardImpl = memo(function WorkoutCard({ session, workouts, onEdit })
           <button
             onClick={() => setExpanded(v => !v)}
             className="mt-2.5 text-xs font-medium transition-colors flex items-center gap-1"
-            style={{ color: 'var(--accent)' }}
+            style={{ color: 'var(--accent-text)' }}
           >
             <span
               style={{

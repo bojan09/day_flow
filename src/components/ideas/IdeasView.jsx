@@ -10,13 +10,13 @@ import { IDEA_STATUSES, IDEA_CATEGORIES } from '../../hooks/useIdeas'
 const STATUS_COLORS = {
   Raw:        'bg-amber-50  text-amber-700  border-amber-200',
   Developing: 'bg-blue-50   text-blue-700   border-blue-200',
-  Action:     '[background-color:var(--accent-light)] [color:var(--accent)] [border-color:var(--accent-mid)]',
+  Action:     '[background-color:var(--accent-light)] [color:var(--accent-text)] [border-color:var(--accent-mid)]',
   Archived:   '[background-color:var(--bg-secondary)] text-stone-500  [border-color:var(--border)]',
 }
 
 const CAT_COLORS = {
   Business: 'bg-blue-100 text-blue-700',    Creative: 'bg-pink-100 text-pink-700',
-  Personal: '[background-color:var(--accent-light)] [color:var(--accent)]', Technical: 'bg-violet-100 text-violet-700',
+  Personal: '[background-color:var(--accent-light)] [color:var(--accent-text)]', Technical: 'bg-violet-100 text-violet-700',
   Learning: 'bg-amber-100 text-amber-700',  Other: '[background-color:var(--bg-secondary)] text-stone-600',
 }
 
@@ -88,7 +88,7 @@ function IdeaCard({ idea, ideas, goals, onEdit }) {
           <button
             onClick={() => setExpanded(e => !e)}
             className="text-xs font-medium transition-colors"
-            style={{ color: 'var(--accent)' }}
+            style={{ color: 'var(--accent-text)' }}
           >
             {expanded ? 'Less ▲' : 'More ▼'}
           </button>
@@ -124,7 +124,7 @@ function IdeaCard({ idea, ideas, goals, onEdit }) {
           <button
             onClick={() => ideas.updateIdea(idea.id, { status: 'Action' })}
             className="w-full py-2 rounded-xl text-xs font-medium border transition-colors"
-            style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', color: 'var(--accent)' }}
+            style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', color: 'var(--accent-text)' }}
           >
             🚀 Mark as Action Item
           </button>

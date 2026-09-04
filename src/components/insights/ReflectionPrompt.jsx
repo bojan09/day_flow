@@ -32,21 +32,21 @@ export default function ReflectionPrompt({ onWriteNote }) {
   return (
     <Card className="[background-color:var(--accent-light)] [border-color:var(--border)]">
       <div className="flex items-start justify-between gap-3 mb-3">
-        <p className="text-xs font-medium uppercase tracking-wider [color:var(--accent)]">Daily Reflection</p>
+        <p className="text-xs font-medium uppercase tracking-wider [color:var(--accent-text)]">Daily Reflection</p>
         <button
           onClick={next}
-          className="text-xs [color:var(--accent)] hover:[color:var(--accent)] transition-colors flex-shrink-0"
+          className="text-xs [color:var(--accent-text)] hover:[color:var(--accent-text)] transition-colors flex-shrink-0"
           title="Next prompt"
         >
           ↻ New
         </button>
       </div>
-      <p className="font-serif text-base [color:var(--accent)] leading-relaxed italic mb-4">
+      <p className="font-serif text-base [color:var(--accent-text)] leading-relaxed italic mb-4">
         "{PROMPTS[idx]}"
       </p>
       <button
         onClick={() => onWriteNote(PROMPTS[idx])}
-        className="text-xs font-medium [color:var(--accent)] hover:[color:var(--accent)] transition-colors flex items-center gap-1"
+        className="text-xs font-medium [color:var(--accent-text)] hover:[color:var(--accent-text)] transition-colors flex items-center gap-1"
       >
         ✍️ Write about this →
       </button>

@@ -5,7 +5,7 @@ import { FEATURES } from '../../utils/constants'
 export default function WelcomeFeatures() {
   return (
     <section id="features" className="py-24 px-5 max-w-5xl mx-auto">
-      <p className="text-xs font-medium uppercase tracking-widest text-center mb-3 [color:var(--accent)]">
+      <p className="text-xs font-medium uppercase tracking-widest text-center mb-3 [color:var(--accent-text)]">
         Features
       </p>
       <h2

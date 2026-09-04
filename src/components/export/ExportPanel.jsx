@@ -25,7 +25,7 @@ function ExportRow({ emoji, label, sub, onExport, done }) {
         onClick={onExport}
         className="flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all active:scale-95"
         style={done
-          ? { backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', color: 'var(--accent)' }
+          ? { backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', color: 'var(--accent-text)' }
           : { backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)', color: 'var(--text-muted)' }
         }
       >
@@ -235,12 +235,12 @@ export default function ExportPanel({
               className="px-4 py-3 rounded-xl border"
               style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)' }}
             >
-              <p className="text-sm font-semibold mb-2" style={{ color: 'var(--accent)' }}>
+              <p className="text-sm font-semibold mb-2" style={{ color: 'var(--accent-text)' }}>
                 ✓ Valid backup — {preview.exportedAt ? new Date(preview.exportedAt).toLocaleDateString() : 'unknown date'}
               </p>
               <div className="grid grid-cols-2 gap-1">
                 {Object.entries(preview.counts).map(([k, v]) => (
-                  <p key={k} className="text-xs" style={{ color: 'var(--accent)' }}>
+                  <p key={k} className="text-xs" style={{ color: 'var(--accent-text)' }}>
                     {v} {k}
                   </p>
                 ))}
@@ -273,7 +273,7 @@ export default function ExportPanel({
           <div className="mt-3 space-y-3">
             <div
               className="px-4 py-3 rounded-xl border text-sm"
-              style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', color: 'var(--accent)' }}
+              style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', color: 'var(--accent-text)' }}
             >
               ✓ Data restored successfully. Refresh the page to see your data.
             </div>

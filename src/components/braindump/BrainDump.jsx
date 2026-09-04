@@ -15,7 +15,7 @@ function classifyLine(line) {
 const TYPE_STYLE = {
   task: 'bg-blue-50 border-blue-200 text-blue-700',
   idea: 'bg-amber-50 border-amber-200 text-amber-700',
-  note: '[background-color:var(--accent-light)] [border-color:var(--accent-mid)] [color:var(--accent)]',
+  note: '[background-color:var(--accent-light)] [border-color:var(--accent-mid)] [color:var(--accent-text)]',
 }
 const TYPE_ICON = { task: '✅', idea: '💡', note: '📝' }
 

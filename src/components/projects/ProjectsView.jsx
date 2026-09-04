@@ -8,7 +8,7 @@ import EmptyState from '../ui/EmptyState'
 import { PROJECT_STATUSES, PROJECT_CATEGORIES } from '../../hooks/useProjects'
 
 const STATUS_COLORS = {
-  Active:   '[background-color:var(--accent-light)] [color:var(--accent)] [border-color:var(--accent-mid)]',
+  Active:   '[background-color:var(--accent-light)] [color:var(--accent-text)] [border-color:var(--accent-mid)]',
   'On Hold':'bg-amber-50  text-amber-700  border-amber-200',
   Done:     '[background-color:var(--bg-secondary)] text-stone-500  [border-color:var(--border)]',
 }

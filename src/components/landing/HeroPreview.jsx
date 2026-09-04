@@ -56,7 +56,7 @@ export default function HeroPreview() {
         {/* Habits */}
         <div>
           <p className="text-xs font-medium uppercase tracking-wider mb-3" style={{ color: 'var(--text-faint)' }}>Habits</p>
-          <p className="font-serif text-3xl mb-3 [color:var(--accent)]">12🔥</p>
+          <p className="font-serif text-3xl mb-3 [color:var(--accent-text)]">12🔥</p>
           <div className="space-y-2.5">
             {HABITS.map(h => (
               <div key={h.label}>

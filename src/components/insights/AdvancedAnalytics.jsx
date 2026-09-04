@@ -96,7 +96,7 @@ function EnergyProductivity({ tasks, energy }) {
         </p>
       ) : (
         <>
-          <p className="text-sm font-medium mb-4" style={{ color: 'var(--accent)' }}>
+          <p className="text-sm font-medium mb-4" style={{ color: 'var(--accent-text)' }}>
             {correlationLabel}
           </p>
           {/* Bar chart with dual overlay */}
@@ -185,7 +185,7 @@ function BurnoutSignal({ tasks, mood }) {
   const riskLabel =
     riskScore >= 4 ? { text: 'High — rest and reduce load',   color: '#EF4444', emoji: '🚨' } :
     riskScore >= 2 ? { text: 'Moderate — watch your pace',    color: '#F59E0B', emoji: '⚠️' } :
-                     { text: 'Low — you\'re in good shape',   color: 'var(--accent)', emoji: '✅' }
+                     { text: 'Low — you\'re in good shape',   color: 'var(--accent-text)', emoji: '✅' }
 
   return (
     <div

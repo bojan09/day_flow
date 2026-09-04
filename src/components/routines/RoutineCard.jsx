@@ -90,7 +90,7 @@ export default function RoutineCard({ routine, routines, onEdit, onDelete, onRun
             <button
               onClick={() => onRun(routine)}
               className="hover-surface w-7 h-7 rounded-full flex items-center justify-center text-sm transition-colors"
-              style={{ color: 'var(--accent)' }}
+              style={{ color: 'var(--accent-text)' }}
               title="Run routine"
               aria-label="Run routine"
             >
@@ -153,8 +153,8 @@ export default function RoutineCard({ routine, routines, onEdit, onDelete, onRun
           style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)' }}
         >
           <div>
-            <p className="text-xs font-medium" style={{ color: 'var(--accent)' }}>Timer running</p>
-            <p className="font-serif text-2xl" style={{ color: 'var(--accent)' }}>
+            <p className="text-xs font-medium" style={{ color: 'var(--accent-text)' }}>Timer running</p>
+            <p className="font-serif text-2xl" style={{ color: 'var(--accent-text)' }}>
               {pad(mins)}:{pad(sec)}
             </p>
           </div>
@@ -218,7 +218,7 @@ export default function RoutineCard({ routine, routines, onEdit, onDelete, onRun
                       style={{
                         backgroundColor: 'var(--accent-light)',
                         borderColor:     'var(--accent-mid)',
-                        color:           'var(--accent)',
+                        color: 'var(--accent-text)',
                       }}
                     >
                       ▶ Start

@@ -7,7 +7,7 @@ import Badge from '../ui/Badge'
 
 const CAT_COLORS = {
   Work:     'bg-blue-100 text-blue-700',
-  Personal: '[background-color:var(--accent-light)] [color:var(--accent)]',
+  Personal: '[background-color:var(--accent-light)] [color:var(--accent-text)]',
   Health:   'bg-emerald-100 text-emerald-700',
   Learning: 'bg-violet-100 text-violet-700',
   Finance:  'bg-amber-100 text-amber-700',
@@ -68,7 +68,7 @@ const TaskRow = memo(function TaskRow({ t, idx, urgency, tasksApi, projects, onT
           {t.isRecurring && (
             <button type="button" aria-label="Manage recurrence"
               onClick={e => { e.stopPropagation(); onOpenRecur(t) }}
-              className="text-[11px] [color:var(--accent)] hover:opacity-70 transition-opacity">
+              className="text-[11px] [color:var(--accent-text)] hover:opacity-70 transition-opacity">
               🔁{(t.recurStatus ?? 'active') !== 'active' && <span className="ml-0.5 [color:var(--text-muted)]">paused</span>}
             </button>
           )}
@@ -84,13 +84,13 @@ const TaskRow = memo(function TaskRow({ t, idx, urgency, tasksApi, projects, onT
         <Badge label={t.priority} color={t.priority} />
         <button onClick={() => tasksApi.setFocus(t.id)}
           aria-label={t.isFocus ? 'Remove focus' : 'Mark as focus'}
-          className={`text-sm p-1 rounded opacity-0 group-hover:opacity-100 transition-all ${t.isFocus ? 'opacity-100 [color:var(--accent)]' : '[color:var(--text-faint)] hover:[color:var(--accent)]'}`}>
+          className={`text-sm p-1 rounded opacity-0 group-hover:opacity-100 transition-all ${t.isFocus ? 'opacity-100 [color:var(--accent-text)]' : '[color:var(--text-faint)] hover:[color:var(--accent-text)]'}`}>
           {t.isFocus ? '📌' : '📍'}
         </button>
         {onTabChange && (
           <button onClick={() => onTabChange('timeblock')}
             className="opacity-0 group-hover:opacity-100 text-[11px] px-1.5 py-0.5 rounded transition-all"
-            style={{ color: 'var(--accent)', backgroundColor: 'var(--accent-light)' }} title="Open in Schedule" aria-label="Open in Schedule">⏰</button>
+            style={{ color: 'var(--accent-text)', backgroundColor: 'var(--accent-light)' }} title="Open in Schedule" aria-label="Open in Schedule">⏰</button>
         )}
         <button aria-label="Delete task" onClick={() => onDelete(t)}
           className="tap-target opacity-0 group-hover:opacity-100 [color:var(--text-faint)] hover:text-red-400 text-xs p-1 transition-all">✕</button>

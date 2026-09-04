@@ -31,7 +31,7 @@ export default function Navbar() {
       <button onClick={handleLogoClick}
         className="font-serif text-2xl tracking-tight leading-none hover:opacity-80 transition-opacity"
         style={{ color: 'var(--text)' }}>
-        Day<em className="not-italic [color:var(--accent)]">Flow</em>
+        Day<em className="not-italic [color:var(--accent-text)]">Flow</em>
       </button>
 
       <ul className="hidden sm:flex gap-8 list-none">

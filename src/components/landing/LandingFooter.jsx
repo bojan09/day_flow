@@ -5,7 +5,7 @@ export default function LandingFooter() {
     <footer className="border-t py-8 px-5" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}>
       <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <span className="font-serif text-xl" style={{ color: 'var(--text)' }}>
-          Day<em className="not-italic [color:var(--accent)]">Flow</em>
+          Day<em className="not-italic [color:var(--accent-text)]">Flow</em>
         </span>
         <div className="flex items-center gap-6">
           {['Privacy', 'Terms', 'Contact'].map(link => (

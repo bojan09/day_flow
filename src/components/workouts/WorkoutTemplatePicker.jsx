@@ -10,7 +10,7 @@ export default function WorkoutTemplatePicker({ recentSessions, onPick, onBlank 
       {recentSessions.map(s => (
         <button key={s.id} onClick={() => onPick(s)}
           className="w-full text-left rounded-xl p-3 text-sm"
-          style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent)' }}>
+          style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent-text)' }}>
           {s.type} <span style={{ color: 'var(--text-faint)' }}>· last: {s.date}</span>
         </button>
       ))}

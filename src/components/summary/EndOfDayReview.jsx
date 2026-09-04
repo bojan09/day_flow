@@ -46,7 +46,7 @@ export default function EndOfDayReview({ tasks }) {
     >
       <p
         className="text-xs font-semibold uppercase tracking-widest mb-3"
-        style={{ color: 'var(--accent)' }}
+        style={{ color: 'var(--accent-text)' }}
       >
         🌙 End of Day Review
       </p>

@@ -79,7 +79,7 @@ function DailyRhythmStrip({ habits, routines, onTabChange }) {
                   >{h.name}</span>
 
                   {done && (
-                    <span className="text-xs flex-shrink-0" style={{ color: 'var(--accent)' }}>✓</span>
+                    <span className="text-xs flex-shrink-0" style={{ color: 'var(--accent-text)' }}>✓</span>
                   )}
                 </button>
               </li>
@@ -99,7 +99,7 @@ function DailyRhythmStrip({ habits, routines, onTabChange }) {
             <button
               onClick={jumpToRhythm}
               className="hover-text text-[11px] font-medium"
-              style={{ color: 'var(--accent)' }}
+              style={{ color: 'var(--accent-text)' }}
             >
               Run →
             </button>

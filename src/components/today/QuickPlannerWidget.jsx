@@ -68,7 +68,7 @@ export default function QuickPlannerWidget({ tasks }) {
         {saved ? (
           <div className="text-center py-4">
             <p className="text-2xl mb-1">✅</p>
-            <p className="text-sm font-medium" style={{ color: 'var(--accent)' }}>
+            <p className="text-sm font-medium" style={{ color: 'var(--accent-text)' }}>
               Tomorrow is planned!
             </p>
             <p className="text-xs mt-0.5" style={{ color: 'var(--text-faint)' }}>

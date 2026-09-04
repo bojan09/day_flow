@@ -19,7 +19,7 @@ export default function WelcomeHero() {
       {/* Badge */}
       <div
         className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8 border text-xs font-medium tracking-widest uppercase opacity-0 animate-fade-up"
-        style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', color: 'var(--accent)' }}
+        style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', color: 'var(--accent-text)' }}
       >
         <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: 'var(--accent)' }} />
         Your daily command center
@@ -32,7 +32,7 @@ export default function WelcomeHero() {
       >
         Plan it. Track it.
         <br />
-        <em className="not-italic [color:var(--accent)]">Own your day.</em>
+        <em className="not-italic [color:var(--accent-text)]">Own your day.</em>
       </h1>
 
       {/* Subheadline */}

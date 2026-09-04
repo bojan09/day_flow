@@ -91,7 +91,7 @@ function GoodMorningHeader({ intention }) {
           >
             {text || 'Set your intention for today…'}
             {text && (
-              <span className="ml-2" style={{ color: 'var(--accent)', fontSize: 'var(--text-2xs)' }}>
+              <span className="ml-2" style={{ color: 'var(--accent-text)', fontSize: 'var(--text-2xs)' }}>
                 ✓
               </span>
             )}

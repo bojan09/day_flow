@@ -15,7 +15,7 @@ export default function HeroSection() {
       <div className="absolute bottom-1/4 left-1/4 w-48 h-48 rounded-full opacity-30 blur-2xl pointer-events-none bg-terracotta-50" />
 
       <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-7 border opacity-0 animate-fade-up"
-        style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', color: 'var(--accent)' }}>
+        style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)', color: 'var(--accent-text)' }}>
         <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: 'var(--accent)' }} />
         <span className="text-xs font-medium tracking-widest uppercase">Your daily command center</span>
       </div>
@@ -23,7 +23,7 @@ export default function HeroSection() {
       <h1 className="font-serif text-5xl sm:text-6xl lg:text-[4.5rem] leading-[1.06] tracking-tight max-w-3xl mx-auto mb-5 text-balance opacity-0 animate-fade-up-d1"
         style={{ color: 'var(--text)' }}>
         Plan it. Track it.<br />
-        <em className="[color:var(--accent)] not-italic">Own your day.</em>
+        <em className="[color:var(--accent-text)] not-italic">Own your day.</em>
       </h1>
 
       <p className="text-lg sm:text-xl max-w-xl mx-auto mb-9 leading-relaxed font-light opacity-0 animate-fade-up-d2"

@@ -105,7 +105,7 @@ export default function WidgetCustomizer({ isOpen, onClose, widgetPrefs, adaptiv
                 {pinned && (
                   <span
                     className="text-[10px] px-2 py-0.5 rounded-full font-medium flex-shrink-0"
-                    style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent)' }}
+                    style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent-text)' }}
                   >
                     Pinned
                   </span>
@@ -118,7 +118,7 @@ export default function WidgetCustomizer({ isOpen, onClose, widgetPrefs, adaptiv
                     <button
                       onClick={() => widgetPrefs.togglePin(id)}
                       className="hover-surface w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all"
-                      style={{ color: pinned ? 'var(--accent)' : 'var(--text-faint)' }}
+                      style={{ color: pinned ? 'var(--accent-text)' : 'var(--text-faint)' }}
                       title={pinned ? 'Unpin' : 'Pin to top'}
                     >
                       {pinned ? '📌' : '📍'}
@@ -136,7 +136,7 @@ export default function WidgetCustomizer({ isOpen, onClose, widgetPrefs, adaptiv
                       }
                     }}
                     className="hover-surface w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all"
-                    style={{ color: hidden ? 'var(--accent)' : 'var(--text-faint)' }}
+                    style={{ color: hidden ? 'var(--accent-text)' : 'var(--text-faint)' }}
                     title={hidden ? 'Show widget' : 'Hide widget'}
                   >
                     {hidden ? '👁' : '🙈'}

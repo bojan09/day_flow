@@ -17,18 +17,18 @@ function highlight(text = '', query = '') {
   return parts.map((p, i) =>
     re.test(p)
       ? <mark key={i} className="rounded px-0.5"
-          style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent)' }}>{p}</mark>
+          style={{ backgroundColor: 'var(--accent-light)', color: 'var(--accent-text)' }}>{p}</mark>
       : p
   )
 }
 
 const TYPE_PILL = {
-  Task:     { bg: '#EFF6FF', color: '#1D4ED8' },
-  Note:     { bg: '#FFFBEB', color: '#92400E' },
-  Habit:    { bg: 'var(--accent-light)', color: 'var(--accent)' },
-  Goal:     { bg: '#F5F3FF', color: '#5B21B6' },
-  Idea:     { bg: '#FFF7ED', color: '#C2410C' },
-  Bookmark: { bg: '#FDF2F8', color: '#86198F' },
+  Task:     { bg: 'var(--tone-blue-bg)', color: 'var(--tone-blue-text)' },
+  Note:     { bg: 'var(--tone-amber-bg)', color: 'var(--tone-amber-text)' },
+  Habit:    { bg: 'var(--accent-light)', color: 'var(--accent-text)' },
+  Goal:     { bg: 'var(--tone-violet-bg)', color: 'var(--tone-violet-text)' },
+  Idea:     { bg: 'var(--tone-orange-bg)', color: 'var(--tone-orange-text)' },
+  Bookmark: { bg: 'var(--tone-pink-bg)', color: 'var(--tone-pink-text)' },
 }
 
 // ── Build flat search corpus ────────────────────────────────────────────────────

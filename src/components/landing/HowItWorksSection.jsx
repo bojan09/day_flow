@@ -27,7 +27,7 @@ export default function HowItWorksSection() {
       id="how-it-works"
       className="py-24 px-5 max-w-4xl mx-auto"
     >
-      <p className="text-xs font-medium uppercase tracking-widest text-center mb-3 [color:var(--accent)]">
+      <p className="text-xs font-medium uppercase tracking-widest text-center mb-3 [color:var(--accent-text)]">
         How it works
       </p>
       <h2

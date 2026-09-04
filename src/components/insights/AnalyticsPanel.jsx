@@ -63,7 +63,7 @@ export default function AnalyticsPanel({ tasks }) {
         <StatCard label="This Week"  value={total}      sub="tasks added" />
         <StatCard label="Completed"  value={completed}  sub="tasks done"  />
         <StatCard label="Rate"       value={`${rate}%`} sub="completion"
-          color={rate >= 80 ? '#10B981' : rate >= 50 ? '#F59E0B' : '#EF4444'} />
+          color={rate >= 80 ? 'var(--tone-emerald-text)' : rate >= 50 ? 'var(--tone-amber-text)' : 'var(--tone-red-text)'} />
       </div>
 
       {/* Daily bar chart */}

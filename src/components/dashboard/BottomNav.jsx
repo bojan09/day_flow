@@ -26,7 +26,7 @@ export default function BottomNav({ activeTab, onTabChange, onOpenDrawer }) {
                 key={i}
                 onClick={() => onTabChange(moduleId)}
                 className="flex flex-col items-center justify-center gap-0.5 min-w-0 py-2 min-h-[56px] relative transition-all active:scale-95"
-                style={{ color: active ? 'var(--accent)' : 'var(--text-faint)' }}
+                style={{ color: active ? 'var(--accent-text)' : 'var(--text-faint)' }}
                 aria-label={mod.label}
                 aria-current={active ? 'page' : undefined}
               >
@@ -54,7 +54,7 @@ export default function BottomNav({ activeTab, onTabChange, onOpenDrawer }) {
           <button
             onClick={onOpenDrawer}
             className="flex flex-col items-center justify-center gap-0.5 min-w-0 py-2 min-h-[56px] relative transition-all active:scale-95"
-            style={{ color: isMoreActive ? 'var(--accent)' : 'var(--text-faint)' }}
+            style={{ color: isMoreActive ? 'var(--accent-text)' : 'var(--text-faint)' }}
             aria-label="More navigation options"
           >
             {isMoreActive && (

@@ -73,7 +73,7 @@ export default function HabitCalendar({ habits }) {
                 onClick={() => habits.toggleHabitDay(habit.id, dateKey)}
                 className={`aspect-square rounded-full flex items-center justify-center text-xs font-medium transition-all ${
                   done  ? '[background-color:var(--accent)] text-white shadow-sm'
-                  : today ? 'border-2 [border-color:var(--accent-mid)] [color:var(--accent)] hover:[background-color:var(--accent-light)]'
+                  : today ? 'border-2 [border-color:var(--accent-mid)] [color:var(--accent-text)] hover:[background-color:var(--accent-light)]'
                   : '[color:var(--text-muted)] hover:[background-color:var(--bg-secondary)]'
                 }`}
               >
@@ -92,7 +92,7 @@ export default function HabitCalendar({ habits }) {
           <span>
             {days.filter(d => habits.isHabitDone(habit.id, getDateKey(d))).length} / {days.length} days
           </span>
-          <span className="[color:var(--accent)] font-medium">
+          <span className="[color:var(--accent-text)] font-medium">
             {Math.round((days.filter(d => habits.isHabitDone(habit.id, getDateKey(d))).length / days.length) * 100)}% this month
           </span>
         </div>

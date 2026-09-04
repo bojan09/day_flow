@@ -85,7 +85,7 @@ export default function AddGoalModal({ isOpen, onClose, onAdd }) {
               placeholder="Describe the goal, e.g. 'run a half marathon this year'"
               className="w-full bg-transparent text-sm outline-none" style={{ color: 'var(--text)' }} />
             <button type="button" onClick={handleDraft} disabled={drafting || !goalText.trim()}
-              className="text-sm font-medium disabled:opacity-40" style={{ color: 'var(--accent)' }}>
+              className="text-sm font-medium disabled:opacity-40" style={{ color: 'var(--accent-text)' }}>
               {drafting ? 'Drafting…' : '✨ Draft milestones with AI'}
             </button>
           </div>

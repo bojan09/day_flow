@@ -189,7 +189,7 @@ export default function RoutineEditor({ initial, onSubmit, onCancel }) {
               onClick={handleDraft}
               disabled={drafting || !goalText.trim()}
               className="text-sm font-medium disabled:opacity-40"
-              style={{ color: 'var(--accent)' }}
+              style={{ color: 'var(--accent-text)' }}
             >
               {drafting ? 'Drafting…' : '✨ Draft with AI'}
             </button>

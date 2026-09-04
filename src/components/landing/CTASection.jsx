@@ -17,10 +17,10 @@ export default function CTASection() {
       <div className="absolute inset-0 pointer-events-none"
         style={{ background: 'linear-gradient(to bottom, var(--bg), var(--accent-light), var(--bg))' }} />
       <div className="relative max-w-2xl mx-auto">
-        <p className="text-xs font-medium uppercase tracking-widest [color:var(--accent)] mb-4">Get started today</p>
+        <p className="text-xs font-medium uppercase tracking-widest [color:var(--accent-text)] mb-4">Get started today</p>
         <h2 className="font-serif text-4xl sm:text-5xl leading-tight tracking-tight mb-5 text-balance"
           style={{ color: 'var(--text)' }}>
-          Ready to take back<br /><em className="[color:var(--accent)] not-italic">your days?</em>
+          Ready to take back<br /><em className="[color:var(--accent-text)] not-italic">your days?</em>
         </h2>
         <p className="mb-10 text-base leading-relaxed" style={{ color: 'var(--text-muted)' }}>
           Free forever. No card required. Your data stays private.

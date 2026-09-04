@@ -37,9 +37,9 @@ export default function FocusTask({ tasks }) {
             <button key={t.id} onClick={() => tasks.setFocus(t.id)}
               className="w-full text-left flex items-center gap-2 text-sm py-1 group"
               style={{ color: 'var(--text-muted)' }}>
-              <span className="text-base transition-colors group-hover:[color:var(--accent)]">◎</span>
+              <span className="text-base transition-colors group-hover:[color:var(--accent-text)]">◎</span>
               <span className="truncate transition-colors">{t.title}</span>
-              <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-all [color:var(--accent)]">
+              <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-all [color:var(--accent-text)]">
                 Set focus
               </span>
             </button>

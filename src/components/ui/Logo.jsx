@@ -10,7 +10,7 @@ export default function Logo({ size = 28, showWordmark = true, className = '' })
       </svg>
       {showWordmark && (
         <span className="font-sans font-semibold text-lg" style={{ color: 'var(--text)' }}>
-          Day<span style={{ color: 'var(--accent)' }}>Flow</span>
+          Day<span style={{ color: 'var(--accent-text)' }}>Flow</span>
         </span>
       )}
     </span>

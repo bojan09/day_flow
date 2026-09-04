@@ -19,7 +19,7 @@ function CalendarWidget({ timeblocks, onTabChange }) {
         No scheduled entries for today
       </p>
       <button type="button" onClick={() => onTabChange?.('timeblock')}
-        className="mt-2 text-xs font-semibold" style={{ color: 'var(--accent)' }}>
+        className="mt-2 text-xs font-semibold" style={{ color: 'var(--accent-text)' }}>
         Open schedule →
       </button>
     </div>
@@ -36,7 +36,7 @@ function CalendarWidget({ timeblocks, onTabChange }) {
             className="w-full flex items-center gap-3 text-left py-1"
           >
             <span className="text-xs w-10 flex-shrink-0 font-medium"
-              style={{ color: isPast ? 'var(--text-faint)' : isCurrent ? 'var(--accent)' : 'var(--text-muted)' }}>
+              style={{ color: isPast ? 'var(--text-faint)' : isCurrent ? 'var(--accent-text)' : 'var(--text-muted)' }}>
               {String(entry.hour).padStart(2, '0')}:00
             </span>
             {isCurrent && (
@@ -52,7 +52,7 @@ function CalendarWidget({ timeblocks, onTabChange }) {
         )
       })}
       <button type="button" onClick={() => onTabChange?.('timeblock')}
-        className="text-xs font-medium pt-1" style={{ color: 'var(--accent)' }}>
+        className="text-xs font-medium pt-1" style={{ color: 'var(--accent-text)' }}>
         Open schedule →
       </button>
     </div>

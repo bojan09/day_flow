@@ -70,7 +70,7 @@ const StreakCelebrationImpl = memo(function StreakCelebration({ streak, name }) 
         }}
       >
         <p className="text-3xl mb-1">🔥</p>
-        <p className="font-serif text-xl font-bold" style={{ color: 'var(--accent)' }}>
+        <p className="font-serif text-xl font-bold" style={{ color: 'var(--accent-text)' }}>
           {milestone}-day streak!
         </p>
         {name && (

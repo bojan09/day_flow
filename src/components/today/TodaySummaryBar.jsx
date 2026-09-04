@@ -11,7 +11,7 @@ export default function TodaySummaryBar({ tasks, habits }) {
 
   const stats = [
     { label: 'Tasks',    val: `${done}`, sub: `of ${total} done`, color: 'var(--text)' },
-    { label: 'Habits',   val: `${habitPct}%`, sub: 'completed',   color: 'var(--accent)' },
+    { label: 'Habits',   val: `${habitPct}%`, sub: 'completed',   color: 'var(--accent-text)' },
     { label: 'Est. Time',val: estLabel,  sub: 'planned',          color: '#C4622D' },
   ]
 

@@ -45,7 +45,7 @@ export default function ThemeToggle({ theme, onSetTheme, compact = false }) {
             style={active
               ? {
                   backgroundColor: 'var(--accent-light)',
-                  color:           'var(--accent)',
+                  color: 'var(--accent-text)',
                   borderBottom:    '2px solid var(--accent)',
                 }
               : {

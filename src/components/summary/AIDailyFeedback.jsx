@@ -144,7 +144,7 @@ Never say "it seems" or "based on the data". Just speak directly.`, context)
                 if (boldMatch) {
                   return (
                     <p key={i} className="mb-2 last:mb-0">
-                      <strong style={{ color: 'var(--accent)', fontFamily: 'inherit' }}>
+                      <strong style={{ color: 'var(--accent-text)', fontFamily: 'inherit' }}>
                         {boldMatch[1]}:
                       </strong>
                       <span style={{ color: 'var(--text)' }}>{boldMatch[2]}</span>

@@ -63,7 +63,7 @@ function PersonalBestsList({ workouts }) {
             <div className="flex items-center gap-2">
               <span
                 className="text-sm font-semibold"
-                style={{ color: 'var(--accent)' }}
+                style={{ color: 'var(--accent-text)' }}
               >
                 {pb.weight}{pb.unit}
               </span>

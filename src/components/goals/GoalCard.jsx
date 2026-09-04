@@ -6,12 +6,12 @@ import Modal from '../ui/Modal'
 import { GOAL_TYPES, GOAL_CATEGORIES } from '../../hooks/useGoals'
 
 const CAT_COLORS = {
-  Career:        { bg: '#EFF6FF', text: '#1D4ED8' },
-  Health:        { bg: '#F0FDF4', text: '#166534' },
-  Learning:      { bg: '#F5F3FF', text: '#5B21B6' },
-  Finance:       { bg: '#FFFBEB', text: '#92400E' },
-  Personal:      { bg: '#EEF4ED', text: '#2A4E36' },
-  Relationships: { bg: '#FFF0F6', text: '#9D174D' },
+  Career:        { bg: 'var(--tone-blue-bg)', text: 'var(--tone-blue-text)' },
+  Health:        { bg: 'var(--tone-emerald-bg)', text: 'var(--tone-emerald-text)' },
+  Learning:      { bg: 'var(--tone-violet-bg)', text: 'var(--tone-violet-text)' },
+  Finance:       { bg: 'var(--tone-amber-bg)', text: 'var(--tone-amber-text)' },
+  Personal:      { bg: 'var(--tone-sage-bg)', text: 'var(--tone-sage-text)' },
+  Relationships: { bg: 'var(--tone-pink-bg)', text: 'var(--tone-pink-text)' },
 }
 
 function EditGoalModal({ goal, goals, onClose }) {
@@ -204,7 +204,7 @@ const GoalCardImpl = memo(function GoalCard({ goal, goals }) {
 
           <button onClick={() => setExpanded(e => !e)}
             className="mt-3 text-xs font-medium transition-colors flex items-center gap-1"
-            style={{ color: 'var(--accent)' }}>
+            style={{ color: 'var(--accent-text)' }}>
             {expanded ? '▲' : '▼'} {goal.milestones.length} milestone{goal.milestones.length !== 1 ? 's' : ''}
           </button>
         </div>

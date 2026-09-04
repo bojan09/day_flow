@@ -9,7 +9,7 @@ function GoalsWidget({ goals, onTabChange }) {
     <div className="px-4 py-3 text-center">
       <p className="text-sm italic" style={{ color: 'var(--text-faint)' }}>No active goals</p>
       <button type="button" onClick={() => onTabChange?.('goals')}
-        className="mt-2 text-xs font-semibold" style={{ color: 'var(--accent)' }}>
+        className="mt-2 text-xs font-semibold" style={{ color: 'var(--accent-text)' }}>
         + Set a goal
       </button>
     </div>
@@ -43,7 +43,7 @@ function GoalsWidget({ goals, onTabChange }) {
         )
       })}
       <button type="button" onClick={() => onTabChange?.('goals')}
-        className="text-xs font-medium" style={{ color: 'var(--accent)' }}>
+        className="text-xs font-medium" style={{ color: 'var(--accent-text)' }}>
         View all goals →
       </button>
     </div>
