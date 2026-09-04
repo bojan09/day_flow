@@ -7,7 +7,6 @@ import EmojiPicker from '../ui/EmojiPicker'
 import Input  from '../ui/Input'
 import { getDateKey } from '../../utils/dateUtils'
 import { isToday, format } from 'date-fns'
-import { HABIT_ICONS } from '../../utils/constants'
 
 const FREQUENCIES = [
   { id: 'daily', label: 'Every day'  },

@@ -13,8 +13,6 @@ const CAT_DOT = {
   Learning: 'bg-violet-500', Finance: 'bg-amber-400', Other: '[background-color:var(--border)]',
 }
 
-const LOAD_COLOR = (n) =>
-  n === 0 ? '' : n <= 2 ? '[background-color:var(--accent-light)]' : n <= 4 ? '[background-color:var(--accent-light)]' : '[background-color:var(--accent-mid)]'
 
 export default function CalendarView({ tasks, categories, onAddCategory, onRemoveCategory }) {
   const [month,       setMonth]       = useState(new Date())

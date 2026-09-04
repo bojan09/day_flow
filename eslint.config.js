@@ -5,6 +5,7 @@
 // output stays signal.
 import js from '@eslint/js'
 import reactHooks from 'eslint-plugin-react-hooks'
+import react from 'eslint-plugin-react'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import globals from 'globals'
 
@@ -22,15 +23,21 @@ export default [
     },
     plugins: {
       'react-hooks': reactHooks,
+      react,
       'react-refresh': reactRefresh,
     },
     rules: {
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
+      // Without this, ESLint does not treat <Foo /> as a reference to Foo, so
+      // component imports and component-valued props look unused. The uppercase
+      // varsIgnorePattern below used to mask that for imports — which also hid
+      // genuinely unused ones.
+      'react/jsx-uses-vars': 'error',
       'react-refresh/only-export-components': 'off',
       // Unused vars are worth seeing, but not as a build-blocking error while
       // the existing backlog is still being worked through.
-      'no-unused-vars': ['warn', { varsIgnorePattern: '^[A-Z_]', argsIgnorePattern: '^_' }],
+      'no-unused-vars': ['warn', { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }],
       // `catch {}` is used deliberately throughout for best-effort operations
       // (localStorage in private mode, realtime teardown).
       'no-empty': ['error', { allowEmptyCatch: true }],

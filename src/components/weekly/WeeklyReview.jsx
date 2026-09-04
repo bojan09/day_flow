@@ -5,7 +5,6 @@
 import { useState, useMemo } from 'react'
 import { callClaude } from '../../services/aiService'
 import { subDays, format }   from 'date-fns'
-import { MOODS }             from '../../hooks/useMood'
 import { getDateKey }        from '../../utils/dateUtils'
 
 

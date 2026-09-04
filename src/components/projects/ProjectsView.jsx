@@ -1,11 +1,10 @@
 // Component: ProjectsView
 // Purpose: Lightweight project grouping — each project shows task progress and linked tasks
 import { useState } from 'react'
-import Card   from '../ui/Card'
 import Modal  from '../ui/Modal'
 import Input  from '../ui/Input'
 import EmptyState from '../ui/EmptyState'
-import { PROJECT_STATUSES, PROJECT_CATEGORIES } from '../../hooks/useProjects'
+import { PROJECT_STATUSES } from '../../hooks/useProjects'
 
 const STATUS_COLORS = {
   Active:   '[background-color:var(--accent-light)] [color:var(--accent-text)] [border-color:var(--accent-mid)]',

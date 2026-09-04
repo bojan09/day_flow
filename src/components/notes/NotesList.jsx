@@ -1,7 +1,6 @@
 // Component: NotesList
 // Purpose: Scrollable sidebar list of notes with pin and delete actions
 import { format } from 'date-fns'
-import Card from '../ui/Card'
 
 export default function NotesList({ notes, activeId, onSelect, onNew, onDelete, onTogglePin }) {
   return (

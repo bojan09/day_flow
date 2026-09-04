@@ -3,7 +3,6 @@ import { useToast } from '../../utils/toast'
 // Component: BookmarksView
 // Purpose: Save URLs with title, tags, read/unread state, and notes
 import { useState } from 'react'
-import Card  from '../ui/Card'
 import Modal from '../ui/Modal'
 import EmptyState from '../ui/EmptyState'
 import { BOOKMARK_TAGS } from '../../hooks/useBookmarks'

@@ -18,6 +18,7 @@ const CaptureView = lazy(() => import('../components/capture/CaptureView'))
 const DailyRhythmView = lazy(() => import('../components/rhythm/DailyRhythmView'))
 const ProjectsView = lazy(() => import('../components/projects/ProjectsView'))
 const WeeklyReview = lazy(() => import('../components/weekly/WeeklyReview'))
+const ReflectionView = lazy(() => import('../components/reflection/ReflectionView'))
 import KeyboardShortcuts  from '../components/keyboard/KeyboardShortcuts'
 import QuickCapture       from '../components/quickcapture/QuickCapture'
 
@@ -41,7 +42,6 @@ import { useMoodTheme       } from '../hooks/useMoodTheme'
 import { useOnboarding     } from '../hooks/useOnboarding'
 import { useTimeblocks    } from '../hooks/useTimeblocks'
 import OnboardingFlow       from '../components/onboarding/OnboardingFlow'
-import FeatureTooltip       from '../components/ui/FeatureTooltip'
 import { stashPendingShare }      from '../services/pendingShare'
 import { spawnRecurringTasks }    from '../services/recurringEngine'
 import { spawnRecurringWorkouts } from '../services/recurringWorkoutsEngine'
@@ -76,7 +76,7 @@ export default function DashboardPage() {
     if (LEGACY_CAPTURE_TABS.includes(hash)) return 'capture'
     if (hash === LEGACY_GOALS_TAB) return 'tasks'
     if (LEGACY_RHYTHM_TABS.includes(hash)) return 'rhythm'
-    const valid = ['today','tasks','rhythm','focus','calendar','timeblock','projects',
+    const valid = ['today','tasks','rhythm','focus','calendar','timeblock','projects','reflect',
       'capture','workouts',
       'insights','search','weeklyreview']
     return valid.includes(hash) ? hash : 'today'
@@ -284,6 +284,7 @@ export default function DashboardPage() {
         {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} energy={energy} goals={goals} moodTheme={moodTheme} workouts={workouts} ideas={ideas} />}
         {activeTab === 'focus'      && <FocusMode tasks={tasks} />}
         {activeTab === 'search'     && <SearchView tasks={tasks} notes={notes} habits={habits} goals={goals} ideas={ideas} />}
+        {activeTab === 'reflect'    && <ReflectionView tasks={tasks} onTabChange={handleTabChange} />}
 
       </ViewErrorBoundary>
       </DashboardLayout>
