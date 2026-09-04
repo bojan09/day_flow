@@ -71,3 +71,57 @@ test('returns 502 when upstream errors', async (t) => {
   await handler(req, res)
   assert.equal(res.statusCode, 502)
 })
+
+test('forwards the upstream explanation so a retired model is diagnosable', async (t) => {
+  // Regression: Groq retired the pinned model and answered 404
+  // model_not_found. The proxy replied with a bare 502, so every AI feature
+  // failed identically and the cause was invisible.
+  process.env.GROQ_API_KEY = 'test-key'
+  const originalFetch = global.fetch
+  global.fetch = async () => ({
+    ok: false,
+    status: 404,
+    json: async () => ({ error: { message: 'The model `x` does not exist or you do not have access to it.' } }),
+  })
+  t.after(() => { global.fetch = originalFetch })
+
+  const { req, res } = mockReqRes({ body: { system: 'sys', message: 'hi' } })
+  await handler(req, res)
+  assert.equal(res.statusCode, 502)
+  assert.match(res._json.error, /does not exist/)
+})
+
+test('reports empty model output instead of returning a blank string', async (t) => {
+  // Reasoning models can spend the whole token budget thinking and return 200
+  // with content: "". Callers should not have to guess what that meant.
+  process.env.GROQ_API_KEY = 'test-key'
+  const originalFetch = global.fetch
+  global.fetch = async () => ({
+    ok: true,
+    status: 200,
+    json: async () => ({ choices: [{ message: { content: '   ' }, finish_reason: 'length' }] }),
+  })
+  t.after(() => { global.fetch = originalFetch })
+
+  const { req, res } = mockReqRes({ body: { system: 'sys', message: 'hi' } })
+  await handler(req, res)
+  assert.equal(res.statusCode, 502)
+  assert.match(res._json.error, /empty/i)
+})
+
+test('sends a reasoning_effort so reasoning does not eat the token budget', async (t) => {
+  process.env.GROQ_API_KEY = 'test-key'
+  let captured = null
+  const originalFetch = global.fetch
+  global.fetch = async (url, opts) => {
+    captured = JSON.parse(opts.body)
+    return { ok: true, status: 200, json: async () => ({ choices: [{ message: { content: 'ok' } }] }) }
+  }
+  t.after(() => { global.fetch = originalFetch })
+
+  const { req, res } = mockReqRes({ body: { system: 'sys', message: 'hi' } })
+  await handler(req, res)
+  assert.equal(res.statusCode, 200)
+  assert.equal(captured.reasoning_effort, 'low')
+  assert.ok(captured.model, 'a model must be pinned')
+})

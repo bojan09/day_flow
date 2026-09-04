@@ -43,30 +43,40 @@ export function usePersistedState(key, defaultValue) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, key])
 
+  // Mirror of the current value, updated synchronously by setValue below so
+  // two calls in the same tick compose correctly.
+  const valueRef = useRef(value)
+  useEffect(() => { valueRef.current = value }, [value])
+
   const setValue = (updater) => {
-    setValueRaw(prev => {
-      const next = typeof updater === 'function' ? updater(prev) : updater
+    // BUG FIX: the write used to live inside the setState updater. React only
+    // runs an updater when it processes the update, so "save then navigate"
+    // — completing a form and switching view in the same tick — unmounted the
+    // component first and the write never happened. React may also invoke an
+    // updater twice, which double-wrote. Resolving the value and persisting it
+    // here makes the write unconditional and exactly-once.
+    const next = typeof updater === 'function' ? updater(valueRef.current) : updater
+    valueRef.current = next
 
-      // Always write to localStorage first — zero data loss
-      storage.set(key, next)
+    // localStorage first — zero data loss
+    storage.set(key, next)
 
-      // Write to Supabase — via offline queue if available, direct otherwise
-      if (useDB) {
-        if (offline?.safeWrite) {
-          offline.safeWrite(
-            `kv:${key}`,
-            { userId, key, value: next },
-            ({ userId, key, value }) => kvService.set(userId, key, value)
-          ).catch(err => console.error(`[DayFlow] usePersistedState(${key}):`, err?.message))
-        } else {
-          kvService.set(userId, key, next).catch(err =>
-            console.error(`[DayFlow] usePersistedState(${key}):`, err?.message)
-          )
-        }
+    // Then Supabase — via the offline queue when one is available
+    if (useDB) {
+      if (offline?.safeWrite) {
+        offline.safeWrite(
+          `kv:${key}`,
+          { userId, key, value: next },
+          ({ userId, key, value }) => kvService.set(userId, key, value)
+        ).catch(err => console.error(`[DayFlow] usePersistedState(${key}):`, err?.message))
+      } else {
+        kvService.set(userId, key, next).catch(err =>
+          console.error(`[DayFlow] usePersistedState(${key}):`, err?.message)
+        )
       }
+    }
 
-      return next
-    })
+    setValueRaw(next)
   }
 
   return [value, setValue]

@@ -5,8 +5,17 @@
 //          model + token limits server-side, and applies a best-effort
 //          per-IP rate limit tuned to Groq's free tier.
 
-const MODEL      = 'llama-3.3-70b-versatile'
+// Groq retires models without warning. llama-3.3-70b-versatile was pinned here
+// and silently stopped existing — Groq answered 404 model_not_found, this proxy
+// turned that into a bare 502, and every AI feature in the app broke with no
+// way to tell why. If AI stops working, check GET /v1/models first, and read
+// the upstream detail this handler now forwards.
+const MODEL      = 'openai/gpt-oss-120b'
 const MAX_TOKENS = 1000
+// gpt-oss models emit reasoning tokens that come out of the same budget. At
+// default effort a short answer can spend the whole allowance on reasoning and
+// return empty content, so keep it low for these short, structured replies.
+const REASONING_EFFORT = 'low'
 
 const WINDOW_MS = 60 * 1000
 const LIMIT     = 30
@@ -51,8 +60,9 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${key}`,
       },
       body: JSON.stringify({
-        model:      MODEL,
-        max_tokens: MAX_TOKENS,
+        model:            MODEL,
+        max_tokens:       MAX_TOKENS,
+        reasoning_effort: REASONING_EFFORT,
         messages: [
           { role: 'system', content: system },
           { role: 'user',   content: message },
@@ -61,11 +71,31 @@ export default async function handler(req, res) {
     })
 
     if (!upstream.ok) {
-      return res.status(502).json({ error: `AI service error (${upstream.status})` })
+      // Forward Groq's own explanation. Without it a retired model, a revoked
+      // key and a rate limit all look identical from the client. Groq error
+      // messages describe the request, never the credential.
+      let detail = ''
+      try {
+        const body = await upstream.json()
+        detail = body?.error?.message || ''
+      } catch { /* non-JSON error body */ }
+      console.error(`[DayFlow] Groq ${upstream.status} for model ${MODEL}: ${detail}`)
+      return res.status(502).json({
+        error: detail
+          ? `AI service error (${upstream.status}): ${String(detail).slice(0, 200)}`
+          : `AI service error (${upstream.status})`,
+      })
     }
 
     const data = await upstream.json()
     const text = data.choices?.[0]?.message?.content || ''
+    if (!text.trim()) {
+      // A reasoning model that spends its whole budget thinking returns 200
+      // with empty content. Say so rather than handing back a blank string
+      // that each caller has to guess about.
+      console.error(`[DayFlow] Groq returned empty content (finish: ${data.choices?.[0]?.finish_reason})`)
+      return res.status(502).json({ error: 'AI returned an empty response — try again' })
+    }
     return res.status(200).json({ text })
   } catch {
     return res.status(502).json({ error: 'AI service unreachable' })

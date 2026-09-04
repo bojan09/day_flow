@@ -22,7 +22,8 @@
 
 export const THEMES = [
   'control', 'discipline', 'patience', 'perspective', 'acceptance',
-  'time', 'adversity', 'presence', 'responsibility', 'relationships',
+  'time', 'mortality', 'gratitude', 'simplicity', 'self-control',
+  'adversity', 'presence', 'responsibility', 'relationships', 'courage',
 ]
 
 export const STOIC_REFERENCES = [
@@ -115,6 +116,122 @@ export const STOIC_REFERENCES = [
     translation: 'Richard Mott Gummere (1917), public domain',
     themes: ['adversity', 'perspective'],
     meaning: 'Most of what you brace for never arrives. Worth asking what is actually in front of you today.',
+  },
+
+  // ── Marcus Aurelius ───────────────────────────────────────────────────────
+  {
+    id: 'med-4-17',
+    quote: 'Do not act as if thou wert going to live ten thousand years… while thou livest, while it is in thy power, be good.',
+    author: 'Marcus Aurelius',
+    work: 'Meditations',
+    section: 'Book IV, 17',
+    translation: 'George Long (1862), public domain',
+    themes: ['mortality', 'time', 'discipline'],
+    meaning: 'The point is not morbidity but urgency: the good you intend is only ever available now.',
+  },
+  {
+    id: 'med-5-16',
+    quote: 'Such as are thy habitual thoughts, such also will be the character of thy mind; for the soul is dyed by the thoughts.',
+    author: 'Marcus Aurelius',
+    work: 'Meditations',
+    section: 'Book V, 16',
+    translation: 'George Long (1862), public domain',
+    themes: ['discipline', 'perspective', 'self-control'],
+    meaning: 'What you dwell on repeatedly becomes what you are like. Attention is character, over time.',
+  },
+  {
+    id: 'med-7-59',
+    quote: 'Look within. Within is the fountain of good, and it will ever bubble up, if thou wilt ever dig.',
+    author: 'Marcus Aurelius',
+    work: 'Meditations',
+    section: 'Book VII, 59',
+    translation: 'George Long (1862), public domain',
+    themes: ['presence', 'gratitude'],
+    meaning: 'The resource you need is not somewhere else, and it does not arrive on its own — it takes digging.',
+  },
+  {
+    id: 'med-4-43',
+    quote: 'Time is like a river made up of the events which happen, and a violent stream; for as soon as a thing has been seen, it is carried away.',
+    author: 'Marcus Aurelius',
+    work: 'Meditations',
+    section: 'Book IV, 43',
+    translation: 'George Long (1862), public domain',
+    themes: ['time', 'mortality', 'acceptance'],
+    meaning: 'Nothing holds still long enough to be gripped. That is a reason to act today, not to despair.',
+  },
+  {
+    id: 'med-4-7',
+    quote: 'Take away thy opinion, and then there is taken away the complaint… Take away the complaint, and the harm is taken away.',
+    author: 'Marcus Aurelius',
+    work: 'Meditations',
+    section: 'Book IV, 7',
+    translation: 'George Long (1862), public domain',
+    themes: ['control', 'perspective', 'acceptance'],
+    meaning: 'Much of what stings is the verdict you attach to an event, and the verdict is yours to withdraw.',
+  },
+
+  // ── Epictetus ─────────────────────────────────────────────────────────────
+  {
+    id: 'ench-8',
+    quote: 'Demand not that events should happen as you wish; but wish them to happen as they do happen, and you will go on well.',
+    author: 'Epictetus',
+    work: 'Enchiridion',
+    section: '8',
+    translation: 'Elizabeth Carter (1758), public domain',
+    themes: ['acceptance', 'control'],
+    meaning: 'Not passivity — it means spending your effort on your response rather than on protesting the facts.',
+  },
+  {
+    id: 'ench-20',
+    quote: 'Remember that it is not he who gives abuse or blows, who affronts; but the view we take of these things as insulting.',
+    author: 'Epictetus',
+    work: 'Enchiridion',
+    section: '20',
+    translation: 'Elizabeth Carter (1758), public domain',
+    themes: ['relationships', 'self-control', 'patience'],
+    meaning: 'The gap between what someone did and how wounded you feel is occupied by your own interpretation.',
+  },
+  {
+    id: 'ench-11',
+    quote: 'Never say of anything, I have lost it; but, I have restored it.',
+    author: 'Epictetus',
+    work: 'Enchiridion',
+    section: '11',
+    translation: 'Elizabeth Carter (1758), public domain',
+    themes: ['acceptance', 'gratitude', 'mortality'],
+    meaning: 'A hard teaching about holding things loosely — what you had was always on loan.',
+  },
+  {
+    id: 'ench-43',
+    quote: 'Everything has two handles: the one by which it may be borne, the other by which it may not.',
+    author: 'Epictetus',
+    work: 'Enchiridion',
+    section: '43',
+    translation: 'Elizabeth Carter (1758), public domain',
+    themes: ['perspective', 'adversity'],
+    meaning: 'The same situation can be picked up in a way that carries or a way that cuts. You choose the grip.',
+  },
+
+  // ── Seneca ────────────────────────────────────────────────────────────────
+  {
+    id: 'sen-let-2',
+    quote: 'To be everywhere is to be nowhere.',
+    author: 'Seneca',
+    work: 'Moral Letters to Lucilius',
+    section: 'Letter 2',
+    translation: 'Richard Mott Gummere (1917), public domain',
+    themes: ['presence', 'simplicity', 'discipline'],
+    meaning: 'Scattering attention across everything is how a day passes without anything actually being done.',
+  },
+  {
+    id: 'sen-brev-1',
+    quote: 'It is not that we have a short time to live, but that we waste a lot of it.',
+    author: 'Seneca',
+    work: 'On the Shortness of Life',
+    section: 'I',
+    translation: 'John W. Basore (1932), public domain',
+    themes: ['time', 'mortality', 'discipline'],
+    meaning: 'The complaint is usually about how the time was spent, not how much of it there was.',
   },
 ]
 
