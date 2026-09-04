@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint src api",
     "test": "npm run test:unit && npm run test:dom",
-    "test:unit": "node --test api/ai.test.js src/utils/reminders.test.js src/utils/withRetry.test.js src/hooks/syncReconcile.test.js src/services/reflectionModel.test.js src/services/stoicThemeSelection.test.js src/services/captureClassifier.test.js",
+    "test:unit": "node --test api/ai.test.js src/utils/reminders.test.js src/utils/withRetry.test.js src/hooks/syncReconcile.test.js src/services/reflectionModel.test.js src/services/stoicThemeSelection.test.js src/services/daySummary.test.js src/services/captureClassifier.test.js",
     "test:dom": "vitest run"
   },
   "dependencies": {

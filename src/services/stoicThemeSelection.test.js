@@ -71,6 +71,25 @@ test('a theme with no verified quote falls back rather than returning nothing', 
   assert.equal(ref.theme, null, 'reports that no themed match was possible')
 })
 
+test('a non-numeric seed still resolves to a real reference', () => {
+  // The evening passes "<date>-evening" to get a different passage from the
+  // morning. Summing the parts as numbers made this NaN and returned undefined,
+  // which rendered as an empty quote.
+  const ref = selectReference('2026-09-04-evening', { todayTaskCount: 3, overdueCount: 1 })
+  assert.ok(ref, 'must return a reference')
+  assert.ok(ref.quote && ref.quote.length > 0, 'quote must not be empty')
+  assert.ok(ref.author, 'author must not be empty')
+})
+
+test('morning and evening seeds are independent', () => {
+  const morning = selectReference('2026-09-04', { todayTaskCount: 3, overdueCount: 1 })
+  const evening = selectReference('2026-09-04-evening', { todayTaskCount: 3, overdueCount: 1 })
+  assert.ok(morning.quote && evening.quote)
+  // Both must be real entries; they may coincide, but neither may be blank.
+  assert.ok(STOIC_REFERENCES.some(r => r.id === morning.id))
+  assert.ok(STOIC_REFERENCES.some(r => r.id === evening.id))
+})
+
 test('every reference carries an attribution and a translation', () => {
   // Guards the spec rule against unattributed or fabricated quotations.
   for (const r of STOIC_REFERENCES) {

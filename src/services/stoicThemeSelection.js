@@ -77,8 +77,14 @@ export function selectReference(dateKey, context = {}, pool = STOIC_REFERENCES) 
   return { ...rotate(pool, dateKey), reason: null, theme: null }
 }
 
-// Deterministic per-day pick — same day, same reference.
-function rotate(list, dateKey) {
-  const n = String(dateKey).split('-').reduce((sum, part) => sum + Number(part), 0)
-  return list[n % list.length]
+// Deterministic per-seed pick — same seed, same reference.
+// Hashes the whole string rather than summing its parts as numbers: callers
+// pass suffixed seeds like "2026-09-04-evening" to get a different passage for
+// the evening, and Number('evening') is NaN, which previously produced
+// list[NaN] === undefined and rendered an empty quote.
+function rotate(list, seed) {
+  const str = String(seed)
+  let hash = 0
+  for (let i = 0; i < str.length; i++) hash = (hash * 31 + str.charCodeAt(i)) >>> 0
+  return list[hash % list.length]
 }

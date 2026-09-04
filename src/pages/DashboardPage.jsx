@@ -284,7 +284,7 @@ export default function DashboardPage() {
         {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} energy={energy} goals={goals} moodTheme={moodTheme} workouts={workouts} ideas={ideas} />}
         {activeTab === 'focus'      && <FocusMode tasks={tasks} />}
         {activeTab === 'search'     && <SearchView tasks={tasks} notes={notes} habits={habits} goals={goals} ideas={ideas} />}
-        {activeTab === 'reflect'    && <ReflectionView tasks={tasks} onTabChange={handleTabChange} />}
+        {activeTab === 'reflect'    && <ReflectionView tasks={tasks} habits={habits} routines={routines} onTabChange={handleTabChange} />}
 
       </ViewErrorBoundary>
       </DashboardLayout>
