@@ -2,18 +2,9 @@
 // Purpose: Stores user's mobile bottom nav configuration in Supabase.
 //          Default 4 tabs. User can replace any slot with any module.
 import { usePersistedState } from './usePersistedState'
+import { ALL_MODULES } from '../config/navigation'
 
-export const ALL_MODULES = [
-  { id: 'today',      label: 'Today',        emoji: '☀️' },
-  { id: 'tasks',      label: 'DailyGoals',   emoji: '🎯' },
-  { id: 'rhythm',     label: 'Daily Rhythm', emoji: '🔁' },
-  { id: 'focus',      label: 'Focus',        emoji: '⏱️' },
-  { id: 'workouts',   label: 'Workouts',     emoji: '🏋️' },
-  { id: 'capture',    label: 'Capture',      emoji: '📥' },
-  { id: 'calendar',   label: 'Calendar',     emoji: '📅' },
-  { id: 'insights',   label: 'Insights',     emoji: '📊' },
-  { id: 'projects',   label: 'Projects',     emoji: '🗂️' },
-]
+export { ALL_MODULES }
 
 // Old persisted nav configs may still reference the standalone 'habits' /
 // 'routines' ids that were folded into 'rhythm' — map them so existing

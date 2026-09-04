@@ -11,24 +11,10 @@ import { isSupabaseConfigured } from '../../services/supabaseClient'
 // Same focusable-element query Modal.jsx uses for its initial-focus target.
 const FOCUSABLE = 'input, textarea, select, button, [href], [tabindex]:not([tabindex="-1"])'
 
-// Primary — always visible, the tabs used every day.
-const PRIMARY_SECTION = { label: 'Primary', tabs: [
-  { id: 'today',     label: 'Today',        emoji: '☀️' },
-  { id: 'tasks',     label: 'DailyGoals',   emoji: '🎯' },
-  { id: 'rhythm',    label: 'Daily Rhythm', emoji: '🔁' },
-  { id: 'workouts',  label: 'Workouts',     emoji: '🏋️' },
-  { id: 'insights',  label: 'Insights',     emoji: '📊' },
-  { id: 'capture',   label: 'Capture',      emoji: '📥' },
-]}
+import { PRIMARY_TABS, MORE_TABS } from '../../config/navigation'
 
-// More — secondary tabs, tucked behind a collapsed-by-default toggle.
-const MORE_SECTION = { label: 'More', tabs: [
-  { id: 'focus',     label: 'Focus',     emoji: '⏱️' },
-  { id: 'calendar',  label: 'Calendar',  emoji: '📅' },
-  { id: 'timeblock', label: 'Schedule',  emoji: '⏰' },
-  { id: 'projects',  label: 'Projects',  emoji: '🗂️' },
-  { id: 'search',    label: 'Search',    emoji: '🔍' },
-]}
+const PRIMARY_SECTION = { label: 'Primary', tabs: PRIMARY_TABS }
+const MORE_SECTION    = { label: 'More',    tabs: MORE_TABS }
 
 // ── User profile strip ────────────────────────────────────────────────────────
 function DrawerProfile({ onSignOut }) {

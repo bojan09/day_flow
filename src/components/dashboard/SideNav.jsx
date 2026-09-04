@@ -7,24 +7,7 @@ import UserMenu    from '../auth/UserMenu'
 import ThemeToggle from '../ui/ThemeToggle'
 import Logo        from '../ui/Logo'
 
-// Primary — always visible, the tabs used every day.
-const PRIMARY_TABS = [
-  { id: 'today',     label: 'Today',        emoji: '☀️' },
-  { id: 'tasks',     label: 'DailyGoals',   emoji: '🎯' },
-  { id: 'rhythm',    label: 'Daily Rhythm', emoji: '🔁' },
-  { id: 'workouts',  label: 'Workouts',     emoji: '🏋️' },
-  { id: 'insights',  label: 'Insights',     emoji: '📊' },
-  { id: 'capture',   label: 'Capture',      emoji: '📥' },
-]
-
-// More — secondary tabs, tucked behind a collapsed-by-default toggle.
-const MORE_TABS = [
-  { id: 'focus',     label: 'Focus',     emoji: '⏱️' },
-  { id: 'calendar',  label: 'Calendar',  emoji: '📅' },
-  { id: 'timeblock', label: 'Schedule',  emoji: '⏰' },
-  { id: 'projects',  label: 'Projects',  emoji: '🗂️' },
-  { id: 'search',    label: 'Search',    emoji: '🔍' },
-]
+import { PRIMARY_TABS, MORE_TABS } from '../../config/navigation'
 
 // Preload lazy chunks when user hovers a nav item
 const PRELOAD_MAP = {
