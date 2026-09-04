@@ -8,6 +8,7 @@ import EveningReview from './EveningReview'
 import { useReflections } from '../../hooks/useReflections'
 import { getTodayKey } from '../../utils/dateUtils'
 import { Sun, Moon, Check } from 'lucide-react'
+import WeeklyReflection from './WeeklyReflection'
 
 // Morning runs until noon; evening opens from 5pm. Between the two the user
 // can still open either deliberately — this only picks the default.
@@ -94,6 +95,8 @@ export default function ReflectionView({ tasks, habits, routines, onTabChange })
             {reflections.streak} days reflected on in a row.
           </p>
         )}
+
+        <WeeklyReflection entriesByDate={reflections.month} todayKey={dateKey} />
 
         <button
           type="button"
