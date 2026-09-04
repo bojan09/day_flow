@@ -1,7 +1,7 @@
 // Component: TopBar
 // Purpose: Sticky dashboard header — page title, date, theme toggle, search, sync status.
 //          Solid background, no glassmorphism.
-import { useNavigate }  from 'react-router-dom'
+import { useNavigate }  from 'react-router'
 import { formatDate }   from '../../utils/dateUtils'
 import SyncIndicator       from '../ui/SyncIndicator'
 import { isSupabaseConfigured } from '../../services/supabaseClient'

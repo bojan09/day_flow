@@ -3,7 +3,7 @@
 //          Handles both initial load AND mid-session token expiry.
 //          Demo mode (no Supabase) always passes through.
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { useAuth } from '../../hooks/useAuth'
 import { isSupabaseConfigured } from '../../services/supabaseClient'
 import { SkeletonCard } from '../ui/Skeleton'

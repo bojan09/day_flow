@@ -1,6 +1,6 @@
 // Component: HeroSection
 // Purpose: Premium hero — CTA links to /auth for sign up
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import HeroPreview from './HeroPreview'
 
 export default function HeroSection() {

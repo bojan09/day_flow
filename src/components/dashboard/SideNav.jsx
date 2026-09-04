@@ -1,7 +1,7 @@
 // Component: SideNav
 // Purpose: Desktop sidebar — Primary + collapsible More nav, expanded theme
 //          switcher, user menu. Logo always goes to /dashboard.
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { useState } from 'react'
 import UserMenu    from '../auth/UserMenu'
 import ThemeToggle from '../ui/ThemeToggle'

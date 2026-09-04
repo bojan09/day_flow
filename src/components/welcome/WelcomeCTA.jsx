@@ -1,6 +1,6 @@
 // Component: WelcomeCTA
 // Purpose: Final CTA section on Welcome page with sign-up and demo options
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 const APP_TABS = [
   { emoji: '☀️', label: 'Today'      }, { emoji: '✅', label: 'Tasks'    },

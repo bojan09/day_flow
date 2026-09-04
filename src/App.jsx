@@ -4,7 +4,7 @@
 //   - Logged IN   → / redirects to /dashboard
 //   - /auth       → AuthPage (sign in / sign up)
 //   - /dashboard  → DashboardPage (protected by AuthGuard)
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router'
 import WelcomePage   from './pages/WelcomePage'
 import DashboardPage from './pages/DashboardPage'
 import AuthPage      from './pages/AuthPage'

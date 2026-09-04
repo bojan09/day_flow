@@ -1,6 +1,6 @@
 // Component: WelcomeNav
 // Purpose: Top navigation bar on the Welcome page — logo, nav links, auth CTAs
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 const NAV_LINKS = [
   { label: 'Features',     href: '#features'      },

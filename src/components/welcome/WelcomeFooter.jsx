@@ -1,6 +1,6 @@
 // Component: WelcomeFooter
 // Purpose: Marketing footer for the Welcome page (logged-out state)
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 const LINKS = {
   Product:  ['Features', 'How it works', 'Pricing'],

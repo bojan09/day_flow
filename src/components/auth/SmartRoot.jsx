@@ -5,7 +5,7 @@
 //          Logged-out → /welcome
 //          Demo mode  → /welcome
 import { useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { useAuth } from '../../hooks/useAuth'
 import { isSupabaseConfigured } from '../../services/supabaseClient'
 

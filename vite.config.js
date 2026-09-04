@@ -42,6 +42,12 @@ export default defineConfig({
   },
   optimizeDeps: {
     esbuildOptions: { loader: { '.js': 'jsx' } },
+    // Pre-bundle these up front. Most views are lazy-loaded, so otherwise Vite
+    // only discovers their deps when a view is first opened and re-optimizes
+    // mid-session, forcing a reload each time on a cold cache. Vite handles
+    // that correctly on its own — this just avoids the churn. Dev-only;
+    // production is pre-bundled by Rollup regardless.
+    include: ['react', 'react-dom', 'react-router', 'lucide-react', 'date-fns'],
   },
   build: {
     rollupOptions: {

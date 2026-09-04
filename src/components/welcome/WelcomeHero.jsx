@@ -1,6 +1,6 @@
 // Component: WelcomeHero
 // Purpose: Full-screen hero — headline, subtext, centred dual CTAs, scroll hint
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 export default function WelcomeHero() {
   const navigate = useNavigate()

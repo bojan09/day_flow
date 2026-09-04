@@ -2,7 +2,7 @@
 // Purpose: Root app page — owns all state hooks, renders active tab.
 //          Hosts QuickCapture + KeyboardShortcuts as global overlays.
 import { useState, useEffect, lazy, Suspense, useCallback } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 import DashboardLayout    from '../layouts/DashboardLayout'
 import TabSkeleton        from '../components/ui/TabSkeleton'
 import ViewErrorBoundary  from '../components/ui/ViewErrorBoundary'

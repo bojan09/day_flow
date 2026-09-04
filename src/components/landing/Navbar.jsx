@@ -1,6 +1,6 @@
 // Component: Navbar (Landing)
 // Purpose: Fixed nav — logo scrolls to top, links smooth-scroll to sections, CTA to /auth
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 const NAV_LINKS = [
   { label: 'Features',     href: '#features'     },

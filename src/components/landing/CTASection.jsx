@@ -1,6 +1,6 @@
 // Component: CTASection
 // Purpose: Bottom CTA — sign up link and try demo option
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 const APP_TABS = [
   { emoji: '☀️', label: 'Today'     }, { emoji: '✅', label: 'Tasks'    },

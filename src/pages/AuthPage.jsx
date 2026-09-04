@@ -3,7 +3,7 @@
 //          ?mode=signin|signup|magic|reset|update-password pre-selects the tab.
 //          Handles PASSWORD_RECOVERY Supabase event via recoveryMode flag.
 import { useState, useEffect } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router'
 import { useAuth } from '../hooks/useAuth'
 import { isSupabaseConfigured } from '../services/supabaseClient'
 import GoogleButton    from '../components/auth/GoogleButton'
