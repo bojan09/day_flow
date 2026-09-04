@@ -11,6 +11,7 @@ import { useAuth }               from './useAuth'
 import { isSupabaseConfigured }  from '../services/supabaseClient'
 import { withRetry }             from '../utils/withRetry'
 import { useToast }              from '../utils/toast'
+import { reconcileRows, shouldIgnoreFetch } from './syncReconcile'
 
 // How long a write/delete guard is held after the operation commits. A
 // getAll() that was already in flight when the write started reflects DB state
@@ -39,24 +40,12 @@ export function useSyncedCollection({ storageKey, table, service }) {
   const itemsRef = useRef(items)
   useEffect(() => { itemsRef.current = items }, [items])
 
-  const reconcile = useCallback((rows) => {
-    const filtered = rows.filter(r => !pendingDeletesRef.current.has(r.id))
-    if (pendingWritesRef.current.size === 0) return filtered
-    const byId = new Map(filtered.map(r => [r.id, r]))
-    for (const [id, local] of pendingWritesRef.current) byId.set(id, local)
-    return [...byId.values()]
-  }, [])
-
   const applyRows = useCallback((rows) => {
-    // Every service's getAll() returns [] BOTH for "genuinely empty" and for a
-    // failed query (it logs the error and returns []). Never let that wipe a
-    // non-empty local list — a transient network blip would otherwise clear the
-    // UI and the localStorage cache sitting behind it.
-    if (rows.length === 0 && itemsRef.current.length > 0) return
-    const merged = reconcile(rows)
+    if (shouldIgnoreFetch(rows, itemsRef.current)) return
+    const merged = reconcileRows(rows, pendingWritesRef.current, pendingDeletesRef.current)
     setItems(merged)
     storage.set(storageKey, merged)
-  }, [reconcile, storageKey])
+  }, [storageKey])
 
   // ── Initial load ───────────────────────────────────────────────────────────
   useEffect(() => {

@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src api",
-    "test": "node --test api/ai.test.js src/utils/reminders.test.js src/utils/withRetry.test.js src/services/captureClassifier.test.js"
+    "test": "node --test api/ai.test.js src/utils/reminders.test.js src/utils/withRetry.test.js src/hooks/syncReconcile.test.js src/services/captureClassifier.test.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
