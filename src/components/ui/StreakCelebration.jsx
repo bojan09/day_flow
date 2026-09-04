@@ -1,7 +1,7 @@
 // Component: StreakCelebration
 // Purpose: Lightweight confetti burst when a streak milestone is hit (7/21/30/100 days).
 //          Uses CSS-only animation — no GSAP, no libraries.
-import { useState, memo, useEffect } from 'react'
+import { useState, memo, useEffect, useRef } from 'react'
 
 const MILESTONES = [7, 14, 21, 30, 60, 100, 365]
 const COLORS     = ['#3B6B4B','#F59E0B','#3B82F6','#7C3AED','#EC4899','#10B981']
@@ -11,7 +11,10 @@ function randomBetween(a, b) { return a + Math.random() * (b - a) }
 export function useStreakCelebration(streak) {
   const [celebrating, setCelebrating] = useState(false)
   const [milestone,   setMilestone]   = useState(null)
-  const prevStreakRef = { current: null }
+  // Was `{ current: null }` — a plain object rebuilt on every render, so
+  // `.current` was always null, the effect below always took the first-run
+  // branch, and no milestone ever fired.
+  const prevStreakRef = useRef(null)
 
   useEffect(() => {
     if (prevStreakRef.current === null) { prevStreakRef.current = streak; return }

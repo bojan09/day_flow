@@ -38,24 +38,27 @@ export default function FocusMode({ tasks }) {
   const circ    = 2 * Math.PI * 88
   const dash    = ((100 - pct) / 100) * circ
 
+  // The tick only advances state. Completion is handled in the effect below,
+  // because React may invoke a state updater more than once for a single
+  // update — running the session-logging side effect inside it could log the
+  // same pomodoro twice.
   useEffect(() => {
     if (running) {
       interval.current = setInterval(() => {
-        setSecs(s => {
-          if (s <= 1) {
-            clearInterval(interval.current)
-            setRunning(false)
-            handleComplete()
-            return 0
-          }
-          return s - 1
-        })
+        setSecs(s => (s <= 1 ? 0 : s - 1))
       }, 1000)
     } else {
       clearInterval(interval.current)
     }
     return () => clearInterval(interval.current)
   }, [running])
+
+  useEffect(() => {
+    if (!running || secs > 0) return
+    clearInterval(interval.current)
+    setRunning(false)
+    handleComplete()
+  }, [secs, running])
 
   const handleComplete = () => {
     if (mode === 'focus') {
