@@ -72,7 +72,7 @@ function DrawerProfile({ onSignOut }) {
 // ── Main drawer ───────────────────────────────────────────────────────────────
 export default function MobileDrawer({
   isOpen, onClose, activeTab, onTabChange,
-  theme, onSetTheme,
+  theme, onSetTheme, onCustomiseNav,
 }) {
   const { signOut }  = useAuth()
   const sheetRef     = useRef(null)
@@ -254,6 +254,17 @@ export default function MobileDrawer({
             Appearance
           </p>
           <ThemeToggle theme={theme} onSetTheme={onSetTheme} compact={false} />
+
+          {onCustomiseNav && (
+            <button
+              type="button"
+              onClick={() => { onClose(); onCustomiseNav() }}
+              className="mt-3 w-full text-left text-xs font-medium py-2"
+              style={{ color: 'var(--text-muted)' }}
+            >
+              ✦ Customise bottom nav
+            </button>
+          )}
         </div>
       </div>
     </div>

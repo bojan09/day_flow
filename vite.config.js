@@ -50,6 +50,20 @@ export default defineConfig({
     include: ['react', 'react-dom', 'react-router', 'lucide-react', 'date-fns'],
   },
   build: {
+    // No <link rel="modulepreload"> tags.
+    //
+    // The service worker answers /assets/* from its own cache via
+    // respondWith, so Chrome cannot match a preloaded response to the
+    // request the SW ultimately serves. Every preload was therefore
+    // discarded — the console said so twice per chunk, once as
+    // "cross-world service worker resource mismatch" and again as
+    // "preloaded but not used" — after costing a duplicate fetch.
+    //
+    // The SW controls the page on every visit after the first, so these tags
+    // were pure waste there. Dropping them removes the waste and the noise;
+    // the cost is one extra round-trip of discovery depth on a first,
+    // uncontrolled load, which the SW cache then makes moot.
+    modulePreload: false,
     rollupOptions: {
       output: {
         manualChunks: (id) => {

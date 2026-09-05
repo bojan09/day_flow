@@ -20,6 +20,8 @@ export default function DashboardLayout({ children, activeTab, onTabChange, them
   const { user }  = useAuth()
   const offline   = useOfflineQueueContext() || { isOnline: true, queueLength: 0, replaying: false }
   const [drawerOpen, setDrawerOpen] = useState(false)
+  // Bumped by the More drawer to open the bottom-nav customiser.
+  const [customizerSignal, setCustomizerSignal] = useState(0)
   const [paletteOpen, setPaletteOpen] = useState(false)
 
   // Global Cmd/Ctrl+K — opens the command palette from anywhere in the app.
@@ -50,13 +52,13 @@ export default function DashboardLayout({ children, activeTab, onTabChange, them
 
       {/* Desktop sidebar — fixed width, full height */}
       <aside className="hidden md:flex w-60 flex-shrink-0 h-screen sticky top-0 overflow-y-auto">
-        <SideNav activeTab={activeTab} onTabChange={onTabChange} theme={theme} onSetTheme={onSetTheme} />
+        <SideNav activeTab={activeTab} onTabChange={onTabChange} theme={theme} onSetTheme={onSetTheme} onCustomiseNav={() => setCustomizerSignal(n => n + 1)} />
       </aside>
 
       {/* Main column — flex-col so footer sticks to bottom */}
       <div className="flex-1 flex flex-col min-w-0" style={{ minHeight: '100vh' }}>
 
-        <TopBar activeTab={activeTab} onTabChange={onTabChange} theme={theme} onSetTheme={onSetTheme} />
+        <TopBar activeTab={activeTab} onTabChange={onTabChange} theme={theme} onSetTheme={onSetTheme} onCustomiseNav={() => setCustomizerSignal(n => n + 1)} />
 
         {/* OfflineBanner inside column — spans content width, never breaks sidebar */}
         <OfflineBanner isOnline={offline.isOnline} queueLength={offline.queueLength} replaying={offline.replaying} />
@@ -73,8 +75,8 @@ export default function DashboardLayout({ children, activeTab, onTabChange, them
       </div>
 
       {/* Mobile overlays — position:fixed, outside normal flow */}
-      <BottomNav activeTab={activeTab} onTabChange={onTabChange} onOpenDrawer={() => setDrawerOpen(true)} />
-      <MobileDrawer isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} activeTab={activeTab} onTabChange={onTabChange} theme={theme} onSetTheme={onSetTheme} />
+      <BottomNav activeTab={activeTab} onTabChange={onTabChange} onOpenDrawer={() => setDrawerOpen(true)} openCustomizerSignal={customizerSignal} />
+      <MobileDrawer isOpen={drawerOpen} onClose={() => setDrawerOpen(false)} activeTab={activeTab} onTabChange={onTabChange} theme={theme} onSetTheme={onSetTheme} onCustomiseNav={() => setCustomizerSignal(n => n + 1)} />
       <InstallPromptBanner />
 
       {/* Global overlay — Cmd/Ctrl+K from anywhere, mounted once at layout top level */}

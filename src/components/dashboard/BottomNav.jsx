@@ -1,13 +1,18 @@
 // Component: BottomNav
 // Purpose: Mobile bottom navigation — 4 customisable slots + More drawer trigger.
 //          Long-press any tab (or tap ⚙️) to open NavCustomizer.
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavConfig } from '../../hooks/useNavConfig'
 import NavCustomizer   from './NavCustomizer'
 
-export default function BottomNav({ activeTab, onTabChange, onOpenDrawer }) {
+export default function BottomNav({ activeTab, onTabChange, onOpenDrawer, openCustomizerSignal = 0 }) {
   const { navItems, setSlot, resetToDefault, getModule } = useNavConfig()
   const [showCustomizer, setShowCustomizer] = useState(false)
+
+  // Opened from the More drawer. The trigger used to be a floating pill
+  // pinned above this bar, which landed underneath the quick-capture button
+  // in the same corner and was left half-covered.
+  useEffect(() => { if (openCustomizerSignal > 0) setShowCustomizer(true) }, [openCustomizerSignal])
 
   const isMoreActive = !navItems.includes(activeTab)
 
@@ -76,18 +81,6 @@ export default function BottomNav({ activeTab, onTabChange, onOpenDrawer }) {
           </button>
         </div>
 
-        {/* Customize hint */}
-        <button
-          onClick={() => setShowCustomizer(true)}
-          className="tap-target absolute -top-7 right-3 text-[10px] px-2 py-1 rounded-full border transition-all"
-          style={{
-            backgroundColor: 'var(--surface)',
-            borderColor:     'var(--border)',
-            color:           'var(--text-faint)',
-          }}
-        >
-          ✦ customise nav
-        </button>
       </nav>
 
       <NavCustomizer
