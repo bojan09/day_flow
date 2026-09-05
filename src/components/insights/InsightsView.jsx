@@ -17,6 +17,7 @@ import WeeklyPersonalBest    from './WeeklyPersonalBest'
 import ReflectionPrompt      from './ReflectionPrompt'
 import DailySummaryCard      from '../summary/DailySummaryCard'
 import VoiceJournal          from '../voice/VoiceJournal'
+import PushSetupPanel      from '../notifications/PushSetupPanel'
 import ThemePicker           from './ThemePicker'
 import ExportPanel           from '../export/ExportPanel'
 
@@ -98,6 +99,10 @@ export default function InsightsView({
       {tab === 'settings' && (
         <div className="space-y-4">
           <ThemePicker theme={theme} onSetTheme={onSetTheme} />
+
+          {/* Was built but never mounted, so nothing ever asked for notification
+              permission and no reminder could fire. */}
+          <PushSetupPanel />
 
           {moodTheme && (
             <div
