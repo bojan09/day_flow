@@ -1,9 +1,8 @@
 // Component: WeeklyReview
-// Purpose: Sunday weekly review — shows week stats AND generates an AI draft
+// Purpose: Sunday weekly review — shows the week stats and gives space to write
 //          summary with reflection prompts. Shows any day (not just Sunday) via
 //          manual trigger, and auto-shows on Sunday.
 import { useState, useMemo } from 'react'
-import { callClaude } from '../../services/aiService'
 import { subDays, format }   from 'date-fns'
 import { getDateKey }        from '../../utils/dateUtils'
 
@@ -46,9 +45,7 @@ function buildWeekContext({ tasks, habits, mood, notes }) {
 
 export default function WeeklyReview({ tasks, habits, mood, notes, onClose }) {
   const [dismissed,  setDismissed] = useState(false)
-  const [aiDraft,    setAiDraft]   = useState('')
-  const [loading,    setLoading]   = useState(false)
-  const [error,      setError]     = useState(null)
+  const [weekNote,    setWeekNote]   = useState('')
   const [next,       setNext]      = useState('')
 
   const ctx = useMemo(() => buildWeekContext({ tasks, habits, mood, notes }), [tasks, habits, mood, notes])
@@ -56,29 +53,6 @@ export default function WeeklyReview({ tasks, habits, mood, notes, onClose }) {
   if (dismissed) return null
 
   const handleClose = () => { setDismissed(true); onClose?.() }
-
-  const generateDraft = async () => {
-    setLoading(true); setError(null); setAiDraft('')
-    try {
-      const text = await callClaude(`You are a thoughtful personal coach writing a weekly review draft for the user.
-Write a warm, personal 3-paragraph review in first person (as if the user wrote it).
-Paragraph 1: What happened this week — reference specific numbers naturally.
-Paragraph 2: What went well and what was challenging — be honest, not just positive.
-Paragraph 3: One clear intention or focus for next week based on the patterns.
-Keep it under 120 words. No headers, no bullet points. Conversational and genuine.`, `Week of ${ctx.weekOf} – ${ctx.weekEnd}:
-Tasks: ${ctx.tasks.done}/${ctx.tasks.total} completed (${ctx.tasks.rate}%)
-Mood average: ${ctx.avgMood ? `${ctx.avgMood}/5` : 'not tracked'}
-Best habit streak: ${ctx.bestStreak} days
-Top habit: ${ctx.topHabit ? `${ctx.topHabit.name} (${ctx.topHabit.pct}%)` : 'none'}
-Struggled with: ${ctx.lowHabit ? `${ctx.lowHabit.name} (${ctx.lowHabit.pct}%)` : 'none'}
-Notes written: ${ctx.weekNotes}`)
-      setAiDraft(text)
-    } catch {
-      setError('Could not generate draft. Check your connection.')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   return (
     <div
@@ -138,38 +112,19 @@ Notes written: ${ctx.weekNotes}`)
             </div>
           )}
 
-          {/* AI Draft */}
-          {!aiDraft && !loading && (
-            <button type="button" onClick={generateDraft}
-              className="w-full py-3 rounded-2xl text-sm font-semibold text-white transition-all active:scale-95"
-              style={{ backgroundColor: 'var(--accent)' }}>
-              ✦ Generate AI review draft
-            </button>
-          )}
-
-          {loading && (
-            <div className="flex items-center justify-center gap-2 py-3">
-              <span className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin"
-                style={{ borderColor: 'var(--accent)' }} />
-              <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Writing your review…</span>
-            </div>
-          )}
-
-          {error && <p className="text-xs text-center text-red-500">{error}</p>}
-
-          {aiDraft && (
-            <div>
-              <p className="text-[10px] uppercase tracking-widest font-semibold mb-2"
-                style={{ color: 'var(--text-faint)' }}>AI draft — edit freely</p>
-              <textarea
-                value={aiDraft}
-                onChange={e => setAiDraft(e.target.value)}
-                className="w-full text-sm rounded-2xl p-4 outline-none border resize-none leading-relaxed"
-                rows={5}
-                style={{ backgroundColor: 'var(--bg)', borderColor: 'var(--border)', color: 'var(--text)' }}
-              />
-            </div>
-          )}
+          {/* Your own words — this used to be a generated draft */}
+          <div>
+            <p className="text-[10px] uppercase tracking-widest font-semibold mb-2"
+              style={{ color: 'var(--text-faint)' }}>How was your week?</p>
+            <textarea
+              value={weekNote}
+              onChange={e => setWeekNote(e.target.value)}
+              placeholder="What happened, what went well, what was hard…"
+              className="w-full text-sm rounded-2xl p-4 outline-none border resize-none leading-relaxed"
+              rows={5}
+              style={{ backgroundColor: 'var(--bg)', borderColor: 'var(--border)', color: 'var(--text)' }}
+            />
+          </div>
 
           {/* Next week intention */}
           <div>
@@ -194,7 +149,7 @@ Notes written: ${ctx.weekNotes}`)
           <button type="button"
             onClick={() => {
               if (next.trim() && notes?.addNote) {
-                notes.addNote({ title: `Week of ${ctx.weekOf}`, content: `${aiDraft}\n\nNext week: ${next}`, tags: ['weekly-review'] })
+                notes.addNote({ title: `Week of ${ctx.weekOf}`, content: `${weekNote}\n\nNext week: ${next}`, tags: ['weekly-review'] })
               }
               handleClose()
             }}

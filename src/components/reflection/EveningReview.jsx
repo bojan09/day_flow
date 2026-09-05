@@ -5,13 +5,13 @@
 // Tone is deliberately different from the morning: the morning prepares, the
 // evening reflects and releases. Nothing here scores the day.
 import { useState } from 'react'
-import { Moon, ArrowRight, ArrowLeft, Check, Sparkles } from 'lucide-react'
+import { Moon, ArrowRight, ArrowLeft, Check } from 'lucide-react'
 import { getTodayKey } from '../../utils/dateUtils'
+import { listHas, toggleInList } from '../../services/chipList'
 import { selectReference } from '../../services/stoicThemeSelection'
-import { buildDaySummary, summaryLines, hasEnoughContextForAI } from '../../services/daySummary'
+import { buildDaySummary, summaryLines } from '../../services/daySummary'
 import { usePomodoroHistory } from '../../hooks/usePomodoroHistory'
 import { useFasting } from '../../hooks/useFasting'
-import { callClaude } from '../../services/aiService'
 
 const FEELINGS = ['Calm', 'Good', 'Easy', 'Focused', 'Challenging', 'Scattered', 'Stressful', 'Difficult']
 
@@ -39,18 +39,18 @@ function Step({ title, hint, children }) {
   )
 }
 
-function Chips({ options, value, onChange, idKey = 'id', labelKey = 'label' }) {
+function Chips({ options, value, onChange, idKey = 'id', labelKey = 'label', multi = false }) {
   return (
     <div className="flex flex-wrap gap-2">
       {options.map(opt => {
         const id    = typeof opt === 'string' ? opt : opt[idKey]
         const label = typeof opt === 'string' ? opt : opt[labelKey]
-        const active = value === id
+        const active = multi ? listHas(value, id) : value === id
         return (
           <button
             key={id}
             type="button"
-            onClick={() => onChange(active ? '' : id)}
+            onClick={() => onChange(multi ? toggleInList(value, id) : (active ? '' : id))}
             className="px-4 py-2 rounded-full text-sm font-medium border transition-all active:scale-95"
             style={active
               ? { backgroundColor: 'var(--accent)', color: 'white', borderColor: 'var(--accent)' }
@@ -91,52 +91,9 @@ export default function EveningReview({ reflections, tasks, habits, routines, on
     lesson:         entry.lesson || '',
     dayFelt:        entry.dayFelt || '',
     carryForward:   entry.carryForward || '',
-    aiReflection:   entry.aiReflection || '',
   })
-  const [ai, setAi] = useState({ loading: false, error: null })
 
   const set = (patch) => setDraft(d => ({ ...d, ...patch }))
-
-  // Grounded strictly in what actually happened and what the user wrote.
-  const requestReflection = async () => {
-    setAi({ loading: true, error: null })
-    const facts = [
-      entry.intention ? `Morning intention: ${entry.intention}` : null,
-      summary.priority ? `Stated priority: ${summary.priority}${summary.priorityDone === null ? '' : summary.priorityDone ? ' (completed)' : ' (not finished)'}` : null,
-      summary.tasks.total ? `Tasks: ${summary.tasks.completed} of ${summary.tasks.total} completed` : null,
-      summary.focusSessions ? `Focus sessions: ${summary.focusSessions} (${summary.focusMinutes} minutes)` : null,
-      summary.habits.total ? `Habits: ${summary.habits.completed} of ${summary.habits.total}` : null,
-      summary.fastingMs ? `Fasted: ${Math.round(summary.fastingMs / 3600000 * 10) / 10} hours` : null,
-      draft.livedIntention ? `Lived according to intention: ${draft.livedIntention.replace('_', ' ')}` : null,
-      draft.wentWell ? `What went well: ${draft.wentWell}` : null,
-      draft.didntGoPlanned ? `What didn't go as planned: ${draft.didntGoPlanned}` : null,
-      draft.lesson ? `What today taught them: ${draft.lesson}` : null,
-      draft.dayFelt ? `The day felt: ${draft.dayFelt}` : null,
-    ].filter(Boolean).join('\n')
-
-    try {
-      const text = await callClaude(
-        `You write a short evening reflection for a personal productivity app, in a calm Stoic spirit.
-
-Rules:
-- 3 short sentences maximum. No headings, no lists, no preamble.
-- Use ONLY the facts given. Never invent events, numbers or feelings.
-- Non-judgmental. Never praise or scold. "Not today" is not failure.
-- Do not diagnose emotions or mental health.
-- End with at most one concrete, small suggestion for tomorrow — only if the facts support it.
-- Address the person as "you".`,
-        facts,
-      )
-      const clean = (text || '').trim()
-      if (clean) {
-        set({ aiReflection: clean })
-        save({ aiReflection: clean })
-      }
-      setAi({ loading: false, error: clean ? null : 'No reflection came back.' })
-    } catch (err) {
-      setAi({ loading: false, error: err?.message || 'Could not generate a reflection.' })
-    }
-  }
 
   const steps = [
     // ── REVIEW ──────────────────────────────────────────────────────────────
@@ -238,54 +195,10 @@ Rules:
           />
           <div className="space-y-2 pt-1">
             <p className="text-[11px] uppercase tracking-widest" style={{ color: 'var(--text-faint)' }}>How did the day feel?</p>
-            <Chips options={FEELINGS} value={draft.dayFelt} onChange={v => set({ dayFelt: v })} />
+            <Chips options={FEELINGS} value={draft.dayFelt} onChange={v => set({ dayFelt: v })} multi />
           </div>
         </Step>
       ),
-    },
-
-    // ── REFLECT (optional AI) ───────────────────────────────────────────────
-    {
-      key: 'reflect',
-      render: () => {
-        const eligible = hasEnoughContextForAI(summary, draft)
-        return (
-          <Step
-            title="Today's reflection"
-            hint={eligible
-              ? 'Optional. Built only from what actually happened and what you wrote.'
-              : 'Your own words are the reflection — there is nothing to add to them yet.'}
-          >
-            {draft.aiReflection && (
-              <div
-                className="rounded-2xl border p-4"
-                style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)' }}
-              >
-                <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: 'var(--accent-text)' }}>
-                  {draft.aiReflection}
-                </p>
-              </div>
-            )}
-
-            {eligible && !draft.aiReflection && (
-              <button
-                type="button"
-                onClick={requestReflection}
-                disabled={ai.loading}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium border transition-all active:scale-95 disabled:opacity-60"
-                style={{ borderColor: 'var(--border)', color: 'var(--text-muted)', backgroundColor: 'var(--surface)' }}
-              >
-                <Sparkles size={15} aria-hidden="true" />
-                {ai.loading ? 'Reflecting…' : 'Add a reflection'}
-              </button>
-            )}
-
-            {ai.error && (
-              <p className="text-xs" style={{ color: 'var(--tone-red-text)' }}>{ai.error}</p>
-            )}
-          </Step>
-        )
-      },
     },
 
     // ── CARRY FORWARD ───────────────────────────────────────────────────────

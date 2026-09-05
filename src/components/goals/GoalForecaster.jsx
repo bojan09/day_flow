@@ -1,6 +1,6 @@
 // Component: GoalForecaster
 // Purpose: Predicts goal completion based on milestone completion velocity.
-//          Shows projected finish date, days ahead/behind, and AI coaching.
+//          Shows projected finish date and days ahead or behind.
 import { useState, useMemo } from 'react'
 import { differenceInDays, addDays, format, parseISO } from 'date-fns'
 

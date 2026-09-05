@@ -2,7 +2,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
-  weekDateKeys, buildWeeklyReflection, weeklyFactsForAI, MIN_DAYS_FOR_WEEKLY,
+  weekDateKeys, buildWeeklyReflection, MIN_DAYS_FOR_WEEKLY,
 } from './weeklyReflection.js'
 
 const TODAY = '2026-09-10'
@@ -26,7 +26,6 @@ test('the weekly view stays hidden until enough days are reflected on', () => {
   const weekly = buildWeeklyReflection(entries, TODAY)
   assert.equal(weekly.daysReflected, 2)
   assert.equal(weekly.enough, false, `needs ${MIN_DAYS_FOR_WEEKLY}`)
-  assert.equal(weeklyFactsForAI(weekly), null, 'no AI call on thin data')
 })
 
 test('it opens once the threshold is met', () => {
@@ -87,18 +86,6 @@ test('collects the lessons and carry-forwards the user actually wrote', () => {
   const w = buildWeeklyReflection(entries, TODAY)
   assert.equal(w.lessons.length, 2, 'blank lessons are skipped')
   assert.equal(w.carried.length, 1)
-})
-
-test('the AI facts block reports only counted material', () => {
-  const entries = {
-    '2026-09-10': done('2026-09-10', { livedIntention: 'yes', intention: 'Focused', lesson: 'Protect the first hour.' }),
-    '2026-09-09': done('2026-09-09', { livedIntention: 'partially', intention: 'Focused' }),
-    '2026-09-08': done('2026-09-08', { livedIntention: 'not_today', intention: 'Calm' }),
-  }
-  const facts = weeklyFactsForAI(buildWeeklyReflection(entries, TODAY))
-  assert.match(facts, /Days reflected on this week: 3/)
-  assert.match(facts, /yes: 1, partially: 1, not today: 1/)
-  assert.match(facts, /Protect the first hour\./)
 })
 
 test('an empty week is safe', () => {

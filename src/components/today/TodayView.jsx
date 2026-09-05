@@ -20,7 +20,6 @@ import DashboardNudges    from './DashboardNudges'
 import CollapsibleWidget  from '../ui/CollapsibleWidget'
 import QuickPlannerWidget from './QuickPlannerWidget'
 import DailySummaryCard       from '../summary/DailySummaryCard'
-import SmartMorningBrief     from './SmartMorningBrief'
 import PriorityRecommendation from './PriorityRecommendation'
 import { useSmartScheduler }  from '../../hooks/useSmartScheduler'
 import FeatureTooltip        from '../ui/FeatureTooltip'
@@ -112,11 +111,6 @@ export default function TodayView({
 
       {/* Greeting */}
       <GoodMorningHeader intention={intention} />
-
-      {/* AI morning brief — shown only before noon, auto-generated */}
-      {!isEvening && !isAfternoon && (
-        <SmartMorningBrief tasks={tasks} habits={habits} mood={mood} goals={goals} />
-      )}
 
       {/* Customize button */}
       <div className="flex justify-end px-1">

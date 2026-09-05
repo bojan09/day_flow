@@ -4,7 +4,6 @@
 import { useState } from 'react'
 import { ROUTINE_TIMES, ROUTINE_EMOJIS } from '../../hooks/useRoutines'
 import StepBuilderCard from './StepBuilderCard'
-import { draftRoutine } from '../../services/routinePlanService'
 
 const TIME_LABELS = {
   morning: '🌅 Morning',
@@ -25,16 +24,6 @@ export default function RoutineEditor({ initial, onSubmit, onCancel }) {
   const [newStepText,     setNewStepText]     = useState('')
   const [newStepDuration, setNewStepDuration] = useState('5')
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-  const [goalText, setGoalText] = useState('')
-  const [drafting, setDrafting] = useState(false)
-
-  const handleDraft = async () => {
-    if (!goalText.trim()) return
-    setDrafting(true)
-    const drafted = await draftRoutine(goalText.trim())
-    if (drafted.length > 0) setSteps(drafted)
-    setDrafting(false)
-  }
 
   // ── Step management ─────────────────────────────────────────────────────────
 
@@ -173,28 +162,6 @@ export default function RoutineEditor({ initial, onSubmit, onCancel }) {
             </span>
           )}
         </div>
-
-        {/* AI draft entry point (only for a brand-new, empty step list) */}
-        {steps.length === 0 && (
-          <div className="rounded-xl p-3 space-y-2 mb-3" style={{ backgroundColor: 'var(--accent-light)' }}>
-            <input
-              value={goalText}
-              onChange={e => setGoalText(e.target.value)}
-              placeholder="Describe the routine, e.g. 'morning routine for deep work'"
-              className="w-full bg-transparent text-sm outline-none"
-              style={{ color: 'var(--text)' }}
-            />
-            <button
-              type="button"
-              onClick={handleDraft}
-              disabled={drafting || !goalText.trim()}
-              className="text-sm font-medium disabled:opacity-40"
-              style={{ color: 'var(--accent-text)' }}
-            >
-              {drafting ? 'Drafting…' : '✨ Draft with AI'}
-            </button>
-          </div>
-        )}
 
         {/* Existing steps */}
         {steps.length > 0 && (

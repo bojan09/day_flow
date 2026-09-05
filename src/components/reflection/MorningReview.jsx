@@ -6,23 +6,25 @@
 import { useState } from 'react'
 import { Sun, ArrowRight, ArrowLeft, Check } from 'lucide-react'
 import { getTodayKey } from '../../utils/dateUtils'
+import { listHas, toggleInList, customPart, setCustomPart } from '../../services/chipList'
 import { selectReference } from '../../services/stoicThemeSelection'
 
 const INTENTIONS = ['Focused', 'Calm', 'Disciplined', 'Patient', 'Present', 'Courageous', 'Deliberate', 'Grateful']
 const OBSTACLES  = ['Distractions', 'Procrastination', 'Too many tasks', 'Low energy', 'Unexpected interruptions', 'Stress']
 
-// Chip row used for the pick-one answers. Always allows a written answer too —
-// the spec says the user should always be able to write their own.
+// Chip row. Multi-select: more than one thing can get in your way, and more
+// than one word can describe how you want to meet the day. Always allows a
+// written answer too — the spec says the user can always write their own.
 function ChipGroup({ options, value, onChange }) {
   return (
     <div className="flex flex-wrap gap-2">
       {options.map(opt => {
-        const active = value === opt
+        const active = listHas(value, opt)
         return (
           <button
             key={opt}
             type="button"
-            onClick={() => onChange(active ? '' : opt)}
+            onClick={() => onChange(toggleInList(value, opt))}
             className="px-4 py-2 rounded-full text-sm font-medium border transition-all active:scale-95"
             style={active
               ? { backgroundColor: 'var(--accent)', color: 'white', borderColor: 'var(--accent)' }
@@ -149,11 +151,11 @@ export default function MorningReview({ reflections, tasks, onClose, dateKey = g
     {
       key: 'intention',
       render: () => (
-        <Step title="How do you want to approach today?" hint="Pick one, or write your own.">
+        <Step title="How do you want to approach today?" hint="Pick any that fit, or write your own.">
           <ChipGroup options={INTENTIONS} value={draft.intention} onChange={v => set({ intention: v })} />
           <input
-            value={INTENTIONS.includes(draft.intention) ? '' : draft.intention}
-            onChange={e => set({ intention: e.target.value })}
+            value={customPart(draft.intention, INTENTIONS)}
+            onChange={e => set({ intention: setCustomPart(draft.intention, INTENTIONS, e.target.value) })}
             placeholder="Or in your own words…"
             className="w-full px-4 py-3 rounded-xl border text-sm outline-none"
             style={textAreaStyle}
@@ -231,8 +233,8 @@ export default function MorningReview({ reflections, tasks, onClose, dateKey = g
         <Step title="What could get in your way?" hint="Optional — naming it early takes some of its power.">
           <ChipGroup options={OBSTACLES} value={draft.obstacle} onChange={v => set({ obstacle: v })} />
           <input
-            value={OBSTACLES.includes(draft.obstacle) ? '' : draft.obstacle}
-            onChange={e => set({ obstacle: e.target.value })}
+            value={customPart(draft.obstacle, OBSTACLES)}
+            onChange={e => set({ obstacle: setCustomPart(draft.obstacle, OBSTACLES, e.target.value) })}
             placeholder="Something else…"
             className="w-full px-4 py-3 rounded-xl border text-sm outline-none"
             style={textAreaStyle}

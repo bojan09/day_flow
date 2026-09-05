@@ -1,8 +1,7 @@
-// Tests: daySummary — the evening's factual picture, and the guard that keeps
-// the AI quiet when there is nothing real to reflect on.
+// Tests: daySummary — the evening's factual picture.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { buildDaySummary, summaryLines, hasEnoughContextForAI } from './daySummary.js'
+import { buildDaySummary, summaryLines } from './daySummary.js'
 
 const DAY = '2026-09-04'
 
@@ -76,29 +75,6 @@ test('empty categories are omitted rather than shown as zeros', () => {
   }))
   assert.equal(lines.length, 1)
   assert.equal(lines[0].label, 'Tasks completed')
-})
-
-test('AI stays silent when the user wrote nothing', () => {
-  const summary = buildDaySummary({ dateKey: DAY, tasks: tasksApi([{ id: 'a', date: DAY, completed: true }]) })
-  assert.equal(hasEnoughContextForAI(summary, {}), false)
-  assert.equal(hasEnoughContextForAI(summary, { wentWell: 'ok' }), false, 'a two-word answer is not context')
-})
-
-test('AI speaks once there is a real written answer plus day data', () => {
-  const summary = buildDaySummary({ dateKey: DAY, tasks: tasksApi([{ id: 'a', date: DAY, completed: true }]) })
-  assert.equal(hasEnoughContextForAI(summary, { wentWell: 'Started the hard task before email.' }), true)
-})
-
-test('AI can speak on writing alone when there is no tracked day data', () => {
-  const summary = buildDaySummary({ dateKey: DAY })
-  assert.equal(hasEnoughContextForAI(summary, { wentWell: 'Stayed calm in the meeting.' }), false)
-  assert.equal(
-    hasEnoughContextForAI(summary, {
-      wentWell: 'Stayed calm in the meeting.',
-      lesson: 'I do better when I prepare the night before.',
-    }),
-    true,
-  )
 })
 
 test('fasting appears only on days it happened', () => {

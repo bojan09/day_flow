@@ -8,9 +8,7 @@ import MoodTracker           from './MoodTracker'
 import MoodChart             from './MoodChart'
 import AnalyticsPanel        from './AnalyticsPanel'
 import SmartStreakBoard      from './SmartStreakBoard'
-import HabitLoopOptimizer  from '../habits/HabitLoopOptimizer'
 import AdvancedAnalytics     from './AdvancedAnalytics'
-import AICoach               from './AICoach'
 import ProductivityHeatmap   from './ProductivityHeatmap'
 import CategoryTrends        from './CategoryTrends'
 import WeeklyMonthlyComparison from './WeeklyMonthlyComparison'
@@ -18,7 +16,6 @@ import YearlyChain           from '../chain/YearlyChain'
 import WeeklyPersonalBest    from './WeeklyPersonalBest'
 import ReflectionPrompt      from './ReflectionPrompt'
 import DailySummaryCard      from '../summary/DailySummaryCard'
-import AIDailyFeedback       from '../summary/AIDailyFeedback'
 import VoiceJournal          from '../voice/VoiceJournal'
 import ThemePicker           from './ThemePicker'
 import ExportPanel           from '../export/ExportPanel'
@@ -68,7 +65,6 @@ export default function InsightsView({
       {tab === 'overview' && (
         <div className="space-y-4">
           <DailySummaryCard tasks={tasks} habits={habits} mood={mood} />
-          <AIDailyFeedback  tasks={tasks} habits={habits} mood={mood} />
           <MoodTracker mood={mood} />
           <AnalyticsPanel  tasks={tasks} />
           <WeeklyPersonalBest tasks={tasks} habits={habits} />
@@ -92,17 +88,7 @@ export default function InsightsView({
       {tab === 'habits' && (
         <div className="space-y-4">
           <SmartStreakBoard habits={habits} />
-          <HabitLoopOptimizer habits={habits} />
 
-          {goals && (
-            <>
-              <p className="text-xs font-medium uppercase tracking-widest px-1"
-                style={{ color: 'var(--text-faint)' }}>
-                AI Coaching
-              </p>
-              <AICoach tasks={tasks} habits={habits} mood={mood} notes={notes} goals={goals} />
-            </>
-          )}
 
           <VoiceJournal notes={notes} />
         </div>

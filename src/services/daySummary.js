@@ -85,20 +85,3 @@ export function summaryLines(summary) {
   }
   return lines
 }
-
-/**
- * Whether there is enough real material to ask the AI for a reflection.
- * The spec: "If there is insufficient context for a meaningful insight: do not
- * generate one. Silence is better than generic AI filler."
- *
- * Requires something the user actually wrote — the AI reflects on their words,
- * it does not invent a day for them.
- */
-export function hasEnoughContextForAI(summary, entry) {
-  const written = [entry?.wentWell, entry?.didntGoPlanned, entry?.lesson, entry?.differently]
-    .filter(v => v && String(v).trim().length >= 8)
-  if (written.length === 0) return false
-
-  const hasDayData = summary.tasks.total > 0 || summary.habits.total > 0 || summary.focusSessions > 0
-  return hasDayData || written.length >= 2
-}

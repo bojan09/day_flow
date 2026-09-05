@@ -73,17 +73,6 @@ export default function ReflectionView({ tasks, habits, routines, onTabChange })
           </p>
         </div>
 
-        {entry.aiReflection && (
-          <div
-            className="rounded-2xl border p-4"
-            style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)' }}
-          >
-            <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: 'var(--accent-text)' }}>
-              {entry.aiReflection}
-            </p>
-          </div>
-        )}
-
         {rows.length > 0 ? <SummaryRows rows={rows} /> : (
           <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
             Your evening reflection is saved.

@@ -1,43 +1,44 @@
+// Tests: captureClassifier — now fully local. These assert the on-device rules
+// that replaced the AI call, so capture keeps working offline and cannot be
+// broken by an upstream model being retired.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { classifyCapture } from './captureClassifier.js'
 
-test('falls back to task classification when AI call throws', async () => {
-  const failingCaller = async () => { throw new Error('network down') }
-  const result = await classifyCapture('call dentist tomorrow high priority', failingCaller)
-  assert.equal(result.type, 'task')
-  assert.equal(result.fields.priority, 'high')
-  assert.ok(result.usedFallback)
+test('plain text becomes a task', () => {
+  const r = classifyCapture('Email the landlord')
+  assert.equal(r.type, 'task')
+  assert.ok(r.fields.title)
 })
 
-test('parses a well-formed AI JSON response', async () => {
-  const fakeCaller = async () => JSON.stringify({
-    type: 'habit',
-    fields: { name: 'Drink water', frequency: 'daily' },
-  })
-  const result = await classifyCapture('drink more water every day', fakeCaller)
-  assert.equal(result.type, 'habit')
-  assert.deepEqual(result.fields, { name: 'Drink water', frequency: 'daily' })
-  assert.equal(result.usedFallback, false)
+test('"every day" prefix becomes a habit', () => {
+  const r = classifyCapture('every day drink water')
+  assert.equal(r.type, 'habit')
+  assert.equal(r.fields.name, 'drink water')
+  assert.equal(r.fields.frequency, 'daily')
 })
 
-test('falls back to task classification when AI returns unparseable text', async () => {
-  const fakeCaller = async () => 'not json at all'
-  const result = await classifyCapture('finish the report friday', fakeCaller)
-  assert.equal(result.type, 'task')
-  assert.ok(result.usedFallback)
+test('"routine:" prefix becomes a routine', () => {
+  const r = classifyCapture('routine: morning deep work')
+  assert.equal(r.type, 'routine')
+  assert.equal(r.fields.name, 'morning deep work')
+  assert.deepEqual(r.fields.steps, [])
 })
 
-test('falls back when AI returns an unrecognized type', async () => {
-  const fakeCaller = async () => JSON.stringify({ type: 'unknown-thing', fields: {} })
-  const result = await classifyCapture('something weird', fakeCaller)
-  assert.equal(result.type, 'task')
-  assert.ok(result.usedFallback)
+test('a clock time makes it an event', () => {
+  const r = classifyCapture('Dentist at 3pm')
+  assert.equal(r.type, 'event')
+  assert.ok(r.fields.title)
 })
 
-test('falls back when AI returns fields: null', async () => {
-  const fakeCaller = async () => JSON.stringify({ type: 'task', fields: null })
-  const result = await classifyCapture('something with null fields', fakeCaller)
-  assert.equal(result.usedFallback, true)
-  assert.equal(result.type, 'task')
+test('empty input is safe', () => {
+  const r = classifyCapture('')
+  assert.equal(r.type, 'task')
+  assert.equal(r.fields.title, '')
+})
+
+test('classification is synchronous but still awaitable', async () => {
+  // Call sites use `await classifyCapture(text)`; awaiting a plain value works.
+  const r = await classifyCapture('Buy milk')
+  assert.equal(r.type, 'task')
 })

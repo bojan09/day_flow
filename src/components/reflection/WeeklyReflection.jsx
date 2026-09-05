@@ -3,49 +3,17 @@
 //          days have actually been reflected on. Hidden entirely below that
 //          threshold, per "do not overwhelm the user with this immediately".
 //
-// The AI step is held to the spec's language rule: patterns are offered as
-// possibilities ("a pattern appears to be…", "one possible experiment…"),
-// never asserted as fact, and never claiming to know the user better than
-// they know themselves.
-import { useState } from 'react'
-import { CalendarRange, Sparkles } from 'lucide-react'
-import { buildWeeklyReflection, weeklyFactsForAI } from '../../services/weeklyReflection'
-import { callClaude } from '../../services/aiService'
+// Reports only what was counted — the interpretation is left to the user.
+import { CalendarRange } from 'lucide-react'
+import { buildWeeklyReflection } from '../../services/weeklyReflection'
 import { usePersistedState } from '../../hooks/usePersistedState'
 import { getTodayKey } from '../../utils/dateUtils'
 
 export default function WeeklyReflection({ entriesByDate, todayKey = getTodayKey() }) {
   const weekly = buildWeeklyReflection(entriesByDate, todayKey)
   const [weekIntention, setWeekIntention] = usePersistedState('weekly_intention', '')
-  const [pattern, setPattern] = useState('')
-  const [ai, setAi] = useState({ loading: false, error: null })
 
   if (!weekly.enough) return null
-
-  const askForPattern = async () => {
-    const facts = weeklyFactsForAI(weekly)
-    if (!facts) return
-    setAi({ loading: true, error: null })
-    try {
-      const text = await callClaude(
-        `You look for possible patterns in a week of someone's own written reflections.
-
-Rules:
-- 3 short sentences maximum, then at most one suggested experiment.
-- Use ONLY the facts given. Never invent events, numbers or feelings.
-- Offer possibilities, never verdicts. Use phrasing like "you may be noticing",
-  "a pattern appears to be", "one possible experiment".
-- Never claim to understand them better than they understand themselves.
-- Do not diagnose emotions or mental health. Do not praise or scold.`,
-        facts,
-      )
-      const clean = (text || '').trim()
-      setPattern(clean)
-      setAi({ loading: false, error: clean ? null : 'Nothing came back.' })
-    } catch (err) {
-      setAi({ loading: false, error: err?.message || 'Could not look for patterns.' })
-    }
-  }
 
   const { lived } = weekly
 
@@ -93,34 +61,6 @@ Rules:
           </div>
         )}
       </div>
-
-      {/* Possible pattern — offered, never asserted */}
-      {pattern ? (
-        <div
-          className="rounded-2xl border p-4"
-          style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)' }}
-        >
-          <p className="text-[11px] font-semibold uppercase tracking-widest mb-2" style={{ color: 'var(--accent-text)' }}>
-            A pattern you may want to notice
-          </p>
-          <p className="text-sm leading-relaxed whitespace-pre-line" style={{ color: 'var(--accent-text)' }}>
-            {pattern}
-          </p>
-        </div>
-      ) : (
-        <button
-          type="button"
-          onClick={askForPattern}
-          disabled={ai.loading}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-medium border transition-all active:scale-95 disabled:opacity-60"
-          style={{ borderColor: 'var(--border)', color: 'var(--text-muted)', backgroundColor: 'var(--surface)' }}
-        >
-          <Sparkles size={15} aria-hidden="true" />
-          {ai.loading ? 'Looking…' : 'Look for a pattern'}
-        </button>
-      )}
-
-      {ai.error && <p className="text-xs" style={{ color: 'var(--tone-red-text)' }}>{ai.error}</p>}
 
       {/* Weekly intention — reflection-derived, not a goals system */}
       <div className="space-y-2">

@@ -25,7 +25,6 @@ export function emptyReflection(dateKey) {
     differently:    '',
     dayFelt:        '',     // "Calm", "Scattered", … or custom
     carryForward:   '',     // "What should tomorrow remember?"
-    aiReflection:   '',     // Groq output, stored so it survives a reload
     eveningDoneAt:  null,
   }
 }

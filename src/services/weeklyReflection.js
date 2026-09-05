@@ -62,20 +62,3 @@ export function buildWeeklyReflection(entriesByDate = {}, todayKey) {
     dateKeys: keys,
   }
 }
-
-/**
- * Facts block for the AI pattern step. Returns null when there isn't enough to
- * work with, so the caller shows nothing rather than generic filler.
- */
-export function weeklyFactsForAI(weekly) {
-  if (!weekly.enough) return null
-  const lines = [
-    `Days reflected on this week: ${weekly.daysReflected}`,
-    `Lived according to intention — yes: ${weekly.lived.yes}, partially: ${weekly.lived.partially}, not today: ${weekly.lived.not_today}`,
-  ]
-  if (weekly.topIntention) lines.push(`Most chosen intention: ${weekly.topIntention.value} (${weekly.topIntention.count}x)`)
-  if (weekly.topFeeling)   lines.push(`Most common description of the day: ${weekly.topFeeling.value} (${weekly.topFeeling.count}x)`)
-  if (weekly.lessons.length) lines.push(`Lessons they wrote:\n${weekly.lessons.map(l => `- ${l.text}`).join('\n')}`)
-  if (weekly.carried.length) lines.push(`Notes they left for the next day:\n${weekly.carried.map(c => `- ${c.text}`).join('\n')}`)
-  return lines.join('\n')
-}

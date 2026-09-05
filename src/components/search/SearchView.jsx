@@ -4,7 +4,6 @@
 //          2. AI natural language search ("show me gym stuff last week")
 //             — sends context to Claude, returns ranked results
 import { useState, useMemo } from 'react'
-import { callClaude } from '../../services/aiService'
 import { useDebounce }       from '../../hooks/useDebounce'
 import { useBookmarks }      from '../../hooks/useBookmarks'
 
@@ -101,10 +100,6 @@ export default function SearchView({ tasks, notes, habits, goals, ideas }) {
   // Owned here rather than at the DashboardPage root — see CaptureView.
   const bookmarks = useBookmarks()
   const [query,    setQuery]    = useState('')
-  const [mode,     setMode]     = useState('keyword') // 'keyword' | 'ai'
-  const [aiResult, setAiResult] = useState([])
-  const [loading,  setLoading]  = useState(false)
-  const [error,    setError]    = useState(null)
   const debouncedQuery = useDebounce(query, 200)
   const q = debouncedQuery.toLowerCase().trim()
 
@@ -114,36 +109,12 @@ export default function SearchView({ tasks, notes, habits, goals, ideas }) {
 
   // ── Keyword results ───────────────────────────────────────────────────────────
   const keywordResults = useMemo(() => {
-    if (!q || mode !== 'keyword') return []
+    if (!q) return []
     return corpus.filter(item => item.searchText.includes(q)).slice(0, 40)
-  }, [corpus, q, mode])
+  }, [corpus, q])
 
-  // ── AI natural language search ────────────────────────────────────────────────
-  const runAiSearch = async () => {
-    if (!query.trim()) return
-    setLoading(true); setError(null); setAiResult([])
-
-    // Build a compact index to send to the AI
-    const index = corpus.map((item, i) => `[${i}] ${item.type}: ${item.title}${item.date ? ` (${item.date})` : ''}`).join('\n')
-
-    try {
-      const text = (await callClaude(`You are a search engine for a personal productivity app. 
-The user gives a natural language query. You get an index of all their data.
-Return ONLY a JSON array of the index numbers that match the query, ordered by relevance.
-Example response: [3, 17, 42, 8]
-Return at most 15 results. Return [] if nothing matches. No explanation, just the JSON array.`, `Query: "${query}"\n\nData index:\n${index.slice(0, 6000)}`)) || '[]'
-      // text already resolved by callClaude
-      const indices = JSON.parse(text.replace(/```json|```/g, '').trim())
-      setAiResult(indices.map(i => corpus[i]).filter(Boolean))
-    } catch {
-      setError('AI search failed. Try keyword mode or check your connection.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const results       = mode === 'ai' ? aiResult : keywordResults
-  const showEmpty     = (mode === 'keyword' ? q : query.trim()) && !loading && results.length === 0
+  const results       = keywordResults
+  const showEmpty     = q && results.length === 0
 
   return (
     <div className="max-w-2xl mx-auto pt-2 space-y-3">
@@ -158,91 +129,29 @@ Return at most 15 results. Return [] if nothing matches. No explanation, just th
           <input
             autoFocus
             value={query}
-            onChange={e => { setQuery(e.target.value); if (mode === 'ai') setAiResult([]) }}
-            onKeyDown={e => { if (e.key === 'Enter' && mode === 'ai') runAiSearch() }}
-            placeholder={mode === 'keyword' ? 'Search everything…' : 'Ask anything — "gym last week", "urgent work tasks"…'}
+            onChange={e => setQuery(e.target.value)}
+            placeholder='Search everything…'
             className="flex-1 text-sm outline-none bg-transparent"
             style={{ color: 'var(--text)' }}
           />
           {query && (
-            <button aria-label="Clear search" type="button" onClick={() => { setQuery(''); setAiResult([]) }}
+            <button aria-label="Clear search" type="button" onClick={() => setQuery('')}
               className="tap-target text-sm flex-shrink-0" style={{ color: 'var(--text-faint)' }}>✕</button>
           )}
         </div>
-        {mode === 'ai' && (
-          <button type="button" onClick={runAiSearch} disabled={!query.trim() || loading}
-            className="px-4 py-2 rounded-xl text-sm font-semibold text-white flex-shrink-0 disabled:opacity-50"
-            style={{ backgroundColor: 'var(--accent)' }}>
-            {loading ? '…' : 'Search'}
-          </button>
-        )}
       </div>
-
-      {/* Mode toggle */}
-      <div className="flex gap-1 p-1 rounded-2xl" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-        {[
-          { id: 'keyword', label: '⚡ Instant', desc: 'Keyword match' },
-          { id: 'ai',      label: '✦ AI Search', desc: 'Natural language' },
-        ].map(m => (
-          <button type="button" key={m.id}
-            onClick={() => { setMode(m.id); setAiResult([]) }}
-            className="flex-1 flex flex-col items-center py-2 rounded-xl text-xs font-medium transition-all"
-            style={mode === m.id
-              ? { backgroundColor: 'var(--surface)', boxShadow: 'var(--shadow-card)', color: 'var(--text)' }
-              : { color: 'var(--text-faint)' }
-            }>
-            <span>{m.label}</span>
-            <span className="text-[10px] opacity-70">{m.desc}</span>
-          </button>
-        ))}
-      </div>
-
-      {/* AI search hint */}
-      {mode === 'ai' && !query && (
-        <div className="space-y-1.5">
-          <p className="text-xs px-1" style={{ color: 'var(--text-faint)' }}>Try asking:</p>
-          {[
-            '"Show everything about my gym workouts"',
-            '"Urgent tasks from last week"',
-            '"Notes I wrote about work"',
-            '"Goals I haven\'t started"',
-          ].map(hint => (
-            <button type="button" key={hint}
-              onClick={() => setQuery(hint.replace(/"/g, ''))}
-              className="hover-surface w-full text-left px-4 py-2.5 rounded-xl border text-sm transition-colors"
-              style={{ borderColor: 'var(--border)', color: 'var(--text-muted)', backgroundColor: 'var(--surface)' }}>
-              {hint}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Loading */}
-      {loading && (
-        <div className="flex items-center justify-center gap-2 py-6">
-          <span className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin"
-            style={{ borderColor: 'var(--accent)' }} />
-          <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            Searching with AI…
-          </span>
-        </div>
-      )}
-
-      {/* Error */}
-      {error && <p className="text-sm text-center text-red-500 px-4">{error}</p>}
 
       {/* Results count */}
       {results.length > 0 && (
         <p className="text-xs px-1" style={{ color: 'var(--text-faint)' }}>
           {results.length} result{results.length !== 1 ? 's' : ''}
-          {mode === 'ai' ? ' · AI ranked' : ''}
         </p>
       )}
 
       {/* Results */}
       <div className="space-y-2">
         {results.map((item, i) => (
-          <ResultCard key={`${item.type}-${item.id}-${i}`} item={item} query={mode === 'keyword' ? q : ''} />
+          <ResultCard key={`${item.type}-${item.id}-${i}`} item={item} query={q} />
         ))}
       </div>
 
@@ -252,13 +161,13 @@ Return at most 15 results. Return [] if nothing matches. No explanation, just th
           <p className="text-2xl mb-2">🔍</p>
           <p className="text-sm font-medium" style={{ color: 'var(--text)' }}>No results found</p>
           <p className="text-xs mt-1" style={{ color: 'var(--text-faint)' }}>
-            {mode === 'ai' ? 'Try rephrasing your question' : 'Try different keywords or switch to AI search'}
+            Try different keywords
           </p>
         </div>
       )}
 
       {/* Empty prompt */}
-      {!query && mode === 'keyword' && (
+      {!query && (
         <p className="text-center text-sm py-8 italic" style={{ color: 'var(--text-faint)' }}>
           Start typing to search tasks, notes, habits, goals, ideas and bookmarks
         </p>

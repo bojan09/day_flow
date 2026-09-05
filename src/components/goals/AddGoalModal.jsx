@@ -4,28 +4,11 @@ import { useState } from 'react'
 import Modal from '../ui/Modal'
 import Input from '../ui/Input'
 import { GOAL_TYPES, GOAL_CATEGORIES } from '../../hooks/useGoals'
-import { draftGoalMilestones } from '../../services/routinePlanService'
 
 export default function AddGoalModal({ isOpen, onClose, onAdd }) {
   const [form, setForm] = useState({ title: '', description: '', type: 'Yearly', category: 'Personal', targetDate: '' })
   const [milestones, setMilestones] = useState([])
-  const [goalText, setGoalText] = useState('')
-  const [drafting, setDrafting] = useState(false)
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }))
-
-  const handleDraft = async () => {
-    if (!goalText.trim()) return
-    setDrafting(true)
-    const drafted = await draftGoalMilestones(goalText.trim())
-    if (drafted.length > 0) {
-      setMilestones(drafted.map((m, i) => ({
-        id: `draft-${i}`,
-        text: m.description ? `${m.title} — ${m.description}` : m.title,
-        done: false,
-      })))
-    }
-    setDrafting(false)
-  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -33,7 +16,6 @@ export default function AddGoalModal({ isOpen, onClose, onAdd }) {
     onAdd({ ...form, milestones })
     setForm({ title: '', description: '', type: 'Yearly', category: 'Personal', targetDate: '' })
     setMilestones([])
-    setGoalText('')
   }
 
   return (
@@ -77,19 +59,6 @@ export default function AddGoalModal({ isOpen, onClose, onAdd }) {
 
         <Input label="Target date (optional)" type="date"
           value={form.targetDate} onChange={e => set('targetDate', e.target.value)} />
-
-        {/* AI draft entry point (only when no milestones have been drafted/added yet) */}
-        {milestones.length === 0 && (
-          <div className="rounded-xl p-3 space-y-2" style={{ backgroundColor: 'var(--accent-light)' }}>
-            <input value={goalText} onChange={e => setGoalText(e.target.value)}
-              placeholder="Describe the goal, e.g. 'run a half marathon this year'"
-              className="w-full bg-transparent text-sm outline-none" style={{ color: 'var(--text)' }} />
-            <button type="button" onClick={handleDraft} disabled={drafting || !goalText.trim()}
-              className="text-sm font-medium disabled:opacity-40" style={{ color: 'var(--accent-text)' }}>
-              {drafting ? 'Drafting…' : '✨ Draft milestones with AI'}
-            </button>
-          </div>
-        )}
 
         {milestones.length > 0 && (
           <div>

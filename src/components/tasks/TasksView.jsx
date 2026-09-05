@@ -7,7 +7,7 @@ import Modal         from '../ui/Modal'
 import TaskForm      from './TaskForm'
 import RecurrencePanel from './RecurrencePanel'
 import QuickTaskBar          from './QuickTaskBar'
-import SmartSchedulerPanel  from './SmartSchedulerPanel'
+
 import NLPTaskInput  from './NLPTaskInput'
 import TaskDetail    from './TaskDetail'
 import TaskSection   from './TaskSection'
@@ -26,7 +26,7 @@ const FILTERS = ['All', 'Today', 'Overdue', 'Pending', 'Done', 'Someday', 'Templ
 // templates and someday are owned here rather than at the DashboardPage root —
 // this view is their only consumer, so hoisting them made every session load
 // them even when the Tasks tab was never opened.
-export default function TasksView({ tasks, projects, categories, onAddCategory, onRemoveCategory, onTabChange, energy, habits, ideas, openTaskId, workouts, goals, initialFilter }) {
+export default function TasksView({ tasks, projects, categories, onAddCategory, onRemoveCategory, onTabChange, ideas, openTaskId, workouts, goals, initialFilter }) {
   const { toast } = useToast()
   const templates = useTemplates()
   const someday   = useSomeday()
@@ -91,8 +91,8 @@ export default function TasksView({ tasks, projects, categories, onAddCategory, 
       {/* Zero-friction quick entry */}
       <QuickTaskBar tasks={tasks} />
 
-      {/* AI smart scheduler */}
-      <SmartSchedulerPanel tasks={tasks} energy={energy} habits={habits} onTabChange={onTabChange} />
+
+
 
       <NLPTaskInput onAdd={t => tasks.addTask(t)} />
 
