@@ -56,7 +56,9 @@ const TaskRow = memo(function TaskRow({ t, idx, urgency, tasksApi, projects, onT
         {t.completed && '✓'}
       </button>
       <div className="flex-1 min-w-0">
-        <p className={`text-sm leading-snug line-clamp-2 ${t.completed ? 'line-through [color:var(--text-faint)]' : '[color:var(--text)]'}`}>{t.title}</p>
+        <p className={`text-[15px] leading-snug font-medium line-clamp-3 ${t.completed ? 'line-through [color:var(--text-faint)]' : '[color:var(--text)]'}`}>
+          {t.title}
+        </p>
         {t.notes && (
           <p className="text-xs truncate mt-0.5" style={{ color: 'var(--text-faint)' }}>{t.notes}</p>
         )}
@@ -81,19 +83,21 @@ const TaskRow = memo(function TaskRow({ t, idx, urgency, tasksApi, projects, onT
         </div>
       </div>
       <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5" onClick={e => e.stopPropagation()}>
-        <Badge label={t.priority} color={t.priority} />
+        {t.priority === 'high' && (
+          <Badge label="High" color="high" />
+        )}
         <button onClick={() => tasksApi.setFocus(t.id)}
           aria-label={t.isFocus ? 'Remove focus' : 'Mark as focus'}
-          className={`text-sm p-1 rounded opacity-0 group-hover:opacity-100 transition-all ${t.isFocus ? 'opacity-100 [color:var(--accent-text)]' : '[color:var(--text-faint)] hover:[color:var(--accent-text)]'}`}>
+          className={`hidden md:block text-sm p-1 rounded md:opacity-0 md:group-hover:opacity-100 transition-all ${t.isFocus ? 'md:opacity-100 [color:var(--accent-text)]' : '[color:var(--text-faint)] hover:[color:var(--accent-text)]'}`}>
           {t.isFocus ? '📌' : '📍'}
         </button>
         {onTabChange && (
           <button onClick={() => onTabChange('timeblock')}
-            className="opacity-0 group-hover:opacity-100 text-[11px] px-1.5 py-0.5 rounded transition-all"
+            className="hidden md:block md:opacity-0 md:group-hover:opacity-100 text-[11px] px-1.5 py-0.5 rounded transition-all"
             style={{ color: 'var(--accent-text)', backgroundColor: 'var(--accent-light)' }} title="Open in Schedule" aria-label="Open in Schedule">⏰</button>
         )}
         <button aria-label="Delete task" onClick={() => onDelete(t)}
-          className="tap-target opacity-0 group-hover:opacity-100 [color:var(--text-faint)] hover:text-red-400 text-xs p-1 transition-all">✕</button>
+          className="tap-target flex items-center justify-center min-w-[40px] min-h-[40px] -mr-1.5 rounded-lg [color:var(--text-faint)] hover:text-red-400 md:opacity-0 md:group-hover:opacity-100 transition-all text-base">✕</button>
       </div>
     </li>
   )

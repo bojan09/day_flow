@@ -372,7 +372,11 @@
   .scrollbar-hide::-webkit-scrollbar { display: none; }
 
   /* Safe area padding for mobile */
-  .pb-safe { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
+  /* Honour the device inset only. The old rule forced a 1rem floor, which on
+     Android (inset 0) left a visible strip of dead space under the bottom nav. */
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  /* Where a floor genuinely helps — a drawer footer sitting on the edge. */
+  .pb-safe-gap { padding-bottom: max(0.75rem, env(safe-area-inset-bottom)); }
   .pt-safe { padding-top: max(0px, env(safe-area-inset-top)); }
 
   /* Modal panel height cap — 85vh first (universal fallback), then 85dvh

@@ -244,7 +244,7 @@ export default function MobileDrawer({
 
         {/* Appearance + safe-area footer */}
         <div
-          className="flex-shrink-0 border-t px-5 py-4 pb-safe"
+          className="flex-shrink-0 border-t px-5 py-4 pb-safe-gap"
           style={{ borderColor: 'var(--border-soft)' }}
         >
           <p
