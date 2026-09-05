@@ -21,7 +21,13 @@ export function useProjects() {
     setProjects(prev => [p, ...prev]); persist(p); return p
   }
 
-  const updateProject = (id, updates) => setProjects(prev => prev.map(p => { if (p.id !== id) return p; const u = { ...p, ...updates }; persist(u); return u }))
+  const updateProject = (id, updates) => {
+    const current = projects.find(p => p.id === id)
+    if (!current) return
+    const u = { ...current, ...updates }
+    setProjects(prev => prev.map(p => (p.id === id ? u : p)))
+    persist(u)
+  }
   const deleteProject = (id)          => { setProjects(prev => prev.filter(p => p.id !== id)); remove(id) }
   const setStatus     = (id, status)  => updateProject(id, { status })
   const getProgress   = (projectId, allTasks) => { const t = allTasks.filter(x => x.projectId === projectId); return t.length ? Math.round((t.filter(x => x.completed).length / t.length) * 100) : 0 }

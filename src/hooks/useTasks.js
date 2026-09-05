@@ -52,20 +52,23 @@ export function useTasks() {
     persist(t)
   }
 
+  // Writes are resolved from current state and performed here, never inside a
+  // setState updater. React runs an updater when it processes the update, not
+  // when you call setState, so a write placed inside one can be skipped
+  // entirely or run twice — which is exactly how toggleTask lost every save.
   const updateTask = (id, updates) => {
-    setTasks(prev => prev.map(t => {
-      if (t.id !== id) return t
-      const merged = { ...t, ...updates }
-      const newReminderAt = computeReminderAt(merged.date, merged.reminderTime)
-      const reminderChanged = newReminderAt !== t.reminderAt
-      const updated = {
-        ...merged,
-        reminderAt: newReminderAt,
-        reminderSent: reminderChanged ? false : merged.reminderSent,
-      }
-      persist(updated)
-      return updated
-    }))
+    const current = tasks.find(t => t.id === id)
+    if (!current) return
+    const merged = { ...current, ...updates }
+    const newReminderAt = computeReminderAt(merged.date, merged.reminderTime)
+    const reminderChanged = newReminderAt !== current.reminderAt
+    const updated = {
+      ...merged,
+      reminderAt: newReminderAt,
+      reminderSent: reminderChanged ? false : merged.reminderSent,
+    }
+    setTasks(prev => prev.map(t => (t.id === id ? updated : t)))
+    persist(updated)
   }
 
   const deleteTask = (id) => {
@@ -75,32 +78,34 @@ export function useTasks() {
   }
 
   const toggleTask = (id) => {
-    let targetTask = null
-    setTasks(prev => prev.map(t => {
-      if (t.id !== id) return t
-      const updated = { ...t, completed: !t.completed, completedAt: !t.completed ? new Date().toISOString() : null }
-      targetTask = updated
-      return updated
-    }))
-    if (targetTask) {
-      // persist() already retries and toasts; this only undoes the optimistic
-      // flip so the checkbox doesn't keep claiming a save that never landed.
-      persist(targetTask, {
-        onFail: () => {
-          setTasks(prev => prev.map(t =>
-            t.id === id ? { ...t, completed: !t.completed, completedAt: t.completed ? null : t.completedAt } : t
-          ))
-        },
-      })
+    // BUG FIX: targetTask used to be assigned inside the setTasks updater and
+    // read on the very next line. React had not run that updater yet, so it was
+    // still null and persist() never fired — the checkbox flipped, no request
+    // was ever sent, and the change was gone on the next load. Deletes were
+    // unaffected because they call remove(id) directly, which is why deleting
+    // stuck while completing did not.
+    const current = tasks.find(t => t.id === id)
+    if (!current) return
+    const targetTask = {
+      ...current,
+      completed: !current.completed,
+      completedAt: !current.completed ? new Date().toISOString() : null,
     }
+    setTasks(prev => prev.map(t => (t.id === id ? targetTask : t)))
+    // persist() already retries and toasts; onFail only undoes the optimistic
+    // flip so the checkbox stops claiming a save that never landed.
+    persist(targetTask, {
+      onFail: () => {
+        setTasks(prev => prev.map(t => (t.id === id ? current : t)))
+      },
+    })
   }
 
   const setFocus = (id) => {
-    setTasks(prev => prev.map(t => {
-      const updated = { ...t, isFocus: t.id === id ? !t.isFocus : false }
-      if (t.isFocus !== updated.isFocus) persist(updated)
-      return updated
-    }))
+    const next = tasks.map(t => ({ ...t, isFocus: t.id === id ? !t.isFocus : false }))
+    setTasks(next)
+    // Only the rows whose focus flag actually moved need writing.
+    next.forEach((t, i) => { if (t.isFocus !== tasks[i].isFocus) persist(t) })
   }
 
   const getTasksByDate       = (dateKey) => tasks.filter(t => t.date === dateKey)

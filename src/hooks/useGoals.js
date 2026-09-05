@@ -22,7 +22,16 @@ export function useGoals() {
     setGoals(prev => [g, ...prev]); persist(g); return g
   }
 
-  const updateGoal  = (id, updates) => setGoals(prev => prev.map(g => { if (g.id !== id) return g; const u = { ...g, ...updates }; persist(u); return u }))
+  // Resolved and written here rather than inside the setState updater: React
+  // only runs an updater when it processes the update, so a write placed in
+  // one is silently skipped whenever the update queue is not empty.
+  const updateGoal = (id, updates) => {
+    const current = goals.find(g => g.id === id)
+    if (!current) return
+    const u = { ...current, ...updates }
+    setGoals(prev => prev.map(g => (g.id === id ? u : g)))
+    persist(u)
+  }
   // Restore a previously deleted goal with its original id/milestones (undo)
   const restoreGoal = (g) => { unmarkDeleted(g.id); setGoals(prev => [g, ...prev]); persist(g) }
 

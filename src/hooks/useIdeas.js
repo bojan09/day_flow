@@ -23,10 +23,13 @@ export function useIdeas() {
     setIdeas(prev => [idea, ...prev]); persist(idea); return idea
   }
 
-  const updateIdea = (id, updates) => setIdeas(prev => prev.map(i => {
-    if (i.id !== id) return i
-    const u = { ...i, ...updates, updatedAt: new Date().toISOString() }; persist(u); return u
-  }))
+  const updateIdea = (id, updates) => {
+    const current = ideas.find(i => i.id === id)
+    if (!current) return
+    const u = { ...current, ...updates, updatedAt: new Date().toISOString() }
+    setIdeas(prev => prev.map(i => (i.id === id ? u : i)))
+    persist(u)
+  }
 
   // Restore a previously deleted idea with its original id (undo)
   const restoreIdea = (i) => { unmarkDeleted(i.id); setIdeas(prev => [i, ...prev]); persist(i) }

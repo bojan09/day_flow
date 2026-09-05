@@ -19,7 +19,13 @@ export function useBookmarks() {
     setBookmarks(prev => [b, ...prev]); persist(b); return b
   }
 
-  const updateBookmark = (id, updates) => setBookmarks(prev => prev.map(b => { if (b.id !== id) return b; const u = { ...b, ...updates }; persist(u); return u }))
+  const updateBookmark = (id, updates) => {
+    const current = bookmarks.find(b => b.id === id)
+    if (!current) return
+    const u = { ...current, ...updates }
+    setBookmarks(prev => prev.map(b => (b.id === id ? u : b)))
+    persist(u)
+  }
   // Restore a previously deleted bookmark with its original id (undo)
   const restoreBookmark = (b) => { unmarkDeleted(b.id); setBookmarks(prev => [b, ...prev]); persist(b) }
 

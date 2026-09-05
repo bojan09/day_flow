@@ -24,12 +24,11 @@ export function useNotes() {
   }
 
   const updateNote = (id, updates) => {
-    setNotes(prev => prev.map(n => {
-      if (n.id !== id) return n
-      const updated = { ...n, ...updates, updatedAt: new Date().toISOString() }
-      persist(updated)
-      return updated
-    }))
+    const current = notes.find(n => n.id === id)
+    if (!current) return
+    const updated = { ...current, ...updates, updatedAt: new Date().toISOString() }
+    setNotes(prev => prev.map(n => (n.id === id ? updated : n)))
+    persist(updated)
   }
 
   // Restore a previously deleted note with its original id/content (undo)
