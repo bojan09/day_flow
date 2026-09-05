@@ -11,6 +11,7 @@ import TasksView          from '../components/tasks/TasksView'
 import FocusMode          from '../components/focus/FocusMode'
 const SearchView = lazy(() => import('../components/search/SearchView'))
 const InsightsView = lazy(() => import('../components/insights/InsightsView'))
+const SettingsView = lazy(() => import('../components/settings/SettingsView'))
 const WorkoutsView = lazy(() => import('../components/workouts/WorkoutsView'))
 const TimeBlockView = lazy(() => import('../components/timeblock/TimeBlockView'))
 const CalendarView = lazy(() => import('../components/calendar/CalendarView'))
@@ -78,7 +79,7 @@ export default function DashboardPage() {
     if (hash === LEGACY_GOALS_TAB) return 'tasks'
     if (LEGACY_RHYTHM_TABS.includes(hash)) return 'rhythm'
     const valid = ['today','tasks','rhythm','focus','calendar','timeblock','projects','reflect',
-      'capture','workouts','fasting',
+      'capture','workouts','fasting','settings',
       'insights','search','weeklyreview']
     return valid.includes(hash) ? hash : 'today'
   })
@@ -282,7 +283,8 @@ export default function DashboardPage() {
         {activeTab === 'capture'    && <CaptureView notes={notes} ideas={ideas} tasks={tasks} goals={goals} categories={catData.all} onAddCategory={catData.addCategory} onRemoveCategory={catData.removeCategory} initialType={captureType} />}
 
         {/* ── Reflect ──────────────────────────────────────────────────────── */}
-        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} theme={theme} onSetTheme={setTheme} onWriteNote={handleWriteNote} intentions={intention} energy={energy} goals={goals} moodTheme={moodTheme} workouts={workouts} ideas={ideas} />}
+        {activeTab === 'insights'   && <InsightsView mood={mood} habits={habits} tasks={tasks} notes={notes} onWriteNote={handleWriteNote} energy={energy} />}
+        {activeTab === 'settings'   && <SettingsView theme={theme} onSetTheme={setTheme} moodTheme={moodTheme} tasks={tasks} habits={habits} mood={mood} notes={notes} goals={goals} intentions={intention} workouts={workouts} ideas={ideas} energy={energy} />}
         {activeTab === 'focus'      && <FocusMode tasks={tasks} />}
         {activeTab === 'search'     && <SearchView tasks={tasks} notes={notes} habits={habits} goals={goals} ideas={ideas} />}
         {activeTab === 'reflect'    && <ReflectionView tasks={tasks} habits={habits} routines={routines} onTabChange={handleTabChange} />}

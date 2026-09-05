@@ -10,7 +10,7 @@
 // content surfaces (habits, moods, routines) still use it deliberately.
 import {
   Sun, Target, Repeat, Dumbbell, ChartColumn, Inbox,
-  Timer, Calendar, CalendarClock, FolderKanban, Search, Sunrise, Utensils,
+  Timer, Calendar, CalendarClock, FolderKanban, Search, Sunrise, Utensils, Settings,
 } from 'lucide-react'
 
 export const NAV_TABS = {
@@ -27,6 +27,7 @@ export const NAV_TABS = {
   search:    { id: 'search',    label: 'Search',       emoji: '🔍', Icon: Search },
   reflect:   { id: 'reflect',   label: 'Reflection',   emoji: '🌅', Icon: Sunrise },
   fasting:   { id: 'fasting',   label: 'Fasting',      emoji: '🍽️', Icon: Utensils },
+  settings:  { id: 'settings',  label: 'Settings',     emoji: '⚙️', Icon: Settings },
 }
 
 const pick = (...ids) => ids.map(id => NAV_TABS[id])
@@ -37,7 +38,7 @@ export const PRIMARY_TABS = pick('today', 'reflect', 'tasks', 'rhythm', 'workout
 // Secondary — behind a collapsed-by-default "More" toggle.
 // Reflection was originally here, but it is a central daily ritual rather than
 // an occasional tool, so it sits in the primary row next to Today.
-export const MORE_TABS = pick('fasting', 'focus', 'calendar', 'timeblock', 'projects', 'search')
+export const MORE_TABS = pick('fasting', 'focus', 'calendar', 'timeblock', 'projects', 'search', 'settings')
 
 // Everything the mobile bottom nav can be customised to show.
 export const ALL_MODULES = pick(

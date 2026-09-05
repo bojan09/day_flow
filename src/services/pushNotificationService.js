@@ -43,11 +43,14 @@ export const pushService = {
       // Save subscription to Supabase
       const { error } = await supabase
         .from('push_subscriptions')
+        // Stored as a real JSON object, not a string: the table derives its
+        // endpoint column from subscription->>'endpoint', which is null for a
+        // JSON string and would let duplicate rows pile up per device.
         .upsert({
           user_id:      userId,
-          subscription: JSON.stringify(subscription),
+          subscription: subscription.toJSON ? subscription.toJSON() : subscription,
           device_name:  navigator.userAgent.slice(0, 100),
-        })
+        }, { onConflict: 'user_id,endpoint' })
 
       if (error) throw error
       return { subscription }

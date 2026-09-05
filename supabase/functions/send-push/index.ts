@@ -51,7 +51,8 @@ Deno.serve(async (req) => {
     for (const { subscription } of subs) {
       try {
         // Use the web-push standard — Deno compatible
-        const sub = JSON.parse(subscription)
+        // Rows written before the jsonb fix hold a stringified subscription.
+        const sub = typeof subscription === 'string' ? JSON.parse(subscription) : subscription
         const response = await fetch(sub.endpoint, {
           method:  'POST',
           headers: {
