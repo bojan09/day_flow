@@ -7,13 +7,12 @@ import MorningReview from './MorningReview'
 import EveningReview from './EveningReview'
 import { useReflections } from '../../hooks/useReflections'
 import { getTodayKey } from '../../utils/dateUtils'
+import { dueReflection, reflectionPhase } from '../../services/reflectionSchedule'
 import { Sun, Moon, Check } from 'lucide-react'
 import WeeklyReflection from './WeeklyReflection'
 
-// Morning runs until noon; evening opens from 5pm. Between the two the user
-// can still open either deliberately — this only picks the default.
-export const isMorningWindow = (hour) => hour < 12
-export const isEveningWindow = (hour) => hour >= 17
+// Which half is on offer is decided by reflectionSchedule, so Today's prompt,
+// the reminder notification and this view can never disagree.
 
 function SummaryRows({ rows }) {
   return (
@@ -36,15 +35,16 @@ export default function ReflectionView({ tasks, habits, routines, onTabChange })
 
   const backToToday = () => onTabChange?.('today')
 
-  // Evening takes precedence once its window opens, so someone who opens the
-  // app at night is not sent back through the morning first.
-  const wantsEvening = isEveningWindow(hour) || reflections.morningDone
+  // The morning must not roll into the evening: completing the morning at 8am
+  // used to drop the user straight into "how did your day go?".
+  const due   = dueReflection({ hour, morningDone: reflections.morningDone, eveningDone: reflections.eveningDone })
+  const phase = reflectionPhase(hour)
 
-  if (!reflections.morningDone && !isEveningWindow(hour)) {
+  if (due === 'morning') {
     return <MorningReview reflections={reflections} tasks={tasks} onClose={backToToday} dateKey={dateKey} />
   }
 
-  if (wantsEvening && !reflections.eveningDone) {
+  if (due === 'evening') {
     return (
       <EveningReview
         reflections={reflections}
@@ -110,7 +110,7 @@ export default function ReflectionView({ tasks, habits, routines, onTabChange })
   return (
     <div className="max-w-xl mx-auto px-1 pt-8 pb-8 space-y-7">
       <div className="flex items-center gap-2.5">
-        {isMorningWindow(hour)
+        {phase === 'morning'
           ? <Sun size={18} strokeWidth={2} style={{ color: 'var(--accent-text)' }} aria-hidden="true" />
           : <Check size={18} strokeWidth={2} style={{ color: 'var(--accent-text)' }} aria-hidden="true" />}
         <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: 'var(--text-faint)' }}>

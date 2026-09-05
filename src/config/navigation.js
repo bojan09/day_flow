@@ -32,15 +32,14 @@ export const NAV_TABS = {
 const pick = (...ids) => ids.map(id => NAV_TABS[id])
 
 // Always visible — the tabs used every day.
-export const PRIMARY_TABS = pick('today', 'tasks', 'rhythm', 'workouts', 'insights', 'capture')
+export const PRIMARY_TABS = pick('today', 'reflect', 'tasks', 'rhythm', 'workouts', 'insights', 'capture')
 
 // Secondary — behind a collapsed-by-default "More" toggle.
-// Reflection lives here rather than in the primary row: the spec asks for a
-// subtle review area plus a contextual entry, not another permanent tab
-// competing for space in the main navigation.
-export const MORE_TABS = pick('reflect', 'fasting', 'focus', 'calendar', 'timeblock', 'projects', 'search')
+// Reflection was originally here, but it is a central daily ritual rather than
+// an occasional tool, so it sits in the primary row next to Today.
+export const MORE_TABS = pick('fasting', 'focus', 'calendar', 'timeblock', 'projects', 'search')
 
 // Everything the mobile bottom nav can be customised to show.
 export const ALL_MODULES = pick(
-  'today', 'tasks', 'rhythm', 'focus', 'workouts', 'capture', 'calendar', 'insights', 'projects', 'fasting',
+  'today', 'reflect', 'tasks', 'rhythm', 'focus', 'workouts', 'capture', 'calendar', 'insights', 'projects', 'fasting',
 )
