@@ -75,7 +75,7 @@ export const pushService = {
           .filter('subscription->>endpoint', 'eq', sub.endpoint)
       }
     } catch (err) {
-      console.error('Unsubscribe failed:', err)
+      console.error('[DayFlow] Unsubscribe failed:', err)
     }
   },
 

@@ -3,11 +3,13 @@
 import { useState, useRef } from 'react'
 import { uploadFile, BUCKETS } from '../../services/storageService'
 import { isSupabaseConfigured } from '../../services/supabaseClient'
+import { useToast } from '../../utils/toast'
 
 export default function AvatarUpload({ userId, currentUrl, initials, onUpdate }) {
   const [uploading, setUploading] = useState(false)
   const [preview,   setPreview]   = useState(currentUrl)
   const inputRef                  = useRef()
+  const { toast }                 = useToast()
 
   if (!isSupabaseConfigured()) return null
 
@@ -20,7 +22,8 @@ export default function AvatarUpload({ userId, currentUrl, initials, onUpdate })
       setPreview(url)
       onUpdate({ avatar_url: url })
     } catch (err) {
-      console.error('Avatar upload failed:', err)
+      console.error('[DayFlow] Avatar upload failed:', err)
+      toast.error('Could not upload photo — try again')
     } finally {
       setUploading(false)
     }
