@@ -20,9 +20,7 @@ const VIEW_CHUNKS = {
     '/components/insights/InsightsView',
   ],
   'views-tertiary': [
-    '/components/balance/BalanceView',
     '/components/braindump/BrainDump',
-    '/components/challenges/ChallengesView',
     '/components/projects/ProjectsView',
     '/components/bookmarks/BookmarksView',
     '/components/weekly/WeeklyReview',

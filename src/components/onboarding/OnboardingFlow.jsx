@@ -2,6 +2,8 @@
 // Purpose: 5-step first-run wizard — shown once to new users.
 //          Steps: Welcome → Name → Starter Pack → Theme → Done
 //          Seeds habits, tasks, and goals from the chosen starter pack.
+import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { STARTER_PACKS } from '../../hooks/useOnboarding'
 import { getTodayKey } from '../../utils/dateUtils'
 
@@ -240,11 +242,22 @@ export default function OnboardingFlow({
     complete()
   }
 
-  return (
+  // Escape mirrors the "Skip setup" affordance on step 0 only — once the user
+  // has started naming/choosing a pack, Escape shouldn't discard that silently.
+  useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape' && step === 0) skip() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [step, skip])
+
+  return createPortal(
     // Full-screen overlay
     <div
       className="fixed inset-0 z-[var(--z-modal)] flex items-end sm:items-center justify-center p-4"
       style={{ backgroundColor: 'var(--overlay)' }}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Welcome setup"
     >
       <div
         className="w-full sm:max-w-md rounded-3xl p-6 animate-spring-in"
@@ -276,6 +289,7 @@ export default function OnboardingFlow({
           <StepDone name={name} pack={pack} onFinish={applyPackAndComplete} />
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

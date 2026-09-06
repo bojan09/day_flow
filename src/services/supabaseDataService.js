@@ -57,7 +57,10 @@ export const tasksService = {
   async delete(userId, id) {
     if (!isSupabaseConfigured()) return
     const { error } = await supabase.from('tasks').delete().eq('id', id).eq('user_id', userId)
-    if (error) console.error('[DayFlow] tasksService.delete:', error.message)
+    if (error) {
+      console.error('[DayFlow] tasksService.delete:', error.message)
+      throw new Error(error.message)
+    }
   },
 }
 
@@ -78,13 +81,19 @@ export const notesService = {
     if (!isSupabaseConfigured()) return
     const row = noteMapper.toDB({ ...note, user_id: userId })
     const { error } = await supabase.from('notes').upsert(row)
-    if (error) console.error('[DayFlow] notesService.upsert:', error.message)
+    if (error) {
+      console.error('[DayFlow] notesService.upsert:', error.message)
+      throw new Error(error.message)
+    }
   },
 
   async delete(userId, id) {
     if (!isSupabaseConfigured()) return
     const { error } = await supabase.from('notes').delete().eq('id', id).eq('user_id', userId)
-    if (error) console.error('[DayFlow] notesService.delete:', error.message)
+    if (error) {
+      console.error('[DayFlow] notesService.delete:', error.message)
+      throw new Error(error.message)
+    }
   },
 }
 
@@ -153,13 +162,19 @@ export const goalsService = {
     if (!isSupabaseConfigured()) return
     const row = goalMapper.toDB({ ...goal, user_id: userId })
     const { error } = await supabase.from('goals').upsert(row)
-    if (error) console.error('[DayFlow] goalsService.upsert:', error.message)
+    if (error) {
+      console.error('[DayFlow] goalsService.upsert:', error.message)
+      throw new Error(error.message)
+    }
   },
 
   async delete(userId, id) {
     if (!isSupabaseConfigured()) return
     const { error } = await supabase.from('goals').delete().eq('id', id).eq('user_id', userId)
-    if (error) console.error('[DayFlow] goalsService.delete:', error.message)
+    if (error) {
+      console.error('[DayFlow] goalsService.delete:', error.message)
+      throw new Error(error.message)
+    }
   },
 }
 
@@ -177,13 +192,19 @@ export const ideasService = {
     if (!isSupabaseConfigured()) return
     const row = ideaMapper.toDB({ ...idea, user_id: userId })
     const { error } = await supabase.from('ideas').upsert(row)
-    if (error) console.error('[DayFlow] ideasService.upsert:', error.message)
+    if (error) {
+      console.error('[DayFlow] ideasService.upsert:', error.message)
+      throw new Error(error.message)
+    }
   },
 
   async delete(userId, id) {
     if (!isSupabaseConfigured()) return
     const { error } = await supabase.from('ideas').delete().eq('id', id).eq('user_id', userId)
-    if (error) console.error('[DayFlow] ideasService.delete:', error.message)
+    if (error) {
+      console.error('[DayFlow] ideasService.delete:', error.message)
+      throw new Error(error.message)
+    }
   },
 }
 
@@ -201,13 +222,19 @@ export const projectsService = {
     if (!isSupabaseConfigured()) return
     const row = projectMapper.toDB({ ...project, user_id: userId })
     const { error } = await supabase.from('projects').upsert(row)
-    if (error) console.error('[DayFlow] projectsService.upsert:', error.message)
+    if (error) {
+      console.error('[DayFlow] projectsService.upsert:', error.message)
+      throw new Error(error.message)
+    }
   },
 
   async delete(userId, id) {
     if (!isSupabaseConfigured()) return
     const { error } = await supabase.from('projects').delete().eq('id', id).eq('user_id', userId)
-    if (error) console.error('[DayFlow] projectsService.delete:', error.message)
+    if (error) {
+      console.error('[DayFlow] projectsService.delete:', error.message)
+      throw new Error(error.message)
+    }
   },
 }
 
@@ -225,13 +252,19 @@ export const bookmarksService = {
     if (!isSupabaseConfigured()) return
     const row = bookmarkMapper.toDB({ ...bookmark, user_id: userId })
     const { error } = await supabase.from('bookmarks').upsert(row)
-    if (error) console.error('[DayFlow] bookmarksService.upsert:', error.message)
+    if (error) {
+      console.error('[DayFlow] bookmarksService.upsert:', error.message)
+      throw new Error(error.message)
+    }
   },
 
   async delete(userId, id) {
     if (!isSupabaseConfigured()) return
     const { error } = await supabase.from('bookmarks').delete().eq('id', id).eq('user_id', userId)
-    if (error) console.error('[DayFlow] bookmarksService.delete:', error.message)
+    if (error) {
+      console.error('[DayFlow] bookmarksService.delete:', error.message)
+      throw new Error(error.message)
+    }
   },
 }
 

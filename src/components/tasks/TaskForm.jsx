@@ -10,8 +10,8 @@ const RECUR_DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
 const ESTIMATES  = [null, 15, 30, 45, 60, 90, 120]
 
 const PRIORITY_STYLES = {
-  high:   'bg-red-50 border-red-300 text-red-600',
-  medium: 'bg-amber-50 border-amber-300 text-amber-600',
+  high:   '[background-color:var(--tone-red-bg)] [border-color:var(--tone-red-border)] [color:var(--tone-red-text)]',
+  medium: '[background-color:var(--tone-amber-bg)] [border-color:var(--tone-amber-border)] [color:var(--tone-amber-text)]',
   low:    '[background-color:var(--accent-light)] [border-color:var(--accent-mid)] [color:var(--accent-text)]',
 }
 

@@ -14,6 +14,13 @@ export default function NoteEditor({ note, onUpdate, onBack, getWordCount, getRe
   const [exportOpen, setExportOpen] = useState(false)
 
   useEffect(() => {
+    if (!exportOpen) return
+    const handler = (e) => { if (e.key === 'Escape') setExportOpen(false) }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [exportOpen])
+
+  useEffect(() => {
     setTitle(note.title); setContent(note.content)
     setTags(note.tags || []); setSaved(true)
   // Resyncs only when a different note is opened — depending on the note

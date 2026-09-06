@@ -2,7 +2,7 @@
 // Purpose: Avatar + dropdown at the bottom of the sidebar.
 //          Sign-out is handled by useAuth.signOut() which redirects to /welcome.
 //          Never navigates to '/' — that could trigger sign-out side-effects.
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth }    from '../../hooks/useAuth'
 import { useProfile } from '../../hooks/useProfile'
 import { isSupabaseConfigured } from '../../services/supabaseClient'
@@ -11,6 +11,13 @@ export default function UserMenu({ onOpenSettings }) {
   const { user, signOut } = useAuth()
   const { displayName, initials } = useProfile(user?.id)
   const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    if (!open) return
+    const handler = (e) => { if (e.key === 'Escape') setOpen(false) }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [open])
 
   // Demo mode — show a neutral "Demo mode" pill instead
   if (!isSupabaseConfigured() || !user) {
@@ -64,10 +71,10 @@ export default function UserMenu({ onOpenSettings }) {
       {open && (
         <>
           {/* Backdrop */}
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="fixed inset-0 z-[var(--z-drawer)]" onClick={() => setOpen(false)} />
 
           <div
-            className="absolute bottom-full left-0 mb-1 w-52 rounded-2xl border py-1.5 z-50 animate-fade-up"
+            className="absolute bottom-full left-0 mb-1 w-52 rounded-2xl border py-1.5 z-[var(--z-drawer)] animate-fade-up"
             style={{
               backgroundColor: 'var(--surface)',
               borderColor:     'var(--border)',

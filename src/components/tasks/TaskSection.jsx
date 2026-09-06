@@ -7,19 +7,19 @@ import { Trash2 } from 'lucide-react'
 import Badge from '../ui/Badge'
 
 const CAT_COLORS = {
-  Work:     'bg-blue-100 text-blue-700',
+  Work:     '[background-color:var(--tone-blue-bg)] [color:var(--tone-blue-text)]',
   Personal: '[background-color:var(--accent-light)] [color:var(--accent-text)]',
-  Health:   'bg-emerald-100 text-emerald-700',
-  Learning: 'bg-violet-100 text-violet-700',
-  Finance:  'bg-amber-100 text-amber-700',
-  Other:    '[background-color:var(--bg-secondary)] text-stone-600',
+  Health:   '[background-color:var(--tone-emerald-bg)] [color:var(--tone-emerald-text)]',
+  Learning: '[background-color:var(--tone-violet-bg)] [color:var(--tone-violet-text)]',
+  Finance:  '[background-color:var(--tone-amber-bg)] [color:var(--tone-amber-text)]',
+  Other:    '[background-color:var(--bg-secondary)] [color:var(--text-muted)]',
 }
 const CAT_DOT = {
-  Work:     'bg-blue-400',
+  Work:     '[background-color:var(--tone-blue-text)]',
   Personal: '[background-color:var(--accent)]',
-  Health:   'bg-emerald-500',
-  Learning: 'bg-violet-500',
-  Finance:  'bg-amber-400',
+  Health:   '[background-color:var(--tone-emerald-text)]',
+  Learning: '[background-color:var(--tone-violet-text)]',
+  Finance:  '[background-color:var(--tone-amber-text)]',
   Other:    '[background-color:var(--border)]',
 }
 const URGENCY_STRIPE = {

@@ -1,6 +1,6 @@
 // Hook: useNavConfig
 // Purpose: Stores user's mobile bottom nav configuration in Supabase.
-//          Default 4 tabs. User can replace any slot with any module.
+//          Default 5 tabs. User can replace any slot with any module.
 import { usePersistedState } from './usePersistedState'
 import { ALL_MODULES } from '../config/navigation'
 

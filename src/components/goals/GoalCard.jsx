@@ -232,7 +232,7 @@ const GoalCardImpl = memo(function GoalCard({ goal, goals }) {
             <form onSubmit={handleAddMilestone} className="flex gap-2">
               <input value={newMs} onChange={e => setNewMs(e.target.value)}
                 placeholder="Add a milestone…"
-                className="flex-1 text-xs rounded-lg px-3 py-2 outline-none border"
+                className="flex-1 text-xs rounded-lg px-3 py-2 border focus:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--accent-light)]"
                 style={{ backgroundColor: 'var(--bg)', borderColor: 'var(--border)', color: 'var(--text)' }} />
               <button type="submit" disabled={!newMs.trim()}
                 className="text-xs px-3 py-2 rounded-lg text-white disabled:opacity-40 transition-colors"

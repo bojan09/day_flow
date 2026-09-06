@@ -2,6 +2,7 @@
 // Purpose: Illustrated empty states — custom SVG per type, not just text + icon.
 //          v6.2: proper illustrations, warmer tone, action button.
 import { memo } from 'react'
+import Button from './Button'
 
 const ILLUSTRATIONS = {
   tasks: (
@@ -69,13 +70,9 @@ function EmptyState({ type = 'default', title, subtitle, action, onAction }) {
         </p>
       )}
       {action && onAction && (
-        <button
-          onClick={onAction}
-          className="mt-4 px-5 py-2 rounded-full text-sm font-semibold text-white transition-all active:scale-95"
-          style={{ backgroundColor: 'var(--accent)' }}
-        >
+        <Button onClick={onAction} className="mt-4">
           {action}
-        </button>
+        </Button>
       )}
     </div>
   )

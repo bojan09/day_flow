@@ -2,7 +2,7 @@ import ViewSkeleton from '../ui/ViewSkeleton'
 import { useToast } from '../../utils/toast'
 // Component: TasksView
 // Purpose: Tasks tab — NLP input, color categories, sub-task detail modal, duplicate, templates, someday
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef, useMemo, Suspense, lazy } from 'react'
 import Modal         from '../ui/Modal'
 import TaskForm      from './TaskForm'
 import RecurrencePanel from './RecurrencePanel'
@@ -12,11 +12,14 @@ import NLPTaskInput  from './NLPTaskInput'
 import TaskDetail    from './TaskDetail'
 import TaskSection   from './TaskSection'
 import EmptyState    from '../ui/EmptyState'
-import TaskTemplates from '../templates/TaskTemplates'
-import SomedayList   from '../summary/SomedayList'
-import RepeatingView from '../repeating/RepeatingView'
-import GoalsView     from '../goals/GoalsView'
 import { getTodayKey } from '../../utils/dateUtils'
+
+// Lazy: each of these is only rendered behind one filter tab, so they don't
+// need to ship in the bundle every Tasks-tab visitor downloads.
+const TaskTemplates = lazy(() => import('../templates/TaskTemplates'))
+const SomedayList    = lazy(() => import('../summary/SomedayList'))
+const RepeatingView  = lazy(() => import('../repeating/RepeatingView'))
+const GoalsView      = lazy(() => import('../goals/GoalsView'))
 import { addDays, format } from 'date-fns'
 import { useTemplates } from '../../hooks/useTemplates'
 import { useSomeday }   from '../../hooks/useSomeday'
@@ -52,22 +55,23 @@ export default function TasksView({ tasks, projects, categories, onAddCategory, 
     }
   }, [openTaskId, tasks.tasks])
 
-  const filtered = tasks.tasks.filter(t => {
+  const filtered = useMemo(() => tasks.tasks.filter(t => {
     if (filter === 'Today')   return t.date === todayKey
     if (filter === 'Overdue') return tasks.isOverdue(t)
     if (filter === 'Pending') return !t.completed
     if (filter === 'Done')    return t.completed
     return true
-  })
+  }), [tasks, filter, todayKey])
+
   const byPriority = (a, b) => {
     const p = { high: 0, medium: 1, low: 2 }
     return (p[a.priority] ?? 1) - (p[b.priority] ?? 1)
   }
 
-  const overdueTasks  = filtered.filter(t => !t.completed && tasks.isOverdue(t)).sort(byPriority)
-  const todayTasks    = filtered.filter(t => !t.completed && t.date === todayKey).sort(byPriority)
-  const upcomingTasks = filtered.filter(t => !t.completed && t.date > todayKey).sort(byPriority)
-  const doneTasks     = filtered.filter(t => t.completed).sort(byPriority)
+  const overdueTasks  = useMemo(() => filtered.filter(t => !t.completed && tasks.isOverdue(t)).sort(byPriority), [filtered, tasks])
+  const todayTasks    = useMemo(() => filtered.filter(t => !t.completed && t.date === todayKey).sort(byPriority), [filtered, todayKey])
+  const upcomingTasks = useMemo(() => filtered.filter(t => !t.completed && t.date > todayKey).sort(byPriority), [filtered, todayKey])
+  const doneTasks     = useMemo(() => filtered.filter(t => t.completed).sort(byPriority), [filtered])
 
   // Declared before the synced early-return below: sitting after it changed
   // the hook count between the skeleton render and the loaded render, which
@@ -122,14 +126,18 @@ export default function TasksView({ tasks, projects, categories, onAddCategory, 
         ))}
       </div>
 
-      {filter === 'Someday' ? (
-        someday && <SomedayList someday={someday} tasks={tasks} />
-      ) : filter === 'Templates' ? (
-        templates && <TaskTemplates templates={templates} tasks={tasks} />
-      ) : filter === 'Repeating' ? (
-        <RepeatingView tasks={tasks} workouts={workouts} />
-      ) : filter === 'Long-term' ? (
-        <GoalsView goals={goals} />
+      {['Someday', 'Templates', 'Repeating', 'Long-term'].includes(filter) ? (
+        <Suspense fallback={<ViewSkeleton type="tasks" />}>
+          {filter === 'Someday' ? (
+            someday && <SomedayList someday={someday} tasks={tasks} />
+          ) : filter === 'Templates' ? (
+            templates && <TaskTemplates templates={templates} tasks={tasks} />
+          ) : filter === 'Repeating' ? (
+            <RepeatingView tasks={tasks} workouts={workouts} />
+          ) : (
+            <GoalsView goals={goals} />
+          )}
+        </Suspense>
       ) : filtered.length === 0 ? (
         <EmptyState type="tasks" title="Nothing here" subtitle="Add a task using the input above." action="+ New Task" onAction={() => setModal(true)} />
       ) : (

@@ -2,7 +2,7 @@ import ViewSkeleton from '../ui/ViewSkeleton'
 import { useToast } from '../../utils/toast'
 // Component: HabitsView
 // Purpose: Habits tab — weekly/calendar toggle, rules panel, pairing suggestions, confetti
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import Card              from '../ui/Card'
 import HabitCard          from './HabitCard'
 import AddHabitModal     from './AddHabitModal'
@@ -36,8 +36,11 @@ export default function HabitsView({ habits, habitRules }) {
   const [view,      setView]     = useState('week')
   const [editingHabit, setEditingHabit] = useState(null)
   const prevStreaks               = useRef({})
+  const celebrationTimers         = useRef([])
   const weekDays                 = getWeekDays()
   const { habits: list, isHabitDone, toggleHabitDay, updateHabit, deleteHabit, getStreak, getWeeklyCount } = habits
+
+  useEffect(() => () => celebrationTimers.current.forEach(clearTimeout), [])
 
   const handleDelete = useCallback((habitId) => {
     const h = list.find(x => x.id === habitId)
@@ -54,14 +57,17 @@ export default function HabitsView({ habits, habitRules }) {
     // Fire IFTTT rules
     habitRules.fireRules(habitId, toggleHabitDay)
     toggleHabitDay(habitId, dateKey)
-    setTimeout(() => {
+    const outer = setTimeout(() => {
       const s = getStreak(habitId)
       if (MILESTONE_STREAKS.includes(s) && s > (prevStreaks.current[habitId] || 0)) {
-        setConfetti(true); setTimeout(() => setConfetti(false), 100)
+        setConfetti(true)
+        const inner = setTimeout(() => setConfetti(false), 100)
+        celebrationTimers.current.push(inner)
         notifyStreakCelebration(s)
       }
       prevStreaks.current[habitId] = s
     }, 50)
+    celebrationTimers.current.push(outer)
   }, [toggleHabitDay, getStreak, habitRules])
 
   const handleToggleToday = useCallback((habitId) => handleToggle(habitId, getTodayKey()), [handleToggle])

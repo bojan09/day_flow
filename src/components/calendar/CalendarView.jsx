@@ -9,8 +9,8 @@ import TaskForm from '../tasks/TaskForm'
 import DayDetailPanel from './DayDetailPanel'
 
 const CAT_DOT = {
-  Work: 'bg-blue-400', Personal: '[background-color:var(--accent)]', Health: 'bg-emerald-500',
-  Learning: 'bg-violet-500', Finance: 'bg-amber-400', Other: '[background-color:var(--border)]',
+  Work: '[background-color:var(--tone-blue-text)]', Personal: '[background-color:var(--accent)]', Health: '[background-color:var(--tone-emerald-text)]',
+  Learning: '[background-color:var(--tone-violet-text)]', Finance: '[background-color:var(--tone-amber-text)]', Other: '[background-color:var(--border)]',
 }
 
 

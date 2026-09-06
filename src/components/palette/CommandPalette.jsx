@@ -3,6 +3,7 @@
 //          into one input. Reuses classifyCapture (existing AI service) for
 //          capture, and ALL_MODULES (existing nav config) for navigation.
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { ALL_MODULES } from '../../hooks/useNavConfig'
 import { classifyCapture } from '../../services/captureClassifier'
 
@@ -33,8 +34,9 @@ export default function CommandPalette({ isOpen, onClose, onNavigate, onCapture 
     onClose()
   }
 
-  return (
-    <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-24 px-4"
+  return createPortal(
+    <div className="fixed inset-0 z-[var(--z-modal)] flex items-start justify-center pt-24 px-4"
+      role="dialog" aria-modal="true"
       style={{ backgroundColor: 'var(--overlay)' }}
       onClick={onClose}
       onKeyDown={e => { if (e.key === 'Escape') { e.stopPropagation(); onClose() } }}>
@@ -47,7 +49,7 @@ export default function CommandPalette({ isOpen, onClose, onNavigate, onCapture 
           onChange={e => setQuery(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter' && matches.length === 0) handleCapture() }}
           placeholder="Jump to a view, or type to capture..."
-          className="w-full px-5 py-4 text-base outline-none bg-transparent border-b"
+          className="w-full px-5 py-4 text-base bg-transparent border-b focus:outline-none focus-visible:[box-shadow:inset_0_-2px_0_var(--accent-mid)]"
           style={{ color: 'var(--text)', borderColor: 'var(--border-soft)' }}
           aria-label="Command palette"
         />
@@ -68,6 +70,7 @@ export default function CommandPalette({ isOpen, onClose, onNavigate, onCapture 
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

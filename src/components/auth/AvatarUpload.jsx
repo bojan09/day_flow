@@ -32,7 +32,7 @@ export default function AvatarUpload({ userId, currentUrl, initials, onUpdate })
   return (
     <label className="relative cursor-pointer group flex-shrink-0">
       {preview ? (
-        <img src={preview} alt="Avatar"
+        <img src={preview} alt="Avatar" width={64} height={64}
           className="w-16 h-16 rounded-full object-cover border-2"
           style={{ borderColor: 'var(--accent)' }} />
       ) : (

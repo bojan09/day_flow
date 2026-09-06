@@ -3,7 +3,8 @@
 //          `steps` = the routine's step array ({id, text, duration}). Advances
 //          on tap/click; onFinish fires after the last step (caller decides
 //          what "finishing" means — e.g. marking the routine's log entry done).
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 
 export default function RoutineRunMode({ routine, steps, onFinish, onExit }) {
   const [idx, setIdx] = useState(0)
@@ -12,10 +13,17 @@ export default function RoutineRunMode({ routine, steps, onFinish, onExit }) {
 
   const advance = () => isLast ? onFinish() : setIdx(i => i + 1)
 
+  useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape') onExit() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onExit])
+
   if (!step) return null
 
-  return (
-    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center text-center px-6"
+  return createPortal(
+    <div className="fixed inset-0 z-[var(--z-modal)] flex flex-col items-center justify-center text-center px-6"
+      role="dialog" aria-modal="true"
       style={{ backgroundColor: 'var(--bg)' }}>
       <button onClick={onExit} aria-label="Exit run mode"
         className="absolute top-6 right-6 text-sm" style={{ color: 'var(--text-faint)' }}>✕ Exit</button>
@@ -29,6 +37,7 @@ export default function RoutineRunMode({ routine, steps, onFinish, onExit }) {
         style={{ backgroundColor: 'var(--accent)' }}>
         {isLast ? 'Finish' : 'Next →'}
       </button>
-    </div>
+    </div>,
+    document.body
   )
 }

@@ -2,6 +2,7 @@
 // Purpose: Global keyboard shortcuts — single key nav + ? help overlay.
 //          Uses CSS variables so it respects the active theme.
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 const SHORTCUTS = [
   { key: 'T', desc: 'Today'      }, { key: 'K', desc: 'DailyGoals' },
@@ -39,9 +40,9 @@ export default function KeyboardShortcuts({ onTabChange }) {
 
   if (!showHelp) return null
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center"
+      className="fixed inset-0 z-[var(--z-modal)] flex items-center justify-center"
       style={{ backgroundColor: 'var(--overlay)' }}
       onClick={() => setShowHelp(false)}
     >
@@ -91,6 +92,7 @@ export default function KeyboardShortcuts({ onTabChange }) {
           >Esc</kbd> to close
         </p>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

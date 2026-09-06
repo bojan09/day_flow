@@ -10,7 +10,7 @@ export default function StepBuilderCard({ step, index, total, onChange, onMoveUp
         <input
           value={step.text}
           onChange={e => onChange({ ...step, text: e.target.value })}
-          className="flex-1 bg-transparent text-sm font-medium outline-none"
+          className="flex-1 bg-transparent text-sm font-medium focus:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--accent-light)] rounded"
           style={{ color: 'var(--text)' }}
           placeholder="Step name"
         />
@@ -18,7 +18,7 @@ export default function StepBuilderCard({ step, index, total, onChange, onMoveUp
           type="number"
           value={step.duration ?? ''}
           onChange={e => onChange({ ...step, duration: e.target.value ? Number(e.target.value) : null })}
-          className="w-14 bg-transparent text-xs text-right outline-none"
+          className="w-14 bg-transparent text-xs text-right focus:outline-none focus-visible:[box-shadow:0_0_0_2px_var(--accent-light)] rounded"
           style={{ color: 'var(--text-faint)' }}
           placeholder="min"
         />

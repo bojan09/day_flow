@@ -4,7 +4,7 @@
 const VARIANTS = {
   primary:    '[background-color:var(--accent)] text-white hover:[background-color:var(--accent)] active:scale-[0.97] shadow-sm hover:shadow-md',
   ghost:      'bg-transparent border border-theme text-muted hover:bg-app-secondary active:scale-[0.97]',
-  danger:     'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 active:scale-[0.97]',
+  danger:     '[background-color:var(--tone-red-bg)] [color:var(--tone-red-text)] hover:brightness-95 [border-color:var(--tone-red-border)] border active:scale-[0.97]',
   terracotta: 'bg-terracotta-500 text-white hover:bg-terracotta-700 active:scale-[0.97] shadow-sm',
   subtle:     'bg-app-secondary text-muted hover:text-theme border border-theme active:scale-[0.97]',
 }

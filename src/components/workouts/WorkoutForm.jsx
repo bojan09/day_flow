@@ -186,6 +186,7 @@ export default function WorkoutForm({ initial, sessions = [], onSubmit, onCancel
             <div key={t} className="relative group/type">
               <button
                 type="button" onClick={() => set('type', t)}
+                aria-pressed={form.type === t}
                 className="px-3 py-1.5 rounded-full text-xs font-medium transition-all border"
                 style={form.type === t
                   ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)', color: 'white' }
@@ -202,7 +203,8 @@ export default function WorkoutForm({ initial, sessions = [], onSubmit, onCancel
                     if (form.type === t) set('type', 'Strength')
                     workoutTypes.removeType(t)
                   }}
-                  className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] items-center justify-center opacity-0 group-hover/type:opacity-100 transition-opacity hidden group-hover/type:flex"
+                  aria-label={`Remove ${t} type`}
+                  className="tap-target absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] flex items-center justify-center transition-opacity"
                   title="Remove type"
                 >
                   ✕
@@ -287,6 +289,7 @@ export default function WorkoutForm({ initial, sessions = [], onSubmit, onCancel
           {MUSCLE_GROUPS.map(mg => (
             <button
               key={mg} type="button" onClick={() => toggleMuscle(mg)}
+              aria-pressed={form.muscleGroups.includes(mg)}
               className="px-3 py-1.5 rounded-full text-xs font-medium transition-all border"
               style={form.muscleGroups.includes(mg)
                 ? { backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent)', color: 'var(--accent-text)' }
@@ -319,7 +322,7 @@ export default function WorkoutForm({ initial, sessions = [], onSubmit, onCancel
               </span>
               <button
                 type="button" onClick={() => removeExercise(ex.id)}
-                className="hover-danger text-xs transition-colors"
+                className="hover-danger tap-target text-xs transition-colors"
                 style={{ color: 'var(--text-faint)' }}
               >
                 Remove
@@ -357,14 +360,14 @@ export default function WorkoutForm({ initial, sessions = [], onSubmit, onCancel
                 <button
                   type="button" onClick={() => removeSet(ex.id, s.id)}
                   aria-label="Remove set"
-                  className="hover-danger text-xs ml-auto" style={{ color: 'var(--text-faint)' }}
+                  className="hover-danger tap-target text-xs ml-auto" style={{ color: 'var(--text-faint)' }}
                 >✕</button>
               </div>
             ))}
 
             <button
               type="button" onClick={() => addSet(ex.id)}
-              className="text-xs font-medium mt-1"
+              className="tap-target text-xs font-medium mt-1"
               style={{ color: 'var(--accent-text)' }}
             >
               + Add set
@@ -407,6 +410,7 @@ export default function WorkoutForm({ initial, sessions = [], onSubmit, onCancel
             { id: 'monthly', label: 'Monthly' },
           ].map(opt => (
             <button key={opt.id} type="button" onClick={() => set('recurrence', opt.id)}
+              aria-pressed={form.recurrence === opt.id}
               className="py-2 rounded-xl text-xs font-medium transition-all border"
               style={form.recurrence === opt.id
                 ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)', color: 'white' }

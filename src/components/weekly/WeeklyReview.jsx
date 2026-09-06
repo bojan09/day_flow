@@ -2,7 +2,8 @@
 // Purpose: Sunday weekly review — shows the week stats and gives space to write
 //          summary with reflection prompts. Shows any day (not just Sunday) via
 //          manual trigger, and auto-shows on Sunday.
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { subDays, format }   from 'date-fns'
 import { getDateKey }        from '../../utils/dateUtils'
 
@@ -50,14 +51,24 @@ export default function WeeklyReview({ tasks, habits, mood, notes, onClose }) {
 
   const ctx = useMemo(() => buildWeekContext({ tasks, habits, mood, notes }), [tasks, habits, mood, notes])
 
-  if (dismissed) return null
-
   const handleClose = () => { setDismissed(true); onClose?.() }
 
-  return (
+  useEffect(() => {
+    if (dismissed) return
+    const handler = (e) => { if (e.key === 'Escape') handleClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dismissed])
+
+  if (dismissed) return null
+
+  return createPortal(
     <div
-      className="fixed inset-0 z-[9998] flex items-end sm:items-center justify-center p-4"
+      className="fixed inset-0 z-[var(--z-modal)] flex items-end sm:items-center justify-center p-4"
       style={{ backgroundColor: 'var(--overlay)' }}
+      role="dialog"
+      aria-modal="true"
     >
       <div
         className="w-full sm:max-w-lg rounded-3xl overflow-hidden animate-spring-in"
@@ -159,6 +170,7 @@ export default function WeeklyReview({ tasks, habits, mood, notes, onClose }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

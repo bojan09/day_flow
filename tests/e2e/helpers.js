@@ -58,7 +58,7 @@ function tryClick(locator, timeout = 2000) {
 
 export async function goToDailyGoals(page) {
   await dismissModals(page)
-  await page.getByRole('button', { name: /^dailygoals$/i }).first().click()
-  await expect(page.locator('h1')).toHaveText(/dailygoals/i)
+  await page.getByRole('button', { name: /^daily goals$/i }).first().click()
+  await expect(page.locator('h1')).toHaveText(/daily goals/i)
   await dismissModals(page)
 }

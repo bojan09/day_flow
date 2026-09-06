@@ -52,7 +52,7 @@ export default function NoteAttachments({ noteId, attachments = [], onUpdate }) 
               className="flex items-center gap-3 p-2.5 rounded-xl border group"
               style={{ backgroundColor: 'var(--bg)', borderColor: 'var(--border)' }}>
               {IMAGE_TYPES.includes(a.type) ? (
-                <img src={a.url} alt={a.name} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+                <img src={a.url} alt={a.name} width={40} height={40} loading="lazy" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
               ) : (
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center text-xl flex-shrink-0"
                   style={{ backgroundColor: 'var(--bg-secondary)' }}>

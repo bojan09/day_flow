@@ -15,7 +15,7 @@ import {
 
 export const NAV_TABS = {
   today:     { id: 'today',     label: 'Today',        emoji: '☀️',  Icon: Sun },
-  tasks:     { id: 'tasks',     label: 'DailyGoals',   emoji: '🎯', Icon: Target },
+  tasks:     { id: 'tasks',     label: 'Daily Goals',  emoji: '🎯', Icon: Target },
   rhythm:    { id: 'rhythm',    label: 'Daily Rhythm', emoji: '🔁', Icon: Repeat },
   workouts:  { id: 'workouts',  label: 'Workouts',     emoji: '🏋️', Icon: Dumbbell },
   insights:  { id: 'insights',  label: 'Insights',     emoji: '📊', Icon: ChartColumn },

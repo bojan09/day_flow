@@ -313,18 +313,17 @@ function BehaviouralInsights({ tasks }) {
 // ── Main export ───────────────────────────────────────────────────────────────
 
 export default function AdvancedAnalytics({ tasks, mood, energy }) {
-  const last30 = Array.from({ length: 30 }, (_, i) => getDateKey(subDays(new Date(), i)))
-  const tasksDone30   = tasks.tasks.filter(t => last30.includes(t.date) && t.completed).length
-  const avgPerDay     = (tasksDone30 / 30).toFixed(1)
-  const longestStreak = (() => {
+  const { tasksDone30, avgPerDay, longestStreak } = useMemo(() => {
+    const last30 = Array.from({ length: 30 }, (_, i) => getDateKey(subDays(new Date(), i)))
+    const done30 = tasks.tasks.filter(t => last30.includes(t.date) && t.completed).length
     let best = 0, cur = 0
     for (let i = 29; i >= 0; i--) {
       const d = getDateKey(subDays(new Date(), i))
       if (tasks.tasks.some(t => t.date === d && t.completed)) { cur++; best = Math.max(best, cur) }
       else cur = 0
     }
-    return best
-  })()
+    return { tasksDone30: done30, avgPerDay: (done30 / 30).toFixed(1), longestStreak: best }
+  }, [tasks.tasks])
 
   return (
     <div className="space-y-4">
