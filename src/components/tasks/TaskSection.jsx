@@ -3,6 +3,7 @@
 //          + its task rows. Row rendering matches the existing TasksView row
 //          markup (color dot, checkbox, category badge, priority badge, actions).
 import { memo } from 'react'
+import { Trash2 } from 'lucide-react'
 import Badge from '../ui/Badge'
 
 const CAT_COLORS = {
@@ -97,7 +98,9 @@ const TaskRow = memo(function TaskRow({ t, idx, urgency, tasksApi, projects, onT
             style={{ color: 'var(--accent-text)', backgroundColor: 'var(--accent-light)' }} title="Open in Schedule" aria-label="Open in Schedule">⏰</button>
         )}
         <button aria-label="Delete task" onClick={() => onDelete(t)}
-          className="tap-target flex items-center justify-center min-w-[40px] min-h-[40px] -mr-1.5 rounded-lg [color:var(--text-faint)] hover:text-red-400 md:opacity-0 md:group-hover:opacity-100 transition-all text-base">✕</button>
+          className="tap-target flex items-center justify-center min-w-[40px] min-h-[40px] -mr-1.5 rounded-lg [color:var(--text-faint)] hover:text-red-400 md:opacity-0 md:group-hover:opacity-100 transition-all">
+          <Trash2 size={16} aria-hidden="true" />
+        </button>
       </div>
     </li>
   )
