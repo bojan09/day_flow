@@ -1,6 +1,7 @@
 // Component: WorkoutCard
 // Purpose: One workout session — type badge, exercises, sets toggle, complete, edit, delete
 import { useState, useEffect, memo } from 'react'
+import { Play } from 'lucide-react'
 
 const TYPE_COLORS = {
   Strength:   { bg: 'var(--tone-sage-bg)', text: 'var(--tone-sage-text)' },
@@ -15,7 +16,7 @@ const TYPE_COLORS = {
   Other:      { bg: 'var(--bg-secondary)', text: 'var(--text-muted)' },
 }
 
-const WorkoutCardImpl = memo(function WorkoutCard({ session, workouts, onEdit }) {
+const WorkoutCardImpl = memo(function WorkoutCard({ session, workouts, onEdit, onStart }) {
   const [expanded, setExpanded] = useState(false)
   // Reset expanded state when session identity changes (prevents state leak after memo reuse)
   useEffect(() => { setExpanded(false) }, [session.id])
@@ -131,6 +132,17 @@ const WorkoutCardImpl = memo(function WorkoutCard({ session, workouts, onEdit })
               />
             </div>
           </div>
+        )}
+
+        {/* Primary action — the focused runner, spec §27's discovery-card CTA */}
+        {onStart && session.exercises.length > 0 && !session.completed && (
+          <button
+            onClick={() => onStart(session)}
+            className="mt-3 w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all active:scale-[0.98]"
+            style={{ backgroundColor: 'var(--accent)' }}
+          >
+            <Play size={14} aria-hidden="true" /> Start Workout
+          </button>
         )}
 
         {/* Toggle expand */}

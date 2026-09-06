@@ -87,6 +87,7 @@ export default function QuickTaskBar({ tasks, onAdded }) {
 
           <input
             ref={inputRef}
+            aria-label="Quick add task"
             value={value}
             onChange={e => setValue(e.target.value)}
             onFocus={() => setFocused(true)}

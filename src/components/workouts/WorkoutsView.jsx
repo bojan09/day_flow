@@ -6,6 +6,7 @@ import WorkoutStatsBar from './WorkoutStatsBar'
 import WorkoutCard     from './WorkoutCard'
 import WorkoutForm     from './WorkoutForm'
 import WeeklyRings     from './WeeklyRings'
+import ActiveWorkoutMode from './ActiveWorkoutMode'
 import Modal           from '../ui/Modal'
 import EmptyState      from '../ui/EmptyState'
 import { getWeekDays, getDateKey, getTodayKey } from '../../utils/dateUtils'
@@ -88,6 +89,7 @@ export default function WorkoutsView({ workouts }) {
   const [editing,  setEditing]  = useState(null)    // session being edited
   const [filter,   setFilter]   = useState('today') // 'all' | 'today' | 'done'
   const [selectedDate, setSelectedDate] = useState(getTodayKey())
+  const [active,   setActive]   = useState(null)    // session currently running in ActiveWorkoutMode
 
   const openAdd  = useCallback(()          => { setEditing(null);    setModal('add')  }, [])
   const openEdit = useCallback((session)   => { setEditing(session); setModal('edit') }, [])
@@ -126,6 +128,11 @@ export default function WorkoutsView({ workouts }) {
       state,
     }
   }), [workouts.sessions])
+
+  // Look up the live session by id rather than holding the object captured at
+  // start time — toggling a set re-renders workouts.sessions, and the active
+  // runner needs to see that immediately (progress bar, "all sets done" CTA).
+  const activeSession = active ? workouts.sessions.find(s => s.id === active.id) : null
 
   if (!workouts.synced) return <ViewSkeleton type="workouts" />
   return (
@@ -192,6 +199,7 @@ export default function WorkoutsView({ workouts }) {
               session={session}
               workouts={workouts}
               onEdit={openEdit}
+              onStart={setActive}
             />
           ))}
         </div>
@@ -211,6 +219,15 @@ export default function WorkoutsView({ workouts }) {
           onCancel={close}
         />
       </Modal>
+
+      {/* Focused runner — spec §28: replaces the whole viewport while active */}
+      {activeSession && (
+        <ActiveWorkoutMode
+          session={activeSession}
+          workouts={workouts}
+          onClose={() => setActive(null)}
+        />
+      )}
     </div>
   )
 }

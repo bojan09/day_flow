@@ -16,8 +16,12 @@ test('completing a task survives a reload', async ({ page }) => {
 
   const title = `E2E persistence check ${Date.now()}`
 
-  // The quick-add row: a text input with an inline "Add" button.
-  const quickAdd = page.getByPlaceholder(/call dentist tomorrow high priority/i)
+  // The quick-add row. Targeted by aria-label rather than the placeholder:
+  // the placeholder rotates through example phrases every 30s, and a second
+  // input elsewhere on the page (NLPTaskInput) happens to share one of those
+  // phrases as its own static placeholder — a real strict-mode ambiguity
+  // this hit during development.
+  const quickAdd = page.getByRole('textbox', { name: 'Quick add task' })
   await quickAdd.fill(title)
   await quickAdd.press('Enter')
 
@@ -41,7 +45,7 @@ test('deleting a task survives a reload', async ({ page }) => {
   await goToDailyGoals(page)
 
   const title = `E2E delete check ${Date.now()}`
-  const quickAdd = page.getByPlaceholder(/call dentist tomorrow high priority/i)
+  const quickAdd = page.getByRole('textbox', { name: 'Quick add task' })
   await quickAdd.fill(title)
   await quickAdd.press('Enter')
 

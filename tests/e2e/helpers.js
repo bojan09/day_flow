@@ -4,11 +4,15 @@ import { expect } from '@playwright/test'
 /**
  * Enter demo mode from a cold load and land on a clean dashboard view.
  *
- * Demo mode can stack two first-run modals (onboarding, then weekly review)
- * with a render delay between them, so this doesn't check-once-and-move-on —
- * it loops dismissing whatever overlay is on top until none remain. A
- * single up-front isVisible() check without a settle pause missed the
- * second modal entirely and left it intercepting every later click.
+ * Demo mode can stack two first-run modals — onboarding and the weekly
+ * review — that mount independently with no coordination between them, so
+ * either can still be animating in while the other is already clickable.
+ * This doesn't check-once-and-move-on: it loops, waits for each candidate
+ * to actually become visible rather than trusting a single snapshot, and
+ * gives each click a short timeout so one genuinely covered by the other
+ * modal fails fast and the loop retries instead of hanging for the whole
+ * test budget. All three properties were needed — earlier versions of this
+ * helper flaked under exactly this stacking a few times before landing here.
  */
 export async function enterDemoMode(page) {
   // '/' redirects to /welcome (marketing) in demo mode — the "try without an
@@ -21,21 +25,35 @@ export async function enterDemoMode(page) {
 }
 
 async function dismissModals(page) {
-  for (let i = 0; i < 5; i++) {
-    const skipSetup = page.getByRole('button', { name: /skip setup/i })
-    if (await skipSetup.isVisible().catch(() => false)) {
-      await skipSetup.click()
-      await page.waitForTimeout(500)
-      continue
-    }
+  for (let i = 0; i < 6; i++) {
+    const skipSetup   = page.getByRole('button', { name: /skip setup/i })
     const closeReview = page.getByRole('button', { name: /^close$/i })
-    if (await closeReview.isVisible().catch(() => false)) {
-      await closeReview.click()
-      await page.waitForTimeout(500)
-      continue
+
+    // waitFor(visible) rather than a single isVisible() snapshot: the two
+    // modals mount independently and a point-in-time check can run in the
+    // gap before the second one has rendered, missing it entirely.
+    if (await waitVisible(skipSetup)) {
+      // A short per-click timeout, not the test's full 30s: onboarding and
+      // the weekly review can both become "visible" (present, not
+      // display:none) while one still covers the other, so a click can hang
+      // on a genuinely-covered element. Failing fast lets the loop retry
+      // from scratch — re-checking Skip setup first — instead of spending
+      // the whole test budget stuck on one click.
+      if (await tryClick(skipSetup)) { await page.waitForTimeout(400); continue }
+    }
+    if (await waitVisible(closeReview)) {
+      if (await tryClick(closeReview)) { await page.waitForTimeout(400); continue }
     }
     break
   }
+}
+
+function waitVisible(locator, timeout = 1000) {
+  return locator.first().waitFor({ state: 'visible', timeout }).then(() => true).catch(() => false)
+}
+
+function tryClick(locator, timeout = 2000) {
+  return locator.click({ timeout }).then(() => true).catch(() => false)
 }
 
 export async function goToDailyGoals(page) {
