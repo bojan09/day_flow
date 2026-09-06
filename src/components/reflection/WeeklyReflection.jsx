@@ -4,8 +4,9 @@
 //          threshold, per "do not overwhelm the user with this immediately".
 //
 // Reports only what was counted — the interpretation is left to the user.
-import { CalendarRange } from 'lucide-react'
+import { CalendarRange, Sparkles } from 'lucide-react'
 import { buildWeeklyReflection } from '../../services/weeklyReflection'
+import { dailyInsight } from '../../services/dailyInsight'
 import { usePersistedState } from '../../hooks/usePersistedState'
 import { getTodayKey } from '../../utils/dateUtils'
 
@@ -16,6 +17,10 @@ export default function WeeklyReflection({ entriesByDate, todayKey = getTodayKey
   if (!weekly.enough) return null
 
   const { lived } = weekly
+  // "A thought worth carrying forward" — the single most-repeated thing the
+  // user actually chose or wrote this week, stated as a fact. Null most of
+  // the time; that is the point (spec: "generated only when useful").
+  const insight = dailyInsight(weekly)
 
   return (
     <section className="space-y-4 pt-2">
@@ -61,6 +66,21 @@ export default function WeeklyReflection({ entriesByDate, todayKey = getTodayKey
           </div>
         )}
       </div>
+
+      {insight && (
+        <div
+          className="rounded-2xl border p-4 flex gap-2.5"
+          style={{ backgroundColor: 'var(--accent-light)', borderColor: 'var(--accent-mid)' }}
+        >
+          <Sparkles size={16} strokeWidth={2} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--accent-text)' }} aria-hidden="true" />
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--accent-text)' }}>
+              Worth carrying forward
+            </p>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--accent-text)' }}>{insight}</p>
+          </div>
+        </div>
+      )}
 
       {/* Weekly intention — reflection-derived, not a goals system */}
       <div className="space-y-2">

@@ -8,6 +8,7 @@ import { Sun, ArrowRight, ArrowLeft, Check } from 'lucide-react'
 import { getTodayKey } from '../../utils/dateUtils'
 import { listHas, toggleInList, customPart, setCustomPart } from '../../services/chipList'
 import { selectReference } from '../../services/stoicThemeSelection'
+import { mementoMoriForDate } from '../../services/mementoMori'
 
 const INTENTIONS = ['Focused', 'Calm', 'Disciplined', 'Patient', 'Present', 'Courageous', 'Deliberate', 'Grateful']
 const OBSTACLES  = ['Distractions', 'Procrastination', 'Too many tasks', 'Low energy', 'Unexpected interruptions', 'Stress']
@@ -70,6 +71,10 @@ export default function MorningReview({ reflections, tasks, onClose, dateKey = g
     yesterdayLivedIntention: reflections.yesterday?.livedIntention ?? null,
     hasCarryForward: !!carryForward,
   })
+
+  // Spec §33: "occasionally appear... should feel meaningful, not ominous."
+  // A quiet aside, not a new step — most mornings this is simply null.
+  const memento = mementoMoriForDate(dateKey)
 
   const [step, setStep]   = useState(0)
   const [showRef, setRef] = useState(false)
@@ -143,6 +148,15 @@ export default function MorningReview({ reflections, tasks, onClose, dateKey = g
               </div>
             )}
           </figure>
+
+          {memento && (
+            <p
+              className="text-sm italic text-center leading-relaxed px-2"
+              style={{ color: 'var(--text-faint)' }}
+            >
+              “{memento.quote}” — {memento.author}
+            </p>
+          )}
         </Step>
       ),
     },
