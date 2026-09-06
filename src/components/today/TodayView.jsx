@@ -26,6 +26,7 @@ import FeatureTooltip        from '../ui/FeatureTooltip'
 import ProjectsWidget    from './modules/ProjectsWidget'
 import GoalsWidget       from './modules/GoalsWidget'
 import WorkoutsWidget    from './modules/WorkoutsWidget'
+import FastingWidget     from './modules/FastingWidget'
 import CalendarWidget    from './modules/CalendarWidget'
 import NotesWidget       from './modules/NotesWidget'
 import IdeasWidget       from './modules/IdeasWidget'
@@ -55,6 +56,7 @@ function WidgetContent({ id, tasks, habits, routines, notes, mood, energy,
     case 'module-projects':    return <ProjectsWidget   projects={projects}   tasks={tasks}      onTabChange={onTabChange} />
     case 'module-goals':       return <GoalsWidget      goals={goals}                            onTabChange={onTabChange} />
     case 'module-workouts':    return <WorkoutsWidget   workouts={workouts}                      onTabChange={onTabChange} />
+    case 'module-fasting':     return <FastingWidget    onTabChange={onTabChange} />
     case 'module-calendar':    return <CalendarWidget   timeblocks={timeblocks}                  onTabChange={onTabChange} />
     case 'module-notes':       return <NotesWidget      notes={notes}                            onTabChange={onTabChange} />
     case 'module-ideas':       return <IdeasWidget      ideas={ideas}                            onTabChange={onTabChange} />

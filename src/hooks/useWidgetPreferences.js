@@ -18,6 +18,7 @@ export const WIDGET_REGISTRY = [
   { id: 'module-projects',   title: 'Projects',   emoji: '🗂️', defaultOpen: true,  alwaysVisible: false, isModule: true },
   { id: 'module-goals',      title: 'Goals',      emoji: '🏆', defaultOpen: true,  alwaysVisible: false, isModule: true },
   { id: 'module-workouts',   title: 'Workouts',   emoji: '🏋️', defaultOpen: true,  alwaysVisible: false, isModule: true },
+  { id: 'module-fasting',    title: 'Fasting',    emoji: '🍽️', defaultOpen: true,  alwaysVisible: false, isModule: true },
   { id: 'module-calendar',   title: 'Calendar',   emoji: '📅', defaultOpen: true,  alwaysVisible: false, isModule: true },
   { id: 'module-notes',      title: 'Notes',      emoji: '📝', defaultOpen: true,  alwaysVisible: false, isModule: true },
   { id: 'module-ideas',      title: 'Ideas',      emoji: '💡', defaultOpen: true,  alwaysVisible: false, isModule: true },

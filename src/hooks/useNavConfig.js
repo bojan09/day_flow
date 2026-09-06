@@ -12,7 +12,7 @@ export { ALL_MODULES }
 // silently falling back to the first module.
 const LEGACY_MODULE_IDS = { habits: 'rhythm', routines: 'rhythm' }
 
-const DEFAULT_NAV = ['today', 'tasks', 'rhythm', 'focus']
+const DEFAULT_NAV = ['today', 'tasks', 'rhythm', 'fasting', 'focus']
 
 export function useNavConfig() {
   const [navItems, setNavItems] = usePersistedState('mobile_nav_config', DEFAULT_NAV)
